@@ -1,0 +1,37 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+  
+    "name": "${mod_name}",
+    "description": "${mod_description}",
+    "authors": [
+      "${mod_author}",
+      "This project is made possible with Patreon support from players like you. Thank you!",
+      "${mod_supporters}"
+    ],
+    "contact": {
+      "homepage": "${mod_homepage}",
+      "sources": "${mod_source}"
+    },
+  
+    "license": "${mod_license}",
+    "environment": "*",
+    "entrypoints": {
+      "main": [
+        "net.darkhax.examplemod.ExampleMod"
+      ]
+    },
+    "mixins": [
+      "${mod_id}.mixins.json"
+    ],
+  
+    "depends": {
+      "fabricloader": ">=0.12",
+      "fabric": "*",
+      "minecraft": "1.18.x",
+      "java": ">=17"
+    },
+    "suggests": {
+    }
+  }
