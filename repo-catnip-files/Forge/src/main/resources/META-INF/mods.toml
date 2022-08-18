@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[40,)"
+license="${mod_license}"
+issueTrackerURL="${mod_issues}"
+
+[[mods]]
+modId="catnip"
+version="${file.jarVersion}"
+displayName="${mod_name}"
+displayURL="${mod_homepage}"
+credits="This project is made possible with Patreon support from players like you. Thank you! {mod_supporters}"
+authors="${mod_author}"
+description='''
+${mod_description}
+'''
+
+[[dependencies.catnip]]
+    modId="forge"
+    mandatory=true
+    versionRange="[40,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.catnip]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.18-2,1.19)"
+    ordering="NONE"
+    side="BOTH"
