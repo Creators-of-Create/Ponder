@@ -98,8 +98,8 @@ dependencies {
     compileOnly commonProject
 
     if (catnipInWorkspace) {
-        compileOnly project(":catnip:Common")
-        compileOnly project(":catnip:Forge")
+        implementation project(":catnip:Common")
+        implementation project(":catnip:Forge")
     } else {
         //todo
         project.logger.lifecycle("Loading Ponder outside of multi-workspace!")
