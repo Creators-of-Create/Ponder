@@ -95,4 +95,8 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 	public void updateNarration(NarrationElementOutput pNarrationElementOutput) {
 		defaultButtonNarrationText(pNarrationElementOutput);
 	}
+
+	public void setHeight(int value) {
+		this.height = value;
+	}
 }

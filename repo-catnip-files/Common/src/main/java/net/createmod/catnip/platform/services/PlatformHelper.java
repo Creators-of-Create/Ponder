@@ -1,5 +1,7 @@
 package net.createmod.catnip.platform.services;
 
+import java.util.stream.Stream;
+
 public interface PlatformHelper {
 
 	/**
@@ -24,5 +26,7 @@ public interface PlatformHelper {
 	 * @return True if in a development environment, false otherwise.
 	 */
 	boolean isDevelopmentEnvironment();
+
+	Stream<String> getLoadedMods();
 
 }

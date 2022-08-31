@@ -3,36 +3,45 @@ package net.createmod.catnip;
 import java.util.Map;
 import java.util.Set;
 
+import net.createmod.catnip.command.CatnipCommands;
 import net.createmod.catnip.config.ConfigBase;
 import net.createmod.catnip.enums.CatnipConfig;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.createmod.catnip.net.ConfigPathArgument;
+import net.createmod.catnip.net.ForgeCatnipNetwork;
+import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Catnip.MOD_ID)
 public class ForgeCatnip {
     
     public ForgeCatnip() {
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
-        // This method is invoked by the Forge mod loader when it is ready
-        // to load your mod. You can access Forge and Common code in this
-        // project.
-    
-        // Use Forge to bootstrap the Common mod.
-        Catnip.LOGGER.info("Hello Forge world!");
-        CommonClass.init();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
 
-        Catnip.init();
+        modEventBus.addListener(ForgeCatnip::init);
+
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ForgeCatnipClient.onCtor(modEventBus, forgeEventBus));
 
         registerConfigs(modLoadingContext);
+    }
 
-        // Some code like events require special initialization from the
-        // loader specific code.
-        //MinecraftForge.EVENT_BUS.addListener(this::onItemTooltip);
-
+    public static void init(final FMLCommonSetupEvent event) {
+        Catnip.init();
+        ForgeCatnipNetwork.register();
+        ArgumentTypes.register(Catnip.asResource("config_path").toString(), ConfigPathArgument.class, new EmptyArgumentSerializer<>(ConfigPathArgument::path));
     }
 
     private static void registerConfigs(ModLoadingContext modLoadingContext) {
@@ -46,8 +55,8 @@ public class ForgeCatnip {
     public static class Events {
 
         @SubscribeEvent
-        public static void onItemTooltip(ItemTooltipEvent event) {
-            CommonClass.onItemTooltip(event.getItemStack(), event.getFlags(), event.getToolTip());
+        public static void registerCommands(RegisterCommandsEvent event) {
+            CatnipCommands.register(event.getDispatcher());
         }
     }
 

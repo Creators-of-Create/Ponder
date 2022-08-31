@@ -4,12 +4,14 @@ import net.createmod.catnip.platform.services.ModHooksHelper;
 import net.createmod.catnip.utility.placement.IPlacementHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent;
 
 public class ForgeHooksHelper implements ModHooksHelper {
@@ -26,6 +28,11 @@ public class ForgeHooksHelper implements ModHooksHelper {
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean isPlayerFake(ServerPlayer player) {
+		return player instanceof FakePlayer;
 	}
 
 	@Override

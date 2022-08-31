@@ -8,10 +8,9 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
-import net.createmod.catnip.utility.placement.PlacementHelpers;
-
+import net.createmod.catnip.utility.placement.PlacementClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -58,7 +57,7 @@ public abstract class GhostBlockRenderer {
 			BlockPos pos = params.pos;
 			ms.translate(pos.getX(), pos.getY(), pos.getZ());
 
-			CatnipServices.CLIENT_HOOKS.renderBlockStateModel(dispatcher, ms, vb, params.state, model, 1f, 1f, 1f);
+			CatnipClientServices.CLIENT_HOOKS.renderBlockStateModel(dispatcher, ms, vb, params.state, model, 1f, 1f, 1f);
 
 			ms.popPose();
 		}
@@ -86,7 +85,7 @@ public abstract class GhostBlockRenderer {
 			ms.scale(.85f, .85f, .85f);
 			ms.translate(-.5, -.5, -.5);
 
-			float alpha = params.alphaSupplier.get() * .75f * PlacementHelpers.getCurrentAlpha();
+			float alpha = params.alphaSupplier.get() * .75f * PlacementClient.getCurrentAlpha();
 			renderModel(ms.last(), vb, params.state, model, 1f, 1f, 1f, alpha,
 				LevelRenderer.getLightColor(mc.level, pos), OverlayTexture.NO_OVERLAY);
 
@@ -128,7 +127,7 @@ public abstract class GhostBlockRenderer {
 					f2 = 1.0F;
 				}
 
-				CatnipServices.CLIENT_HOOKS.vertexConsumerPutBulkDataWithAlpha(consumer, pose, quad, f, f1, f2, alpha, packedLight, packedOverlay);
+				CatnipClientServices.CLIENT_HOOKS.vertexConsumerPutBulkDataWithAlpha(consumer, pose, quad, f, f1, f2, alpha, packedLight, packedOverlay);
 			}
 
 		}

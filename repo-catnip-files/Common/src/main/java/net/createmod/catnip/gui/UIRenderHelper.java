@@ -19,10 +19,9 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
-import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.utility.Couple;
-
+import net.createmod.catnip.utility.theme.Color;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -293,7 +292,7 @@ public class UIRenderHelper {
 			CustomRenderTarget framebuffer = new CustomRenderTarget(true);
 			framebuffer.resize(mainWindow.getWidth(), mainWindow.getHeight(), Minecraft.ON_OSX);
 			framebuffer.setClearColor(0, 0, 0, 0);
-			CatnipServices.CLIENT_HOOKS.enableStencilBuffer(framebuffer);
+			CatnipClientServices.CLIENT_HOOKS.enableStencilBuffer(framebuffer);
 			return framebuffer;
 		}
 

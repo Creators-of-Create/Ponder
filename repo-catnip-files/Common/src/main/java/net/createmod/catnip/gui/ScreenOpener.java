@@ -16,11 +16,11 @@ public class ScreenOpener {
 	private static final Deque<Screen> backStack = new ArrayDeque<>();
 	@Nullable private static Screen backSteppedFrom = null;
 
-	public static void open(Screen screen) {
+	public static void open(@Nullable Screen screen) {
 		open(Minecraft.getInstance().screen, screen);
 	}
 
-	public static void open(@Nullable Screen current, Screen toOpen) {
+	public static void open(@Nullable Screen current, @Nullable Screen toOpen) {
 		backSteppedFrom = null;
 		if (current != null) {
 			if (backStack.size() >= 15) // don't go deeper than 15 steps
@@ -86,7 +86,7 @@ public class ScreenOpener {
 		return backSteppedFrom != null ? backSteppedFrom : backStack.peek();
 	}
 
-	private static void openScreen(Screen screen) {
+	private static void openScreen(@Nullable Screen screen) {
 		Minecraft.getInstance()
 			.tell(() -> {
 				Minecraft.getInstance()

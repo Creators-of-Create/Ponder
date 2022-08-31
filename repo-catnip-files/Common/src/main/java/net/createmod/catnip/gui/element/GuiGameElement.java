@@ -13,7 +13,7 @@ import com.mojang.math.Vector3f;
 
 import net.createmod.catnip.gui.ILightingSettings;
 import net.createmod.catnip.gui.UIRenderHelper;
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.Minecraft;
@@ -182,7 +182,7 @@ public class GuiGameElement {
 				.getBlockColors()
 				.getColor(blockState, null, null, 0);
 			Color rgb = new Color(color == -1 ? this.color : color);
-			CatnipServices.CLIENT_HOOKS.renderBlockStateModel(blockRenderer, ms, vb, blockState, blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat());
+			CatnipClientServices.CLIENT_HOOKS.renderBlockStateModel(blockRenderer, ms, vb, blockState, blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat());
 			buffer.endBatch();
 		}
 
@@ -201,7 +201,7 @@ public class GuiGameElement {
 			RenderType renderType, VertexConsumer vb, PoseStack ms) {
 			if (blockState.getBlock() instanceof BaseFireBlock) {
 				Lighting.setupForFlatItems();
-				CatnipServices.CLIENT_HOOKS.renderBlockState(blockRenderer, ms, buffer, blockState);
+				CatnipClientServices.CLIENT_HOOKS.renderBlockState(blockRenderer, ms, buffer, blockState);
 				buffer.endBatch();
 				Lighting.setupFor3DItems();
 				return;
@@ -213,7 +213,7 @@ public class GuiGameElement {
 				.isEmpty())
 				return;
 
-			CatnipServices.CLIENT_HOOKS.renderFullFluidState(ms, buffer, blockState.getFluidState());
+			CatnipClientServices.CLIENT_HOOKS.renderFullFluidState(ms, buffer, blockState.getFluidState());
 
 			buffer.endBatch();
 		}

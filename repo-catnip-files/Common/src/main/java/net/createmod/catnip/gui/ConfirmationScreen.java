@@ -10,11 +10,11 @@ import org.lwjgl.opengl.GL30;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.TextStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
-
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -92,7 +92,7 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 
 	public void open(@Nonnull Screen source) {
 		this.source = source;
-		Minecraft client = CatnipServices.CLIENT_HOOKS.getMinecraftFromScreen(source);
+		Minecraft client = CatnipClientServices.CLIENT_HOOKS.getMinecraftFromScreen(source);
 		this.init(client, client.getWindow().getGuiScaledWidth(), client.getWindow().getGuiScaledHeight());
 		this.minecraft.screen = this;
 	}

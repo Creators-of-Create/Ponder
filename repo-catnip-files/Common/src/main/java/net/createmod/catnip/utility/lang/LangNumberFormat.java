@@ -3,7 +3,7 @@ package net.createmod.catnip.utility.lang;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.platform.CatnipClientServices;
 
 public class LangNumberFormat {
 
@@ -15,7 +15,7 @@ public class LangNumberFormat {
 	}
 
 	public void update() {
-		format = NumberFormat.getInstance(CatnipServices.CLIENT_HOOKS.getCurrentLocale());
+		format = NumberFormat.getInstance(CatnipClientServices.CLIENT_HOOKS.getCurrentLocale());
 		format.setMaximumFractionDigits(2);
 		format.setMinimumFractionDigits(0);
 		format.setGroupingUsed(true);

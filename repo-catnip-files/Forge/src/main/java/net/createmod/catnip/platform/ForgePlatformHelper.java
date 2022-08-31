@@ -1,8 +1,11 @@
 package net.createmod.catnip.platform;
 
+import java.util.stream.Stream;
+
 import net.createmod.catnip.platform.services.PlatformHelper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.forgespi.language.IModInfo;
 
 public class ForgePlatformHelper implements PlatformHelper {
 
@@ -24,4 +27,8 @@ public class ForgePlatformHelper implements PlatformHelper {
 		return !FMLLoader.isProduction();
 	}
 
+	@Override
+	public Stream<String> getLoadedMods() {
+		return ModList.get().getMods().stream().map(IModInfo::getModId);
+	}
 }

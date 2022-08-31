@@ -65,6 +65,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 			return;
 
 		addRenderableWidget(backTrack = new BoxWidget(31, height - 31 - 20)
+				.withBounds(20, 20)
 				.enableFade(0, 5)
 				.withPadding(2, 2)
 				.withCallback(() -> ScreenOpener.openPreviousScreen(this, null)));
@@ -115,10 +116,10 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 
 			if (x + 30 < backTrack.x)
 				UIRenderHelper.breadcrumbArrow(ms, x + 30, height - 51, 0, maxX - (x + 30), 20, 5,
-						Theme.Key.PONDER_BACK_ARROW.p());
+						Theme.Key.NAV_BACK_ARROW.p());
 
-			UIRenderHelper.breadcrumbArrow(ms, x, height - 51, 0, 30, 20, 5, Theme.Key.PONDER_BACK_ARROW.p());
-			UIRenderHelper.breadcrumbArrow(ms, x - 30, height - 51, 0, 30, 20, 5, Theme.Key.PONDER_BACK_ARROW.p());
+			UIRenderHelper.breadcrumbArrow(ms, x, height - 51, 0, 30, 20, 5, Theme.Key.NAV_BACK_ARROW.p());
+			UIRenderHelper.breadcrumbArrow(ms, x - 30, height - 51, 0, 30, 20, 5, Theme.Key.NAV_BACK_ARROW.p());
 		}
 
 		if (transition.getChaseTarget() == 0 || transition.settled()) {

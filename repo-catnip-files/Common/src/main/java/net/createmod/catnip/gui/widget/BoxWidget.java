@@ -5,16 +5,17 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.createmod.catnip.gui.element.FadableScreenElement;
-import net.createmod.catnip.utility.theme.Theme;
-import net.createmod.catnip.utility.theme.Theme.Key;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.gui.element.FadableScreenElement;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.utility.theme.Theme;
+import net.createmod.catnip.utility.theme.Theme.Key;
 
 public class BoxWidget extends ElementWidget {
 
@@ -104,6 +105,8 @@ public class BoxWidget extends ElementWidget {
 	protected void beforeRender(@Nonnull PoseStack ms, int mouseX, int mouseY, float partialTicks) {
 		super.beforeRender(ms, mouseX, mouseY, partialTicks);
 
+		RenderSystem.enableDepthTest();
+
 		if (isHovered != wasHovered) {
 			startGradientAnimation(
 					getColorForState(true),
@@ -130,7 +133,7 @@ public class BoxWidget extends ElementWidget {
 			return;
 
 		box.withAlpha(fadeValue);
-		box.withBackground(customBackground != null ? customBackground : Key.PONDER_BACKGROUND_TRANSPARENT.c())
+		box.withBackground(customBackground != null ? customBackground : Key.BOX_BACKGROUND_TRANSPARENT.c())
 				.gradientBorder(gradientColor1, gradientColor2)
 				.at(x, y, z)
 				.withBounds(width, height)

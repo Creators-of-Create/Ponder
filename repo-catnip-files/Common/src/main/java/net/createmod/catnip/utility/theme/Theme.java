@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,7 +18,7 @@ public class Theme {
 	private static final List<Theme> THEMES = new ArrayList<>();
 	public static final Theme BASE = addTheme(new Theme());
 
-	public static Theme addTheme(@Nonnull Theme theme) {
+	public static <T extends Theme> T addTheme(@Nonnull T theme) {
 		THEMES.add(theme);
 		THEMES.sort(Comparator.comparingInt(Theme::getPriority).reversed());
 		return theme;
@@ -61,13 +62,6 @@ public class Theme {
 		init();
 	}
 
-	/*
-	 * Small note to addons: if you also want to make use of Theme,
-	 * and add new Keys, please do not use mixins. Instead make a Theme
-	 * subclass, override init and apply it via the static #addTheme
-	 *
-	 **/
-
 	protected void init() {
 		put(Key.BUTTON_IDLE, new Color(0xdd_8ab6d6, true), new Color(0x90_8ab6d6, true));
 		put(Key.BUTTON_HOVER, new Color(0xff_9ABBD3, true), new Color(0xd0_9ABBD3, true));
@@ -83,22 +77,10 @@ public class Theme {
 		put(Key.VANILLA_TOOLTIP_BORDER, new Color(0x50_5000ff, true), new Color(0x50_28007f, true));
 		put(Key.VANILLA_TOOLTIP_BACKGROUND, new Color(0xf0_100010, true));
 
-		put(Key.PONDER_BUTTON_IDLE, new Color(0x60_c0c0ff, true), new Color(0x30_c0c0ff, true));
-		put(Key.PONDER_BUTTON_HOVER, new Color(0xf0_c0c0ff, true), new Color(0xa0_c0c0ff, true));
-		put(Key.PONDER_BUTTON_CLICK, new Color(0xff_ffffff), new Color(0xdd_ffffff));
-		put(Key.PONDER_BUTTON_DISABLE, new Color(0x80_909090, true), new Color(0x20_909090, true));
-		put(Key.PONDER_BACKGROUND_TRANSPARENT, new Color(0xdd_000000, true));
-		put(Key.PONDER_BACKGROUND_FLAT, new Color(0xff_000000, false));
-		put(Key.PONDER_BACKGROUND_IMPORTANT, new Color(0xdd_0e0e20, true));
-		put(Key.PONDER_IDLE, new Color(0x40ffeedd, true), new Color(0x20ffeedd, true));
-		put(Key.PONDER_HOVER, new Color(0x70ffffff, true), new Color(0x30ffffff, true));
-		put(Key.PONDER_HIGHLIGHT, new Color(0xf0ffeedd, true), new Color(0x60ffeedd, true));
-		put(Key.TEXT_WINDOW_BORDER, new Color(0x607a6000, true), new Color(0x207a6000, true));
-		put(Key.PONDER_BACK_ARROW, new Color(0xf0aa9999, true), new Color(0x30aa9999, true));
-		put(Key.PONDER_PROGRESSBAR, new Color(0x80ffeedd, true), new Color(0x50ffeedd, true));
-		put(Key.PONDER_MISSING_MODDED, new Color(0x70_984500, true), new Color(0x70_692400, true));
-		//put(Key.PONDER_MISSING_VANILLA, new Color(0x50_5000ff, true), new Color(0x50_300077, true));
-		lookup(Key.PONDER_MISSING_VANILLA, Key.VANILLA_TOOLTIP_BORDER);
+		put(Key.BOX_BACKGROUND_TRANSPARENT, new Color(0xdd_000000, true));
+		put(Key.BOX_BACKGROUND_FLAT, new Color(0xff_000000, false));
+		put(Key.NAV_BACK_ARROW, new Color(0xf0aa9999, true), new Color(0x30aa9999, true));
+
 		put(Key.CONFIG_TITLE_A, new Color(0xffc69fbc, true), new Color(0xfff6b8bb, true));
 		put(Key.CONFIG_TITLE_B, new Color(0xfff6b8bb, true), new Color(0xfffbf994, true));
 		//put(Key., new Color(0x, true), new Color(0x, true));
@@ -139,6 +121,8 @@ public class Theme {
 
 	public static class Key {
 
+		private static final AtomicInteger INDEX = new AtomicInteger(0);
+
 		public static final Key BUTTON_IDLE = new Key();
 		public static final Key BUTTON_HOVER = new Key();
 		public static final Key BUTTON_CLICK = new Key();
@@ -155,35 +139,20 @@ public class Theme {
 		public static final Key VANILLA_TOOLTIP_BORDER = new Key();
 		public static final Key VANILLA_TOOLTIP_BACKGROUND = new Key();
 
-		public static final Key PONDER_BACKGROUND_TRANSPARENT = new Key();
-		public static final Key PONDER_BACKGROUND_FLAT = new Key();
-		public static final Key PONDER_BACKGROUND_IMPORTANT = new Key();
-		public static final Key PONDER_IDLE = new Key();
-		public static final Key PONDER_HOVER = new Key();
-		public static final Key PONDER_HIGHLIGHT = new Key();
-		public static final Key TEXT_WINDOW_BORDER = new Key();
-		public static final Key PONDER_BACK_ARROW = new Key();
-		public static final Key PONDER_PROGRESSBAR = new Key();
-		public static final Key PONDER_MISSING_MODDED = new Key();
-		public static final Key PONDER_MISSING_VANILLA = new Key();
-
-		public static final Key PONDER_BUTTON_IDLE = new Key();
-		public static final Key PONDER_BUTTON_HOVER = new Key();
-		public static final Key PONDER_BUTTON_CLICK = new Key();
-		public static final Key PONDER_BUTTON_DISABLE = new Key();
+		public static final Key BOX_BACKGROUND_TRANSPARENT = new Key();
+		public static final Key BOX_BACKGROUND_FLAT = new Key();
+		public static final Key NAV_BACK_ARROW = new Key();
 
 		public static final Key CONFIG_TITLE_A = new Key();
 		public static final Key CONFIG_TITLE_B = new Key();
 
-		private static int index = 0;
-
 		private final String stringKey;
 
-		protected Key() {
-			this.stringKey = "_" + index++;
+		public Key() {
+			this.stringKey = "_" + INDEX.getAndIncrement();
 		}
 
-		protected Key(String stringKey) {
+		public Key(String stringKey) {
 			this.stringKey = stringKey;
 		}
 
