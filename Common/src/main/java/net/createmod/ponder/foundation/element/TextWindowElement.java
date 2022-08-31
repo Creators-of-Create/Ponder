@@ -9,10 +9,10 @@ import com.mojang.math.Matrix4f;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.foundation.PonderLocalization;
 import net.createmod.ponder.foundation.PonderPalette;
 import net.createmod.ponder.foundation.PonderScene;
+import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
@@ -118,8 +118,8 @@ public class TextWindowElement extends AnimatedOverlayElement {
 		ms.translate(0, sceneToScreen.y, 400);
 
 		new BoxElement()
-				.withBackground(Theme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(Theme.Key.TEXT_WINDOW_BORDER.p())
+				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
+				.gradientBorder(PonderTheme.Key.TEXT_WINDOW_BORDER.p())
 				.at(targetX - 10, 3, 100)
 				.withBounds(boxWidth, boxHeight - 1)
 				.render(ms);

@@ -44,6 +44,7 @@ import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
 import net.createmod.ponder.foundation.PonderTag;
+import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.PonderWorld;
 import net.createmod.ponder.foundation.content.DebugScenes;
 import net.createmod.ponder.foundation.element.TextWindowElement;
@@ -581,8 +582,8 @@ public class PonderUI extends NavigatableSimiScreen {
 			int streakHeight = 35 - 9 + wordWrappedHeight;
 			UIRenderHelper.streak(ms, 0, x - 4, y - 12 + streakHeight / 2, streakHeight, (int) (150 * fade));
 			UIRenderHelper.streak(ms, 180, x - 4, y - 12 + streakHeight / 2, streakHeight, (int) (30 * fade));
-			new BoxElement().withBackground(Theme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(Theme.Key.PONDER_IDLE.p())
+			new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
+				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
 				.at(21, 21, 100)
 				.withBounds(30, 30)
 				.render(ms);
@@ -615,11 +616,11 @@ public class PonderUI extends NavigatableSimiScreen {
 				ms.popPose();
 			}
 
-			Color c1 = Theme.Key.PONDER_BACK_ARROW.c()
+			Color c1 = Theme.Key.NAV_BACK_ARROW.c()
 				.setAlpha(0x40);
-			Color c2 = Theme.Key.PONDER_BACK_ARROW.c()
+			Color c2 = Theme.Key.NAV_BACK_ARROW.c()
 				.setAlpha(0x20);
-			Color c3 = Theme.Key.PONDER_BACK_ARROW.c()
+			Color c3 = Theme.Key.NAV_BACK_ARROW.c()
 				.setAlpha(0x10);
 			UIRenderHelper.breadcrumbArrow(ms, width / 2 - 20, height - 51, 0, 20, 20, 5, c1, c2);
 			UIRenderHelper.breadcrumbArrow(ms, width / 2 + 20, height - 51, 0, -20, 20, -5, c1, c2);
@@ -897,8 +898,7 @@ public class PonderUI extends NavigatableSimiScreen {
 		int divotSize = 8;
 		int distance = 1;
 		int divotRadius = divotSize / 2;
-		Theme.Key key = highlighted ? Theme.Key.PONDER_BUTTON_HOVER : Theme.Key.PONDER_IDLE;
-		Couple<Color> borderColors = key.p();
+		Couple<Color> borderColors = (highlighted ? PonderTheme.Key.PONDER_BUTTON_HOVER : PonderTheme.Key.PONDER_IDLE).p();
 		Color c;
 
 		switch (pointing) {
@@ -937,7 +937,7 @@ public class PonderUI extends NavigatableSimiScreen {
 			break;
 		}
 
-		new BoxElement().withBackground(Theme.Key.PONDER_BACKGROUND_FLAT.c())
+		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
 			.gradientBorder(borderColors)
 			.at(boxX, boxY, 100)
 			.withBounds(w, h)

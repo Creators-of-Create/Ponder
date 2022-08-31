@@ -21,6 +21,7 @@ import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderLocalization;
 import net.createmod.ponder.foundation.PonderRegistry;
 import net.createmod.ponder.foundation.PonderTag;
+import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
@@ -126,8 +127,8 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
 		int streakHeight = 35;
 		UIRenderHelper.streak(ms, 0, x - 4, y - 12 + streakHeight / 2, streakHeight, 240);
 		// PonderUI.renderBox(ms, 21, 21, 30, 30, false);
-		new BoxElement().withBackground(Theme.Key.PONDER_BACKGROUND_FLAT.c())
-			.gradientBorder(Theme.Key.PONDER_IDLE.p())
+		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
+			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
 			.at(21, 21, 100)
 			.withBounds(30, 30)
 			.render(ms);
@@ -159,8 +160,8 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
 		int h = font.wordWrapHeight(desc, w);
 
 		// PonderUI.renderBox(ms, x - 3, y - 3, w + 6, h + 6, false);
-		new BoxElement().withBackground(Theme.Key.PONDER_BACKGROUND_FLAT.c())
-			.gradientBorder(Theme.Key.PONDER_IDLE.p())
+		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
+			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
 			.at(x - 3, y - 3, 90)
 			.withBounds(w + 6, h + 6)
 			.render(ms);
@@ -185,8 +186,8 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
 		ms.translate(x, y, 0);
 		// PonderUI.renderBox(ms, (sWidth - stringWidth) / 2 - 5, itemArea.getY() - 21,
 		// stringWidth + 10, 10, false);
-		new BoxElement().withBackground(Theme.Key.PONDER_BACKGROUND_FLAT.c())
-			.gradientBorder(Theme.Key.PONDER_IDLE.p())
+		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
+			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
 			.at((windowWidth - stringWidth) / 2f - 5, itemArea.getY() - 21, 100)
 			.withBounds(stringWidth + 10, 10)
 			.render(ms);

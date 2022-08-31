@@ -13,6 +13,7 @@ import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 
+import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.AnimationTickHolder;
@@ -335,7 +336,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 					.pose(),
 				overlayMS.last()
 					.normal());
-			CatnipServices.CLIENT_HOOKS.renderBlockStateBatched(Minecraft.getInstance().getBlockRenderer(), ms, builder, world.getBlockState(pos), pos, world, true, new Random(), null);
+			CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(Minecraft.getInstance().getBlockRenderer(), ms, builder, world.getBlockState(pos), pos, world, true, new Random(), null);
 			ms.popPose();
 		}
 
@@ -447,12 +448,12 @@ public class WorldSectionElement extends AnimatedSceneElement {
 			poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
 
 
-			if (state.getRenderShape() == RenderShape.MODEL && CatnipServices.CLIENT_HOOKS.chunkRenderTypeMatches(state, layer)) {
+			if (state.getRenderShape() == RenderShape.MODEL && CatnipClientServices.CLIENT_HOOKS.chunkRenderTypeMatches(state, layer)) {
 				BlockEntity tile = world.getBlockEntity(pos);
-				CatnipServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, consumer, state, pos, world, true, random, tile);
+				CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, consumer, state, pos, world, true, random, tile);
 			}
 
-			if (!fluidState.isEmpty() && CatnipServices.CLIENT_HOOKS.fluidRenderTypeMatches(fluidState, layer)) {
+			if (!fluidState.isEmpty() && CatnipClientServices.CLIENT_HOOKS.fluidRenderTypeMatches(fluidState, layer)) {
 				//todo missing PoseStack
 				dispatcher.renderLiquid(pos, world, consumer, state, fluidState);
 			}

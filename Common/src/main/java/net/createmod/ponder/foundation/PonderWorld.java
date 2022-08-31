@@ -2,12 +2,9 @@ package net.createmod.ponder.foundation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -15,7 +12,7 @@ import javax.annotation.Nullable;
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.worldWrappers.SchematicWorld;
 import net.createmod.catnip.utility.worldWrappers.WrappedClientWorld;
@@ -48,12 +45,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class PonderWorld extends SchematicWorld {
 
-	private static final Set<Consumer<PonderWorld>> RESTORE_LISTENERS = new HashSet<>();
-
-	public static void onRestore(Consumer<PonderWorld> consumer) {
-		RESTORE_LISTENERS.add(consumer);
-	}
-
 	@Nullable public PonderScene scene;
 
 	protected Map<BlockPos, BlockState> originalBlocks;
@@ -79,7 +70,7 @@ public class PonderWorld extends SchematicWorld {
 	public void createBackup() {
 		originalBlocks.clear();
 		originalTileEntities.clear();
-		blocks.forEach((k, v) -> originalBlocks.put(k, v));
+		originalBlocks.putAll(blocks);
 		tileEntities.forEach(
 			(k, v) -> originalTileEntities.put(k, BlockEntity.loadStatic(k, blocks.get(k), v.saveWithFullMetadata())));
 		entities.forEach(e -> {
@@ -95,7 +86,7 @@ public class PonderWorld extends SchematicWorld {
 		tileEntities.clear();
 		blockBreakingProgressions.clear();
 		renderedTileEntities.clear();
-		originalBlocks.forEach((k, v) -> blocks.put(k, v));
+		blocks.putAll(originalBlocks);
 		originalTileEntities.forEach((k, v) -> {
 			BlockEntity te = BlockEntity.loadStatic(k, originalBlocks.get(k), v.saveWithFullMetadata());
 			onTEAdded(te, te.getBlockPos());
@@ -109,7 +100,7 @@ public class PonderWorld extends SchematicWorld {
 		});
 		particles.clearEffects();
 
-		RESTORE_LISTENERS.forEach(consumer -> consumer.accept(this));
+		PonderIndex.forEachPlugin(plugin -> plugin.onPonderWorldRestore(this));
 
 		fixControllerTileEntities();
 	}
@@ -239,7 +230,7 @@ public class PonderWorld extends SchematicWorld {
 	@Nullable
 	private <T extends ParticleOptions> Particle makeParticle(T data, double x, double y, double z, double mx, double my,
 		double mz) {
-		return CatnipServices.CLIENT_HOOKS.createParticleFromData(data, asClientWorld.get(), x, y, z, mx, my, mz);
+		return CatnipClientServices.CLIENT_HOOKS.createParticleFromData(data, asClientWorld.get(), x, y, z, mx, my, mz);
 	}
 
 	@Override

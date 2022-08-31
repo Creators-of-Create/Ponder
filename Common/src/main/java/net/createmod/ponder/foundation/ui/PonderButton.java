@@ -10,9 +10,9 @@ import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.catnip.utility.theme.Theme.Key;
 import net.createmod.ponder.foundation.PonderTag;
+import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -120,22 +120,22 @@ public class PonderButton extends BoxWidget {
 
 	@Override
 	public Key getDisabledTheme() {
-		return Theme.Key.PONDER_BUTTON_DISABLE;
+		return PonderTheme.Key.PONDER_BUTTON_DISABLE;
 	}
 
 	@Override
 	public Key getIdleTheme() {
-		return Theme.Key.PONDER_BUTTON_IDLE;
+		return PonderTheme.Key.PONDER_BUTTON_IDLE;
 	}
 
 	@Override
 	public Key getHoverTheme() {
-		return Theme.Key.PONDER_BUTTON_HOVER;
+		return PonderTheme.Key.PONDER_BUTTON_HOVER;
 	}
 
 	@Override
 	public Key getClickTheme() {
-		return Theme.Key.PONDER_BUTTON_CLICK;
+		return PonderTheme.Key.PONDER_BUTTON_CLICK;
 	}
 
 }

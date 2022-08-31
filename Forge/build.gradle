@@ -63,6 +63,11 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
+            if (inMultiModWorkspace)
+                ideaModule "createmod.Ponder.Forge.main"
+            else
+                ideaModule "Ponder.Forge.main"
+
             ideaModule "${rootProject.name}.${project.name}.main"
             taskName 'Server'
             
@@ -71,9 +76,16 @@ minecraft {
             }
             
             mods {
-                modServerRun {
+                ponder {
                     source sourceSets.main
                     source commonProject.sourceSets.main
+                }
+
+                if (catnipInWorkspace) {
+                    catnip {
+                        source project(":catnip:Common").sourceSets.main
+                        source project(":catnip:Forge").sourceSets.main
+                    }
                 }
             }
         }

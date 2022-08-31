@@ -1,9 +1,7 @@
 package net.createmod.ponder.foundation.ui;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
@@ -19,6 +17,8 @@ import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderChapter;
+import net.createmod.ponder.foundation.PonderIndex;
+import net.createmod.ponder.foundation.PonderPlugin;
 import net.createmod.ponder.foundation.PonderRegistry;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
@@ -28,8 +28,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
 public class PonderIndexScreen extends NavigatableSimiScreen {
-
-	private static final List<Predicate<ItemLike>> exclusions = new LinkedList<>();
 
 	protected final List<PonderChapter> chapters;
 	private final double chapterXmult = 0.5;
@@ -131,19 +129,11 @@ public class PonderIndexScreen extends NavigatableSimiScreen {
 		);*/
 	}
 
-	public static void addExclusion(Predicate<ItemLike> predicate) {
-		exclusions.add(predicate);
-	}
-
 	private static boolean isItemIncluded(ItemEntry entry) {
-		return exclusions.stream().noneMatch(predicate -> predicate.test(entry.item));
-		/*if (item instanceof BlockItem) {
-			Block block = ((BlockItem) item).getBlock();
-			if (block instanceof ValveHandleBlock && !AllBlocks.COPPER_VALVE_HANDLE.is(item))
-				return false;
-		}
-
-		return true;*/
+		//TODO maybe needs caching, need to run a profiler
+		return PonderIndex.streamPlugins()
+				.flatMap(PonderPlugin::indexExclusions)
+				.noneMatch(predicate -> predicate.test(entry.item));
 	}
 
 	@Override

@@ -10,8 +10,8 @@ import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.foundation.PonderScene;
+import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.sounds.SoundManager;
@@ -92,8 +92,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
 		isHovered = clicked(mouseX, mouseY);
 
 		new BoxElement()
-				.withBackground(Theme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(Theme.Key.PONDER_IDLE.p())
+				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
+				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
 				.at(x, y, 400)
 				.withBounds(width, height)
 				.render(ms);
@@ -103,8 +103,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
 
 		ms.pushPose();
 		ms.scale((width + 4) * progress.getValue(partialTicks), 1, 1);
-		Color c1 = Theme.Key.PONDER_PROGRESSBAR.c(true);
-		Color c2 = Theme.Key.PONDER_PROGRESSBAR.c(false);
+		Color c1 = PonderTheme.Key.PONDER_PROGRESSBAR.c(true);
+		Color c2 = PonderTheme.Key.PONDER_PROGRESSBAR.c(false);
 		UIRenderHelper.drawGradientRect(ms.last().pose(), 310, 0, 3, 1, 4, c1, c1);
 		UIRenderHelper.drawGradientRect(ms.last().pose(), 310, 0, 4, 1, 5, c2, c2);
 		ms.popPose();
@@ -117,12 +117,12 @@ public class PonderProgressBar extends AbstractSimiWidget {
 	private void renderKeyframes(PoseStack ms, int mouseX, float partialTicks) {
 		PonderScene activeScene = ponder.getActiveScene();
 
-		Couple<Color> hover = Theme.Key.PONDER_HOVER.p().map(c -> c.setAlpha(0xa0));
-		Couple<Color> idle = Theme.Key.PONDER_HOVER.p().map(c -> c.setAlpha(0x40));
-		int hoverStartColor = Theme.Key.PONDER_HOVER.i(true) | 0xa0_000000;
-		int hoverEndColor = Theme.Key.PONDER_HOVER.i(false) | 0xa0_000000;
-		int idleStartColor = Theme.Key.PONDER_IDLE.i(true) | 0x40_000000;
-		int idleEndColor = Theme.Key.PONDER_IDLE.i(false) | 0x40_000000;
+		Couple<Color> hover = PonderTheme.Key.PONDER_HOVER.p().map(c -> c.setAlpha(0xa0));
+		Couple<Color> idle = PonderTheme.Key.PONDER_HOVER.p().map(c -> c.setAlpha(0x40));
+		int hoverStartColor = PonderTheme.Key.PONDER_HOVER.i(true) | 0xa0_000000;
+		int hoverEndColor = PonderTheme.Key.PONDER_HOVER.i(false) | 0xa0_000000;
+		int idleStartColor = PonderTheme.Key.PONDER_IDLE.i(true) | 0x40_000000;
+		int idleEndColor = PonderTheme.Key.PONDER_IDLE.i(false) | 0x40_000000;
 		int hoverIndex;
 
 		if (isHovered) {

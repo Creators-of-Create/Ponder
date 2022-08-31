@@ -7,6 +7,7 @@ import com.google.common.base.Strings;
 
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.animation.LerpedFloat;
@@ -57,12 +58,7 @@ public class PonderTooltipHandler {
 
 		float value = holdWProgress.getValue();
 
-
-		//int keyCode = ponderKeybind().getKey().getValue();
-		//long window = instance.getWindow().getWindow();
-
-		if (!subject && CatnipServices.CLIENT_HOOKS.isKeyPressed(ponderKeybind())) {
-		//if (!subject && InputConstants.isKeyDown(window, keyCode)) {
+		if (!subject && CatnipClientServices.CLIENT_HOOKS.isKeyPressed(ponderKeybind())) {
 			if (value >= 1) {
 				if (currentScreen instanceof NavigatableSimiScreen)
 					((NavigatableSimiScreen) currentScreen).centerScalingOnMouse();
@@ -80,8 +76,6 @@ public class PonderTooltipHandler {
 	public static void addToTooltip(List<Component> toolTip, ItemStack stack) {
 		if (!enable)
 			return;
-
-		//Ponder.LOGGER.debug("PonderTooltipHelper test1 ");
 
 		updateHovered(stack);
 
