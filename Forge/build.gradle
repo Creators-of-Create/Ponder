@@ -101,9 +101,7 @@ dependencies {
         implementation project(":catnip:Common")
         implementation project(":catnip:Forge")
     } else {
-        //todo
-        project.logger.lifecycle("Loading Ponder outside of multi-workspace!")
-        //throw new AssertionError()
+        implementation fg.deobf("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}")
     }
 
     annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'

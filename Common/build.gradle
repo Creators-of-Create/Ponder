@@ -24,8 +24,7 @@ dependencies {
     if (catnipInWorkspace) {
         compileOnly project(":catnip:Common")
     } else {
-        //todo
-        project.logger.lifecycle("Loading Ponder outside of multi-workspace!")
+        compileOnly "net.createmod.catnip:Catnip-Common-${minecraft_version}:${catnip_version}"
     }
 
 }
