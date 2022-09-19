@@ -8,9 +8,12 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
+import net.createmod.catnip.ForgeCatnipClient;
 import net.createmod.catnip.mixin.client.accessor.ParticleEngineAccessor;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
 import net.createmod.catnip.utility.BasicFluidRenderer;
@@ -36,7 +39,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.fluids.FluidStack;
 
 public class ForgeClientHooksHelper implements ModClientHooksHelper {
@@ -55,17 +57,17 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 
 	@Override
 	public void renderBlockStateModel(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer, BlockState state, BakedModel model, float red, float green, float blue) {
-		dispatcher.getModelRenderer().renderModel(ms.last(), consumer, state, model, red, green, blue, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+		dispatcher.getModelRenderer().renderModel(ms.last(), consumer, state, model, red, green, blue, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ForgeCatnipClient.NoModelData);
 	}
 
 	@Override
 	public void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer, BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides, Random random, @Nullable BlockEntity tileWithModelData) {
-		dispatcher.renderBatched(state, pos, level, ms, consumer, checkSides, random, tileWithModelData != null ? tileWithModelData.getModelData() : EmptyModelData.INSTANCE);
+		dispatcher.renderBatched(state, pos, level, ms, consumer, checkSides, random, tileWithModelData != null ? tileWithModelData.getModelData() : ForgeCatnipClient.NoModelData);
 	}
 
 	@Override
 	public void renderBlockState(BlockRenderDispatcher dispatcher, PoseStack ms, MultiBufferSource buffer, BlockState state) {
-		dispatcher.renderSingleBlock(state, ms, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+		dispatcher.renderSingleBlock(state, ms, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ForgeCatnipClient.NoModelData);
 	}
 
 	@Override
@@ -86,6 +88,11 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public boolean fluidRenderTypeMatches(FluidState state, RenderType layer) {
 		return ItemBlockRenderTypes.canRenderInLayer(state, layer);
+	}
+
+	@Override
+	public VertexFormat getFormatFromBufferBuilder(BufferBuilder buffer) {
+		return buffer.getVertexFormat();
 	}
 
 	@Override

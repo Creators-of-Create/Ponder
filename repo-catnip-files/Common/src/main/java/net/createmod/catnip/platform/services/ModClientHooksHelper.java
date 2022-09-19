@@ -6,8 +6,10 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -52,6 +54,8 @@ public interface ModClientHooksHelper {
 	default boolean fluidRenderTypeMatches(FluidState state, RenderType layer) {
 		return ItemBlockRenderTypes.getRenderLayer(state) == layer;
 	}
+
+	VertexFormat getFormatFromBufferBuilder(BufferBuilder buffer);
 
 	<T extends ParticleOptions> Particle createParticleFromData(T data, ClientLevel level, double x, double y, double z, double mx, double my, double mz);
 

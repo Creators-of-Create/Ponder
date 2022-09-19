@@ -3,16 +3,18 @@ package net.createmod.catnip;
 
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.enums.CatnipConfig;
-import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.render.SpriteShifter;
 import net.createmod.catnip.utility.placement.PlacementClient;
-import net.createmod.catnip.utility.worldWrappers.WrappedClientWorld;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,6 +26,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 
 public class ForgeCatnipClient {
+
+	public static final IModelData NoModelData = new ModelDataMap.Builder().build();
 
 	public static void onCtor(IEventBus modEventBus, IEventBus forgeEventBus) {
 		modEventBus.addListener(ForgeCatnipClient::init);
@@ -38,8 +42,10 @@ public class ForgeCatnipClient {
 
 		@SubscribeEvent
 		public static void onTick(TickEvent.ClientTickEvent event) {
+			if (event.phase == TickEvent.Phase.START)
+				return;
+
 			CatnipClient.onTick();
-			AnimationTickHolder.tick();
 		}
 
 		@SubscribeEvent
@@ -49,19 +55,12 @@ public class ForgeCatnipClient {
 
 		@SubscribeEvent
 		public static void onLoadWorld(WorldEvent.Load event) {
-			LevelAccessor world = event.getWorld();
-			if (!world.isClientSide() || !(world instanceof ClientLevel) || world instanceof WrappedClientWorld)
-				return;
-
-			AnimationTickHolder.reset();
+			CatnipClient.onLoadWorld(event.getWorld());
 		}
 
 		@SubscribeEvent
 		public static void onUnloadWorld(WorldEvent.Unload event) {
-			if (!event.getWorld().isClientSide())
-				return;
-
-			AnimationTickHolder.reset();
+			CatnipClient.onUnloadWorld(event.getWorld());
 		}
 
 		@SubscribeEvent
@@ -89,6 +88,27 @@ public class ForgeCatnipClient {
 					.withTitles("Client Settings", null, null)
 					.withSpecs(CatnipConfig.Client().specification, null, null)
 			);
+		}
+
+		@SubscribeEvent
+		public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
+			event.registerReloadListener(CatnipClient.RESOURCE_RELOAD_LISTENER);
+		}
+
+		@SubscribeEvent
+		public static void onTextureStitchPre(TextureStitchEvent.Pre event) {
+			if (!event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS))
+				return;
+
+			SpriteShifter.getAllTargetSprites().forEach(event::addSprite);
+		}
+
+		@SubscribeEvent
+		public static void onTextureStitchPost(TextureStitchEvent.Post event) {
+			if (!event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS))
+				return;
+
+			SpriteShifter.getAllShifts().forEach(entry -> entry.loadTextures(event.getAtlas()));
 		}
 	}
 

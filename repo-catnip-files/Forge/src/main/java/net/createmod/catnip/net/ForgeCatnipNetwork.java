@@ -24,7 +24,7 @@ public class ForgeCatnipNetwork {
 	public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
 			.named(CHANNEL_NAME)
 			.serverAcceptedVersions(NETWORK_VERSION_STR::equals)
-			.clientAcceptedVersions(NETWORK_VERSION_STR::equals)
+			.clientAcceptedVersions(version -> NETWORK_VERSION_STR.equals(version) || NetworkRegistry.ABSENT.equals(version))
 			.networkProtocolVersion(() -> NETWORK_VERSION_STR)
 			.simpleChannel();
 
