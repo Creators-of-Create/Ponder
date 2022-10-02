@@ -34,6 +34,11 @@ public class PonderButton extends BoxWidget {
 		z = 420;
 		paddingX = 2;
 		paddingY = 2;
+		disabledTheme = PonderTheme.Key.PONDER_BUTTON_DISABLE;
+		idleTheme = PonderTheme.Key.PONDER_BUTTON_IDLE;
+		hoverTheme = PonderTheme.Key.PONDER_BUTTON_HOVER;
+		clickTheme = PonderTheme.Key.PONDER_BUTTON_CLICK;
+		updateColorsFromState();
 	}
 
 	public <T extends PonderButton> T withShortcut(KeyMapping key) {
@@ -117,25 +122,4 @@ public class PonderButton extends BoxWidget {
 	public PonderTag getTag() {
 		return tag;
 	}
-
-	@Override
-	public Key getDisabledTheme() {
-		return PonderTheme.Key.PONDER_BUTTON_DISABLE;
-	}
-
-	@Override
-	public Key getIdleTheme() {
-		return PonderTheme.Key.PONDER_BUTTON_IDLE;
-	}
-
-	@Override
-	public Key getHoverTheme() {
-		return PonderTheme.Key.PONDER_BUTTON_HOVER;
-	}
-
-	@Override
-	public Key getClickTheme() {
-		return PonderTheme.Key.PONDER_BUTTON_CLICK;
-	}
-
 }

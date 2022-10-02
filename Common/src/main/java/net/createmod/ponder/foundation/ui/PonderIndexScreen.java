@@ -1,6 +1,7 @@
 package net.createmod.ponder.foundation.ui;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -27,7 +28,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
-public class PonderIndexScreen extends NavigatableSimiScreen {
+public class PonderIndexScreen extends AbstractPonderScreen {
 
 	protected final List<PonderChapter> chapters;
 	private final double chapterXmult = 0.5;
@@ -56,15 +57,7 @@ public class PonderIndexScreen extends NavigatableSimiScreen {
 		items.clear();
 		PonderRegistry.ALL.keySet()
 			.stream()
-			.map(key -> {
-				/*Item item = ForgeRegistries.ITEMS.getValue(key);
-				if (item == null) {
-					Block b = ForgeRegistries.BLOCKS.getValue(key);
-					if (b != null)
-						item = b.asItem();
-				}*/
-				return new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key);
-			})
+			.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
 			.filter(entry -> entry.item != null)
 			.filter(PonderIndexScreen::isItemIncluded)
 			.forEach(items::add);
@@ -103,6 +96,8 @@ public class PonderIndexScreen extends NavigatableSimiScreen {
 		int itemCenterX = (int) (width * itemXmult);
 		int itemCenterY = (int) (height * itemYmult);
 
+		items.sort(Comparator.comparing(ItemEntry::key));
+
 		for (ItemEntry entry : items) {
 			PonderButton b = new PonderButton(itemCenterX + layout.getX() + 4, itemCenterY + layout.getY() + 4)
 					.showing(new ItemStack(entry.item))
@@ -123,10 +118,6 @@ public class PonderIndexScreen extends NavigatableSimiScreen {
 	@Override
 	protected void initBackTrackIcon(BoxWidget backTrack) {
 		backTrack.showing(PonderGuiTextures.ICON_PONDER_IDENTIFY);
-		/*backTrack.showing(GuiGameElement.of(AllItems.WRENCH.asStack())
-				.scale(1.5f)
-				.at(-4, -4)
-		);*/
 	}
 
 	private static boolean isItemIncluded(ItemEntry entry) {
@@ -193,26 +184,6 @@ public class PonderIndexScreen extends NavigatableSimiScreen {
 
 		ms.popPose();
 	}
-
-	/*@Override
-	public boolean mouseClicked(double x, double y, int button) {
-		MutableBoolean handled = new MutableBoolean(false);
-		widgets.forEach(w -> {
-			if (handled.booleanValue())
-				return;
-			if (!w.isMouseOver(x, y))
-				return;
-			if (w instanceof PonderButton) {
-				PonderButton btn = (PonderButton) w;
-				btn.runCallback(x, y);
-				handled.setTrue();
-			}
-		});
-
-		if (handled.booleanValue())
-			return true;
-		return super.mouseClicked(x, y, button);
-	}*/
 
 	@Override
 	public boolean isEquivalentTo(NavigatableSimiScreen other) {

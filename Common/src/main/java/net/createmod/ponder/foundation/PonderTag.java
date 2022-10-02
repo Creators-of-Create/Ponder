@@ -17,7 +17,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PonderTag implements ScreenElement {
 
-	public static class Highlight {
+	/**
+	 * Highlight.ALL is a special PonderTag, used to indicate that all Tags
+	 * for a certain Scene should be highlighted instead of selected single ones
+	 */
+	public static final class Highlight {
 		public static final PonderTag ALL = create("_all");
 	}
 
@@ -109,8 +113,5 @@ public class PonderTag implements ScreenElement {
 	protected static PonderTag create(String namespace, String id) {
 		return new PonderTag(new ResourceLocation(namespace, id));
 	}
-
-	// Make sure class is loaded; Lang registration happens with builder calls
-	public static void register() {}
 
 }

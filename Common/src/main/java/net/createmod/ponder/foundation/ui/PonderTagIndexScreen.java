@@ -1,6 +1,11 @@
 package net.createmod.ponder.foundation.ui;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -8,7 +13,6 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
@@ -18,29 +22,27 @@ import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderGuiTextures;
-import net.createmod.ponder.foundation.PonderLocalization;
 import net.createmod.ponder.foundation.PonderRegistry;
 import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 
-public class PonderTagIndexScreen extends NavigatableSimiScreen {
+public class PonderTagIndexScreen extends AbstractPonderScreen {
 
-	public static final String EXIT = PonderLocalization.LANG_PREFIX + "exit";
-	public static final String TITLE = PonderLocalization.LANG_PREFIX + "index_title";
-	public static final String WELCOME = PonderLocalization.LANG_PREFIX + "welcome";
-	public static final String CATEGORIES = PonderLocalization.LANG_PREFIX + "categories";
-	public static final String DESCRIPTION = PonderLocalization.LANG_PREFIX + "index_description";
+	protected List<ModTagsEntry> currentModTagEntries = new LinkedList<>();
+	protected List<Map.Entry<String, List<PonderTag>>> sortedModTags = List.of();
+	protected boolean isPaginated = false;
+	protected int modsPerScreen;
+	protected int indexStart;
 
-	private final double itemXmult = 0.5;
-	private final double mainYmult = 0.15;
-	@Nullable protected Rect2i itemArea;
-	@Nullable protected Rect2i chapterArea;
+	@Nullable protected PonderButton pageNext;
+	@Nullable protected PonderButton pagePrev;
 
 	@Nullable private PonderTag hoveredItem = null;
 
@@ -52,37 +54,110 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
 	protected void init() {
 		super.init();
 
-		List<PonderTag> tags = PonderRegistry.TAGS.getListedTags();
-		int rowCount = Mth.clamp((int) Math.ceil(tags.size() / 11d), 1, 3);
-		LayoutHelper layout = LayoutHelper.centeredHorizontal(tags.size(), rowCount, 28, 28, 8);
-		itemArea = layout.getArea();
-		int itemCenterX = (int) (width * itemXmult);
-		int itemCenterY = getItemsY();
+		Map<String, List<PonderTag>> tagsByModID = PonderRegistry.TAGS.getListedTags().stream().collect(Collectors.groupingBy(tag -> tag.getId().getNamespace()));
+		sortedModTags = new TreeMap<>(tagsByModID).entrySet().stream().toList();
 
-		for (PonderTag i : tags) {
-			PonderButton b =
-				new PonderButton(itemCenterX + layout.getX() + 4, itemCenterY + layout.getY() + 4).showingTag(i)
-					.withCallback((mouseX, mouseY) -> {
-						centerScalingOn(mouseX, mouseY);
-						ScreenOpener.transitionTo(new PonderTagScreen(i));
-					});
-			addRenderableWidget(b);
-			layout.next();
+		int modCount = sortedModTags.size();
+		int maxModsOnScreen = (height - 140 - 40) / 58;
+		if (modCount > 1 && modCount > maxModsOnScreen) {
+			//enable mod pagination
+			isPaginated = true;
+			indexStart = 0;
+			modsPerScreen = maxModsOnScreen;
+		} else {
+			isPaginated = false;
+			indexStart = 0;
+			modsPerScreen = modCount;
 		}
 
-		addRenderableWidget(backTrack = new PonderButton(31, height - 31 - 20).enableFade(0, 5)
-			.showing(PonderGuiTextures.ICON_PONDER_CLOSE)
-			.withCallback(() -> ScreenOpener.openPreviousScreen(this, null)));
-		backTrack.fade(1);
+		setupModTagEntries();
+
+		if (isPaginated) {
+			int xOffset = (int) (width * 0.5);
+
+			addRenderableWidget(pagePrev = new PonderButton(xOffset - 120, height - 32)
+					.showing(PonderGuiTextures.ICON_PONDER_LEFT)
+					.withCallback(() -> updatePagination(-1))
+					.setActive(false)
+			);
+
+			pagePrev.updateColorsFromState();
+
+			addRenderableWidget(pageNext = new PonderButton(xOffset + 100, height - 32)
+					.showing(PonderGuiTextures.ICON_PONDER_RIGHT)
+					.withCallback(() -> updatePagination(1))
+					.setActive(true)
+			);
+		}
+	}
+
+	protected void setupModTagEntries() {
+		removeWidgets(children().stream().filter(widget -> {
+			if (!(widget instanceof PonderButton ponderButton))
+				return false;
+
+			return ponderButton.tag != null;
+		}).toList());
+
+		currentModTagEntries.clear();
+
+		AtomicInteger yOffset = new AtomicInteger(140);
+		int xOffset = (int) (width * 0.5);
+
+		for (int i = 0; i < modsPerScreen; i++) {
+			if (indexStart + i >= sortedModTags.size())
+				break;
+
+			Map.Entry<String, List<PonderTag>> entry = sortedModTags.get(indexStart + i);
+			String key = entry.getKey() + ".ponder.mod_name";
+			String modName = I18n.exists(key) ? I18n.get(key) : entry.getKey();
+			List<PonderTag> tags = entry.getValue();
+
+			LayoutHelper layout = LayoutHelper.centeredHorizontal(tags.size(), 1, 28, 28, 8);
+			Rect2i layoutArea = layout.getArea();
+
+			for (PonderTag tag : tags) {
+				PonderButton button = new PonderButton(xOffset + layout.getX() + 4, yOffset.get() + layout.getY() + 18)
+						.showingTag(tag)
+						.withCallback((mouseX, mouseY) -> {
+							centerScalingOn(mouseX, mouseY);
+							ScreenOpener.transitionTo(new PonderTagScreen(tag));
+						});
+				addRenderableWidget(button);
+				layout.next();
+			}
+
+			currentModTagEntries.add(new ModTagsEntry(
+					modName,
+					tags.size(),
+					layoutArea,
+					yOffset.get()
+			));
+
+			yOffset.addAndGet(58 + 10);
+		}
+	}
+
+	protected void updatePagination(int diff) {
+		if (diff == 1) {
+			indexStart = indexStart + modsPerScreen;
+		} else if (diff == -1) {
+			indexStart = Math.max(indexStart - modsPerScreen, 0);
+		} else if (diff == 0) {
+			indexStart = 0;
+		}
+
+		setupModTagEntries();
+
+		pagePrev.<PonderButton>setActive(indexStart >= 1).animateGradientFromState();
+		pageNext.<PonderButton>setActive(indexStart + modsPerScreen < sortedModTags.size()).animateGradientFromState();
+
+
 	}
 
 	@Override
 	protected void initBackTrackIcon(BoxWidget backTrack) {
 		backTrack.showing(PonderGuiTextures.ICON_PONDER_IDENTIFY);
-		/*backTrack.showing(GuiGameElement.of(AllItems.WRENCH.asStack())
-				.scale(1.5f)
-				.at(-4, -4)
-		);*/
 	}
 
 	@Override
@@ -104,110 +179,99 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
 	}
 
 	@Override
-	protected Component backTrackingComponent() {
-		return Ponder.lang()
-				.translate(EXIT)
-				.component();
-	}
-
-	@Override
 	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		renderItems(ms, mouseX, mouseY, partialTicks);
-
 		ms.pushPose();
-		ms.translate(width / 2 - 120, height * mainYmult - 40, 0);
+		ms.translate(width / 2d, 30, 0);
 
+		//title, box for icon and streak
 		ms.pushPose();
-		// ms.translate(0, 0, 800);
-		int x = 31 + 20 + 8;
-		int y = 31;
+		ms.translate(-120, 0, 0);
 
-		String title = Ponder.lang().translate(WELCOME).string();
+		String title = Ponder.lang().translate(AbstractPonderScreen.WELCOME).string();
 
-		int streakHeight = 35;
-		UIRenderHelper.streak(ms, 0, x - 4, y - 12 + streakHeight / 2, streakHeight, 240);
-		// PonderUI.renderBox(ms, 21, 21, 30, 30, false);
 		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
 			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
-			.at(21, 21, 100)
+			.at(0, 0, 100)
 			.withBounds(30, 30)
 			.render(ms);
 
-		font.draw(ms, title, x + 8, y + 1, Theme.Key.TEXT.i());
-//		y += 8;
-//		x += 0;
-//		ms.translate(x, y, 0);
-//		ms.translate(0, 0, 5);
-//		textRenderer.draw(ms, title, 0, 0, Theme.i(Theme.Key.TEXT));
-		ms.popPose();
+		//todo add icon inside the box
 
+		//34 = 30 bounds + 2 padding + 2 box width
+		//-3 = 2 padding + 1 pixel of the box
+		ms.translate(34, -3, 0);
+
+		int streakHeight = 36;
+		UIRenderHelper.streak(ms, 0, 0, (streakHeight / 2), streakHeight, 280);
+
+		ms.scale(2f, 2f, 2f);
+		font.draw(ms, title, 3, 5, Theme.Key.TEXT.i());
+
+		ms.popPose();
+		ms.translate(0, 50, 0);
 		ms.pushPose();
-		ms.translate(23, 23, 10);
-		ms.scale(1.66f, 1.66f, 1.66f);
-		ms.translate(-4, -4, 0);
-		ms.scale(1.5f, 1.5f, 1.5f);
-		//TODO
-		//GuiGameElement.of(AllItems.WRENCH.asStack()).render(ms);
-		ms.popPose();
-		ms.popPose();
+		//at the middle, 80px from the top now
 
-		ms.pushPose();
-		int w = (int) (width * .45);
-		x = (width - w) / 2;
-		y = getItemsY() - 10 + Math.max(itemArea.getHeight(), 48);
+		int maxWidth = (int) (width * .5f);
+		String desc = Ponder.lang().translate(AbstractPonderScreen.DESCRIPTION).string();
 
-		String desc = Ponder.lang().translate(DESCRIPTION).string();
-		int h = font.wordWrapHeight(desc, w);
+		int descWidth = font.width(desc);
+		if (descWidth + 2 < maxWidth)
+			maxWidth = descWidth + 2;
 
-		// PonderUI.renderBox(ms, x - 3, y - 3, w + 6, h + 6, false);
+		int descHeight = font.wordWrapHeight(desc, maxWidth);
+
+		ms.translate(-maxWidth / 2f, 0, 0);
+
 		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
-			.at(x - 3, y - 3, 90)
-			.withBounds(w + 6, h + 6)
-			.render(ms);
+				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+				.at(-3, -3, 0)
+				.withBounds(maxWidth + 6, descHeight + 5)
+				.render(ms);
 
-		ms.translate(0, 0, 100);
-		FontHelper.drawSplitString(ms, font, desc, x, y, w, Theme.Key.TEXT.i());
+		FontHelper.drawSplitString(ms, font, desc, 0, 0, maxWidth, Theme.Key.TEXT.i());
 		ms.popPose();
-	}
 
-	protected void renderItems(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		List<PonderTag> tags = PonderRegistry.TAGS.getListedTags();
-		if (tags.isEmpty())
-			return;
+		ms.translate(0, -80, 0);
+		//at the middle of top edge now
 
-		int x = (int) (width * itemXmult);
-		int y = getItemsY();
-
-		String relatedTitle = Ponder.lang().translate(CATEGORIES).string();
-		int stringWidth = font.width(relatedTitle);
-
-		ms.pushPose();
-		ms.translate(x, y, 0);
-		// PonderUI.renderBox(ms, (sWidth - stringWidth) / 2 - 5, itemArea.getY() - 21,
-		// stringWidth + 10, 10, false);
-		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
-			.at((windowWidth - stringWidth) / 2f - 5, itemArea.getY() - 21, 100)
-			.withBounds(stringWidth + 10, 10)
-			.render(ms);
-
-		ms.translate(0, 0, 200);
-
-//		UIRenderHelper.streak(0, itemArea.getX() - 10, itemArea.getY() - 20, 20, 180, 0x101010);
-		drawCenteredString(ms, font, relatedTitle, windowWidth / 2, itemArea.getY() - 20, Theme.Key.TEXT.i());
-
-		ms.translate(0, 0, -200);
-
-		UIRenderHelper.streak(ms, 0, 0, 0, itemArea.getHeight() + 10, itemArea.getWidth() / 2 + 75);
-		UIRenderHelper.streak(ms, 180, 0, 0, itemArea.getHeight() + 10, itemArea.getWidth() / 2 + 75);
+		for(ModTagsEntry entry : currentModTagEntries) {
+			ms.pushPose();
+			renderTagsEntry(ms, entry);
+			ms.popPose();
+		}
 
 		ms.popPose();
 
 	}
 
-	public int getItemsY() {
-		return (int) (mainYmult * height + 85);
+	protected void renderTagsEntry(PoseStack ms, ModTagsEntry entry) {
+
+		int layoutWidth = entry.layoutArea().getWidth();
+		int layoutHeight = entry.layoutArea().getHeight();
+
+		ms.translate(0, entry.yPos(), 0);
+
+		String categories = Ponder.lang().translate(AbstractPonderScreen.CATEGORIES, entry.modName()).string();
+		int stringWidth = font.width(categories);
+		ms.pushPose();
+		ms.translate(-stringWidth / 2f, -20, 0);
+
+		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
+				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+				.at(-3, -1, 0)
+				.withBounds(stringWidth + 6, 10)
+				.render(ms);
+
+		font.draw(ms, categories, 0, 0, Theme.Key.TEXT.i());
+
+		ms.popPose();
+
+		int extraLength = Mth.clamp(entry.tagCount, 2, 8);
+
+		UIRenderHelper.streak(ms,   0, 0, layoutHeight / 2, layoutHeight + 6, layoutWidth / 2 + extraLength * 15);
+		UIRenderHelper.streak(ms, 180, 0, layoutHeight / 2, layoutHeight + 6, layoutWidth / 2 + extraLength * 15);
+
 	}
 
 	@Override
@@ -237,5 +301,12 @@ public class PonderTagIndexScreen extends NavigatableSimiScreen {
 		super.removed();
 		hoveredItem = null;
 	}
+
+	public record ModTagsEntry(
+			String modName,
+			int tagCount,
+			Rect2i layoutArea,
+			int yPos
+	) {}
 
 }

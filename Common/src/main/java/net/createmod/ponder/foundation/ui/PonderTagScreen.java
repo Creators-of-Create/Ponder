@@ -20,7 +20,6 @@ import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.foundation.PonderChapter;
-import net.createmod.ponder.foundation.PonderLocalization;
 import net.createmod.ponder.foundation.PonderRegistry;
 import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
@@ -31,9 +30,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
-public class PonderTagScreen extends NavigatableSimiScreen {
-
-	public static final String ASSOCIATED = PonderLocalization.LANG_PREFIX + "associated";
+public class PonderTagScreen extends AbstractPonderScreen {
 
 	private final PonderTag tag;
 	protected final List<ItemEntry> items = new ArrayList<>();
@@ -100,7 +97,7 @@ public class PonderTagScreen extends NavigatableSimiScreen {
 
 			PonderButton b = new PonderButton(itemCenterX - layout.getTotalWidth() / 2 - 48, itemCenterY - 10)
 					.showing(tag.getMainItem());
-			b.withCustomBackground(PonderTheme.Key.PONDER_BACKGROUND_IMPORTANT.c());
+			//b.withCustomBackground(PonderTheme.Key.PONDER_BACKGROUND_IMPORTANT.c());
 
 			if (PonderRegistry.ALL.containsKey(registryName)) {
 				b.withCallback((mouseX, mouseY) -> {
@@ -193,7 +190,7 @@ public class PonderTagScreen extends NavigatableSimiScreen {
 				.withBounds(30, 30)
 				.render(ms);
 
-		font.draw(ms, Ponder.lang().translate(PonderUI.PONDERING).component(), x, y - 6, Theme.Key.TEXT_DARKER.i());
+		font.draw(ms, Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(), x, y - 6, Theme.Key.TEXT_DARKER.i());
 		y += 8;
 		x += 0;
 		ms.translate(x, y, 0);
@@ -237,7 +234,7 @@ public class PonderTagScreen extends NavigatableSimiScreen {
 		int x = (int) (width * itemXmult);
 		int y = getItemsY();
 
-		String relatedTitle = Ponder.lang().translate(ASSOCIATED).string();
+		String relatedTitle = Ponder.lang().translate(AbstractPonderScreen.ASSOCIATED).string();
 		int stringWidth = font.width(relatedTitle);
 
 		ms.pushPose();

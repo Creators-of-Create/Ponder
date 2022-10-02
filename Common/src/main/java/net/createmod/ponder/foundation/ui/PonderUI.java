@@ -1,7 +1,5 @@
 package net.createmod.ponder.foundation.ui;
 
-import static net.createmod.ponder.foundation.PonderLocalization.LANG_PREFIX;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,22 +66,10 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.Vec3;
 
-public class PonderUI extends NavigatableSimiScreen {
+public class PonderUI extends AbstractPonderScreen {
 
 	public static int ponderTicks;
 	public static float ponderPartialTicksPaused;
-
-	public static final String PONDERING = LANG_PREFIX + "pondering";
-	public static final String IDENTIFY_MODE = LANG_PREFIX + "identify_mode";
-	public static final String IN_CHAPTER = LANG_PREFIX + "in_chapter";
-	public static final String IDENTIFY = LANG_PREFIX + "identify";
-	public static final String PREVIOUS = LANG_PREFIX + "previous";
-	public static final String CLOSE = LANG_PREFIX + "close";
-	public static final String NEXT = LANG_PREFIX + "next";
-	public static final String NEXT_UP = LANG_PREFIX + "next_up";
-	public static final String REPLAY = LANG_PREFIX + "replay";
-	public static final String SLOW_TEXT = LANG_PREFIX + "slow_text";
-	public static final String THINK_BACK = LANG_PREFIX + "think_back";
 
 	private final List<PonderScene> scenes;
 	private final List<PonderTag> tags;
@@ -139,10 +125,6 @@ public class PonderUI extends NavigatableSimiScreen {
 	PonderUI(List<PonderScene> scenes) {
 		ResourceLocation location = scenes.get(0).getLocation();
 		stack = new ItemStack(CatnipServices.REGISTRIES.getItemOrBlock(location));
-		/*if (ForgeRegistries.ITEMS.containsKey(location))
-			stack = new ItemStack(ForgeRegistries.ITEMS.getValue(location));
-		else
-			stack = new ItemStack(ForgeRegistries.BLOCKS.getValue(location));*/
 
 		tags = new ArrayList<>(PonderRegistry.TAGS.getTags(location));
 		this.scenes = scenes;
@@ -260,7 +242,7 @@ public class PonderUI extends NavigatableSimiScreen {
 
 	@Override
 	protected void initBackTrackIcon(BoxWidget backTrack) {
-		backTrack.showing(GuiGameElement.of(stack)
+		backTrack.showingElement(GuiGameElement.of(stack)
 				.scale(1.5f)
 				.at(-4, -4)
 		);
@@ -593,7 +575,7 @@ public class PonderUI extends NavigatableSimiScreen {
 				.at(x - 39, y - 11)
 				.render(ms);
 
-			font.draw(ms, Ponder.lang().translate(PONDERING).component(), x, y - 6, tooltipColor);
+			font.draw(ms, Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(), x, y - 6, tooltipColor);
 			y += 8;
 			x += 0;
 			ms.translate(x, y, 0);
@@ -610,7 +592,7 @@ public class PonderUI extends NavigatableSimiScreen {
 				ms.translate(chap.x - 4 - 4, chap.y, 0);
 				UIRenderHelper.streak(ms, 180, 4, 10, 26, (int) (150 * fade));
 
-				drawRightAlignedString(font, ms, Ponder.lang().translate(IN_CHAPTER).string(), 0, 0, tooltipColor);
+				drawRightAlignedString(font, ms, Ponder.lang().translate(AbstractPonderScreen.IN_CHAPTER).string(), 0, 0, tooltipColor);
 				drawRightAlignedString(font, ms, chapter.getTitle(), 0, 12, Theme.Key.TEXT.i());
 
 				ms.popPose();
@@ -635,7 +617,7 @@ public class PonderUI extends NavigatableSimiScreen {
 				if (hoveredTooltipItem.isEmpty()) {
 
 					MutableComponent text = Ponder.lang()
-							.translate(IDENTIFY_MODE, ((MutableComponent) minecraft.options.keyDrop.getTranslatedKeyMessage())
+							.translate(AbstractPonderScreen.IDENTIFY_MODE, ((MutableComponent) minecraft.options.keyDrop.getTranslatedKeyMessage())
 									.withStyle(ChatFormatting.WHITE))
 							.style(ChatFormatting.GRAY)
 							.component();
@@ -697,7 +679,7 @@ public class PonderUI extends NavigatableSimiScreen {
 			.equals(Ponder.asResource("creative_motor_mojang"))) {
 			ms.pushPose();
 			ms.translate(right.x + 10, right.y - 6 + nextUp.getValue(partialTicks) * 5, 400);
-			MutableComponent nextUpComponent = Ponder.lang().translate(NEXT_UP).component();
+			MutableComponent nextUpComponent = Ponder.lang().translate(AbstractPonderScreen.NEXT_UP).component();
 			int boxWidth = (Math.max(font.width(nextScene.getTitle()), font.width(nextUpComponent)) + 5);
 			renderSpeechBox(ms, 0, 0, boxWidth, 20, right.isHoveredOrFocused(), Pointing.DOWN, false);
 			ms.translate(0, -29, 100);
@@ -737,6 +719,7 @@ public class PonderUI extends NavigatableSimiScreen {
 		IntStream.range(0, tagButtons.size())
 			.forEach(i -> {
 				ms.pushPose();
+				PonderTag tag = this.tags.get(i);
 				LerpedFloat chase = tagFades.get(i);
 				PonderButton button = tagButtons.get(i);
 				if (button.isMouseOver(mouseX, mouseY)) {
@@ -746,7 +729,7 @@ public class PonderUI extends NavigatableSimiScreen {
 
 				chase.tickChaser();
 
-				if (highlightAll)
+				if (highlightAll || sceneTags.contains(tag))
 					button.flash();
 				else
 					button.dim();
@@ -760,7 +743,7 @@ public class PonderUI extends NavigatableSimiScreen {
 
 				RenderSystem.enableScissor((int) (x * s), 0, (int) (fadedWidth * s), (int) (height * s));
 
-				String tagName = this.tags.get(i)
+				String tagName = tag
 					.getTitle();
 				font.draw(ms, tagName, 3, 8, Theme.Key.TEXT_ACCENT_SLIGHT.i());
 
@@ -773,17 +756,17 @@ public class PonderUI extends NavigatableSimiScreen {
 		ms.translate(0, 0, 500);
 		int tooltipY = height - 16;
 		if (scan.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(IDENTIFY).component(), scan.x + 10, tooltipY, tooltipColor);
+			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.IDENTIFY).component(), scan.x + 10, tooltipY, tooltipColor);
 		if (index != 0 && left.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(PREVIOUS).component(), left.x + 10, tooltipY, tooltipColor);
+			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.PREVIOUS).component(), left.x + 10, tooltipY, tooltipColor);
 		if (close.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(CLOSE).component(), close.x + 10, tooltipY, tooltipColor);
+			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.CLOSE).component(), close.x + 10, tooltipY, tooltipColor);
 		if (index != scenes.size() - 1 && right.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(NEXT).component(), right.x + 10, tooltipY, tooltipColor);
+			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.NEXT).component(), right.x + 10, tooltipY, tooltipColor);
 		if (replay.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(REPLAY).component(), replay.x + 10, tooltipY, tooltipColor);
+			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.REPLAY).component(), replay.x + 10, tooltipY, tooltipColor);
 		if (slowMode.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(SLOW_TEXT).component(), slowMode.x + 5, tooltipY, tooltipColor);
+			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.SLOW_TEXT).component(), slowMode.x + 5, tooltipY, tooltipColor);
 		if (PonderRegistry.editingModeActive() && userMode.isHoveredOrFocused())
 			drawCenteredString(ms, font, "Editor View", userMode.x + 10, tooltipY, tooltipColor);
 		ms.popPose();

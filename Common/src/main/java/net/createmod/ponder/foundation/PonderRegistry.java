@@ -16,7 +16,6 @@ import javax.annotation.Nullable;
 
 import net.createmod.catnip.Catnip;
 import net.createmod.ponder.enums.PonderConfig;
-import net.createmod.ponder.foundation.content.SharedText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -61,7 +60,7 @@ public class PonderRegistry {
 	public static List<PonderScene> compile(List<PonderStoryBoardEntry> entries) {
 		if (editingModeActive()) {
 			PonderLocalization.SHARED.clear();
-			SharedText.gatherText();
+			PonderIndex.gatherSharedText();
 		}
 
 		List<PonderScene> scenes = new ArrayList<>();

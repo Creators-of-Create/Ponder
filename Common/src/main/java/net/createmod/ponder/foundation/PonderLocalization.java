@@ -7,10 +7,7 @@ import com.google.gson.JsonObject;
 
 import net.createmod.catnip.utility.Couple;
 import net.createmod.ponder.Ponder;
-import net.createmod.ponder.foundation.content.SharedText;
-import net.createmod.ponder.foundation.ui.PonderTagIndexScreen;
-import net.createmod.ponder.foundation.ui.PonderTagScreen;
-import net.createmod.ponder.foundation.ui.PonderUI;
+import net.createmod.ponder.foundation.ui.AbstractPonderScreen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 
@@ -78,6 +75,7 @@ public class PonderLocalization {
 	//
 
 	public static final String LANG_PREFIX = "ponder.";
+	public static final String UI_PREFIX = "ui.";
 
 	public static void record(String namespace, JsonObject object) {
 		SHARED.forEach((k, v) -> {
@@ -116,25 +114,25 @@ public class PonderLocalization {
 	private static void recordGeneral(JsonObject object) {
 		addGeneral(object, PonderTooltipHandler.HOLD_TO_PONDER, "Hold [%1$s] to Ponder");
 		addGeneral(object, PonderTooltipHandler.SUBJECT, "Subject of this scene");
-		addGeneral(object, PonderUI.PONDERING, "Pondering about...");
-		addGeneral(object, PonderUI.IDENTIFY_MODE, "Identify mode active.\nUnpause with [%1$s]");
-		addGeneral(object, PonderTagScreen.ASSOCIATED, "Associated Entries");
+		addGeneral(object, AbstractPonderScreen.PONDERING, "Pondering about...");
+		addGeneral(object, AbstractPonderScreen.IDENTIFY_MODE, "Identify mode active.\nUnpause with [%1$s]");
+		addGeneral(object, AbstractPonderScreen.ASSOCIATED, "Associated Entries");
 
-		addGeneral(object, PonderUI.CLOSE, "Close");
-		addGeneral(object, PonderUI.IDENTIFY, "Identify");
-		addGeneral(object, PonderUI.NEXT, "Next Scene");
-		addGeneral(object, PonderUI.NEXT_UP, "Up Next:");
-		addGeneral(object, PonderUI.PREVIOUS, "Previous Scene");
-		addGeneral(object, PonderUI.REPLAY, "Replay");
-		addGeneral(object, PonderUI.THINK_BACK, "Think Back");
-		addGeneral(object, PonderUI.SLOW_TEXT, "Comfy Reading");
+		addGeneral(object, AbstractPonderScreen.CLOSE, "Close");
+		addGeneral(object, AbstractPonderScreen.IDENTIFY, "Identify");
+		addGeneral(object, AbstractPonderScreen.NEXT, "Next Scene");
+		addGeneral(object, AbstractPonderScreen.NEXT_UP, "Up Next:");
+		addGeneral(object, AbstractPonderScreen.PREVIOUS, "Previous Scene");
+		addGeneral(object, AbstractPonderScreen.REPLAY, "Replay");
+		addGeneral(object, AbstractPonderScreen.THINK_BACK, "Think Back");
+		addGeneral(object, AbstractPonderScreen.SLOW_TEXT, "Comfy Reading");
 
-		addGeneral(object, PonderTagIndexScreen.EXIT, "Exit");
-		addGeneral(object, PonderTagIndexScreen.WELCOME, "Welcome to Ponder");
-		addGeneral(object, PonderTagIndexScreen.CATEGORIES, "Available Categories in Create");
-		addGeneral(object, PonderTagIndexScreen.DESCRIPTION,
-			"Click one of the icons to learn about its associated Items and Blocks");
-		addGeneral(object, PonderTagIndexScreen.TITLE, "Ponder Index");
+		addGeneral(object, AbstractPonderScreen.EXIT, "Exit");
+		addGeneral(object, AbstractPonderScreen.WELCOME, "Welcome to Ponder");
+		addGeneral(object, AbstractPonderScreen.CATEGORIES, "Available Categories for %1$s");
+		addGeneral(object, AbstractPonderScreen.DESCRIPTION,
+			"Click one of the icons below to learn about its associated Items and Blocks");
+		addGeneral(object, AbstractPonderScreen.INDEX_TITLE, "Ponder Index");
 	}
 
 	private static void addGeneral(JsonObject json, String key, String enUS) {
@@ -152,9 +150,8 @@ public class PonderLocalization {
 	 * Generate a JsonObject holding all Lang-entries and their enUS default that was declared in code
 	 */
 	public static JsonObject provideLangEntries(String modID) {
-		SharedText.gatherText();
-		PonderTag.register();
 		PonderIndex.registerAll();
+		PonderIndex.gatherSharedText();
 
 		generateSceneLang();
 

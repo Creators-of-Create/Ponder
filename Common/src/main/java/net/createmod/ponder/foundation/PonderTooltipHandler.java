@@ -38,8 +38,8 @@ public class PonderTooltipHandler {
 	static boolean subject = false;
 	static boolean deferTick = false;
 
-	public static final String HOLD_TO_PONDER = PonderLocalization.LANG_PREFIX + "hold_to_ponder";
-	public static final String SUBJECT = PonderLocalization.LANG_PREFIX + "subject";
+	public static final String HOLD_TO_PONDER = PonderLocalization.UI_PREFIX + "hold_to_ponder";
+	public static final String SUBJECT = PonderLocalization.UI_PREFIX + "subject";
 
 	public static void tick() {
 		deferTick = true;
