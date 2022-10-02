@@ -13,6 +13,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.lang.Lang;
@@ -61,17 +62,21 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 		List<Screen> screenHistory = ScreenOpener.getScreenHistory();
 		if (screenHistory.isEmpty())
 			return;
-		if (!(screenHistory.get(0) instanceof NavigatableSimiScreen screen))
-			return;
 
 		addRenderableWidget(backTrack = new BoxWidget(31, height - 31 - 20)
 				.withBounds(20, 20)
 				.enableFade(0, 5)
 				.withPadding(2, 2)
+				.fade(1)
 				.withCallback(() -> ScreenOpener.openPreviousScreen(this, null)));
-		backTrack.fade(1);
 
-		screen.initBackTrackIcon(backTrack);
+		Screen previousScreen = screenHistory.get(0);
+		if (previousScreen instanceof NavigatableSimiScreen screen) {
+			screen.initBackTrackIcon(backTrack);
+		} else {
+			backTrack.showing(CatnipGuiTextures.ICON_DISABLE);
+		}
+
 	}
 
 	/**
@@ -81,6 +86,18 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 	 * @param backTrack The backTrack button of the current screen.
 	 */
 	protected abstract void initBackTrackIcon(BoxWidget backTrack);
+
+	protected Component backTrackingComponent() {
+		if (ScreenOpener.getBackStepScreen() instanceof NavigatableSimiScreen) {
+			return Lang.builder("catnip")
+					.translate("gui.step_back")
+					.component();
+		}
+
+		return Lang.builder("catnip")
+				.translate("gui.exit")
+				.component();
+	}
 
 	@Override
 	public void render(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
@@ -100,12 +117,6 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 			}
 		}
 		ms.popPose();
-	}
-
-	protected Component backTrackingComponent() {
-		return Lang.builder("catnip")
-				.translate("gui.step_back")
-				.component();
 	}
 
 	@Override

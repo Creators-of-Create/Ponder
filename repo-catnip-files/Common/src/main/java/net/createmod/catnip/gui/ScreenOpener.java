@@ -82,6 +82,11 @@ public class ScreenOpener {
 	}
 
 	@Nullable
+	public static Screen getBackStepScreen() {
+		return backStack.peek();
+	}
+
+	@Nullable
 	public static Screen getPreviouslyRenderedScreen() {
 		return backSteppedFrom != null ? backSteppedFrom : backStack.peek();
 	}

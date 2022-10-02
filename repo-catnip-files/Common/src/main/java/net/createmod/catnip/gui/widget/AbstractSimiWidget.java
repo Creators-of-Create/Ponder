@@ -52,6 +52,11 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 		return (T) this;
 	}
 
+	public <T extends AbstractSimiWidget> T setActive(boolean active) {
+		this.active = active;
+		return (T) this;
+	}
+
 	public List<Component> getToolTip() {
 		return toolTip;
 	}

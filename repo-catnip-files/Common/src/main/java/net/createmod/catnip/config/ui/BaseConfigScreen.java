@@ -189,11 +189,11 @@ public class BaseConfigScreen extends ConfigScreen {
 		int boxPadding = 4;
 		title = new BoxWidget(-5, height / 2 - 110, boxWidth, boxHeight)
 				//.withCustomBackground(new Color(0x20_000000, true))
+				.<BoxWidget>setActive(false)
 				.withBorderColors(Theme.Key.BUTTON_IDLE.p())
 				.withPadding(0, boxPadding)
 				.rescaleElement(boxWidth / 2f, (boxHeight - 2 * boxPadding) / 2f)//double the text size by telling it the element is only half as big as the available space
 				.showingElement(titleText.at(0, 7));
-		title.active = false;
 
 		addRenderableWidget(title);
 

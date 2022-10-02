@@ -26,6 +26,10 @@ public class BoxWidget extends ElementWidget {
 	@Nullable protected Color customBorderTop;
 	@Nullable protected Color customBorderBot;
 	@Nullable protected Color customBackground;
+	protected Theme.Key disabledTheme = Theme.Key.BUTTON_DISABLE;
+	protected Theme.Key idleTheme = Theme.Key.BUTTON_IDLE;
+	protected Theme.Key hoverTheme = Theme.Key.BUTTON_HOVER;
+	protected Theme.Key clickTheme = Theme.Key.BUTTON_CLICK;
 	protected boolean animateColors = true;
 	protected LerpedFloat colorAnimation = LerpedFloat.linear();
 
@@ -76,6 +80,30 @@ public class BoxWidget extends ElementWidget {
 
 	public <T extends BoxWidget> T withCustomBackground(Color color) {
 		this.customBackground = color;
+		//noinspection unchecked
+		return (T) this;
+	}
+
+	public <T extends BoxWidget> T withThemeKeys(
+			@Nullable Theme.Key disabledTheme,
+			@Nullable Theme.Key idleTheme,
+			@Nullable Theme.Key hoverTheme,
+			@Nullable Theme.Key clickTheme
+	) {
+		if (disabledTheme != null)
+			this.disabledTheme = disabledTheme;
+
+		if (idleTheme != null) {
+			this.idleTheme = idleTheme;
+			updateColorsFromState();
+		}
+
+		if (hoverTheme != null)
+			this.hoverTheme = hoverTheme;
+
+		if (clickTheme != null)
+			this.clickTheme = clickTheme;
+
 		//noinspection unchecked
 		return (T) this;
 	}
@@ -210,19 +238,19 @@ public class BoxWidget extends ElementWidget {
 	}
 
 	public Key getDisabledTheme() {
-		return Theme.Key.BUTTON_DISABLE;
+		return disabledTheme;
 	}
 
 	public Key getIdleTheme() {
-		return Theme.Key.BUTTON_IDLE;
+		return idleTheme;
 	}
 
 	public Key getHoverTheme() {
-		return Theme.Key.BUTTON_HOVER;
+		return hoverTheme;
 	}
 
 	public Key getClickTheme() {
-		return Theme.Key.BUTTON_CLICK;
+		return clickTheme;
 	}
 
 }

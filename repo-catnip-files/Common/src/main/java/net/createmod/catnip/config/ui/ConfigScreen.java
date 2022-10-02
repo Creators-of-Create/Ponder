@@ -12,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.lwjgl.opengl.GL30;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -20,25 +19,16 @@ import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.animation.Force;
 import net.createmod.catnip.utility.animation.PhysicalFloat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class ConfigScreen extends AbstractSimiScreen {
-
-	/*
-	 * TODO
-	 * reduce number of packets sent to the server when saving a bunch of values
-	 *
-	 * FIXME
-	 * tooltips are hidden underneath the scrollbar, if the bar is near the middle
-	 *  (maybe depthTest is disabled during render)
-	 */
 
 	public static final Map<String, TriConsumer<Screen, PoseStack, Float>> backgrounds = new HashMap<>();
 	public static final PhysicalFloat cogSpin = PhysicalFloat.create().withLimit(10f).withDrag(0.3).addForce(new Force.Static(.2f));
@@ -51,12 +41,10 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 			(ps, x, y, alpha) -> fill(ps, -200, -200, 200, 200, 0x60_000000)
 	);
 
-	//TODO
-	private PanoramaRenderer vanillaPanorama;
+	private static final PanoramaRenderer vanillaPanorama = new PanoramaRenderer(TitleScreen.CUBE_MAP);
 
 	public ConfigScreen(@Nullable Screen parent) {
 		this.parent = parent;
-
 	}
 
 	@Override
@@ -121,10 +109,10 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 	}
 
 	/**
-	 * By default ConfigScreens will render the Create Panorama as
-	 * their background when opened from the Main- or ModList-Menu.
-	 * If your addon wants to render something else, please add to the
-	 * backgrounds Map in this Class with your modID as the key.
+	 * By default, ConfigScreens will render the Vanilla Panorama as
+	 * their background when not opened ingame.
+	 * If your mod wants to render something else, please add to the
+	 * {@code backgrounds} Map in this Class with your modID as the key.
 	 */
 	protected void renderMenuBackground(PoseStack ms, float partialTicks) {
 		TriConsumer<Screen, PoseStack, Float> customBackground = backgrounds.get(modID);
@@ -133,20 +121,13 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 			return;
 		}
 
-		float elapsedPartials = minecraft.getDeltaFrameTime();
-
-		//CreateMainMenuScreen.PANORAMA.render(elapsedPartials, 1);
-
-		//RenderSystem.setShaderTexture(0, CreateMainMenuScreen.PANORAMA_OVERLAY_TEXTURES);
-		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-		//blit(ms, 0, 0, this.width, this.height, 0.0F, 0.0F, 16, 128, 16, 128);
+		vanillaPanorama.render(minecraft.getDeltaFrameTime(), 1);
 
 		fill(ms, 0, 0, this.width, this.height, 0x90_282c34);
 	}
 
 	protected static void renderCog(PoseStack ms) {
-		float partialTicks = AnimationTickHolder.getPartialTicks();
+		float partialTicks = Minecraft.getInstance().getFrameTime();
 		ms.pushPose();
 
 		ms.translate(-100, 100, -100);
