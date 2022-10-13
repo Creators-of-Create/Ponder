@@ -3,6 +3,7 @@ package net.createmod.ponder.foundation.ui;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
@@ -42,9 +43,15 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 
 	private ItemStack hoveredItem = ItemStack.EMPTY;
 
+	private final List<Predicate<ItemLike>> exclusions;
+
 	public PonderIndexScreen() {
 		chapters = new ArrayList<>();
 		items = new ArrayList<>();
+		// collect exclusions once at screen creation instead of every time they are needed
+		exclusions = PonderIndex.streamPlugins()
+				.flatMap(PonderPlugin::indexExclusions)
+				.toList();
 	}
 
 	@Override
@@ -59,7 +66,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 			.stream()
 			.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
 			.filter(entry -> entry.item != null)
-			.filter(PonderIndexScreen::isItemIncluded)
+			.filter(this::isItemIncluded)
 			.forEach(items::add);
 
 		boolean hasChapters = !chapters.isEmpty();
@@ -120,10 +127,9 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 		backTrack.showing(PonderGuiTextures.ICON_PONDER_IDENTIFY);
 	}
 
-	private static boolean isItemIncluded(ItemEntry entry) {
-		//TODO maybe needs caching, need to run a profiler
-		return PonderIndex.streamPlugins()
-				.flatMap(PonderPlugin::indexExclusions)
+	private boolean isItemIncluded(ItemEntry entry) {
+		return exclusions
+				.stream()
 				.noneMatch(predicate -> predicate.test(entry.item));
 	}
 

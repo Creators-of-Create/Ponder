@@ -94,6 +94,7 @@ public class PonderScene {
 	private boolean stoppedCounting;
 	private int totalTime;
 	private int currentTime;
+	private boolean nextUpEnabled = true;
 
 	public PonderScene(@Nullable PonderWorld world, String namespace, ResourceLocation location, Collection<PonderTag> tags) {
 		if (world != null)
@@ -457,6 +458,10 @@ public class PonderScene {
 		return basePlateSize;
 	}
 
+	public float getScaleFactor() {
+		return scaleFactor;
+	}
+
 	public float getYOffset() {
 		return yOffset;
 	}
@@ -467,6 +472,14 @@ public class PonderScene {
 
 	public int getCurrentTime() {
 		return currentTime;
+	}
+
+	public void setNextUpEnabled(boolean nextUpEnabled) {
+		this.nextUpEnabled = nextUpEnabled;
+	}
+
+	public boolean isNextUpEnabled() {
+		return nextUpEnabled;
 	}
 
 	public class SceneTransform {
@@ -500,10 +513,10 @@ public class PonderScene {
 		}
 
 		public PoseStack apply(PoseStack ms) {
-			return apply(ms, WorldTickHolder.getPartialTicks(world), false);
+			return apply(ms, WorldTickHolder.getPartialTicks(world));
 		}
 
-		public PoseStack apply(PoseStack ms, float pt, boolean overlayCompatible) {
+		public PoseStack apply(PoseStack ms, float pt) {
 			ms.translate(width / 2, height / 2, 200 + offset);
 
 			ms.mulPose(Vector3f.XP.rotationDegrees(-35));
@@ -514,23 +527,12 @@ public class PonderScene {
 			ms.mulPose(Vector3f.XP.rotationDegrees(xRotation.getValue(pt)));
 			ms.mulPose(Vector3f.YP.rotationDegrees(yRotation.getValue(pt)));
 
+			UIRenderHelper.flipForGuiRender(ms);
 			float f = 30 * scaleFactor;
+			ms.scale(f, f, f);
+			ms.translate((basePlateSize + basePlateOffsetX) / -2f, -1f + yOffset,
+					(basePlateSize + basePlateOffsetZ) / -2f);
 
-			if (!overlayCompatible) {
-				UIRenderHelper.flipForGuiRender(ms);
-				ms.scale(f, f, f);
-				ms.translate((basePlateSize + basePlateOffsetX) / -2f, -1f + yOffset,
-					(basePlateSize + basePlateOffsetZ) / -2f);
-			} else {
-				// For block breaking overlay; Don't ask
-				ms.scale(f, f, f);
-				if (f == 30)
-					ms.translate(0.525, .2975, .9);
-				ms.translate((basePlateSize + basePlateOffsetX) / -2f, -yOffset,
-					(basePlateSize + basePlateOffsetZ) / -2f);
-				float y = (float) (0.5065 * Math.pow(2.2975, Math.log(1 / scaleFactor) / Math.log(2))) / 30;
-				ms.scale(y, -y, -y);
-			}
 
 			return ms;
 		}
@@ -573,7 +575,7 @@ public class PonderScene {
 		protected void refreshMatrix(float pt) {
 			if (cachedMat != null)
 				return;
-			cachedMat = apply(new PoseStack(), pt, false).last()
+			cachedMat = apply(new PoseStack(), pt).last()
 				.pose();
 		}
 

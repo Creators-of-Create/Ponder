@@ -18,6 +18,7 @@ import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.FontHelper;
+import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
@@ -30,7 +31,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.Mth;
 
 public class PonderTagIndexScreen extends AbstractPonderScreen {
@@ -283,7 +283,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 		if (hoveredItem != null) {
 			List<Component> list = FontHelper.cutStringTextComponent(hoveredItem.getDescription(),
 				ChatFormatting.GRAY, ChatFormatting.GRAY);
-			list.add(0, new TextComponent(hoveredItem.getTitle()));
+			list.add(0, Components.literal(hoveredItem.getTitle()));
 			renderComponentTooltip(ms, list, mouseX, mouseY);
 		}
 

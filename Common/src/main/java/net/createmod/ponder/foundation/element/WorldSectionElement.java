@@ -329,20 +329,26 @@ public class WorldSectionElement extends AnimatedSceneElement {
 			BlockPos pos = entry.getKey();
 			if (!section.test(pos))
 				continue;
+
 			if (overlayMS == null) {
 				overlayMS = new PoseStack();
-				world.scene.getTransform().apply(overlayMS, pt, true);
-				transformMS(overlayMS, pt);
+				overlayMS.last().pose().load(ms.last().pose());
+				overlayMS.last().normal().load(ms.last().normal());
+
+				float scaleFactor = world.scene.getScaleFactor();
+				float f = (float) Math.pow(30 * scaleFactor, -1.2);
+				overlayMS.scale(f, f, f);
 			}
+
+			VertexConsumer builder = new SheetedDecalTextureGenerator(
+					buffer.getBuffer(ModelBakery.DESTROY_TYPES.get(entry.getValue())), overlayMS.last()
+					.pose(),
+					overlayMS.last()
+							.normal());
 
 			ms.pushPose();
 			ms.translate(pos.getX(), pos.getY(), pos.getZ());
-			VertexConsumer builder = new SheetedDecalTextureGenerator(
-				buffer.getBuffer(ModelBakery.DESTROY_TYPES.get(entry.getValue())), overlayMS.last()
-					.pose(),
-				overlayMS.last()
-					.normal());
-			CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(Minecraft.getInstance().getBlockRenderer(), ms, builder, world.getBlockState(pos), pos, world, true, new Random(), null);
+			Minecraft.getInstance().getBlockRenderer().renderBreakingTexture(world.getBlockState(pos), pos, world, ms, builder);
 			ms.popPose();
 		}
 

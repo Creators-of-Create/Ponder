@@ -228,6 +228,10 @@ public class SceneBuilder {
 		addInstruction(new MarkAsFinishedInstruction());
 	}
 
+	public void setNextUpEnabled(boolean isEnabled) {
+		addInstruction(scene -> scene.setNextUpEnabled(isEnabled));
+	}
+
 	/**
 	 * Pans the scene's camera view around the vertical axis by the given amount
 	 *

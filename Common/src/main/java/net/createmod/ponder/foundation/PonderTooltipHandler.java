@@ -11,6 +11,7 @@ import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.foundation.ui.PonderUI;
@@ -21,7 +22,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 
 public class PonderTooltipHandler {
@@ -168,7 +168,7 @@ public class PonderTooltipHandler {
 			bars += ChatFormatting.GRAY + Strings.repeat("|", current);
 			if (progress < 1)
 				bars += ChatFormatting.DARK_GRAY + Strings.repeat("|", total - current);
-			return new TextComponent(bars);
+			return Components.literal(bars);
 		}
 
 		return holdW;

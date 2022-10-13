@@ -304,27 +304,6 @@ public class PonderTagScreen extends AbstractPonderScreen {
 		return hoveredItem;
 	}
 
-	/*@Override
-	public boolean mouseClicked(double x, double y, int button) {
-		MutableBoolean handled = new MutableBoolean(false);
-		widgets.forEach(w -> {
-			if (handled.booleanValue())
-				return;
-			if (!w.isMouseOver(x, y))
-				return;
-			if (w instanceof PonderButton) {
-				PonderButton mtdButton = (PonderButton) w;
-				mtdButton.runCallback(x, y);
-				handled.setTrue();
-				return;
-			}
-		});
-
-		if (handled.booleanValue())
-			return true;
-		return super.mouseClicked(x, y, button);
-	}*/
-
 	@Override
 	public boolean isEquivalentTo(NavigatableSimiScreen other) {
 		if (other instanceof PonderTagScreen)
