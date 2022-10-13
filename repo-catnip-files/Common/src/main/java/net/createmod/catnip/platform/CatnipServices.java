@@ -12,7 +12,7 @@ public class CatnipServices {
 
 	public static final PlatformHelper PLATFORM = load(PlatformHelper.class);
 	public static final ModHooksHelper HOOKS = load(ModHooksHelper.class);
-	public static final RegisteredObjectsHelper REGISTRIES = load(RegisteredObjectsHelper.class);
+	public static final RegisteredObjectsHelper<?> REGISTRIES = load(RegisteredObjectsHelper.class);
 	public static final NetworkHelper NETWORK = load(NetworkHelper.class);
 
 	public static <T> T load(Class<T> clazz) {

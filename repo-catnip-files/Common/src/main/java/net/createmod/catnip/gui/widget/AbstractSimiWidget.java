@@ -7,10 +7,10 @@ import java.util.function.BiConsumer;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.gui.TickableGuiEventListener;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 public abstract class AbstractSimiWidget extends AbstractWidget implements TickableGuiEventListener {
 
@@ -29,7 +29,7 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 	}
 
 	protected AbstractSimiWidget(int x, int y, int width, int height) {
-		this(x, y, width, height, TextComponent.EMPTY);
+		this(x, y, width, height, Components.immutableEmpty());
 	}
 
 	protected AbstractSimiWidget(int x, int y, int width, int height, Component message) {

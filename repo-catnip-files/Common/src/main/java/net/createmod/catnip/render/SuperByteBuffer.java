@@ -4,10 +4,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 
+import net.createmod.catnip.utility.flw.TStack;
+import net.createmod.catnip.utility.flw.Transform;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.core.Direction;
 
-public interface SuperByteBuffer {
+@SuppressWarnings({"UnusedReturnValue", "unused", "unchecked"})
+public interface SuperByteBuffer extends Transform<SuperByteBuffer>, TStack<SuperByteBuffer> {
 
 	void renderInto(PoseStack ms, VertexConsumer consumer);
 
@@ -17,21 +20,11 @@ public interface SuperByteBuffer {
 
 	<Self extends SuperByteBuffer> Self reset();
 
-	<Self extends SuperByteBuffer> Self translate(float x, float y, float z);
-
-	<Self extends SuperByteBuffer> Self rotate(Direction axis, float radians);
-
-	<Self extends SuperByteBuffer> Self scale(float factorX, float factorY, float factorZ);
-
-	<Self extends SuperByteBuffer> Self transform(PoseStack ms);
-
-	<Self extends SuperByteBuffer> Self light(int packedLight);
-
-	<Self extends SuperByteBuffer> Self light(Matrix4f lightTransform);
-
 	<Self extends SuperByteBuffer> Self color(int color);
 
 	<Self extends SuperByteBuffer> Self color(int r, int g, int b, int a);
+
+	<Self extends SuperByteBuffer> Self disableDiffuse();
 
 	<Self extends SuperByteBuffer> Self shiftUV(SpriteShiftEntry entry);
 
@@ -39,31 +32,40 @@ public interface SuperByteBuffer {
 
 	<Self extends SuperByteBuffer> Self shiftUVtoSheet(SpriteShiftEntry entry, float uTarget, float vTarget, int sheetSize);
 
+	<Self extends SuperByteBuffer> Self overlay();
+
+	<Self extends SuperByteBuffer> Self overlay(int overlay);
+
+	/**
+	 * Indicate that this buffer should look up the light coordinates in the current level.
+	 */
+	<Self extends SuperByteBuffer> Self light();
+
+	/**
+	 * Indicate that this buffer should look up the light coordinates in the current level.
+	 * Light Positions will be transformed by the passed Matrix before the lookup.
+	 */
+	<Self extends SuperByteBuffer> Self light(Matrix4f lightTransform);
+
+	<Self extends SuperByteBuffer> Self light(int packedLight);
+
+	/**
+	 * Use max light from calculated light (world light or custom light) and vertex
+	 * light for the final light value. Ineffective if no other light method was called.
+	 */
+	<Self extends SuperByteBuffer> Self hybridLight();
+
+	/**
+	 * Transforms normals not only by the local matrix stack, but also by the passed
+	 * matrix stack.
+	 */
+	<Self extends SuperByteBuffer> Self fullNormalTransform();
+
 	//
 
-	default <Self extends SuperByteBuffer> Self translate(double x, double y, double z) {
-		return this.translate((float) x, (float) y, (float) z);
-	}
-
 	default <Self extends SuperByteBuffer> Self rotate(Direction.Axis axis, float radians) {
-		return rotate(Direction.get(Direction.AxisDirection.POSITIVE, axis), radians);
+		return (Self) rotate(Direction.get(Direction.AxisDirection.POSITIVE, axis), radians);
 	}
-
-	default <Self extends SuperByteBuffer> Self rotateCentered(Direction axis, float radians) {
-		return this
-				.translate(.5f, .5f, .5f)
-				.rotate(axis, radians)
-				.translate(-.5f, -.5f, -.5f);
-	}
-
-	default <Self extends SuperByteBuffer> Self rotateCentered(Direction.Axis axis, float radians) {
-		return rotateCentered(Direction.get(Direction.AxisDirection.POSITIVE, axis), radians);
-	}
-
-	default <Self extends SuperByteBuffer> Self scale(float factor) {
-		return this.scale(factor, factor, factor);
-	}
-
 	default <Self extends SuperByteBuffer> Self light(Matrix4f lightTransform, int packedLight) {
 		return this
 				.light(lightTransform)
@@ -81,6 +83,13 @@ public interface SuperByteBuffer {
 
 	default <Self extends SuperByteBuffer> Self shiftUVScrolling(SpriteShiftEntry entry, float scrollV) {
 		return this.shiftUVScrolling(entry, 0, scrollV);
+	}
+
+	default <Self extends SuperByteBuffer> Self forEntityRender() {
+		return this
+				.disableDiffuse()
+				.overlay()
+				.fullNormalTransform();
 	}
 
 	@FunctionalInterface

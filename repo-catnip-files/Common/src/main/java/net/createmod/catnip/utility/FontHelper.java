@@ -11,6 +11,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Matrix4f;
 
 import net.createmod.catnip.platform.CatnipClientServices;
+import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -18,7 +19,6 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 
 public final class FontHelper {
 
@@ -96,7 +96,7 @@ public final class FontHelper {
 
 	public static List<Component> cutStringTextComponent(String c, ChatFormatting defaultColor,
 		ChatFormatting highlightColor) {
-		return cutTextComponent(new TextComponent(c), defaultColor, highlightColor, 0);
+		return cutTextComponent(Components.literal(c), defaultColor, highlightColor, 0);
 	}
 
 	public static List<Component> cutTextComponent(Component c, ChatFormatting defaultColor,
@@ -106,7 +106,7 @@ public final class FontHelper {
 
 	public static List<Component> cutStringTextComponent(String c, ChatFormatting defaultColor,
 		ChatFormatting highlightColor, int indent) {
-		return cutTextComponent(new TextComponent(c), defaultColor, highlightColor, indent);
+		return cutTextComponent(Components.literal(c), defaultColor, highlightColor, indent);
 	}
 
 	public static List<Component> cutTextComponent(Component c, ChatFormatting defaultColor,
@@ -152,7 +152,7 @@ public final class FontHelper {
 		}
 
 		// Format
-		MutableComponent lineStart = new TextComponent(Strings.repeat(" ", indent));
+		MutableComponent lineStart = Components.literal(Strings.repeat(" ", indent));
 		lineStart.withStyle(defaultColor);
 		List<Component> formattedLines = new ArrayList<>(lines.size());
 		Couple<ChatFormatting> f = Couple.create(highlightColor, defaultColor);
@@ -162,7 +162,7 @@ public final class FontHelper {
 			MutableComponent currentComponent = lineStart.plainCopy();
 			String[] split = string.split("_");
 			for (String part : split) {
-				currentComponent.append(new TextComponent(part).withStyle(f.get(currentlyHighlighted)));
+				currentComponent.append(Components.literal(part).withStyle(f.get(currentlyHighlighted)));
 				currentlyHighlighted = !currentlyHighlighted;
 			}
 

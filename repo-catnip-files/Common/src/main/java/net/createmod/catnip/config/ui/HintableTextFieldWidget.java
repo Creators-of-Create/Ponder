@@ -4,11 +4,11 @@ import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.network.chat.TextComponent;
 
 public class HintableTextFieldWidget extends EditBox {
 
@@ -16,7 +16,7 @@ public class HintableTextFieldWidget extends EditBox {
 	protected String hint;
 
 	public HintableTextFieldWidget(Font font, int x, int y, int width, int height) {
-		super(font, x, y, width, height, TextComponent.EMPTY);
+		super(font, x, y, width, height, Components.immutableEmpty());
 		this.font = font;
 	}
 

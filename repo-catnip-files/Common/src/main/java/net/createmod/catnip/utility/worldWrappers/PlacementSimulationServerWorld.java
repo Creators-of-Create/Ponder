@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 
 public class PlacementSimulationServerWorld extends WrappedServerWorld {
 	public HashMap<BlockPos, BlockState> blocksAdded;
@@ -50,6 +51,11 @@ public class PlacementSimulationServerWorld extends WrappedServerWorld {
 		if (blocksAdded.containsKey(pos))
 			return blocksAdded.get(pos);
 		return Blocks.AIR.defaultBlockState();
+	}
+
+	@Override
+	public FluidState getFluidState(BlockPos pos) {
+		return getBlockState(pos).getFluidState();
 	}
 	
 }

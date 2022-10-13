@@ -9,7 +9,10 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
@@ -17,8 +20,9 @@ import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 
 @SuppressWarnings("unchecked")
@@ -33,17 +37,27 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	// Vertex Coloring
 	protected boolean shouldColor;
 	protected int r, g, b, a;
+	protected boolean disableDiffuse;
 
 	// Vertex Texture Coordinates
 	@Nullable protected SpriteShiftFunc spriteShiftFunc;
 
+	// Vertex Overlay Color
+	protected boolean hasOverlay;
+	protected int overlay = OverlayTexture.NO_OVERLAY;
+
 	// Vertex Lighting
-	protected boolean shouldLight;
-	protected int packedLightCoordinates;
+	protected boolean useWorldLight;
 	@Nullable protected Matrix4f lightTransform;
+	protected boolean hasCustomLight;
+	protected int packedLightCoordinates;
+	protected boolean hybridLight;
+
+	// Vertex Normals
+	protected boolean fullNormalTransform;
 
 	// Temporary
-	private static final Long2IntMap WORLD_LIGHT_CACHE = new Long2IntOpenHashMap();
+	protected static final Long2IntMap WORLD_LIGHT_CACHE = new Long2IntOpenHashMap();
 
 
 	public DefaultSuperByteBuffer(BufferBuilder buf) {
@@ -59,7 +73,6 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 		template.order(rendered.order());
 		template.limit(rendered.limit());
 		template.put(rendered);
-		//template.rewind();
 
 		transforms = new PoseStack();
 		transforms.pushPose();
@@ -69,38 +82,55 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	public void renderInto(PoseStack ms, VertexConsumer consumer) {
 		if (isEmpty())
 			return;
-		//buffer.rewind();
 
-		Matrix4f t = ms.last()
-				.pose()
-				.copy();
-		Matrix4f localTransforms = transforms.last()
-				.pose();
-		t.multiply(localTransforms);
+		Matrix4f modelMatrix = ms.last().pose().copy();
+		Matrix4f localTransforms = transforms.last().pose();
+		modelMatrix.multiply(localTransforms);
+
+		Matrix3f normalMatrix;
+		if (fullNormalTransform) {
+			normalMatrix = ms.last().normal().copy();
+			normalMatrix.mul(transforms.last().normal());
+		} else {
+			normalMatrix = transforms.last().normal().copy();
+		}
 
 		for (int i = 0; i < vertexCount(); i++) {
 			float x = getX(i);
 			float y = getY(i);
 			float z = getZ(i);
 
+			float normalX = getNX(i);
+			float normalY = getNY(i);
+			float normalZ = getNZ(i);
+
 			Vector4f pos = new Vector4f(x, y, z, 1F);
+			Vector3f normal = new Vector3f(normalX, normalY, normalZ);
 			Vector4f lightPos = new Vector4f(x, y, z, 1F);
-			pos.transform(t);
+			pos.transform(modelMatrix);
+			normal.transform(normalMatrix);
 			lightPos.transform(localTransforms);
 
 			consumer.vertex(pos.x(), pos.y(), pos.z());
 
-			byte r = getR(i);
-			byte g = getG(i);
-			byte b = getB(i);
-			byte a = getA(i);
-
+			byte r, g, b, a;
 			if (shouldColor) {
-				float lum = (r < 0 ? 255 + r : r) / 256f;
-				consumer.color((int) (this.r * lum), (int) (this.g * lum), (int) (this.b * lum), this.a);
-			} else
+				r = (byte) this.r;
+				g = (byte) this.g;
+				b = (byte) this.b;
+				a = (byte) this.a;
+			} else {
+				r = getR(i);
+				g = getG(i);
+				b = getB(i);
+				a = getA(i);
+			}
+			if (disableDiffuse) {
 				consumer.color(r, g, b, a);
-
+			} else {
+				// missing flywheel's diffuse calc stuff
+				consumer.color(r, g, b, a);
+			}
 			float u = getU(i);
 			float v = getV(i);
 
@@ -109,18 +139,33 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 			} else
 				consumer.uv(u, v);
 
-			if (shouldLight) {
-				int light = packedLightCoordinates;
+			int light;
+			if (useWorldLight) {
+				lightPos.set(((x - .5f) * 15 / 16f) + .5f, (y - .5f) * 15 / 16f + .5f, (z - .5f) * 15 / 16f + .5f, 1f);
+				lightPos.transform(localTransforms);
 				if (lightTransform != null) {
 					lightPos.transform(lightTransform);
-					light = getLight(Minecraft.getInstance().level, lightPos);
 				}
-				consumer.uv2(light);
-			} else
-				consumer.uv2(getLight(i));
 
-			consumer.normal(getNX(i), getNY(i), getNZ(i))
-					.endVertex();
+				light = getLight(Minecraft.getInstance().level, lightPos);
+				if (hasCustomLight) {
+					light = maxLight(light, packedLightCoordinates);
+				}
+			} else if (hasCustomLight) {
+				light = packedLightCoordinates;
+			} else {
+				light = getLight(i);
+			}
+
+			if (hybridLight) {
+				consumer.uv2(maxLight(light, getLight(i)));
+			} else {
+				consumer.uv2(light);
+			}
+
+			consumer.normal(normal.x(), normal.y(), normal.z());
+
+			consumer.endVertex();
 		}
 
 		reset();
@@ -139,10 +184,16 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 		g = 0;
 		b = 0;
 		a = 0;
+		disableDiffuse = false;
 		spriteShiftFunc = null;
-		shouldLight = false;
+		hasOverlay = false;
+		overlay = OverlayTexture.NO_OVERLAY;
+		useWorldLight = false;
 		lightTransform = null;
+		hasCustomLight = false;
 		packedLightCoordinates = 0;
+		hybridLight = false;
+		fullNormalTransform = false;
 
 		WORLD_LIGHT_CACHE.clear();
 
@@ -160,18 +211,14 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	@Override
-	public DefaultSuperByteBuffer translate(float x, float y, float z) {
+	public SuperByteBuffer translate(double x, double y, double z) {
 		transforms.translate(x, y, z);
 		return this;
 	}
 
 	@Override
-	public DefaultSuperByteBuffer rotate(Direction axis, float radians) {
-		if (radians == 0)
-			return this;
-
-		transforms.mulPose(axis.step().rotation(radians));
-
+	public SuperByteBuffer multiply(Quaternion quaternion) {
+		transforms.mulPose(quaternion);
 		return this;
 	}
 
@@ -183,6 +230,30 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	@Override
+	public DefaultSuperByteBuffer pushPose() {
+		transforms.pushPose();
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer popPose() {
+		transforms.popPose();
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer mulPose(Matrix4f pose) {
+		transforms.last().pose().multiply(pose);
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer mulNormal(Matrix3f normal) {
+		transforms.last().normal().mul(normal);
+		return this;
+	}
+
+	@Override
 	public DefaultSuperByteBuffer transform(PoseStack ms) {
 		transforms.last()
 				.pose()
@@ -190,20 +261,6 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 		transforms.last()
 				.normal()
 				.mul(ms.last().normal());
-		return this;
-	}
-
-	@Override
-	public DefaultSuperByteBuffer light(int packedLight) {
-		shouldLight = true;
-		packedLightCoordinates = packedLight;
-		return this;
-	}
-
-	@Override
-	public DefaultSuperByteBuffer light(Matrix4f lightTransform) {
-		shouldLight = true;
-		this.lightTransform = lightTransform;
 		return this;
 	}
 
@@ -224,6 +281,12 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 		this.g = g;
 		this.b = b;
 		this.a = a;
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer disableDiffuse() {
+		disableDiffuse = true;
 		return this;
 	}
 
@@ -258,6 +321,51 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 					.getV((SpriteShiftEntry.getUnInterpolatedV(entry.getOriginal(), v) / sheetSize) + vTarget * 16);
 			builder.uv(targetU, targetV);
 		};
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer overlay() {
+		hasOverlay = true;
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer overlay(int overlay) {
+		hasOverlay = true;
+		this.overlay = overlay;
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer light() {
+		useWorldLight = true;
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer light(Matrix4f lightTransform) {
+		useWorldLight = true;
+		this.lightTransform = lightTransform;
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer light(int packedLight) {
+		hasCustomLight = true;
+		this.packedLightCoordinates = packedLight;
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer hybridLight() {
+		hybridLight = true;
+		return this;
+	}
+
+	@Override
+	public DefaultSuperByteBuffer fullNormalTransform() {
+		fullNormalTransform = true;
 		return this;
 	}
 
@@ -321,6 +429,14 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 
 	protected byte getNZ(int index) {
 		return template.get(getBufferPosition(index) + 30);
+	}
+
+	public static int maxLight(int packedLight1, int packedLight2) {
+		int blockLight1 = LightTexture.block(packedLight1);
+		int skyLight1 = LightTexture.sky(packedLight1);
+		int blockLight2 = LightTexture.block(packedLight2);
+		int skyLight2 = LightTexture.sky(packedLight2);
+		return LightTexture.pack(Math.max(blockLight1, blockLight2), Math.max(skyLight1, skyLight2));
 	}
 
 	private static int getLight(Level world, Vector4f lightPos) {

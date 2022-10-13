@@ -12,10 +12,11 @@ import net.createmod.catnip.config.ui.ConfigTextField;
 import net.createmod.catnip.config.ui.HintableTextFieldWidget;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.TextStencilElement;
+import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
@@ -43,20 +44,12 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 		if (this instanceof IntegerEntry && annotations.containsKey("IntDisplay")) {
 			String intDisplay = annotations.get("IntDisplay");
 			int intValue = (Integer) getValue();
-			String textValue;
-			switch (intDisplay) {
-				case "#":
-					textValue = "#" + Integer.toHexString(intValue).toUpperCase(Locale.ROOT);
-					break;
-				case "0x":
-					textValue = "0x" + Integer.toHexString(intValue).toUpperCase(Locale.ROOT);
-					break;
-				case "0b":
-					textValue = "0b" + Integer.toBinaryString(intValue);
-					break;
-				default:
-					textValue = String.valueOf(intValue);
-			}
+			String textValue = switch (intDisplay) {
+				case "#" -> "#" + Integer.toHexString(intValue).toUpperCase(Locale.ROOT);
+				case "0x" -> "0x" + Integer.toHexString(intValue).toUpperCase(Locale.ROOT);
+				case "0b" -> "0b" + Integer.toBinaryString(intValue);
+				default -> String.valueOf(intValue);
+			};
 			textField.setValue(textValue);
 		} else {
 			textField.setValue(String.valueOf(getValue()));
@@ -74,13 +67,13 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
 			Font font = Minecraft.getInstance().font;
 			if (min.doubleValue() > getTypeMin().doubleValue()) {
-				TextComponent t = new TextComponent(formatBound(min) + " < ");
+				MutableComponent t = Components.literal(formatBound(min) + " < ");
 				minText = new TextStencilElement(font, t).centered(true, false);
 				minText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0 ,0, height/2, height, width, Theme.Key.TEXT_DARKER.p()));
 				minOffset = font.width(t);
 			}
 			if (max.doubleValue() < getTypeMax().doubleValue()) {
-				TextComponent t = new TextComponent(" < " + formatBound(max));
+				MutableComponent t = Components.literal(" < " + formatBound(max));
 				maxText = new TextStencilElement(font, t).centered(true, false);
 				maxText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0 ,0, height/2, height, width, Theme.Key.TEXT_DARKER.p()));
 				maxOffset = font.width(t);
