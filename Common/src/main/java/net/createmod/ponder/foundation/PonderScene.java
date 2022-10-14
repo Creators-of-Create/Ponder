@@ -27,6 +27,7 @@ import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.createmod.catnip.gui.UIRenderHelper;
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
@@ -44,6 +45,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
@@ -52,6 +54,7 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
@@ -130,14 +133,14 @@ public class PonderScene {
 	}
 
 	public Pair<ItemStack, BlockPos> rayTraceScene(Vec3 from, Vec3 to) {
-		MutableObject<Pair<WorldSectionElement, BlockPos>> nearestHit = new MutableObject<>();
+		MutableObject<Pair<WorldSectionElement, Pair<Vec3, BlockHitResult>>> nearestHit = new MutableObject<>();
 		MutableDouble bestDistance = new MutableDouble(0);
 
 		forEach(WorldSectionElement.class, wse -> {
 			wse.resetSelectedBlock();
 			if (!wse.isVisible())
 				return;
-			Pair<Vec3, BlockPos> rayTrace = wse.rayTrace(world, from, to);
+			Pair<Vec3, BlockHitResult> rayTrace = wse.rayTrace(world, from, to);
 			if (rayTrace == null)
 				return;
 			double distanceTo = rayTrace.getFirst()
@@ -145,15 +148,15 @@ public class PonderScene {
 			if (nearestHit.getValue() != null && distanceTo >= bestDistance.getValue())
 				return;
 
-			nearestHit.setValue(Pair.of(wse, rayTrace.getSecond()));
+			nearestHit.setValue(Pair.of(wse, rayTrace));
 			bestDistance.setValue(distanceTo);
 		});
 
 		if (nearestHit.getValue() == null)
 			return Pair.of(ItemStack.EMPTY, BlockPos.ZERO);
 
-		BlockPos selectedPos = nearestHit.getValue()
-			.getSecond();
+		Pair<Vec3, BlockHitResult> selectedHit = nearestHit.getValue().getSecond();
+		BlockPos selectedPos = selectedHit.getSecond().getBlockPos();
 
 		BlockPos origin = new BlockPos(basePlateOffsetX, 0, basePlateOffsetZ);
 		if (!world.getBounds()
@@ -172,11 +175,17 @@ public class PonderScene {
 			.getFirst()
 			.selectBlock(selectedPos);
 		BlockState blockState = world.getBlockState(selectedPos);
-		ItemStack pickBlock = blockState.getBlock().getCloneItemStack(world, selectedPos, blockState);
-		/*ItemStack pickBlock = blockState.getCloneItemStack(
-			new BlockHitResult(VecHelper.getCenterOf(selectedPos), Direction.UP, selectedPos, true), world, selectedPos,
-			Minecraft.getInstance().player);
-		*/
+
+		Direction direction = selectedHit.getSecond().getDirection();
+		Vec3 location = selectedHit.getSecond().getLocation();
+
+		ItemStack pickBlock = CatnipServices.HOOKS.getCloneItemFromBlockstate(
+				blockState,
+				new BlockHitResult(location, direction, selectedPos, true),
+				world,
+				selectedPos,
+				Minecraft.getInstance().player
+		);
 
 		return Pair.of(pickBlock, selectedPos);
 	}

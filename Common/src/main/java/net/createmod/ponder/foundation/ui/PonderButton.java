@@ -106,6 +106,11 @@ public class PonderButton extends BoxWidget {
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (shortcut != null && shortcut.matches(keyCode, scanCode)) {
+
+			gradientColor1 = getClickTheme().c(true);
+			gradientColor2 = getClickTheme().c(false);
+			startGradientAnimation(getColorForState(true), getColorForState(false), true, 0.15);
+
 			runCallback(width / 2f, height / 2f);
 			return true;
 		}

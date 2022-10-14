@@ -152,13 +152,13 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
 		hoveredItem = ItemStack.EMPTY;
 		Window w = minecraft.getWindow();
-		double mouseX = minecraft.mouseHandler.xpos() * w.getGuiScaledWidth() / w.getScreenWidth();
-		double mouseY = minecraft.mouseHandler.ypos() * w.getGuiScaledHeight() / w.getScreenHeight();
+		int mX = (int) (this.minecraft.mouseHandler.xpos() * (double) w.getGuiScaledWidth() / (double) w.getScreenWidth());
+		int mY = (int) (this.minecraft.mouseHandler.ypos() * (double) w.getGuiScaledHeight() / (double) w.getScreenHeight());
 		for (GuiEventListener child : children()) {
 			if (child == backTrack)
 				continue;
 			if (child instanceof PonderButton button)
-				if (button.isMouseOver(mouseX, mouseY)) {
+				if (button.isMouseOver(mX, mY)) {
 					hoveredItem = button.getItem();
 				}
 		}

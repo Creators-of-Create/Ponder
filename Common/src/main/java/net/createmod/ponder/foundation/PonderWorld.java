@@ -48,7 +48,7 @@ public class PonderWorld extends SchematicWorld {
 	@Nullable public PonderScene scene;
 
 	protected Map<BlockPos, BlockState> originalBlocks;
-	protected Map<BlockPos, BlockEntity> originalTileEntities;
+	protected Map<BlockPos, CompoundTag> originalTileEntities;
 	protected Map<BlockPos, Integer> blockBreakingProgressions;
 	protected List<Entity> originalEntities;
 	private final Supplier<ClientLevel> asClientWorld = Suppliers.memoize(() -> WrappedClientWorld.of(this));
@@ -72,7 +72,7 @@ public class PonderWorld extends SchematicWorld {
 		originalTileEntities.clear();
 		originalBlocks.putAll(blocks);
 		tileEntities.forEach(
-			(k, v) -> originalTileEntities.put(k, BlockEntity.loadStatic(k, blocks.get(k), v.saveWithFullMetadata())));
+			(k, v) -> originalTileEntities.put(k, v.saveWithFullMetadata()));
 		entities.forEach(e -> {
 			CompoundTag tag = new CompoundTag();
 			e.save(tag);//TODO Used to use Forge's #serializeNBT, which includes Passengers
@@ -88,7 +88,7 @@ public class PonderWorld extends SchematicWorld {
 		renderedTileEntities.clear();
 		blocks.putAll(originalBlocks);
 		originalTileEntities.forEach((k, v) -> {
-			BlockEntity te = BlockEntity.loadStatic(k, originalBlocks.get(k), v.saveWithFullMetadata());
+			BlockEntity te = BlockEntity.loadStatic(k, originalBlocks.get(k), v);
 			onTEAdded(te, te.getBlockPos());
 			tileEntities.put(k, te);
 			renderedTileEntities.add(te);
@@ -101,8 +101,6 @@ public class PonderWorld extends SchematicWorld {
 		particles.clearEffects();
 
 		PonderIndex.forEachPlugin(plugin -> plugin.onPonderWorldRestore(this));
-
-		fixControllerTileEntities();
 	}
 
 	public void restoreBlocks(Selection selection) {
@@ -110,8 +108,7 @@ public class PonderWorld extends SchematicWorld {
 			if (originalBlocks.containsKey(p))
 				blocks.put(p, originalBlocks.get(p));
 			if (originalTileEntities.containsKey(p)) {
-				BlockEntity te = BlockEntity.loadStatic(p, originalBlocks.get(p), originalTileEntities.get(p)
-					.saveWithFullMetadata());
+				BlockEntity te = BlockEntity.loadStatic(p, originalBlocks.get(p), originalTileEntities.get(p));
 				if (te != null) {
 					onTEAdded(te, te.getBlockPos());
 					tileEntities.put(p, te);
@@ -249,10 +246,6 @@ public class PonderWorld extends SchematicWorld {
 		if (!(tileEntity instanceof VirtualTileEntity virtualTile))
 			return;
 		virtualTile.markVirtual();
-	}
-
-	public void fixControllerTileEntities() {
-
 	}
 
 	public void setBlockBreakingProgress(BlockPos pos, int damage) {
