@@ -180,8 +180,9 @@ public class BoxWidget extends ElementWidget {
 		return
 				x - 4 <= mX &&
 				y - 4 <= mY &&
-				mX <= x + 4 + width &&
-				mY <= y + 4 + height;
+				mX <= x + 3 + width &&
+				mY <= y + 3 + height;
+		//using 3 instead of the "correct" 4 for the last two gives better results
 	}
 
 	public BoxElement getBox() {
@@ -201,7 +202,7 @@ public class BoxWidget extends ElementWidget {
 		);
 	}
 
-	private void startGradientAnimation(Color c1, Color c2, boolean positive, double expSpeed) {
+	protected void startGradientAnimation(Color c1, Color c2, boolean positive, double expSpeed) {
 		if (!animateColors)
 			return;
 
@@ -216,11 +217,11 @@ public class BoxWidget extends ElementWidget {
 		colorTarget2 = c2;
 	}
 
-	private void startGradientAnimation(Color c1, Color c2, boolean positive) {
+	protected void startGradientAnimation(Color c1, Color c2, boolean positive) {
 		startGradientAnimation(c1, c2, positive, 0.6);
 	}
 
-	private Color getColorForState(boolean first) {
+	protected Color getColorForState(boolean first) {
 		if (!active)
 			return getDisabledTheme().p().get(first);
 

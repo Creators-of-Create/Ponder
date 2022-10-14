@@ -15,12 +15,12 @@ import net.minecraft.network.chat.Component;
 public abstract class AbstractSimiWidget extends AbstractWidget implements TickableGuiEventListener {
 
 	public static final int HEADER_RGB = 0x5391E1;
-	
+
 	protected float z;
 	protected boolean wasHovered = false;
 	protected List<Component> toolTip = new LinkedList<>();
 	protected BiConsumer<Integer, Integer> onClick = (_$, _$$) -> {};
-	
+
 	public int lockedTooltipX = -1;
 	public int lockedTooltipY = -1;
 
@@ -67,7 +67,7 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 	@Override
 	public void render(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
 		if (visible) {
-			isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
+			isHovered = isMouseOver(mouseX, mouseY);
 			beforeRender(ms, mouseX, mouseY, partialTicks);
 			renderButton(ms, mouseX, mouseY, partialTicks);
 			afterRender(ms, mouseX, mouseY, partialTicks);
@@ -89,6 +89,11 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 
 	public void runCallback(double mouseX, double mouseY) {
 		onClick.accept((int) mouseX, (int) mouseY);
+	}
+
+	@Override
+	protected boolean clicked(double mouseX, double mouseY) {
+		return this.isMouseOver(mouseX, mouseY);
 	}
 
 	@Override
