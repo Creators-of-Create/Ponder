@@ -2,7 +2,7 @@
     "schemaVersion": 1,
     "id": "${mod_id}",
     "version": "${version}",
-  
+
     "name": "${mod_name}",
     "description": "${mod_description}",
     "authors": [
@@ -14,20 +14,21 @@
       "homepage": "${mod_homepage}",
       "sources": "${mod_source}"
     },
-  
+
     "license": "${mod_license}",
     "environment": "*",
+  "accessWidener": "fabric_catnip.accesswidener",
     "entrypoints": {
       "main": [
-        "net.darkhax.examplemod.ExampleMod"
+        "net.createmod.catnip.FabricCatnip"
+      ],
+      "client": [
+        "net.createmod.catnip.FabricCatnipClient"
       ]
     },
-    "mixins": [
-      "${mod_id}.mixins.json"
-    ],
-  
+
     "depends": {
-      "fabricloader": ">=0.12",
+      "fabricloader": ">=0.13",
       "fabric": "*",
       "minecraft": "1.18.x",
       "java": ">=17"

@@ -6,6 +6,7 @@ import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.config.ModConfig;
 
 public class ClientboundConfigPacket implements ClientboundPacket {
@@ -27,6 +28,11 @@ public class ClientboundConfigPacket implements ClientboundPacket {
 	public void write(FriendlyByteBuf buffer) {
 		buffer.writeUtf(path);
 		buffer.writeUtf(value);
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return Catnip.asResource("config_packet");
 	}
 
 	public static class Handler {

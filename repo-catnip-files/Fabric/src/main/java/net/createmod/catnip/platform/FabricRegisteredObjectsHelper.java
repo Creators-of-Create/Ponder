@@ -61,4 +61,14 @@ public class FabricRegisteredObjectsHelper implements RegisteredObjectsHelper<Re
 	public ResourceLocation getKeyOrThrow(RecipeSerializer<?> value) {
 		return getKeyOrThrow(Registry.RECIPE_SERIALIZER, value);
 	}
+
+	@Override
+	public Item getItem(ResourceLocation location) {
+		return Registry.ITEM.get(location);
+	}
+
+	@Override
+	public Block getBlock(ResourceLocation location) {
+		return Registry.BLOCK.get(location);
+	}
 }

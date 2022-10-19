@@ -72,7 +72,7 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 
 	@Override
 	public void renderFullFluidState(PoseStack ms, MultiBufferSource.BufferSource buffer, FluidState fluid) {
-		BasicFluidRenderer.renderFluidBox(new FluidStack(fluid.getType(), 1000), 0, 0, 0, 1, 1, 1, buffer, ms, LightTexture.FULL_BRIGHT, false);
+		BasicFluidRenderer.renderFluidBox(fluid.getType(), 1000, 0, 0, 0, 1, 1, 1, buffer, ms, LightTexture.FULL_BRIGHT, false);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.CatnipRenderTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -14,8 +15,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.fluids.FluidStack;
 
 public class BasicFluidRenderer {
 
@@ -23,29 +22,26 @@ public class BasicFluidRenderer {
 		return buffer.getBuffer(CatnipRenderTypes.getFluid());
 	}
 
-	public static void renderFluidBox(FluidStack fluidStack, float xMin, float yMin, float zMin, float xMax,
+	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
 			float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom) {
-		renderFluidBox(fluidStack, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom);
+		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom);
 	}
 
-	public static void renderFluidBox(FluidStack fluidStack, float xMin, float yMin, float zMin, float xMax,
+	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
 			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom) {
-		Fluid fluid = fluidStack.getFluid();
-		FluidAttributes fluidAttributes = fluid.getAttributes();
 		TextureAtlasSprite fluidTexture = Minecraft.getInstance()
 				.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-				.apply(fluidAttributes.getStillTexture(fluidStack));
+				.apply(CatnipServices.FLUID_HELPER.getStillTexture(fluid));
 
-		int color = fluidAttributes.getColor(fluidStack);
+		int color = CatnipServices.FLUID_HELPER.getColor(fluid);
 		int blockLightIn = (light >> 4) & 0xF;
-		int luminosity = Math.max(blockLightIn, fluidAttributes.getLuminosity(fluidStack));
+		int luminosity = Math.max(blockLightIn, CatnipServices.FLUID_HELPER.getLuminosity(fluid));
 		light = (light & 0xF00000) | luminosity << 4;
 
 		Vec3 center = new Vec3(xMin + (xMax - xMin) / 2, yMin + (yMax - yMin) / 2, zMin + (zMax - zMin) / 2);
 		ms.pushPose();
-		if (fluidStack.getFluid()
-				.getAttributes()
-				.isLighterThanAir()) {
+		if (CatnipServices.FLUID_HELPER
+				.isLighterThanAir(fluid)) {
 			ms.translate(center.x, center.y, center.z);
 			ms.mulPose(Vector3f.XP.rotationDegrees(180));
 			ms.translate(-center.x, -center.y, -center.z);

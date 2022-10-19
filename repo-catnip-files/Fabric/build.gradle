@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'net.darkhax.curseforgegradle' version '1.0.7'
     id 'net.darkhax.tweedle' version '1.0.5'
     id 'idea'
@@ -17,6 +17,10 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modImplementation include("io.github.fabricators_of_create:Porting-Lib:${project.port_lib_version}+${project.minecraft_version}-stable")
+    modImplementation include("net.minecraftforge:forgeconfigapiport-fabric:3.2.3") //source: https://github.com/Fuzss/forgeconfigapiport-fabric
+    implementation(include("javax.annotation:javax.annotation-api:1.3.2"))
+    implementation(include("com.google.code.findbugs:jsr305:3.0.2"))
     modImplementation "com.terraformersmc:modmenu:3.0.0"
     implementation commonProject
 }
@@ -36,6 +40,8 @@ loom {
             runDir("run")
         }
     }
+
+    accessWidenerPath = file("src/main/resources/fabric_catnip.accesswidener")
 }
 
 processResources {
@@ -73,37 +79,37 @@ tasks.withType(JavaCompile) {
 
 // -- MAVEN PUBLISHING --
 commonProject.publishing {
-    
+
     publications {
-    
+
         mavenJava(MavenPublication) {
-        
+
             artifactId commonProject.archivesBaseName
-            
+
             // Base mod archive.
             artifact(remapJar) {
-            
+
                 builtBy remapJar
             }
-            
+
             // Adds the soruces as an artifact.
             artifact(sourcesJar) {
-            
+
                 builtBy remapSourcesJar
             }
         }
     }
-    
+
     repositories {
-    
+
         maven {
-        
+
             // Sets maven credentials if they are provided. This is generally
             // only used for external/remote uploads.
             if (commonProject.hasProperty('mavenUsername') && commonProject.hasProperty('mavenPassword')) {
-            
+
                 credentials {
-                
+
                     username findProperty('mavenUsername')
                     password findProperty('mavenPassword')
                 }
@@ -116,25 +122,25 @@ commonProject.publishing {
 
 // CurseForge Publishing
 /*task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-    
+
     apiToken = findProperty('curse_auth')
 
     def mainFile = upload(curse_project, file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
     mainFile.changelogType = 'markdown'
-    mainFile.changelog = project.ext.mod_changelog 
+    mainFile.changelog = project.ext.mod_changelog
     mainFile.addJavaVersion('Java 17')
-    
+
     // Append Patreon Supporters
     def patreonInfo = project.findProperty('patreon')
-        
+
     if (patreonInfo) {
         mainFile.changelog += "\n\nThis project is made possible by [Patreon](${patreonInfo.campaignUrlTracked}) support from players like you. Thank you!\n\n${patreonInfo.pledgeLog}"
     }
-    
+
     doLast {
-    
+
         if (project.hasProperty('mod_homepage')) {
-        
+
             project.ext.curse_file_url = "${mod_homepage}/files/${mainFile.curseFileId}"
         }
     }
@@ -143,33 +149,33 @@ commonProject.publishing {
 // Twitter Announcement
 /*
 def canTweet = project.hasProperty('twitter_api_key') && project.hasProperty('twitter_api_key_secret') && project.hasProperty('twitter_access_token') && project.hasProperty('twitter_access_token_secret')
-    
+
 task postTweet (type: net.darkhax.tweedle.TaskPostTweet){
-    
+
     onlyIf {
-    
+
         canTweet && project.hasProperty('minecraft_version') && project.hasProperty('curse_file_url')
     }
-    
+
     if (canTweet) {
-    
+
         addClient(project.findProperty('twitter_api_key'), project.findProperty('twitter_api_key_secret'), project.findProperty('twitter_access_token'), project.findProperty('twitter_access_token_secret'))
     }
-    
+
     doLast {
-    
+
         def tweetBody = "${project.ext.mod_name} (Fabric) ${project.version} for Minecraft ${project.ext.minecraft_version} has been released. #${project.ext.mod_name.toLowerCase().replaceAll("[^a-zA-Z]", "")} #fabric"
-        
+
         if (project.hasProperty('curse_file_url')) {
-            
+
             tweetBody += " ${project.findProperty('curse_file_url')}"
         }
-        
+
         sendTweet(tweetBody)
     }
 }
 
 if (!canTweet) {
-    
+
     project.logger.warn("Skipping Twitter plugin. APIKey: ${project.hasProperty('twitter_api_key')} ${project.hasProperty('twitter_api_key_secret')} AccessToken: ${project.hasProperty('twitter_access_token')} ${project.hasProperty('twitter_access_token_secret')}")
 }*/

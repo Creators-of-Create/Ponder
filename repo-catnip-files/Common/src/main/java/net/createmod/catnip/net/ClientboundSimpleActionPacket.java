@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import net.createmod.catnip.Catnip;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 
 public class ClientboundSimpleActionPacket implements ClientboundPacket {
 
@@ -39,6 +40,11 @@ public class ClientboundSimpleActionPacket implements ClientboundPacket {
 	public void write(FriendlyByteBuf buffer) {
 		buffer.writeUtf(action);
 		buffer.writeUtf(value);
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return Catnip.asResource("simple_action_packet");
 	}
 
 	public static class Handler {

@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.createmod.catnip.Catnip;
 import net.createmod.catnip.config.ui.ConfigHelper;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -36,6 +37,11 @@ public class ServerboundConfigPacket<T> implements ServerboundPacket {
 		buffer.writeUtf(modID);
 		buffer.writeUtf(path);
 		buffer.writeUtf(value);
+	}
+
+	@Override
+	public ResourceLocation getId() {
+		return Catnip.asResource("config_packet");
 	}
 
 	@Override
