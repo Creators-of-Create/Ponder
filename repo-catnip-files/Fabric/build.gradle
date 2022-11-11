@@ -84,19 +84,7 @@ commonProject.publishing {
 
         mavenJava(MavenPublication) {
 
-            artifactId commonProject.archivesBaseName
-
-            // Base mod archive.
-            artifact(remapJar) {
-
-                builtBy remapJar
-            }
-
-            // Adds the soruces as an artifact.
-            artifact(sourcesJar) {
-
-                builtBy remapSourcesJar
-            }
+            artifactId project.archivesBaseName
         }
     }
 
