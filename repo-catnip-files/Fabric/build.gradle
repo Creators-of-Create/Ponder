@@ -48,13 +48,13 @@ processResources {
 
     from commonProject.sourceSets.main.resources
 
-    def buildProps = commonProject.properties.clone()
+    def buildProps = project.properties.clone()
 
-    if (commonProject.hasProperty('patreon')) {
+    if (project.hasProperty('patreon')) {
 
         def supporters = new ArrayList<String>()
 
-        for (entry in commonProject.ext.patreon.pledges) {
+        for (entry in project.ext.patreon.pledges) {
 
             def pledge = entry.value;
 
@@ -78,13 +78,25 @@ tasks.withType(JavaCompile) {
 }
 
 // -- MAVEN PUBLISHING --
-commonProject.publishing {
+project.publishing {
 
     publications {
 
         mavenJava(MavenPublication) {
 
             artifactId project.archivesBaseName
+
+            // Base mod archive.
+            artifact(remapJar) {
+
+                builtBy remapJar
+            }
+
+            // Adds the soruces as an artifact.
+            artifact(sourcesJar) {
+
+                builtBy remapSourcesJar
+            }
         }
     }
 
