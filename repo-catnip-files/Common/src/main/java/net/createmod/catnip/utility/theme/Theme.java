@@ -162,18 +162,18 @@ public class Theme {
 
 		//
 
-		@Nonnull public Couple<Color> p() { return Theme.p(stringKey); }
+		public Couple<Color> p() { return Theme.p(stringKey); }
 
-		@Nonnull public Color c(boolean first) { return Theme.c(stringKey, first); }
+		public Color c(boolean first) { return Theme.c(stringKey, first); }
 
-		@Nonnull public Color c() { return Theme.c(stringKey); }
+		public Color c() { return Theme.c(stringKey); }
 
 		public int i(boolean first) { return Theme.i(stringKey, first); }
 
 		public int i() { return Theme.i(stringKey); }
 	}
 
-	private static class ColorHolder {
+	protected static class ColorHolder {
 
 		private static final ColorHolder MISSING = ColorHolder.single(Color.BLACK);
 

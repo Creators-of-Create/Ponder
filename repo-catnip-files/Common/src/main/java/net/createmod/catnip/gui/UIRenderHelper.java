@@ -1,5 +1,9 @@
 package net.createmod.catnip.gui;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -16,6 +20,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
@@ -25,6 +30,7 @@ import net.createmod.catnip.utility.theme.Color;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.Mth;
 
 public class UIRenderHelper {
 
@@ -242,6 +248,70 @@ public class UIRenderHelper {
 		RenderSystem.disableBlend();
 		RenderSystem.enableTexture();
 	}
+
+	/**
+	 * centered on 0, 0
+	 *
+	 * @param arcAngle length of the sector arc
+	 */
+	public static void drawRadialSector(PoseStack ms, float innerRadius, float outerRadius, float startAngle, float arcAngle, Color innerColor, Color outerColor) {
+
+		//todo params
+		//Color innerColor = Color.WHITE.setAlpha(0.05f);
+		//Color outerColor = Color.WHITE.setAlpha(0.3f);
+
+		List<Point2D> innerPoints = getPointsForCircleArc(innerRadius, startAngle, arcAngle);
+		List<Point2D> outerPoints = getPointsForCircleArc(outerRadius, startAngle, arcAngle);
+
+		// if arcAngle > 0, start with inner. otherwise start with outer
+
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.setShader(GameRenderer::getPositionColorShader);
+
+		BufferBuilder builder = Tesselator.getInstance().getBuilder();
+		//RenderSystem.lineWidth(4.0f);
+		//builder.begin(VertexFormat.Mode.LINE_STRIP, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+		builder.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+
+		Matrix4f pose = ms.last().pose();
+		Matrix3f n = ms.last().normal();
+
+		for (int i = 0; i < innerPoints.size(); i++) {
+			Point2D point = outerPoints.get(i);
+			//builder.vertex(pose, (float) point.getX(), (float) point.getY(), 0).color(innerColor.getRGB()).normal(n, 1, 1, 0).endVertex();
+			builder.vertex(pose, (float) point.getX(), (float) point.getY(), 0).color(outerColor.getRGB()).endVertex();
+
+			point = innerPoints.get(i);
+			builder.vertex(pose, (float) point.getX(), (float) point.getY(), 0).color(innerColor.getRGB()).endVertex();
+		}
+
+		Tesselator.getInstance().end();
+
+		RenderSystem.disableBlend();
+
+	}
+
+	private static List<Point2D> getPointsForCircleArc(float radius, float startAngle, float arcAngle) {
+		int segmentCount = Math.abs(arcAngle) <= 45 ? 8 : 16;
+		List<Point2D> points = new ArrayList<>(segmentCount);
+
+
+		float theta = (Mth.DEG_TO_RAD * arcAngle) / (float) (segmentCount - 1);
+		float t = Mth.DEG_TO_RAD * startAngle;
+
+		for (int i = 0; i < segmentCount; i++) {
+			points.add(new Point2D.Float(
+					(float) (radius * Math.cos(t)),
+					(float) (radius * Math.sin(t))
+			));
+
+			t += theta;
+		}
+
+		return points;
+	}
+
 
 	//just like AbstractGui#drawTexture, but with a color at every vertex
 	public static void drawColoredTexture(PoseStack ms, Color c, int x, int y, int tex_left, int tex_top, int width, int height) {
