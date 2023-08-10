@@ -8,14 +8,14 @@ import net.createmod.ponder.foundation.Selection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class TileEntityDataInstruction extends WorldModifyInstruction {
+public class BlockEntityDataInstruction extends WorldModifyInstruction {
 
 	private boolean redraw;
 	private UnaryOperator<CompoundTag> data;
 	private Class<? extends BlockEntity> type;
 
-	public TileEntityDataInstruction(Selection selection, Class<? extends BlockEntity> type,
-		UnaryOperator<CompoundTag> data, boolean redraw) {
+	public BlockEntityDataInstruction(Selection selection, Class<? extends BlockEntity> type,
+									  UnaryOperator<CompoundTag> data, boolean redraw) {
 		super(selection);
 		this.type = type;
 		this.data = data;
@@ -27,15 +27,15 @@ public class TileEntityDataInstruction extends WorldModifyInstruction {
 		PonderWorld world = scene.getWorld();
 		selection.forEach(pos -> {
 			if (!world.getBounds()
-				.isInside(pos))
+					.isInside(pos))
 				return;
-			BlockEntity tileEntity = world.getBlockEntity(pos);
-			if (!type.isInstance(tileEntity))
+			BlockEntity blockEntity = world.getBlockEntity(pos);
+			if (!type.isInstance(blockEntity))
 				return;
-			CompoundTag apply = data.apply(tileEntity.saveWithFullMetadata());
-			//if (tileEntity instanceof SyncedTileEntity)TODO
-			//	((SyncedTileEntity) tileEntity).readClient(apply);
-			tileEntity.load(apply);
+			CompoundTag apply = data.apply(blockEntity.saveWithFullMetadata());
+			//if (blockEntity instanceof SyncedBlockEntity) //TODO
+			//	((SyncedBlockEntity) blockEntity).readClient(apply);
+			blockEntity.load(apply);
 		});
 	}
 

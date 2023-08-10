@@ -22,6 +22,7 @@ import net.createmod.ponder.foundation.element.WorldSectionElement;
 import net.createmod.ponder.foundation.instruction.AnimateMinecartInstruction;
 import net.createmod.ponder.foundation.instruction.AnimateParrotInstruction;
 import net.createmod.ponder.foundation.instruction.AnimateWorldSectionInstruction;
+import net.createmod.ponder.foundation.instruction.BlockEntityDataInstruction;
 import net.createmod.ponder.foundation.instruction.ChaseAABBInstruction;
 import net.createmod.ponder.foundation.instruction.CreateMinecartInstruction;
 import net.createmod.ponder.foundation.instruction.CreateParrotInstruction;
@@ -41,7 +42,6 @@ import net.createmod.ponder.foundation.instruction.ReplaceBlocksInstruction;
 import net.createmod.ponder.foundation.instruction.RotateSceneInstruction;
 import net.createmod.ponder.foundation.instruction.ShowInputInstruction;
 import net.createmod.ponder.foundation.instruction.TextInstruction;
-import net.createmod.ponder.foundation.instruction.TileEntityDataInstruction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -94,7 +94,7 @@ public class SceneBuilder {
 	 */
 	public final SpecialInstructions special;
 
-	private final PonderScene scene;
+	protected final PonderScene scene;
 
 	public SceneBuilder(PonderScene ponderScene) {
 		scene = ponderScene;
@@ -153,6 +153,13 @@ public class SceneBuilder {
 	 */
 	public void scaleSceneView(float factor) {
 		scene.scaleFactor = factor;
+	}
+
+	/**
+	 * Use this to disable the base plates' shadow for this scene
+	 */
+	public void removeShadow() {
+		scene.hidePlatformShadow = true;
 	}
 
 	/**
@@ -325,6 +332,12 @@ public class SceneBuilder {
 		public void showFilterSlotInput(Vec3 location, int duration) {
 			float s = .1f;
 			Vec3 expands = new Vec3(s, s, s);
+			addInstruction(new HighlightValueBoxInstruction(location, expands, duration));
+		}
+
+		public void showFilterSlotInput(Vec3 location, Direction side, int duration) {
+			location = location.add(Vec3.atLowerCornerOf(side.getNormal()).scale(-3 / 128f));
+			Vec3 expands = VecHelper.axisAlingedPlaneOf(side).scale(11 / 128f);
 			addInstruction(new HighlightValueBoxInstruction(location, expands, duration));
 		}
 
@@ -585,23 +598,24 @@ public class SceneBuilder {
 			});
 		}
 
-		public void modifyTileNBT(Selection selection, Class<? extends BlockEntity> teType,
-			Consumer<CompoundTag> consumer) {
-			modifyTileNBT(selection, teType, consumer, false);
+		public void modifyBlockEntityNBT(Selection selection, Class<? extends BlockEntity> beType,
+										 Consumer<CompoundTag> consumer) {
+			modifyBlockEntityNBT(selection, beType, consumer, false);
 		}
 
-		public <T extends BlockEntity> void modifyTileEntity(BlockPos position, Class<T> teType, Consumer<T> consumer) {
+		public <T extends BlockEntity> void modifyBlockEntity(BlockPos position, Class<T> beType,
+															  Consumer<T> consumer) {
 			addInstruction(scene -> {
-				BlockEntity tileEntity = scene.getWorld()
-					.getBlockEntity(position);
-				if (teType.isInstance(tileEntity))
-					consumer.accept(teType.cast(tileEntity));
+				BlockEntity blockEntity = scene.getWorld()
+						.getBlockEntity(position);
+				if (beType.isInstance(blockEntity))
+					consumer.accept(beType.cast(blockEntity));
 			});
 		}
 
-		public void modifyTileNBT(Selection selection, Class<? extends BlockEntity> teType,
-			Consumer<CompoundTag> consumer, boolean reDrawBlocks) {
-			addInstruction(new TileEntityDataInstruction(selection, teType, nbt -> {
+		public void modifyBlockEntityNBT(Selection selection, Class<? extends BlockEntity> teType,
+										 Consumer<CompoundTag> consumer, boolean reDrawBlocks) {
+			addInstruction(new BlockEntityDataInstruction(selection, teType, nbt -> {
 				consumer.accept(nbt);
 				return nbt;
 			}, reDrawBlocks));

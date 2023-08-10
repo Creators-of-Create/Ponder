@@ -70,7 +70,7 @@ public class ForgePonderClient {
 							(mc, previousScreen) -> new BaseConfigScreen(previousScreen, Ponder.MOD_ID)));
 
 			BaseConfigScreen.setDefaultActionFor(Ponder.MOD_ID, base -> base
-					.withTitles("Client Settings", null, null)
+					.withButtonLabels("Client Settings", null, null)
 					.withSpecs(PonderConfig.Client().specification, null, null)
 			);
 		}

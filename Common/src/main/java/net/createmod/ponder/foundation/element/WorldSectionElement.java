@@ -63,8 +63,8 @@ public class WorldSectionElement extends AnimatedSceneElement {
 
 	private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(ThreadLocalObjects::new);
 
-	List<BlockEntity> renderedTileEntities;
-	List<Pair<BlockEntity, Consumer<Level>>> tickableTileEntities;
+	List<BlockEntity> renderedBlockEntities;
+	List<Pair<BlockEntity, Consumer<Level>>> tickableBlockEntities;
 	Selection section;
 	boolean redraw;
 
@@ -250,50 +250,50 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		prevAnimatedRotation = animatedRotation;
 		if (!isVisible())
 			return;
-		loadTEsIfMissing(scene.getWorld());
-		renderedTileEntities.removeIf(te -> scene.getWorld()
-			.getBlockEntity(te.getBlockPos()) != te);
-		tickableTileEntities.removeIf(te -> scene.getWorld()
-			.getBlockEntity(te.getFirst()
-				.getBlockPos()) != te.getFirst());
-		tickableTileEntities.forEach(te -> te.getSecond()
+		loadBEsIfMissing(scene.getWorld());
+		renderedBlockEntities.removeIf(be -> scene.getWorld()
+			.getBlockEntity(be.getBlockPos()) != be);
+		tickableBlockEntities.removeIf(be -> scene.getWorld()
+			.getBlockEntity(be.getFirst()
+				.getBlockPos()) != be.getFirst());
+		tickableBlockEntities.forEach(be -> be.getSecond()
 			.accept(scene.getWorld()));
 	}
 
 	@Override
 	public void whileSkipping(PonderScene scene) {
 		if (redraw) {
-			renderedTileEntities = null;
-			tickableTileEntities = null;
+			renderedBlockEntities = null;
+			tickableBlockEntities = null;
 		}
 		redraw = false;
 	}
 
-	protected void loadTEsIfMissing(PonderWorld world) {
-		if (renderedTileEntities != null)
+	protected void loadBEsIfMissing(PonderWorld world) {
+		if (renderedBlockEntities != null)
 			return;
-		tickableTileEntities = new ArrayList<>();
-		renderedTileEntities = new ArrayList<>();
+		tickableBlockEntities = new ArrayList<>();
+		renderedBlockEntities = new ArrayList<>();
 		section.forEach(pos -> {
-			BlockEntity tileEntity = world.getBlockEntity(pos);
+			BlockEntity blockEntity = world.getBlockEntity(pos);
 			BlockState blockState = world.getBlockState(pos);
 			Block block = blockState.getBlock();
-			if (tileEntity == null)
+			if (blockEntity == null)
 				return;
 			if (!(block instanceof EntityBlock))
 				return;
-			tileEntity.setBlockState(world.getBlockState(pos));
-			BlockEntityTicker<?> ticker = ((EntityBlock) block).getTicker(world, blockState, tileEntity.getType());
+			blockEntity.setBlockState(world.getBlockState(pos));
+			BlockEntityTicker<?> ticker = ((EntityBlock) block).getTicker(world, blockState, blockEntity.getType());
 			if (ticker != null)
-				addTicker(tileEntity, ticker);
-			renderedTileEntities.add(tileEntity);
+				addTicker(blockEntity, ticker);
+			renderedBlockEntities.add(blockEntity);
 		});
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends BlockEntity> void addTicker(T tileEntity, BlockEntityTicker<?> ticker) {
-		tickableTileEntities.add(Pair.of(tileEntity, w -> ((BlockEntityTicker<T>) ticker).tick(w,
-			tileEntity.getBlockPos(), tileEntity.getBlockState(), tileEntity)));
+	private <T extends BlockEntity> void addTicker(T blockEntity, BlockEntityTicker<?> ticker) {
+		tickableBlockEntities.add(Pair.of(blockEntity, w -> ((BlockEntityTicker<T>) ticker).tick(w,
+			blockEntity.getBlockPos(), blockEntity.getBlockState(), blockEntity)));
 	}
 
 	@Override
@@ -302,14 +302,14 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		if (fade != 1)
 			light = (int) (Mth.lerp(fade, 5, 14));
 		if (redraw) {
-			renderedTileEntities = null;
-			tickableTileEntities = null;
+			renderedBlockEntities = null;
+			tickableBlockEntities = null;
 		}
 
 		ms.pushPose();
 		transformMS(ms, pt);
 		world.pushFakeLight(light);
-		renderTileEntities(world, ms, buffer, pt);
+		renderBlockEntities(world, ms, buffer, pt);
 		world.popLight();
 
 		Map<BlockPos, Integer> blockBreakingProgressions = world.getBlockBreakingProgressions();
@@ -392,16 +392,16 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		aabbOutline.getParams()
 			.lineWidth(1 / 64f)
 			.colored(0xefefef)
-			.disableNormals();
-		aabbOutline.render(ms, (SuperRenderTypeBuffer) buffer, pt);
+			.disableLineNormals();
+		aabbOutline.render(ms, (SuperRenderTypeBuffer) buffer, Vec3.ZERO, pt);
 
 		ms.popPose();
 	}
 
-	private void renderTileEntities(PonderWorld world, PoseStack ms, MultiBufferSource buffer, float pt) {
-		loadTEsIfMissing(world);
+	private void renderBlockEntities(PonderWorld world, PoseStack ms, MultiBufferSource buffer, float pt) {
+		loadBEsIfMissing(world);
 
-		Iterator<BlockEntity> iterator = renderedTileEntities.iterator();
+		Iterator<BlockEntity> iterator = renderedBlockEntities.iterator();
 		while (iterator.hasNext()) {
 			BlockEntity tile = iterator.next();
 			BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(tile);
@@ -426,22 +426,25 @@ public class WorldSectionElement extends AnimatedSceneElement {
 
 			ms.popPose();
 		}
-		//TileEntityRenderHelper.renderTileEntities(world, renderedTileEntities, ms, buffer, pt);
 	}
 
-	/*private void renderStructureUnbuffered(PonderWorld world, RenderType layer, PoseStack ms, VertexConsumer consumer) {
-		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
+	/*private SuperByteBuffer buildStructureBuffer(PonderWorld world, RenderType layer) {
+		BlockRenderDispatcher dispatcher = ModelUtil.VANILLA_RENDERER;
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
-		PoseStack poseStack = ms;
+		PoseStack poseStack = objects.poseStack;
 		Random random = objects.random;
-		//BufferBuilder bufferBuilder = objects.unshadedBuilder;
+		ShadeSeparatingVertexConsumer shadeSeparatingWrapper = objects.shadeSeparatingWrapper;
+		BufferBuilder shadedBuilder = objects.shadedBuilder;
+		BufferBuilder unshadedBuilder = objects.unshadedBuilder;
 
+		shadedBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+		unshadedBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+		shadeSeparatingWrapper.prepare(shadedBuilder, unshadedBuilder);
 
-		//bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
 		world.setMask(this.section);
+		ForgeHooksClient.setRenderType(layer);
 		ModelBlockRenderer.enableCaching();
-
 		section.forEach(pos -> {
 			BlockState state = world.getBlockState(pos);
 			FluidState fluidState = world.getFluidState(pos);
@@ -449,22 +452,27 @@ public class WorldSectionElement extends AnimatedSceneElement {
 			poseStack.pushPose();
 			poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
 
-
-			if (state.getRenderShape() == RenderShape.MODEL && CatnipClientServices.CLIENT_HOOKS.chunkRenderTypeMatches(state, layer)) {
-				BlockEntity tile = world.getBlockEntity(pos);
-				CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, consumer, state, pos, world, true, random, tile);
+			if (state.getRenderShape() == RenderShape.MODEL && ItemBlockRenderTypes.canRenderInLayer(state, layer)) {
+				BlockEntity blockEntity = world.getBlockEntity(pos);
+				dispatcher.renderBatched(state, pos, world, poseStack, shadeSeparatingWrapper, true, random,
+					blockEntity != null ? blockEntity.getModelData() : EmptyModelData.INSTANCE);
 			}
 
-			if (!fluidState.isEmpty() && CatnipClientServices.CLIENT_HOOKS.fluidRenderTypeMatches(fluidState, layer)) {
-				dispatcher.renderLiquid(pos, world, consumer, state, fluidState);
-			}
+			if (!fluidState.isEmpty() && ItemBlockRenderTypes.canRenderInLayer(fluidState, layer))
+				dispatcher.renderLiquid(pos, world, shadedBuilder, state, fluidState);
 
 			poseStack.popPose();
 		});
-
 		ModelBlockRenderer.clearCache();
+		ForgeHooksClient.setRenderType(null);
 		world.clearMask();
-		//bufferBuilder.end();
+
+		shadeSeparatingWrapper.clear();
+		ShadeSeparatedBufferedData bufferedData = ModelUtil.endAndCombine(shadedBuilder, unshadedBuilder);
+
+		SuperByteBuffer sbb = new SuperByteBuffer(bufferedData);
+		bufferedData.release();
+		return sbb;
 	}*/
 
 	private SuperByteBuffer buildStructureBuffer(PonderWorld world, RenderType layer) {
@@ -488,8 +496,8 @@ public class WorldSectionElement extends AnimatedSceneElement {
 			poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
 
 			if (state.getRenderShape() == RenderShape.MODEL && CatnipClientServices.CLIENT_HOOKS.chunkRenderTypeMatches(state, layer)) {
-				BlockEntity tile = world.getBlockEntity(pos);
-				CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, builder, state, pos, world, true, random, tile);
+				BlockEntity blockEntity = world.getBlockEntity(pos);
+				CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, builder, state, pos, world, true, random, blockEntity);
 			}
 
 			if (!fluidState.isEmpty() && CatnipClientServices.CLIENT_HOOKS.fluidRenderTypeMatches(fluidState, layer))
@@ -509,7 +517,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 	private static class ThreadLocalObjects {
 		public final PoseStack poseStack = new PoseStack();
 		public final Random random = new Random();
-		//public final ShadeSeparatingVertexConsumer shadeSeparatingWrapper = new ShadeSeparatingVertexConsumer();
+		public final BufferBuilder shadedBuilder = new BufferBuilder(512);
 		public final BufferBuilder unshadedBuilder = new BufferBuilder(512);
 	}
 

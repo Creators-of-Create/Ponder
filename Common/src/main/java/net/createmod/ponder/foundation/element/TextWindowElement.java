@@ -12,6 +12,7 @@ import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.foundation.PonderLocalization;
 import net.createmod.ponder.foundation.PonderPalette;
 import net.createmod.ponder.foundation.PonderScene;
+import net.createmod.ponder.foundation.PonderScene.SceneTransform;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.network.chat.FormattedText;
@@ -94,28 +95,38 @@ public class TextWindowElement extends AnimatedOverlayElement {
 			bakedText = textGetter.get();
 		if (fade < 1 / 16f)
 			return;
-		Vec2 sceneToScreen = vec != null ? scene.getTransform()
-			.sceneToScreen(vec, partialTicks) : new Vec2(screen.width / 2, (screen.height - 200) / 2 + y - 8);
+		SceneTransform transform = scene.getTransform();
+		Vec2 sceneToScreen = vec != null ? transform.sceneToScreen(vec, partialTicks)
+				: new Vec2(screen.width / 2, (screen.height - 200) / 2 + y - 8);
+
+		boolean settled = transform.xRotation.settled() && transform.yRotation.settled();
+		float pY = settled ? (int) sceneToScreen.y : sceneToScreen.y;
 
 		float yDiff = (screen.height / 2f - sceneToScreen.y - 10) / 100f;
-		int targetX = (int) (screen.width * Mth.lerp(yDiff * yDiff, 6f / 8, 5f / 8));
+		float targetX = (screen.width * Mth.lerp(yDiff * yDiff, 6f / 8, 5f / 8));
 
 		if (nearScene)
-			targetX = (int) Math.min(targetX, sceneToScreen.x + 50);
+			targetX = Math.min(targetX, sceneToScreen.x + 50);
 
-		int textWidth = Math.min(screen.width - targetX, 180);
+		if (settled)
+			targetX = (int) targetX;
 
-		List<FormattedText> lines = screen.getFontRenderer().getSplitter().splitLines(bakedText, textWidth, Style.EMPTY);
+		int textWidth = (int) Math.min(screen.width - targetX, 180);
+
+		List<FormattedText> lines = screen.getFontRenderer()
+				.getSplitter()
+				.splitLines(bakedText, textWidth, Style.EMPTY);
 
 		int boxWidth = 0;
 		for (FormattedText line : lines)
-			boxWidth = Math.max(boxWidth, screen.getFontRenderer().width(line));
+			boxWidth = Math.max(boxWidth, screen.getFontRenderer()
+					.width(line));
 
 		int boxHeight = screen.getFontRenderer()
-			.wordWrapHeight(bakedText, boxWidth);
+				.wordWrapHeight(bakedText, boxWidth);
 
 		ms.pushPose();
-		ms.translate(0, sceneToScreen.y, 400);
+		ms.translate(0, pY, 400);
 
 		new BoxElement()
 				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())

@@ -48,7 +48,7 @@ public class PonderWorld extends SchematicWorld {
 	@Nullable public PonderScene scene;
 
 	protected Map<BlockPos, BlockState> originalBlocks;
-	protected Map<BlockPos, CompoundTag> originalTileEntities;
+	protected Map<BlockPos, CompoundTag> originalBlockEntities;
 	protected Map<BlockPos, Integer> blockBreakingProgressions;
 	protected List<Entity> originalEntities;
 	private final Supplier<ClientLevel> asClientWorld = Suppliers.memoize(() -> WrappedClientWorld.of(this));
@@ -61,7 +61,7 @@ public class PonderWorld extends SchematicWorld {
 	public PonderWorld(BlockPos anchor, Level original) {
 		super(anchor, original);
 		originalBlocks = new HashMap<>();
-		originalTileEntities = new HashMap<>();
+		originalBlockEntities = new HashMap<>();
 		blockBreakingProgressions = new HashMap<>();
 		originalEntities = new ArrayList<>();
 		particles = new PonderWorldParticles(this);
@@ -69,10 +69,10 @@ public class PonderWorld extends SchematicWorld {
 
 	public void createBackup() {
 		originalBlocks.clear();
-		originalTileEntities.clear();
+		originalBlockEntities.clear();
 		originalBlocks.putAll(blocks);
-		tileEntities.forEach(
-			(k, v) -> originalTileEntities.put(k, v.saveWithFullMetadata()));
+		blockEntities.forEach(
+			(k, v) -> originalBlockEntities.put(k, v.saveWithFullMetadata()));
 		entities.forEach(e -> {
 			CompoundTag tag = new CompoundTag();
 			e.save(tag);//TODO Used to use Forge's #serializeNBT, which includes Passengers
@@ -83,15 +83,15 @@ public class PonderWorld extends SchematicWorld {
 	public void restore() {
 		entities.clear();
 		blocks.clear();
-		tileEntities.clear();
+		blockEntities.clear();
 		blockBreakingProgressions.clear();
-		renderedTileEntities.clear();
+		renderedBlockEntities.clear();
 		blocks.putAll(originalBlocks);
-		originalTileEntities.forEach((k, v) -> {
-			BlockEntity te = BlockEntity.loadStatic(k, originalBlocks.get(k), v);
-			onTEAdded(te, te.getBlockPos());
-			tileEntities.put(k, te);
-			renderedTileEntities.add(te);
+		originalBlockEntities.forEach((k, v) -> {
+			BlockEntity blockEntity = BlockEntity.loadStatic(k, originalBlocks.get(k), v);
+			onBEAdded(blockEntity, blockEntity.getBlockPos());
+			blockEntities.put(k, blockEntity);
+			renderedBlockEntities.add(blockEntity);
 		});
 		originalEntities.forEach(e -> {
 			CompoundTag tag = new CompoundTag();
@@ -107,11 +107,11 @@ public class PonderWorld extends SchematicWorld {
 		selection.forEach(p -> {
 			if (originalBlocks.containsKey(p))
 				blocks.put(p, originalBlocks.get(p));
-			if (originalTileEntities.containsKey(p)) {
-				BlockEntity te = BlockEntity.loadStatic(p, originalBlocks.get(p), originalTileEntities.get(p));
-				if (te != null) {
-					onTEAdded(te, te.getBlockPos());
-					tileEntities.put(p, te);
+			if (originalBlockEntities.containsKey(p)) {
+				BlockEntity blockEntity = BlockEntity.loadStatic(p, originalBlocks.get(p), originalBlockEntities.get(p));
+				if (blockEntity != null) {
+					onBEAdded(blockEntity, blockEntity.getBlockPos());
+					blockEntities.put(p, blockEntity);
 				}
 			}
 		});
@@ -240,10 +240,9 @@ public class PonderWorld extends SchematicWorld {
 			particles.addParticle(p);
 	}
 
-	@Override
-	protected void onTEAdded(BlockEntity tileEntity, BlockPos pos) {
-		super.onTEAdded(tileEntity, pos);
-		if (!(tileEntity instanceof VirtualTileEntity virtualTile))
+	protected void onBEAdded(BlockEntity blockEntity, BlockPos pos) {
+		super.onBEadded(blockEntity, pos);
+		if (!(blockEntity instanceof VirtualTileEntity virtualTile))
 			return;
 		virtualTile.markVirtual();
 	}

@@ -98,8 +98,8 @@ public class PonderTag implements ScreenElement {
 			ms.scale(0.25f, 0.25f, 1);
 			GuiComponent.blit(ms, 0, 0, 0, 0, 0, 64, 64, 64, 64);
 		} else if (!itemIcon.isEmpty()) {
-			ms.translate(-4, -4, 0);
-			ms.scale(1.5f, 1.5f, 1.5f);
+			ms.translate(-2, -2, 0);
+			ms.scale(1.25f, 1.25f, 1.25f);
 			GuiGameElement.of(itemIcon)
 				.render(ms);
 		}

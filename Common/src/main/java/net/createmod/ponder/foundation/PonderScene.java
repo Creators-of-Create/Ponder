@@ -93,6 +93,7 @@ public class PonderScene {
 	int basePlateSize;
 	float scaleFactor;
 	float yOffset;
+	boolean hidePlatformShadow;
 
 	private boolean stoppedCounting;
 	private int totalTime;
@@ -105,6 +106,7 @@ public class PonderScene {
 
 		pointOfInterest = Vec3.ZERO;
 		textIndex = 1;
+		hidePlatformShadow = false;
 
 		this.world = world;
 		this.namespace = namespace;
@@ -249,7 +251,7 @@ public class PonderScene {
 		camera.set(transform.xRotation.getValue(pt) + 90, transform.yRotation.getValue(pt) + 180);
 		world.renderEntities(ms, buffer, camera, pt);
 		world.renderParticles(ms, buffer, camera, pt);
-		outliner.renderOutlines(ms, buffer, pt);
+		outliner.renderOutlines(ms, buffer, Vec3.ZERO, pt);
 
 		ms.popPose();
 		//ForcedDiffuseState.popCalculator();
@@ -463,6 +465,10 @@ public class PonderScene {
 		return basePlateOffsetZ;
 	}
 
+	public boolean shouldHidePlatformShadow() {
+		return hidePlatformShadow;
+	}
+
 	public int getBasePlateSize() {
 		return basePlateSize;
 	}
@@ -539,9 +545,11 @@ public class PonderScene {
 			UIRenderHelper.flipForGuiRender(ms);
 			float f = 30 * scaleFactor;
 			ms.scale(f, f, f);
-			ms.translate((basePlateSize + basePlateOffsetX) / -2f, -1f + yOffset,
-					(basePlateSize + basePlateOffsetZ) / -2f);
-
+			ms.translate(
+					basePlateSize / -2f - basePlateOffsetX,
+					-1f + yOffset,
+					basePlateSize / -2f - basePlateOffsetZ
+			);
 
 			return ms;
 		}
@@ -568,8 +576,11 @@ public class PonderScene {
 			float f = 1f / (30 * scaleFactor);
 
 			vec = vec.multiply(f, -f, f);
-			vec = vec.subtract((basePlateSize + basePlateOffsetX) / -2f, -1f + yOffset,
-				(basePlateSize + basePlateOffsetZ) / -2f);
+			vec = vec.subtract(
+					basePlateSize / -2f - basePlateOffsetX,
+					-1f + yOffset,
+					basePlateSize / -2f - basePlateOffsetZ
+			);
 
 			return vec;
 		}
@@ -590,7 +601,7 @@ public class PonderScene {
 
 	}
 
-	public class SceneCamera extends Camera {
+	public static class SceneCamera extends Camera {
 
 		public void set(float xRotation, float yRotation) {
 			setRotation(yRotation, xRotation);
