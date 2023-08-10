@@ -1,6 +1,7 @@
 package net.createmod.catnip.platform.services;
 
 import net.createmod.catnip.net.BasePacket;
+import net.createmod.catnip.net.ClientboundSimpleActionPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -15,5 +16,9 @@ public interface NetworkHelper {
 	void sendToEntity(Entity entity, BasePacket packet);
 
 	void sendToServer(BasePacket packet);
+
+	default void simpleActionToClient(Player player, String action, String value) {
+		sendToPlayer(player, new ClientboundSimpleActionPacket(action, value));
+	}
 
 }

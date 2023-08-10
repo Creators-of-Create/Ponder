@@ -63,6 +63,8 @@ public interface SuperByteBuffer extends Transform<SuperByteBuffer>, TStack<Supe
 
 	//
 
+	default void delete() {}
+
 	default <Self extends SuperByteBuffer> Self rotate(Direction.Axis axis, float radians) {
 		return (Self) rotate(Direction.get(Direction.AxisDirection.POSITIVE, axis), radians);
 	}

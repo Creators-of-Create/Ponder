@@ -25,7 +25,7 @@ public class CatnipClient {
 	public static final Outliner OUTLINER = new Outliner();
 
 	public static void init() {
-		SuperByteBufferCache.getInstance().registerCompartment(CachedBlockBuffers.GENERIC_TILE);
+		SuperByteBufferCache.getInstance().registerCompartment(CachedBlockBuffers.GENERIC_BLOCK);
 
 		UIRenderHelper.init();
 	}
@@ -52,11 +52,11 @@ public class CatnipClient {
 		float partialTicks = AnimationTickHolder.getPartialTicks();
 
 		ms.pushPose();
-		ms.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
+		//ms.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
 		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBufferImpl.getInstance();
 
-		GHOST_BLOCKS.renderAll(ms, buffer);
-		OUTLINER.renderOutlines(ms, buffer, partialTicks);
+		GHOST_BLOCKS.renderAll(ms, buffer, cameraPos);
+		OUTLINER.renderOutlines(ms, buffer, cameraPos, partialTicks);
 
 		buffer.draw();
 		ms.popPose();

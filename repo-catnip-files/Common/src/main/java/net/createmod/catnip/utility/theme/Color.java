@@ -8,6 +8,7 @@ import com.google.common.hash.Hashing;
 import com.mojang.math.Vector3f;
 
 import net.createmod.catnip.utility.Couple;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
@@ -151,6 +152,10 @@ public class Color {
 
 	public Vector3f asVectorF() {
 		return new Vector3f(getRedAsFloat(), getGreenAsFloat(), getBlueAsFloat());
+	}
+
+	public Style asStyle() {
+		return Style.EMPTY.withColor(this.value);
 	}
 
 	public Color setRed(int r) {

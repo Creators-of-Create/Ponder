@@ -85,7 +85,7 @@ public class ForgeCatnipClient {
 							(mc, previousScreen) -> new BaseConfigScreen(previousScreen, Catnip.MOD_ID)));
 
 			BaseConfigScreen.setDefaultActionFor(Catnip.MOD_ID, base -> base
-					.withTitles("Client Settings", null, null)
+					.withButtonLabels("Client Settings", null, null)
 					.withSpecs(CatnipConfig.Client().specification, null, null)
 			);
 		}

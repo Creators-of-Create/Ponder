@@ -20,9 +20,9 @@ import net.createmod.catnip.gui.element.FadableScreenElement;
 import net.createmod.catnip.gui.element.TextStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.FontHelper;
+import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Theme;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
@@ -34,7 +34,7 @@ public class BaseConfigScreen extends ConfigScreen {
 
 	static {
 		DEFAULTS.put(Catnip.MOD_ID, base -> base
-				.withTitles("Client Settings", null, null)
+				.withButtonLabels("Client Settings", null, null)
 				.withSpecs(CatnipConfig.Client().specification, null, null)
 		);
 	}
@@ -61,9 +61,9 @@ public class BaseConfigScreen extends ConfigScreen {
 	@Nullable ForgeConfigSpec clientSpec;
 	@Nullable ForgeConfigSpec commonSpec;
 	@Nullable ForgeConfigSpec serverSpec;
-	String clientTile = "Client Config";
-	String commonTile = "Common Config";
-	String serverTile = "Server Config";
+	String clientButtonLabel = "Client Config";
+	String commonButtonLabel = "Common Config";
+	String serverButtonLabel = "Server Config";
 	String modID;
 	protected boolean returnOnClose;
 
@@ -115,15 +115,15 @@ public class BaseConfigScreen extends ConfigScreen {
 		return this;
 	}
 
-	public BaseConfigScreen withTitles(@Nullable String client, @Nullable String common, @Nullable String server) {
+	public BaseConfigScreen withButtonLabels(@Nullable String client, @Nullable String common, @Nullable String server) {
 		if (client != null)
-			clientTile = client;
+			clientButtonLabel = client;
 
 		if (common != null)
-			commonTile = common;
+			commonButtonLabel = common;
 
 		if (server != null)
-			serverTile = server;
+			serverButtonLabel = server;
 
 		return this;
 	}
@@ -133,7 +133,7 @@ public class BaseConfigScreen extends ConfigScreen {
 		super.init();
 		returnOnClose = true;
 
-		TextStencilElement clientText = new TextStencilElement(font, Components.literal(clientTile)).centered(true, true);
+		TextStencilElement clientText = new TextStencilElement(font, Components.literal(clientButtonLabel)).centered(true, true);
 		addRenderableWidget(clientConfigWidget = new BoxWidget(width / 2 - 100, height / 2 - 15 - 30, 200, 16).showingElement(clientText));
 
 		if (clientSpec != null) {
@@ -145,7 +145,7 @@ public class BaseConfigScreen extends ConfigScreen {
 			clientText.withElementRenderer(DISABLED_RENDERER);
 		}
 
-		TextStencilElement commonText = new TextStencilElement(font, Components.literal(commonTile)).centered(true, true);
+		TextStencilElement commonText = new TextStencilElement(font, Components.literal(commonButtonLabel)).centered(true, true);
 		addRenderableWidget(commonConfigWidget = new BoxWidget(width / 2 - 100, height / 2 - 15, 200, 16).showingElement(commonText));
 
 		if (commonSpec != null) {
@@ -157,7 +157,7 @@ public class BaseConfigScreen extends ConfigScreen {
 			commonText.withElementRenderer(DISABLED_RENDERER);
 		}
 
-		TextStencilElement serverText = new TextStencilElement(font, Components.literal(serverTile)).centered(true, true);
+		TextStencilElement serverText = new TextStencilElement(font, Components.literal(serverButtonLabel)).centered(true, true);
 		addRenderableWidget(serverConfigWidget = new BoxWidget(width / 2 - 100, height / 2 - 15 + 30, 200, 16).showingElement(serverText));
 
 		if (serverSpec == null) {
@@ -172,7 +172,7 @@ public class BaseConfigScreen extends ConfigScreen {
 					.addAll(FontHelper.cutTextComponent(
 							Components.literal(
 									"Gameplay settings can only be accessed from the in-game menu after joining a World or Server."),
-							ChatFormatting.GRAY, ChatFormatting.GRAY));
+							Palette.ALL_GRAY));
 		} else {
 			serverConfigWidget.withCallback(() -> linkTo(new SubMenuConfigScreen(this, ModConfig.Type.SERVER, serverSpec)));
 			serverText.withElementRenderer(BoxWidget.gradientFactory.apply(serverConfigWidget));

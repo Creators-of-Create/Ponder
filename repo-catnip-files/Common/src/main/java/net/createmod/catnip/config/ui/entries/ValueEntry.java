@@ -21,6 +21,7 @@ import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.FontHelper;
+import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
@@ -73,16 +74,17 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 		// add comment to tooltip
 		labelTooltip.addAll(commentLines.stream()
 				.filter(s -> !s.startsWith("Range"))
+				.map(s -> s.equals(".") ? " " : s)
 				.map(Components::literal)
-				.flatMap(stc -> FontHelper.cutTextComponent(stc, ChatFormatting.GRAY, ChatFormatting.GRAY).stream())
+				.flatMap(stc -> FontHelper.cutTextComponent(stc, Palette.ALL_GRAY).stream())
 				.toList()
 		);
 
 		if (annotations.containsKey(ConfigAnnotations.RequiresRelog.TRUE.getName()))
-			labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("Changing this value will require a _relog_ to take full effect"), ChatFormatting.GRAY, ChatFormatting.GOLD));
+			labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("Changing this value will require a _relog_ to take full effect"), Palette.GRAY_AND_GOLD));
 
 		if (annotations.containsKey(ConfigAnnotations.RequiresRestart.CLIENT.getName()))
-			labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("Changing this value will require a _restart_ to take full effect"), ChatFormatting.GRAY, ChatFormatting.RED));
+			labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("Changing this value will require a _restart_ to take full effect"), Palette.GRAY_AND_RED));
 
 		labelTooltip.add(Components.literal(ConfigScreen.modID + ":" + path.get(path.size() - 1)).withStyle(ChatFormatting.DARK_GRAY));
 	}

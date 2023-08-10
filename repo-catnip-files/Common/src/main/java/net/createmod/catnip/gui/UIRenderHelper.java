@@ -325,8 +325,15 @@ public class UIRenderHelper {
 	public static void drawStretched(PoseStack ms, int left, int top, int w, int h, int z, TextureSheetSegment tex) {
 		tex.bind();
 		drawTexturedQuad(ms.last()
-			.pose(), Color.WHITE, left, left + w, top, top + h, z, tex.getStartX() / 256f, (tex.getStartX() + tex.getWidth()) / 256f,
-			tex.getStartY() / 256f, (tex.getStartY() + tex.getHeight()) / 256f);
+						.pose(), Color.WHITE, left, left + w, top, top + h, z, tex.getStartX() / 256f, (tex.getStartX() + tex.getWidth()) / 256f,
+				tex.getStartY() / 256f, (tex.getStartY() + tex.getHeight()) / 256f);
+	}
+
+	public static void drawCropped(PoseStack ms, int left, int top, int w, int h, int z, TextureSheetSegment tex) {
+		tex.bind();
+		drawTexturedQuad(ms.last()
+						.pose(), Color.WHITE, left, left + w, top, top + h, z, tex.getStartX() / 256f, (tex.getStartX() + w) / 256f,
+				tex.getStartY() / 256f, (tex.getStartY() + h) / 256f);
 	}
 
 	private static void drawColoredTexture(PoseStack ms, Color c, int left, int right, int top, int bot, int z, int tex_width, int tex_height, float tex_left, float tex_top, int sheet_width, int sheet_height) {

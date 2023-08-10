@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.FontHelper;
 
 public class Theme {
 
@@ -41,6 +42,8 @@ public class Theme {
 				.map(holder -> holder.lookupKey == null ? holder : resolve(holder.lookupKey))
 				.orElse(ColorHolder.MISSING);
 	}
+
+	@Nonnull public static FontHelper.Palette palette(String key) {return resolve(key).getPalette();}
 
 	@Nonnull public static Couple<Color> p(String key) {return resolve(key).asPair();}
 
@@ -162,6 +165,8 @@ public class Theme {
 
 		//
 
+		public FontHelper.Palette palette() { return Theme.palette(stringKey); }
+
 		public Couple<Color> p() { return Theme.p(stringKey); }
 
 		public Color c(boolean first) { return Theme.c(stringKey, first); }
@@ -178,18 +183,20 @@ public class Theme {
 		private static final ColorHolder MISSING = ColorHolder.single(Color.BLACK);
 
 		private Couple<Color> colors = Couple.create(Color.BLACK, Color.PURPLE);
-		@Nullable
-		private String lookupKey;
+		private FontHelper.Palette palette = FontHelper.Palette.ALL_GRAY;
+		@Nullable private String lookupKey;
 
 		private static ColorHolder single(Color c) {
 			ColorHolder h = new ColorHolder();
 			h.colors = Couple.create(c.setImmutable(), c.setImmutable());
+			h.palette = asPalette(h.colors);
 			return h;
 		}
 
 		private static ColorHolder pair(Color first, Color second) {
 			ColorHolder h = new ColorHolder();
 			h.colors = Couple.create(first.setImmutable(), second.setImmutable());
+			h.palette = asPalette(h.colors);
 			return h;
 		}
 
@@ -205,6 +212,14 @@ public class Theme {
 
 		private Couple<Color> asPair() {
 			return colors;
+		}
+
+		private FontHelper.Palette getPalette() {
+			return palette;
+		}
+
+		private static FontHelper.Palette asPalette(Couple<Color> colors) {
+			return new FontHelper.Palette(colors.getFirst().asStyle(), colors.getSecond().asStyle());
 		}
 
 	}

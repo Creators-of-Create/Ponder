@@ -187,8 +187,8 @@ public class VecHelper {
 	}
 
 	public static Vec3 clamp(Vec3 vec, float maxLength) {
-		return vec.length() > maxLength ? vec.normalize()
-			.scale(maxLength) : vec;
+		return vec.lengthSqr() > maxLength * maxLength ? vec.normalize()
+				.scale(maxLength) : vec;
 	}
 
 	public static Vec3 lerp(float p, Vec3 from, Vec3 to) {
@@ -208,6 +208,14 @@ public class VecHelper {
 			Mth.clamp(vec.z, -maxLength, maxLength));
 	}
 
+	public static Vec3 componentMin(Vec3 vec1, Vec3 vec2) {
+		return new Vec3(Math.min(vec1.x, vec2.x), Math.min(vec1.y, vec2.y), Math.min(vec1.z, vec2.z));
+	}
+
+	public static Vec3 componentMax(Vec3 vec1, Vec3 vec2) {
+		return new Vec3(Math.max(vec1.x, vec2.x), Math.max(vec1.y, vec2.y), Math.max(vec1.z, vec2.z));
+	}
+
 	public static Vec3 project(Vec3 vec, Vec3 ontoVec) {
 		if (ontoVec.equals(Vec3.ZERO))
 			return Vec3.ZERO;
@@ -218,7 +226,7 @@ public class VecHelper {
 	public static Vec3 intersectSphere(Vec3 origin, Vec3 lineDirection, Vec3 sphereCenter, double radius) {
 		if (lineDirection.equals(Vec3.ZERO))
 			return null;
-		if (lineDirection.length() != 1)
+		if (lineDirection.lengthSqr() != 1)
 			lineDirection = lineDirection.normalize();
 
 		Vec3 diff = origin.subtract(sphereCenter);
@@ -309,7 +317,7 @@ public class VecHelper {
 			return null;
 		if (intersect[0] < 0 || intersect[1] < 0)
 			return null;
-		if (intersect[0] > pDiff.length() || intersect[1] > qDiff.length())
+		if (intersect[0] * intersect[0] > pDiff.lengthSqr() || intersect[1] * intersect[1] > qDiff.lengthSqr())
 			return null;
 		return intersect;
 	}

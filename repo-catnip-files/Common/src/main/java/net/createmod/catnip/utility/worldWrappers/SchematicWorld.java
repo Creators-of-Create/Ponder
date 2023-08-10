@@ -11,12 +11,14 @@ import java.util.stream.Stream;
 
 import net.createmod.catnip.Catnip;
 import net.createmod.catnip.utility.BBHelper;
+import net.createmod.catnip.utility.NBTProcessors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
@@ -42,10 +44,10 @@ import net.minecraft.world.ticks.LevelTickAccess;
 public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor {
 
 	protected Map<BlockPos, BlockState> blocks;
-	protected Map<BlockPos, BlockEntity> tileEntities;
-	protected List<BlockEntity> renderedTileEntities;
+	protected Map<BlockPos, BlockEntity> blockEntities;
+	protected List<BlockEntity> renderedBlockEntities;
 	protected List<Entity> entities;
-	private BoundingBox bounds;
+	protected BoundingBox bounds;
 
 	public BlockPos anchor;
 	public boolean renderMode;
@@ -58,11 +60,11 @@ public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor 
 		super(original);
 		setChunkSource(new SchematicChunkSource(this));
 		this.blocks = new HashMap<>();
-		this.tileEntities = new HashMap<>();
+		this.blockEntities = new HashMap<>();
 		this.bounds = new BoundingBox(BlockPos.ZERO);
 		this.anchor = anchor;
 		this.entities = new ArrayList<>();
-		this.renderedTileEntities = new ArrayList<>();
+		this.renderedBlockEntities = new ArrayList<>();
 	}
 
 	public Set<BlockPos> getAllPositions() {
@@ -71,14 +73,12 @@ public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor 
 
 	@Override
 	public boolean addFreshEntity(Entity entityIn) {
-		if (entityIn instanceof ItemFrame)
-			((ItemFrame) entityIn).getItem()
-				.setTag(null);
-		if (entityIn instanceof ArmorStand) {
-			ArmorStand armorStandEntity = (ArmorStand) entityIn;
-			armorStandEntity.getAllSlots()
-				.forEach(stack -> stack.setTag(null));
-		}
+		if (entityIn instanceof ItemFrame itemFrame)
+			itemFrame.setItem(NBTProcessors.withUnsafeNBTDiscarded(itemFrame.getItem()));
+		if (entityIn instanceof ArmorStand armorStand)
+			for (EquipmentSlot equipmentSlot : EquipmentSlot.values())
+				armorStand.setItemSlot(equipmentSlot,
+						NBTProcessors.withUnsafeNBTDiscarded(armorStand.getItemBySlot(equipmentSlot)));
 
 		return entities.add(entityIn);
 	}
@@ -91,34 +91,30 @@ public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor 
 	public BlockEntity getBlockEntity(BlockPos pos) {
 		if (isOutsideBuildHeight(pos))
 			return null;
-		if (tileEntities.containsKey(pos))
-			return tileEntities.get(pos);
+		if (blockEntities.containsKey(pos))
+			return blockEntities.get(pos);
 		if (!blocks.containsKey(pos.subtract(anchor)))
 			return null;
 
 		BlockState blockState = getBlockState(pos);
 		if (blockState.hasBlockEntity()) {
 			try {
-				BlockEntity tileEntity = ((EntityBlock) blockState.getBlock()).newBlockEntity(pos, blockState);
-				if (tileEntity != null) {
-					onTEAdded(tileEntity, pos);
-					tileEntities.put(pos, tileEntity);
-					renderedTileEntities.add(tileEntity);
+				BlockEntity blockEntity = ((EntityBlock) blockState.getBlock()).newBlockEntity(pos, blockState);
+				if (blockEntity != null) {
+					onBEadded(blockEntity, pos);
+					blockEntities.put(pos, blockEntity);
+					renderedBlockEntities.add(blockEntity);
 				}
-				return tileEntity;
+				return blockEntity;
 			} catch (Exception e) {
-				Catnip.LOGGER.debug("Could not create TE of block " + blockState, e);
+				Catnip.LOGGER.debug("Could not create BlockEntity of block " + blockState, e);
 			}
 		}
 		return null;
 	}
 
-	public Map<BlockPos, BlockEntity> getTileEntities() {
-		return tileEntities;
-	}
-
-	protected void onTEAdded(BlockEntity tileEntity, BlockPos pos) {
-		tileEntity.setLevel(this);
+	protected void onBEadded(BlockEntity blockEntity, BlockPos pos) {
+		blockEntity.setLevel(this);
 	}
 
 	@Override
@@ -126,7 +122,7 @@ public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor 
 		BlockPos pos = globalPos.subtract(anchor);
 
 		if (pos.getY() - bounds.minY() == -1 && !renderMode)
-			return Blocks.GRASS_BLOCK.defaultBlockState();
+			return Blocks.DIRT.defaultBlockState();
 		if (getBounds().isInside(pos) && blocks.containsKey(pos))
 			return processBlockStateForPrinting(blocks.get(pos));
 		return Blocks.AIR.defaultBlockState();
@@ -143,8 +139,8 @@ public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor 
 
 	@Override
 	public Holder<Biome> getBiome(BlockPos pos) {
-		return BuiltinRegistries.BIOME.getHolder(Biomes.PLAINS)
-			.orElse(null);
+		return BuiltinRegistries.BIOME.getHolder(Biomes.PLAINS).orElseThrow();
+		//return ForgeRegistries.BIOMES.getHolder(Biomes.PLAINS.location()).orElse(null);
 	}
 
 	@Override
@@ -205,21 +201,21 @@ public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor 
 	@Override
 	public boolean setBlock(BlockPos pos, BlockState arg1, int arg2) {
 		pos = pos.immutable()
-			.subtract(anchor);
+				.subtract(anchor);
 		bounds = BBHelper.encapsulate(bounds, pos);
 		blocks.put(pos, arg1);
-		if (tileEntities.containsKey(pos)) {
-			BlockEntity tileEntity = tileEntities.get(pos);
-			if (!tileEntity.getType()
-				.isValid(arg1)) {
-				tileEntities.remove(pos);
-				renderedTileEntities.remove(tileEntity);
+		if (blockEntities.containsKey(pos)) {
+			BlockEntity blockEntity = blockEntities.get(pos);
+			if (!blockEntity.getType()
+					.isValid(arg1)) {
+				blockEntities.remove(pos);
+				renderedBlockEntities.remove(blockEntity);
 			}
 		}
 
-		BlockEntity tileEntity = getBlockEntity(pos);
-		if (tileEntity != null)
-			tileEntities.put(pos, tileEntity);
+		BlockEntity blockEntity = getBlockEntity(pos);
+		if (blockEntity != null)
+			blockEntities.put(pos, blockEntity);
 
 		return true;
 	}
@@ -235,8 +231,12 @@ public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor 
 		this.bounds = bounds;
 	}
 
-	public Iterable<BlockEntity> getRenderedTileEntities() {
-		return renderedTileEntities;
+	public Iterable<BlockEntity> getBlockEntities() {
+		return blockEntities.values();
+	}
+
+	public Iterable<BlockEntity> getRenderedBlockEntities() {
+		return renderedBlockEntities;
 	}
 
 	protected BlockState processBlockStateForPrinting(BlockState state) {

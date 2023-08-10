@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class CachedBlockBuffers {
 
-	public static final Compartment<BlockState> GENERIC_TILE = new Compartment<>();
+	public static final Compartment<BlockState> GENERIC_BLOCK = new Compartment<>();
 
 	/**
 	 * Creates and caches a SuperByteBuffer that has the model of a BlockState baked into it
@@ -15,7 +15,7 @@ public class CachedBlockBuffers {
 	 * @return the cached SuperByteBuffer
 	 */
 	public static SuperByteBuffer block(BlockState toRender) {
-		return block(GENERIC_TILE, toRender);
+		return block(GENERIC_BLOCK, toRender);
 	}
 
 	/**

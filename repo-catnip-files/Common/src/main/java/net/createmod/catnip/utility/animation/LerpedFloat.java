@@ -1,7 +1,8 @@
 package net.createmod.catnip.utility.animation;
 
-import net.createmod.catnip.utility.math.AngleHelper;
+import javax.annotation.Nullable;
 
+import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 
@@ -11,7 +12,7 @@ public class LerpedFloat {
 	protected float previousValue;
 	protected float value;
 
-	protected Chaser chaseFunction;
+	@Nullable protected Chaser chaseFunction;
 	protected float chaseTarget;
 	protected float chaseSpeed;
 	protected boolean angularChase;
@@ -95,7 +96,7 @@ public class LerpedFloat {
 	}
 
 	public boolean settled() {
-		return Mth.equal((double) previousValue, value);
+		return Mth.equal((double) previousValue, value) && (chaseFunction == null || Mth.equal((double) value, chaseTarget));
 	}
 
 	public float getChaseTarget() {

@@ -16,9 +16,9 @@ import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.utility.FontHelper;
+import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Theme;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 
 public class ConfigModListScreen extends ConfigScreen {
@@ -117,7 +117,7 @@ public class ConfigModListScreen extends ConfigScreen {
 				button.updateColorsFromState();
 				button.modifyElement(e -> ((DelegatedStencilElement) e).withElementRenderer(BaseConfigScreen.DISABLED_RENDERER));
 				labelTooltip.add(Components.literal(toHumanReadable(id)));
-				labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("This Mod does not have any configs registered or is not using Forge's config system"), ChatFormatting.GRAY, ChatFormatting.GRAY));
+				labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("This Mod does not have any configs registered or is not using Forge's config system"), Palette.ALL_GRAY));
 			}
 
 			listeners.add(button);
