@@ -20,7 +20,6 @@ import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -149,7 +148,7 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 
 				light = getLight(Minecraft.getInstance().level, lightPos);
 				if (hasCustomLight) {
-					light = maxLight(light, packedLightCoordinates);
+					light = SuperByteBuffer.maxLight(light, packedLightCoordinates);
 				}
 			} else if (hasCustomLight) {
 				light = packedLightCoordinates;
@@ -158,7 +157,7 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 			}
 
 			if (hybridLight) {
-				consumer.uv2(maxLight(light, getLight(i)));
+				consumer.uv2(SuperByteBuffer.maxLight(light, getLight(i)));
 			} else {
 				consumer.uv2(light);
 			}
@@ -429,14 +428,6 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 
 	protected byte getNZ(int index) {
 		return template.get(getBufferPosition(index) + 30);
-	}
-
-	public static int maxLight(int packedLight1, int packedLight2) {
-		int blockLight1 = LightTexture.block(packedLight1);
-		int skyLight1 = LightTexture.sky(packedLight1);
-		int blockLight2 = LightTexture.block(packedLight2);
-		int skyLight2 = LightTexture.sky(packedLight2);
-		return LightTexture.pack(Math.max(blockLight1, blockLight2), Math.max(skyLight1, skyLight2));
 	}
 
 	private static int getLight(Level world, Vector4f lightPos) {

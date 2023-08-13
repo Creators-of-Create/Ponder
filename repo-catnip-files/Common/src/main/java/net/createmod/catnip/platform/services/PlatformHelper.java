@@ -1,5 +1,6 @@
 package net.createmod.catnip.platform.services;
 
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface PlatformHelper {
@@ -28,5 +29,9 @@ public interface PlatformHelper {
 	boolean isDevelopmentEnvironment();
 
 	Stream<String> getLoadedMods();
+
+	void executeOnClientOnly(Supplier<Runnable> toRun);
+
+	void executeOnServerOnly(Supplier<Runnable> toRun);
 
 }

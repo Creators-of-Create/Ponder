@@ -6,12 +6,21 @@ apply from: '../gradle/property_helper.gradle'
 
 archivesBaseName = "${mod_name}-Common-${minecraft_version}"
 
+boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
+
 minecraft {
     version(minecraft_version)
     accessWideners 'src/main/resources/catnip.accesswidener'
 }
 
 dependencies {
+
+    if (flywheelInWorkspace) {
+        //implementation project(':Flywheel')
+    } else {
+        compileOnly "com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"
+    }
+
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.4'
 
     implementation 'com.electronwill.night-config:core:3.6.5'

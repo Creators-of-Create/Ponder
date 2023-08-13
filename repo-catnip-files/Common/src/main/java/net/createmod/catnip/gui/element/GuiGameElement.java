@@ -2,6 +2,7 @@ package net.createmod.catnip.gui.element;
 
 import javax.annotation.Nullable;
 
+import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
@@ -56,6 +57,10 @@ public class GuiGameElement {
 		return new GuiBlockStateRenderBuilder(fluid.defaultFluidState()
 			.createLegacyBlock()
 			.setValue(LiquidBlock.LEVEL, 0));
+	}
+
+	public static GuiRenderBuilder of(PartialModel partial) {
+		return new GuiBlockPartialRenderBuilder(partial);
 	}
 
 	public static abstract class GuiRenderBuilder extends AbstractRenderElement {
@@ -270,4 +275,11 @@ public class GuiGameElement {
 
 	}
 
+	public static class GuiBlockPartialRenderBuilder extends GuiBlockModelRenderBuilder {
+
+		public GuiBlockPartialRenderBuilder(PartialModel partial) {
+			super(partial.get(), null);
+		}
+
+	}
 }

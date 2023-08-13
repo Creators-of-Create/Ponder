@@ -3,15 +3,12 @@ package net.createmod.catnip;
 
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.enums.CatnipConfig;
-import net.createmod.catnip.render.SpriteShifter;
 import net.createmod.catnip.utility.placement.PlacementClient;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -93,22 +90,6 @@ public class ForgeCatnipClient {
 		@SubscribeEvent
 		public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
 			event.registerReloadListener(CatnipClient.RESOURCE_RELOAD_LISTENER);
-		}
-
-		@SubscribeEvent
-		public static void onTextureStitchPre(TextureStitchEvent.Pre event) {
-			if (!event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS))
-				return;
-
-			SpriteShifter.getAllTargetSprites().forEach(event::addSprite);
-		}
-
-		@SubscribeEvent
-		public static void onTextureStitchPost(TextureStitchEvent.Post event) {
-			if (!event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS))
-				return;
-
-			SpriteShifter.getAllShifts().forEach(entry -> entry.loadTextures(event.getAtlas()));
 		}
 	}
 

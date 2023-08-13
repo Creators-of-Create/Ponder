@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.event.ClientResourceReloadListener;
 import net.createmod.catnip.gui.UIRenderHelper;
-import net.createmod.catnip.render.CachedBlockBuffers;
-import net.createmod.catnip.render.DefaultSuperRenderTypeBufferImpl;
+import net.createmod.catnip.render.CachedBuffers;
+import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.AnimationTickHolder;
@@ -25,7 +25,7 @@ public class CatnipClient {
 	public static final Outliner OUTLINER = new Outliner();
 
 	public static void init() {
-		SuperByteBufferCache.getInstance().registerCompartment(CachedBlockBuffers.GENERIC_BLOCK);
+		SuperByteBufferCache.getInstance().registerCompartment(CachedBuffers.GENERIC_BLOCK);
 
 		UIRenderHelper.init();
 	}
@@ -53,7 +53,7 @@ public class CatnipClient {
 
 		ms.pushPose();
 		//ms.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
-		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBufferImpl.getInstance();
+		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
 
 		GHOST_BLOCKS.renderAll(ms, buffer, cameraPos);
 		OUTLINER.renderOutlines(ms, buffer, cameraPos, partialTicks);

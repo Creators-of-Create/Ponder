@@ -1,5 +1,7 @@
 package net.createmod.catnip.render;
 
+import com.jozufozu.flywheel.core.model.ModelUtil;
+import com.jozufozu.flywheel.core.model.ShadeSeparatedBufferedData;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -7,26 +9,35 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.level.block.state.BlockState;
 
-public interface SuperBufferFactory {
+public class SuperBufferFactory {
 
-	static SuperBufferFactory getInstance() {
-		return DefaultSuperBufferFactory.getInstance();
+	private static SuperBufferFactory instance = new SuperBufferFactory();
+
+	public static SuperBufferFactory getInstance() {
+		return instance;
 	}
 
 	static void setInstance(SuperBufferFactory factory) {
-		DefaultSuperBufferFactory.setInstance(factory);
+		instance = factory;
 	}
 
-	SuperByteBuffer create(BufferBuilder builder);
+	public SuperByteBuffer create(BufferBuilder builder) {
+		return new DefaultSuperByteBuffer(builder);
+	}
 
-	SuperByteBuffer createForBlock(BakedModel model, BlockState referenceState, PoseStack ms);
-
-	default SuperByteBuffer createForBlock(BlockState renderedState) {
+	public SuperByteBuffer createForBlock(BlockState renderedState) {
 		return createForBlock(Minecraft.getInstance().getBlockRenderer().getBlockModel(renderedState), renderedState);
 	}
 
-	default SuperByteBuffer createForBlock(BakedModel model, BlockState referenceState) {
+	public SuperByteBuffer createForBlock(BakedModel model, BlockState referenceState) {
 		return createForBlock(model, referenceState, new PoseStack());
+	}
+
+	public SuperByteBuffer createForBlock(BakedModel model, BlockState referenceState, PoseStack ms) {
+		ShadeSeparatedBufferedData data = ModelUtil.getBufferedData(model, referenceState, ms);
+		ShadeSpearatingSuperByteBuffer sbb = new ShadeSpearatingSuperByteBuffer(data);
+		data.release();
+		return sbb;
 	}
 
 }

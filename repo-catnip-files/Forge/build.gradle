@@ -18,6 +18,8 @@ apply from: '../gradle/patreon.gradle'
 
 archivesBaseName = "${mod_name}-Forge-${minecraft_version}"
 
+boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
+
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
 
 minecraft {
@@ -35,10 +37,18 @@ minecraft {
                 arg "-mixin.config=${mod_id}.mixins.json"
             }
 
+            arg '-mixin.config=flywheel.mixins.json'
+
             mods {
                 modClientRun {
                     source sourceSets.main
                     source commonProject.sourceSets.main
+                }
+
+                if (flywheelInWorkspace) {
+                    flywheel {
+                        source project(":Flywheel").sourceSets.main
+                    }
                 }
             }
         }
@@ -66,6 +76,12 @@ dependencies {
 
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly commonProject
+
+    if (flywheelInWorkspace) {
+        implementation project(':Flywheel')
+    } else {
+        implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
+    }
 
     annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
 }
@@ -192,6 +208,18 @@ project.publishing {
             }
 
             url getDefaultString('mavenURL', 'undefined', true)
+        }
+    }
+}
+
+////////////////
+// IntelliJ Project Import
+// The Mixin annotation process does not have an obfuscation source when running through the IntelliJ compiler,
+// thus we have to prevent it from being activated as part of importing this Gradle project into IntelliJ.
+if (System.getProperty("idea.sync.active") == "true") {
+    afterEvaluate {
+        tasks.withType(JavaCompile).all {
+            it.options.annotationProcessorPath = files()
         }
     }
 }

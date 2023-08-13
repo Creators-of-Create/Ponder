@@ -1,46 +1,41 @@
 package net.createmod.catnip.render;
 
-import java.util.function.Function;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import com.jozufozu.flywheel.core.StitchedSprite;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 
 public class SpriteShiftEntry {
-	protected final ResourceLocation originalLocation;
-	protected final ResourceLocation targetLocation;
-	@Nullable protected TextureAtlasSprite original;
-	@Nullable protected TextureAtlasSprite target;
+	@Nullable protected StitchedSprite original;
+	@Nullable protected StitchedSprite target;
 
-	public SpriteShiftEntry(ResourceLocation originalTextureLocation, ResourceLocation targetTextureLocation) {
-		this.originalLocation = originalTextureLocation;
-		this.targetLocation = targetTextureLocation;
+	public void set(ResourceLocation originalLocation, ResourceLocation targetLocation) {
+		original = new StitchedSprite(originalLocation);
+		target = new StitchedSprite(targetLocation);
 	}
 
 	public ResourceLocation getOriginalResourceLocation() {
-		return originalLocation;
+		Objects.requireNonNull(original);
+		return original.getLocation();
 	}
 
 	public ResourceLocation getTargetResourceLocation() {
-		return targetLocation;
+		Objects.requireNonNull(target);
+		return target.getLocation();
 	}
 
 	public TextureAtlasSprite getOriginal() {
-		if (original == null)
-			loadTextures();
-
-		return original;
+		Objects.requireNonNull(original);
+		return original.get();
 	}
 
 	public TextureAtlasSprite getTarget() {
-		if (target == null)
-			loadTextures();
-
-		return target;
+		Objects.requireNonNull(target);
+		return target.get();
 	}
 
 	public float getTargetU(float localU) {
@@ -49,18 +44,6 @@ public class SpriteShiftEntry {
 
 	public float getTargetV(float localV) {
 		return getTarget().getV(getUnInterpolatedV(getOriginal(), localV));
-	}
-
-	protected void loadTextures() {
-		Function<ResourceLocation, TextureAtlasSprite> textureMap = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
-
-		original = textureMap.apply(originalLocation);
-		target = textureMap.apply(targetLocation);
-	}
-
-	public void loadTextures(TextureAtlas atlas) {
-		original = atlas.getSprite(originalLocation);
-		target = atlas.getSprite(targetLocation);
 	}
 
 	public static float getUnInterpolatedU(TextureAtlasSprite sprite, float u) {

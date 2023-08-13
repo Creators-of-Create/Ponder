@@ -13,11 +13,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.ModelBakery;
 
-public class DefaultSuperRenderTypeBufferImpl implements SuperRenderTypeBuffer {
+public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
 
-	private static final DefaultSuperRenderTypeBufferImpl INSTANCE = new DefaultSuperRenderTypeBufferImpl();
+	private static final DefaultSuperRenderTypeBuffer INSTANCE = new DefaultSuperRenderTypeBuffer();
 
-	public static DefaultSuperRenderTypeBufferImpl getInstance() {
+	public static DefaultSuperRenderTypeBuffer getInstance() {
 		return INSTANCE;
 	}
 
@@ -25,7 +25,7 @@ public class DefaultSuperRenderTypeBufferImpl implements SuperRenderTypeBuffer {
 	protected SuperRenderTypeBufferPhase defaultBuffer;
 	protected SuperRenderTypeBufferPhase lateBuffer;
 
-	public DefaultSuperRenderTypeBufferImpl() {
+	public DefaultSuperRenderTypeBuffer() {
 		earlyBuffer = new SuperRenderTypeBufferPhase();
 		defaultBuffer = new SuperRenderTypeBufferPhase();
 		lateBuffer = new SuperRenderTypeBufferPhase();
