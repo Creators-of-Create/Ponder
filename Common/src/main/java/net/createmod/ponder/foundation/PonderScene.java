@@ -19,6 +19,7 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableObject;
 
+import com.jozufozu.flywheel.util.DiffuseLightCalculator;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
@@ -28,6 +29,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.render.ForcedDiffuseState;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
@@ -235,7 +237,7 @@ public class PonderScene {
 	}
 
 	public void renderScene(SuperRenderTypeBuffer buffer, PoseStack ms, float pt) {
-		//ForcedDiffuseState.pushCalculator(DiffuseLightCalculator.DEFAULT);//TODO Flywheel :(
+		ForcedDiffuseState.pushCalculator(DiffuseLightCalculator.DEFAULT);
 		ms.pushPose();
 		Minecraft mc = Minecraft.getInstance();
 		Entity prevRVE = mc.cameraEntity;
@@ -254,7 +256,7 @@ public class PonderScene {
 		outliner.renderOutlines(ms, buffer, Vec3.ZERO, pt);
 
 		ms.popPose();
-		//ForcedDiffuseState.popCalculator();
+		ForcedDiffuseState.popCalculator();
 	}
 
 	public void renderOverlay(PonderUI screen, PoseStack ms, float partialTicks) {

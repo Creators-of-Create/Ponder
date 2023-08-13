@@ -8,6 +8,9 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import com.jozufozu.flywheel.core.model.ModelUtil;
+import com.jozufozu.flywheel.core.model.ShadeSeparatedBufferedData;
+import com.jozufozu.flywheel.core.model.ShadeSeparatingVertexConsumer;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -18,7 +21,7 @@ import com.mojang.math.Vector3f;
 
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.render.SuperBufferFactory;
+import net.createmod.catnip.render.ShadeSpearatingSuperByteBuffer;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.catnip.render.SuperByteBufferCache.Compartment;
@@ -428,7 +431,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		}
 	}
 
-	/*private SuperByteBuffer buildStructureBuffer(PonderWorld world, RenderType layer) {
+	private SuperByteBuffer buildStructureBuffer(PonderWorld world, RenderType layer) {
 		BlockRenderDispatcher dispatcher = ModelUtil.VANILLA_RENDERER;
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
@@ -443,7 +446,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		shadeSeparatingWrapper.prepare(shadedBuilder, unshadedBuilder);
 
 		world.setMask(this.section);
-		ForgeHooksClient.setRenderType(layer);
+		//ForgeHooksClient.setRenderType(layer); TODO
 		ModelBlockRenderer.enableCaching();
 		section.forEach(pos -> {
 			BlockState state = world.getBlockState(pos);
@@ -452,30 +455,29 @@ public class WorldSectionElement extends AnimatedSceneElement {
 			poseStack.pushPose();
 			poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
 
-			if (state.getRenderShape() == RenderShape.MODEL && ItemBlockRenderTypes.canRenderInLayer(state, layer)) {
+			if (state.getRenderShape() == RenderShape.MODEL && CatnipClientServices.CLIENT_HOOKS.chunkRenderTypeMatches(state, layer)) {
 				BlockEntity blockEntity = world.getBlockEntity(pos);
-				dispatcher.renderBatched(state, pos, world, poseStack, shadeSeparatingWrapper, true, random,
-					blockEntity != null ? blockEntity.getModelData() : EmptyModelData.INSTANCE);
+				CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, shadeSeparatingWrapper, state, pos, world, true, random, blockEntity);
 			}
 
-			if (!fluidState.isEmpty() && ItemBlockRenderTypes.canRenderInLayer(fluidState, layer))
+			if (!fluidState.isEmpty() && CatnipClientServices.CLIENT_HOOKS.fluidRenderTypeMatches(fluidState, layer))
 				dispatcher.renderLiquid(pos, world, shadedBuilder, state, fluidState);
 
 			poseStack.popPose();
 		});
 		ModelBlockRenderer.clearCache();
-		ForgeHooksClient.setRenderType(null);
+		//ForgeHooksClient.setRenderType(null);
 		world.clearMask();
 
 		shadeSeparatingWrapper.clear();
 		ShadeSeparatedBufferedData bufferedData = ModelUtil.endAndCombine(shadedBuilder, unshadedBuilder);
 
-		SuperByteBuffer sbb = new SuperByteBuffer(bufferedData);
+		SuperByteBuffer sbb = new ShadeSpearatingSuperByteBuffer(bufferedData);
 		bufferedData.release();
 		return sbb;
-	}*/
+	}
 
-	private SuperByteBuffer buildStructureBuffer(PonderWorld world, RenderType layer) {
+	/*private SuperByteBuffer buildStructureBuffer(PonderWorld world, RenderType layer) {
 		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
@@ -512,11 +514,12 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		builder.end();
 
 		return SuperBufferFactory.getInstance().create(builder);
-	}
+	}*/
 
 	private static class ThreadLocalObjects {
 		public final PoseStack poseStack = new PoseStack();
 		public final Random random = new Random();
+		public final ShadeSeparatingVertexConsumer shadeSeparatingWrapper = new ShadeSeparatingVertexConsumer();
 		public final BufferBuilder shadedBuilder = new BufferBuilder(512);
 		public final BufferBuilder unshadedBuilder = new BufferBuilder(512);
 	}

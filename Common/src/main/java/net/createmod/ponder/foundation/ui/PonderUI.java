@@ -22,7 +22,7 @@ import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.render.DefaultSuperRenderTypeBufferImpl;
+import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.FontHelper;
@@ -420,7 +420,7 @@ public class PonderUI extends AbstractPonderScreen {
 	}
 
 	protected void renderScene(PoseStack ms, int mouseX, int mouseY, int i, float partialTicks) {
-		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBufferImpl.getInstance();
+		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
 		PonderScene scene = scenes.get(i);
 		double value = lazyIndex.getValue(minecraft.getFrameTime());
 		double diff = i - value;

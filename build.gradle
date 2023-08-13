@@ -74,6 +74,12 @@ subprojects {
             url = "https://maven.createmod.net"
         }
 
+        maven {
+            // location of the maven for Registrate and Flywheel
+            name = 'tterrag Maven'
+            url = 'https://maven.tterrag.com'
+        }
+
     }
 }
 

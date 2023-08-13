@@ -7,7 +7,7 @@ apply from: '../gradle/property_helper.gradle'
 archivesBaseName = "${mod_name}-Common-${minecraft_version}"
 
 boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
-//boolean catnipInWorkspace = findProject(":catnip") != null
+boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
 
 minecraft {
     version(minecraft_version)
@@ -25,6 +25,12 @@ dependencies {
         compileOnly project(":catnip:Common")
     } else {
         compileOnly "net.createmod.catnip:Catnip-Common-${minecraft_version}:${catnip_version}"
+    }
+
+    if (flywheelInWorkspace) {
+        //implementation project(':Flywheel')
+    } else {
+        compileOnly "com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"
     }
 
 }

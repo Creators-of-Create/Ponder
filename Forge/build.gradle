@@ -20,8 +20,9 @@ archivesBaseName = "${mod_name}-Forge-${minecraft_version}"
 
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
 
-boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
 boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
+boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
+boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
 
 minecraft {
 
@@ -46,6 +47,8 @@ minecraft {
                 arg '-mixin.config=catnip.mixins.json'
             }
 
+            arg '-mixin.config=flywheel.mixins.json'
+
             mods {
                 ponder {
                     source sourceSets.main
@@ -56,6 +59,12 @@ minecraft {
                     catnip {
                         source project(":catnip:Common").sourceSets.main
                         source project(":catnip:Forge").sourceSets.main
+                    }
+                }
+
+                if (flywheelInWorkspace) {
+                    flywheel {
+                        source project(":Flywheel").sourceSets.main
                     }
                 }
             }
@@ -102,6 +111,12 @@ dependencies {
         implementation project(":catnip:Forge")
     } else {
         implementation fg.deobf("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}")
+    }
+
+    if (flywheelInWorkspace) {
+        implementation project(':Flywheel')
+    } else {
+        implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
     }
 
     annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
@@ -230,6 +245,18 @@ project.publishing {
 
             url project.hasProperty('mavenURL') ? project.property('mavenURL') : 'undefined'
             //url getDefaultString('mavenURL', 'undefined', true)
+        }
+    }
+}
+
+////////////////
+// IntelliJ Project Import
+// The Mixin annotation process does not have an obfuscation source when running through the IntelliJ compiler,
+// thus we have to prevent it from being activated as part of importing this Gradle project into IntelliJ.
+if (System.getProperty("idea.sync.active") == "true") {
+    afterEvaluate {
+        tasks.withType(JavaCompile).all {
+            it.options.annotationProcessorPath = files()
         }
     }
 }
