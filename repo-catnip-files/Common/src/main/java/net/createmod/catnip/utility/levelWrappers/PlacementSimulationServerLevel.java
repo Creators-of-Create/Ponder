@@ -1,4 +1,4 @@
-package net.createmod.catnip.utility.worldWrappers;
+package net.createmod.catnip.utility.levelWrappers;
 
 import java.util.HashMap;
 import java.util.function.Predicate;
@@ -9,14 +9,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 
-public class PlacementSimulationServerWorld extends WrappedServerWorld {
+public class PlacementSimulationServerLevel extends WrappedServerLevel {
 	public HashMap<BlockPos, BlockState> blocksAdded;
 
-	public PlacementSimulationServerWorld(ServerLevel wrapped) {
+	public PlacementSimulationServerLevel(ServerLevel wrapped) {
 		super(wrapped);
 		blocksAdded = new HashMap<>();
 	}
-	
+
 	public void clear() {
 		blocksAdded.clear();
 	}
@@ -36,7 +36,7 @@ public class PlacementSimulationServerWorld extends WrappedServerWorld {
 	public boolean isStateAtPosition(BlockPos pos, Predicate<BlockState> condition) {
 		return condition.test(getBlockState(pos));
 	}
-	
+
 	@Override
 	public boolean isLoaded(BlockPos pos) {
 		return true;
@@ -57,5 +57,5 @@ public class PlacementSimulationServerWorld extends WrappedServerWorld {
 	public FluidState getFluidState(BlockPos pos) {
 		return getBlockState(pos).getFluidState();
 	}
-	
+
 }

@@ -1,4 +1,4 @@
-package net.createmod.catnip.utility.worldWrappers;
+package net.createmod.catnip.utility.levelWrappers;
 
 import java.util.Collections;
 import java.util.List;
@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -16,25 +15,26 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.ticks.LevelTicks;
 
-public class WrappedServerWorld extends ServerLevel {
+public class WrappedServerLevel extends ServerLevel {
 
-	protected Level world;
+	protected ServerLevel level;
 
-	public WrappedServerWorld(Level world) {
-		super(world.getServer(), Util.backgroundExecutor(), world.getServer().storageSource,
-			(ServerLevelData) world.getLevelData(), world.dimension(), world.dimensionTypeRegistration(),
-			new DummyStatusListener(), ((ServerChunkCache) world.getChunkSource()).getGenerator(), world.isDebug(),
-			world.getBiomeManager().biomeZoomSeed, Collections.emptyList(), false);
-		this.world = world;
+	public WrappedServerLevel(ServerLevel level) {
+		super(level.getServer(), Util.backgroundExecutor(), level.getServer().storageSource,
+			  (ServerLevelData) level.getLevelData(), level.dimension(),
+			  new LevelStem(level.dimensionTypeRegistration(), level.getChunkSource().getGenerator()),
+			  new DummyStatusListener(), level.isDebug(), level.getBiomeManager().biomeZoomSeed,
+			  Collections.emptyList(), false);
+		this.level = level;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class WrappedServerWorld extends ServerLevel {
 
 	@Override
 	public void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags) {
-		world.sendBlockUpdated(pos, oldState, newState, flags);
+		level.sendBlockUpdated(pos, oldState, newState, flags);
 	}
 
 	@Override
@@ -90,8 +90,8 @@ public class WrappedServerWorld extends ServerLevel {
 
 	@Override
 	public boolean addFreshEntity(Entity entityIn) {
-		entityIn.level = world;
-		return world.addFreshEntity(entityIn);
+		entityIn.level = level;
+		return level.addFreshEntity(entityIn);
 	}
 
 	@Override
@@ -107,12 +107,12 @@ public class WrappedServerWorld extends ServerLevel {
 
 	@Override
 	public RecipeManager getRecipeManager() {
-		return world.getRecipeManager();
+		return level.getRecipeManager();
 	}
 
 	@Override
 	public Holder<Biome> getUncachedNoiseBiome(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
-		return world.getUncachedNoiseBiome(p_225604_1_, p_225604_2_, p_225604_3_);
+		return level.getUncachedNoiseBiome(p_225604_1_, p_225604_2_, p_225604_3_);
 	}
 
 

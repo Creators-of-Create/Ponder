@@ -40,7 +40,7 @@ public class ForgeCatnipNetwork {
 		CHANNEL.messageBuilder(type, index++, NetworkDirection.PLAY_TO_CLIENT)
 				.encoder(T::write)
 				.decoder(factory)
-				.consumer(clientHandler(handler))
+				.consumerNetworkThread(clientHandler(handler))
 				.add();
 	}
 
@@ -55,7 +55,7 @@ public class ForgeCatnipNetwork {
 		CHANNEL.messageBuilder(type, index++, NetworkDirection.PLAY_TO_SERVER)
 				.encoder(T::write)
 				.decoder(factory)
-				.consumer(serverHandler())
+				.consumerNetworkThread(serverHandler())
 				.add();
 	}
 

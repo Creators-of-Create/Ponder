@@ -8,8 +8,9 @@ import net.createmod.catnip.config.ConfigBase;
 import net.createmod.catnip.enums.CatnipConfig;
 import net.createmod.catnip.net.ConfigPathArgument;
 import net.createmod.catnip.net.ForgeCatnipNetwork;
-import net.minecraft.commands.synchronization.ArgumentTypes;
-import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.commands.synchronization.ArgumentTypeInfos;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -22,16 +23,26 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 @Mod(Catnip.MOD_ID)
 public class ForgeCatnip {
-    
+
+	private static final DeferredRegister<ArgumentTypeInfo<?, ?>> COMMAND_ARGUMENT_TYPES = DeferredRegister.create(ForgeRegistries.COMMAND_ARGUMENT_TYPES, Catnip.MOD_ID);
+
+	private static final RegistryObject<SingletonArgumentInfo<ConfigPathArgument>> CONFIG_PATH_ARGUMENT_TYPE = COMMAND_ARGUMENT_TYPES.register("config_path", () ->
+			ArgumentTypeInfos.registerByClass(ConfigPathArgument.class, SingletonArgumentInfo.contextFree(ConfigPathArgument::new)));
+
     public ForgeCatnip() {
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         IEventBus forgeEventBus = MinecraftForge.EVENT_BUS;
 
         modEventBus.addListener(ForgeCatnip::init);
+
+		COMMAND_ARGUMENT_TYPES.register(modEventBus);
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ForgeCatnipClient.onCtor(modEventBus, forgeEventBus));
 
@@ -41,7 +52,6 @@ public class ForgeCatnip {
     public static void init(final FMLCommonSetupEvent event) {
         Catnip.init();
         ForgeCatnipNetwork.register();
-        ArgumentTypes.register(Catnip.asResource("config_path").toString(), ConfigPathArgument.class, new EmptyArgumentSerializer<>(ConfigPathArgument::path));
     }
 
     private static void registerConfigs(ModLoadingContext modLoadingContext) {

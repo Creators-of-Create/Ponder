@@ -10,9 +10,9 @@ import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.ghostblock.GhostBlocks;
+import net.createmod.catnip.utility.levelWrappers.WrappedClientLevel;
 import net.createmod.catnip.utility.outliner.Outliner;
 import net.createmod.catnip.utility.placement.PlacementClient;
-import net.createmod.catnip.utility.worldWrappers.WrappedClientWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.LevelAccessor;
@@ -67,7 +67,7 @@ public class CatnipClient {
 		if (!level.isClientSide())
 			return;
 
-		if (level instanceof ClientLevel && !(level instanceof WrappedClientWorld)) {
+		if (level instanceof ClientLevel && !(level instanceof WrappedClientLevel)) {
 			invalidateRenderers();
 			AnimationTickHolder.reset();
 		}

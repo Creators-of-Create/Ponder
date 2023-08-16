@@ -5,15 +5,13 @@ import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.enums.CatnipConfig;
 import net.createmod.catnip.utility.placement.PlacementClient;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
-import net.minecraftforge.client.gui.ForgeIngameGui;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModContainer;
@@ -23,8 +21,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 
 public class ForgeCatnipClient {
-
-	public static final IModelData NoModelData = new ModelDataMap.Builder().build();
 
 	public static void onCtor(IEventBus modEventBus, IEventBus forgeEventBus) {
 		modEventBus.addListener(ForgeCatnipClient::init);
@@ -51,21 +47,21 @@ public class ForgeCatnipClient {
 		}
 
 		@SubscribeEvent
-		public static void onLoadWorld(WorldEvent.Load event) {
-			CatnipClient.onLoadWorld(event.getWorld());
+		public static void onLoadWorld(LevelEvent.Load event) {
+			CatnipClient.onLoadWorld(event.getLevel());
 		}
 
 		@SubscribeEvent
-		public static void onUnloadWorld(WorldEvent.Unload event) {
-			CatnipClient.onUnloadWorld(event.getWorld());
+		public static void onUnloadWorld(LevelEvent.Unload event) {
+			CatnipClient.onUnloadWorld(event.getLevel());
 		}
 
 		@SubscribeEvent
-		public static void afterRenderOverlayLayer(RenderGameOverlayEvent.PostLayer event) {
-			if (event.getOverlay() != ForgeIngameGui.CROSSHAIR_ELEMENT)
+		public static void afterRenderOverlayLayer(RenderGuiOverlayEvent.Post event) {
+			if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
 				return;
 
-			PlacementClient.onRenderCrosshairOverlay(event.getWindow(), event.getMatrixStack(), event.getPartialTicks());
+			PlacementClient.onRenderCrosshairOverlay(event.getWindow(), event.getPoseStack(), event.getPartialTick());
 		}
 
 	}
@@ -77,8 +73,8 @@ public class ForgeCatnipClient {
 			ModContainer modContainer = ModList.get()
 					.getModContainerById(Catnip.MOD_ID)
 					.orElseThrow(() -> new IllegalStateException("Catnip Mod Container missing after loadCompleted"));
-			modContainer.registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
-					() -> new ConfigGuiHandler.ConfigGuiFactory(
+			modContainer.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+					() -> new ConfigScreenHandler.ConfigScreenFactory(
 							(mc, previousScreen) -> new BaseConfigScreen(previousScreen, Catnip.MOD_ID)));
 
 			BaseConfigScreen.setDefaultActionFor(Catnip.MOD_ID, base -> base

@@ -1,7 +1,6 @@
 package net.createmod.catnip.utility.ghostblock;
 
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.Nullable;
 
@@ -12,7 +11,6 @@ import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.placement.PlacementClient;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -22,6 +20,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
@@ -47,18 +46,18 @@ public abstract class GhostBlockRenderer {
 		public void render(PoseStack ms, SuperRenderTypeBuffer buffer, Vec3 camera, GhostBlockParams params) {
 			ms.pushPose();
 
-			BlockRenderDispatcher dispatcher = Minecraft.getInstance()
-				.getBlockRenderer();
+			BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 
-			BakedModel model = dispatcher.getBlockModel(params.state);
-
-			RenderType layer = ItemBlockRenderTypes.getRenderType(params.state, false);
-			VertexConsumer vb = buffer.getEarlyBuffer(layer);
-
+			BlockState state = params.state;
+			BakedModel model = dispatcher.getBlockModel(state);
 			BlockPos pos = params.pos;
+
 			ms.translate(pos.getX() - camera.x, pos.getY() - camera.y, pos.getZ() - camera.z);
 
-			CatnipClientServices.CLIENT_HOOKS.renderBlockStateModel(dispatcher, ms, vb, params.state, model, 1f, 1f, 1f);
+			for (RenderType layer : CatnipClientServices.CLIENT_HOOKS.getRenderTypesForBlockModel(state, RandomSource.create(42L), null)) {
+				VertexConsumer vb = buffer.getEarlyBuffer(layer);
+				CatnipClientServices.CLIENT_HOOKS.renderVirtualBlockStateModel(dispatcher, ms, vb, state, model, 1f, 1f, 1f, layer);
+			}
 
 			ms.popPose();
 		}
@@ -97,7 +96,7 @@ public abstract class GhostBlockRenderer {
 		public void renderModel(PoseStack.Pose pose, VertexConsumer consumer,
 			@Nullable BlockState state, BakedModel model, float red, float green, float blue,
 			float alpha, int packedLight, int packedOverlay) {
-			Random random = new Random();
+			RandomSource random = RandomSource.create();
 
 			for (Direction direction : Direction.values()) {
 				random.setSeed(42L);

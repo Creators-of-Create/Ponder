@@ -1,4 +1,4 @@
-package net.createmod.catnip.utility.worldWrappers;
+package net.createmod.catnip.utility.levelWrappers;
 
 import javax.annotation.Nullable;
 

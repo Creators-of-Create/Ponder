@@ -3,14 +3,13 @@ package net.createmod.catnip.gui.element;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.lang.Lang;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.MutableComponent;
 
 public class TextStencilElement extends DelegatedStencilElement {
 
 	protected Font font;
-	protected MutableComponent component = Lang.empty().copy();
+	protected MutableComponent component = Components.empty();
 	protected boolean centerVertically = false;
 	protected boolean centerHorizontally = false;
 

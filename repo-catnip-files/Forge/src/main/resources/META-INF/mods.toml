@@ -17,13 +17,13 @@ ${mod_description}
 [[dependencies.catnip]]
     modId="forge"
     mandatory=true
-    versionRange="[40,)"
+    versionRange="[43.2.3,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.catnip]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18-2,1.19)"
+    versionRange="[1.19.2,1.20)"
     ordering="NONE"
     side="BOTH"

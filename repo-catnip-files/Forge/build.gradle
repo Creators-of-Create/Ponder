@@ -8,29 +8,41 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath "org.parchmentmc:librarian:${librarian_version}"
         classpath group: 'net.darkhax.curseforgegradle', name: 'CurseForgeGradle', version: '1.0.7'
         classpath group: 'net.darkhax.tweedle', name: 'Tweedle', version: '1.0.5'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply from: '../gradle/patreon.gradle'
 
 archivesBaseName = "${mod_name}-Forge-${minecraft_version}"
 
-boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
+def commonProject = findProject(":Common") != null ? project(":Common") : project(":catnip:Common")
 
-def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
+boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
+boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
 
 minecraft {
 
-    mappings channel: 'official', version: minecraft_version
+    if (Boolean.parseBoolean(project.use_parchment)) {
+        mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    } else {
+        mappings channel: 'official', version: "${minecraft_version}"
+    }
+
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
             workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
+            if (inMultiModWorkspace)
+                ideaModule "createmod.catnip.Forge.main"
+            else
+                ideaModule "catnip.Forge.main"
+
             taskName 'Client'
 
             if (project.ext.mixin_enabled) {
@@ -40,7 +52,7 @@ minecraft {
             arg '-mixin.config=flywheel.mixins.json'
 
             mods {
-                modClientRun {
+                catnip {
                     source sourceSets.main
                     source commonProject.sourceSets.main
                 }
@@ -55,7 +67,11 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-            ideaModule "${rootProject.name}.${project.name}.main"
+            if (inMultiModWorkspace)
+                ideaModule "createmod.catnip.Forge.main"
+            else
+                ideaModule "catnip.Forge.main"
+
             taskName 'Server'
 
             if (project.ext.mixin_enabled) {
@@ -63,7 +79,7 @@ minecraft {
             }
 
             mods {
-                modServerRun {
+                catnip {
                     source sourceSets.main
                     source commonProject.sourceSets.main
                 }

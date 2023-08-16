@@ -1,4 +1,4 @@
-package net.createmod.catnip.utility.worldWrappers;
+package net.createmod.catnip.utility.levelWrappers;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +41,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.ticks.BlackholeTickAccess;
 import net.minecraft.world.ticks.LevelTickAccess;
 
-public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor {
+public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor {
 
 	protected Map<BlockPos, BlockState> blocks;
 	protected Map<BlockPos, BlockEntity> blockEntities;
@@ -52,11 +52,11 @@ public class SchematicWorld extends WrappedWorld implements ServerLevelAccessor 
 	public BlockPos anchor;
 	public boolean renderMode;
 
-	public SchematicWorld(Level original) {
+	public SchematicLevel(Level original) {
 		this(BlockPos.ZERO, original);
 	}
 
-	public SchematicWorld(BlockPos anchor, Level original) {
+	public SchematicLevel(BlockPos anchor, Level original) {
 		super(original);
 		setChunkSource(new SchematicChunkSource(this));
 		this.blocks = new HashMap<>();

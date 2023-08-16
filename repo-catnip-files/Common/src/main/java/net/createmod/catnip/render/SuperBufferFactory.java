@@ -2,7 +2,7 @@ package net.createmod.catnip.render;
 
 import com.jozufozu.flywheel.core.model.ModelUtil;
 import com.jozufozu.flywheel.core.model.ShadeSeparatedBufferedData;
-import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
@@ -21,7 +21,7 @@ public class SuperBufferFactory {
 		instance = factory;
 	}
 
-	public SuperByteBuffer create(BufferBuilder builder) {
+	public SuperByteBuffer create(RenderedBuffer builder) {
 		return new DefaultSuperByteBuffer(builder);
 	}
 

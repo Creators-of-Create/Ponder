@@ -1,4 +1,4 @@
-package net.createmod.catnip.utility.worldWrappers;
+package net.createmod.catnip.utility.levelWrappers;
 
 import java.util.function.BiFunction;
 
@@ -9,12 +9,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 
-public class RayTraceWorld implements BlockGetter {
+public class RayTraceLevel implements BlockGetter {
 
 	private final LevelAccessor template;
 	private final BiFunction<BlockPos, BlockState, BlockState> stateGetter;
 
-	public RayTraceWorld(LevelAccessor template, BiFunction<BlockPos, BlockState, BlockState> stateGetter) {
+	public RayTraceLevel(LevelAccessor template, BiFunction<BlockPos, BlockState, BlockState> stateGetter) {
 		this.template = template;
 		this.stateGetter = stateGetter;
 	}

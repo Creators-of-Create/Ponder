@@ -6,9 +6,9 @@ import java.nio.ByteOrder;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
@@ -17,7 +17,6 @@ import com.mojang.math.Vector4f;
 
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import net.createmod.catnip.platform.CatnipClientServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -59,14 +58,16 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	protected static final Long2IntMap WORLD_LIGHT_CACHE = new Long2IntOpenHashMap();
 
 
-	public DefaultSuperByteBuffer(BufferBuilder buf) {
-		Pair<BufferBuilder.DrawState, ByteBuffer> state = buf.popNextBuffer();
-		ByteBuffer rendered = state.getSecond();
+	public DefaultSuperByteBuffer(RenderedBuffer renderedBuffer) {
+		ByteBuffer rendered = renderedBuffer.vertexBuffer();
+		BufferBuilder.DrawState drawState = renderedBuffer.drawState();
+
 		// Vanilla issue, endianness does not carry over into sliced buffers - fixed by forge only
 		rendered.order(ByteOrder.nativeOrder());
 
-		formatSize = CatnipClientServices.CLIENT_HOOKS.getFormatFromBufferBuilder(buf).getVertexSize();
-		int size = state.getFirst().vertexCount() * formatSize;
+		drawState.format().getVertexSize();
+		formatSize = drawState.format().getVertexSize();
+		int size = drawState.vertexCount() * formatSize;
 
 		template = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
 		template.order(rendered.order());

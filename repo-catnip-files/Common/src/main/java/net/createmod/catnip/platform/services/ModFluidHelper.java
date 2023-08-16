@@ -6,9 +6,15 @@ import net.minecraft.world.level.material.Fluid;
 public interface ModFluidHelper<R> {
 	int getColor(Fluid fluid);
 
+	int getColor(Fluid fluid, long amount);
+
 	int getLuminosity(Fluid fluid);
 
+	int getLuminosity(Fluid fluid, long amount);
+
 	ResourceLocation getStillTexture(Fluid fluid);
+
+	ResourceLocation getStillTexture(Fluid fluid, long amount);
 
 	boolean isLighterThanAir(Fluid fluid);
 

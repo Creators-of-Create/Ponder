@@ -7,9 +7,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
-import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.Couple;
 
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.renderer.GameRenderer;
 
 public class BoxElement extends AbstractRenderElement {
@@ -71,7 +71,7 @@ public class BoxElement extends AbstractRenderElement {
 
 	//total box width = 1 * 2 (outer border) + 1 * 2 (inner color border) + 2 * borderOffset + width
 	//defaults to 2 + 2 + 4 + 16 = 24px
-	//batch everything together to save a bunch of gl calls over GuiUtils
+	//batch everything together to save a bunch of gl calls over ScreenUtils
 	protected void renderBox(PoseStack ms) {
 		/*
 		*          _____________

@@ -31,17 +31,16 @@ public class BasicFluidRenderer {
 			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom) {
 		TextureAtlasSprite fluidTexture = Minecraft.getInstance()
 				.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-				.apply(CatnipServices.FLUID_HELPER.getStillTexture(fluid));
+				.apply(CatnipServices.FLUID_HELPER.getStillTexture(fluid, amount));
 
-		int color = CatnipServices.FLUID_HELPER.getColor(fluid);
+		int color = CatnipServices.FLUID_HELPER.getColor(fluid, amount);
 		int blockLightIn = (light >> 4) & 0xF;
-		int luminosity = Math.max(blockLightIn, CatnipServices.FLUID_HELPER.getLuminosity(fluid));
+		int luminosity = Math.max(blockLightIn, CatnipServices.FLUID_HELPER.getLuminosity(fluid, amount));
 		light = (light & 0xF00000) | luminosity << 4;
 
 		Vec3 center = new Vec3(xMin + (xMax - xMin) / 2, yMin + (yMax - yMin) / 2, zMin + (zMax - zMin) / 2);
 		ms.pushPose();
-		if (CatnipServices.FLUID_HELPER
-				.isLighterThanAir(fluid)) {
+		if (CatnipServices.FLUID_HELPER.isLighterThanAir(fluid)) {
 			ms.translate(center.x, center.y, center.z);
 			ms.mulPose(Vector3f.XP.rotationDegrees(180));
 			ms.translate(-center.x, -center.y, -center.z);

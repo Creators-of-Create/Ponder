@@ -14,20 +14,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class ForgeRegisteredObjectsHelper implements RegisteredObjectsHelper<IForgeRegistry> {
 
 	@Override
 	public <V> ResourceLocation getKeyOrThrow(IForgeRegistry registry, V value) {
-		ResourceLocation key = null;
-		if (value instanceof IForgeRegistryEntry<?> forgeEntry) {
-			key = forgeEntry.getRegistryName();
-		}
+		ResourceLocation key = registry.getKey(value);
 
 		if (key == null) {
 			throw new IllegalArgumentException("Could not get key for value " + value + "!");
 		}
+		
 		return key;
 	}
 
@@ -48,12 +45,12 @@ public class ForgeRegisteredObjectsHelper implements RegisteredObjectsHelper<IFo
 
 	@Override
 	public ResourceLocation getKeyOrThrow(EntityType<?> value) {
-		return getKeyOrThrow(ForgeRegistries.ENTITIES, value);
+		return getKeyOrThrow(ForgeRegistries.ENTITY_TYPES, value);
 	}
 
 	@Override
 	public ResourceLocation getKeyOrThrow(BlockEntityType<?> value) {
-		return getKeyOrThrow(ForgeRegistries.BLOCK_ENTITIES, value);
+		return getKeyOrThrow(ForgeRegistries.BLOCK_ENTITY_TYPES, value);
 	}
 
 	@Override
