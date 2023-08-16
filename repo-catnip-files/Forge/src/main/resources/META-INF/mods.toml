@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[40,)"
+loaderVersion="[43,)"
 license="${mod_license}"
 issueTrackerURL="${mod_issues}"
 
@@ -8,8 +8,9 @@ modId="catnip"
 version="${file.jarVersion}"
 displayName="${mod_name}"
 displayURL="${mod_homepage}"
-credits="This project is made possible with Patreon support from players like you. Thank you! {mod_supporters}"
+logoFile="logo.png"
 authors="${mod_author}"
+credits="${mod_credit}"
 description='''
 ${mod_description}
 '''

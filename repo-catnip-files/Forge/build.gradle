@@ -1,29 +1,31 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.minecraftforge.net' }
-        maven { url 'https://plugins.gradle.org/m2/' }
-        maven { url 'https://repo.spongepowered.org/repository/maven-public' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
-        classpath "org.parchmentmc:librarian:${librarian_version}"
-        classpath group: 'net.darkhax.curseforgegradle', name: 'CurseForgeGradle', version: '1.0.7'
-        classpath group: 'net.darkhax.tweedle', name: 'Tweedle', version: '1.0.5'
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0, 6.2)'
+    id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+    id 'org.parchmentmc.librarian.forgegradle' version "${librarian_version}"
+}
+
+base {
+    archivesName = "catnip-Forge-${minecraft_version}"
+}
+
+def commonProject = findProject(':Common') != null ? project(':Common') : project(':catnip:Common')
+
+boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
+boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
+project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
+project.logger.lifecycle("Dependencies included in Workspace: [Flywheel: ${flywheelInWorkspace}]")
+
+// -- Mixin Support
+if (project.ext.mixin_enabled) {
+    mixin {
+        // Tells the mixin plugin where to put the generated refmap file.
+        add sourceSets.main, "${mod_id}.refmap.json"
+
+        config "${mod_id}.mixins.json"
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply from: '../gradle/patreon.gradle'
-
-archivesBaseName = "${mod_name}-Forge-${minecraft_version}"
-
-def commonProject = findProject(":Common") != null ? project(":Common") : project(":catnip:Common")
-
-boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
-boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
 minecraft {
 
@@ -33,60 +35,64 @@ minecraft {
         mappings channel: 'official', version: "${minecraft_version}"
     }
 
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
+    copyIdeResources = true
+
+    if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
+        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    }
 
     runs {
-        client {
+        // applies to all the run configs below
+        configureEach {
             workingDirectory project.file('run')
-            if (inMultiModWorkspace)
-                ideaModule "createmod.catnip.Forge.main"
-            else
-                ideaModule "catnip.Forge.main"
 
-            taskName 'Client'
+            if (inMultiModWorkspace)
+                ideaModule 'createmod.catnip.Forge.main'
+            else
+                ideaModule 'catnip.Forge.main'
+
+            property 'forge.logging.console.level', 'debug'
+            jvmArgs '-XX:+IgnoreUnrecognizedVMOptions', '-XX:+AllowEnhancedClassRedefinition' // uncomment with jbr
+            //jvmArgs '-XX:+UnlockCommercialFeatures' // uncomment for profiling
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             if (project.ext.mixin_enabled) {
                 arg "-mixin.config=${mod_id}.mixins.json"
             }
-
-            arg '-mixin.config=flywheel.mixins.json'
 
             mods {
                 catnip {
                     source sourceSets.main
                     source commonProject.sourceSets.main
                 }
+            }
+        }
 
+        client {
+            taskName 'Client'
+
+            arg '-mixin.config=flywheel.mixins.json'
+
+            mods {
                 if (flywheelInWorkspace) {
                     flywheel {
-                        source project(":Flywheel").sourceSets.main
+                        source project(':Flywheel').sourceSets.main
                     }
                 }
             }
         }
 
         server {
-            workingDirectory project.file('run')
-            if (inMultiModWorkspace)
-                ideaModule "createmod.catnip.Forge.main"
-            else
-                ideaModule "catnip.Forge.main"
-
             taskName 'Server'
-
-            if (project.ext.mixin_enabled) {
-                arg "-mixin.config=${mod_id}.mixins.json"
-            }
-
-            mods {
-                catnip {
-                    source sourceSets.main
-                    source commonProject.sourceSets.main
-                }
-            }
         }
     }
 }
+
+// Include resources generated by data generators.
+//sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
 
@@ -102,86 +108,30 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     source(commonProject.sourceSets.main.allSource)
+}
+tasks.withType(Javadoc).configureEach {
+    source(commonProject.sourceSets.main.allJava)
+}
+tasks.named("sourcesJar", Jar) {
+    from(commonProject.sourceSets.main.allSource)
 }
 
 processResources {
-
     from commonProject.sourceSets.main.resources
 
     def buildProps = project.properties.clone()
 
-    // Replaces FML's magic file.jarVersion string with the correct version at
-    // build time.
+    // Replaces FML's magic file.jarVersion string with the correct version at build time.
     buildProps.put('file', [jarVersion: project.version])
 
-    if (project.hasProperty('patreon')) {
-
-        def supporters = new ArrayList<String>()
-
-        for (entry in project.ext.patreon.pledges) {
-
-            def pledge = entry.value;
-
-            if (pledge.isValid()) {
-
-                supporters.add(pledge.getDisplayName())
-            }
-        }
-
-        buildProps.put('mod_supporters', supporters.join(', '))
-    } else {
-        buildProps.put('mod_supporters', '')
-    }
-
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-
         expand buildProps
-    }
-
-    if (project.ext.mixin_enabled) {
-        filesMatching(["${mod_id}.mixins.json".toString()]) {
-
-            expand buildProps
-        }
     }
 }
 
 jar.finalizedBy('reobfJar')
-
-jar {
-
-    manifest {
-
-        def newProps = [:]
-
-        if (project.ext.mixin_enabled) {
-            newProps['MixinConfigs'] = "${mod_id}.mixins.json"
-        }
-
-        attributes(newProps)
-    }
-}
-
-// -- Mixin Support
-if (project.ext.mixin_enabled) {
-
-    apply plugin: 'org.spongepowered.mixin'
-
-    mixin {
-
-        // Tells the mixin plugin where to put the generated refmap file.
-        add sourceSets.main, "${mod_id}.refmap.json"
-    }
-}
-
-java {
-
-    withJavadocJar()
-    withSourcesJar()
-
-}
 
 // -- MAVEN PUBLISHING --
 project.publishing {
@@ -190,21 +140,9 @@ project.publishing {
 
         mavenJava(MavenPublication) {
 
-            artifactId project.archivesBaseName
-
+            artifactId base.archivesName.get()
             from components.java
-            /*// Base mod archive.
-            artifact jar
-
-            // Adds the sources as an artifact.
-            artifact project.sourcesJar {
-                 classifier 'sources'
-            }
-
-            // Adds the javadocs as an artifact.
-            artifact project.javadocJar {
-                classifier 'javadoc'
-            }*/
+            fg.component(it)
         }
     }
 
@@ -239,63 +177,3 @@ if (System.getProperty("idea.sync.active") == "true") {
         }
     }
 }
-
-// CurseForge Publishing
-/*task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-
-    apiToken = findProperty('curse_auth')
-
-    def mainFile = upload(curse_project, jar)
-    mainFile.changelogType = 'markdown'
-    mainFile.changelog = project.ext.mod_changelog
-    mainFile.addJavaVersion('Java 17')
-
-    // Append Patreon Supporters
-    def patreonInfo = project.findProperty('patreon')
-
-    if (patreonInfo) {
-        mainFile.changelog += "\n\nThis project is made possible by [Patreon](${patreonInfo.campaignUrlTracked}) support from players like you. Thank you!\n\n${patreonInfo.pledgeLog}"
-    }
-
-    doLast {
-
-        if (project.hasProperty('mod_homepage')) {
-
-            project.ext.curse_file_url = "${mod_homepage}/files/${mainFile.curseFileId}"
-        }
-    }
-}*/
-
-// Twitter Announcement
-/*
-def canTweet = project.hasProperty('twitter_api_key') && project.hasProperty('twitter_api_key_secret') && project.hasProperty('twitter_access_token') && project.hasProperty('twitter_access_token_secret')
-
-task postTweet (type: net.darkhax.tweedle.TaskPostTweet){
-
-    onlyIf {
-
-        canTweet && project.hasProperty('minecraft_version') && project.hasProperty('curse_file_url')
-    }
-
-    if (canTweet) {
-
-        addClient(project.findProperty('twitter_api_key'), project.findProperty('twitter_api_key_secret'), project.findProperty('twitter_access_token'), project.findProperty('twitter_access_token_secret'))
-    }
-
-    doLast {
-
-        def tweetBody = "${project.ext.mod_name} (Forge) ${project.version} for Minecraft ${project.ext.minecraft_version} has been released. #${project.ext.mod_name.toLowerCase().replaceAll("[^a-zA-Z]", "")} #forge"
-
-        if (project.hasProperty('curse_file_url')) {
-
-            tweetBody += " ${project.findProperty('curse_file_url')}"
-        }
-
-        sendTweet(tweetBody)
-    }
-}
-
-if (!canTweet) {
-
-    project.logger.warn("Skipping Twitter plugin. APIKey: ${project.hasProperty('twitter_api_key')} ${project.hasProperty('twitter_api_key_secret')} AccessToken: ${project.hasProperty('twitter_access_token')} ${project.hasProperty('twitter_access_token_secret')}")
-}*/
