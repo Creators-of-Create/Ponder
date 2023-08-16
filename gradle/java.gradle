@@ -1,4 +1,5 @@
 apply plugin: 'java'
+
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 java.withSourcesJar()
 java.withJavadocJar()
@@ -40,6 +41,14 @@ tasks.withType(JavaCompile).configureEach {
 
     it.options.encoding = 'UTF-8'
     it.options.release = 17
+}
+
+// Disables Gradle's custom module metadata from being published to maven. The
+// metadata includes mapped dependencies which are not reasonably consumable by
+// other mod developers.
+tasks.withType(GenerateModuleMetadata) {
+
+	enabled = false
 }
 
 javadoc {

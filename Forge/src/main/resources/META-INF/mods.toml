@@ -1,27 +1,28 @@
 modLoader="javafml"
-loaderVersion="[40,)"
+loaderVersion="[43,)"
 license="${mod_license}"
 issueTrackerURL="${mod_issues}"
 
 [[mods]]
-modId="${mod_id}"
+modId="ponder"
 version="${file.jarVersion}"
 displayName="${mod_name}"
 displayURL="${mod_homepage}"
-credits="This project is made possible with Patreon support from players like you. Thank you! {mod_supporters}"
+logoFile="logo.png"
 authors="${mod_author}"
+credits="${mod_credit}"
 description='''
 ${mod_description}
 '''
 
-[[dependencies.${mod_id}]]
+[[dependencies.ponder]]
     modId="forge"
     mandatory=true
     versionRange="[43.2.3,)"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.${mod_id}]]
+[[dependencies.ponder]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.19.2,1.20)"
