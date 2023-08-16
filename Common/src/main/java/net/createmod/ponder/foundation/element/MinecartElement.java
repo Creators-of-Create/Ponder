@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 
 import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.ponder.foundation.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.PonderWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -92,7 +92,7 @@ public class MinecartElement extends AnimatedSceneElement {
 	}
 
 	@Override
-	protected void renderLast(PonderWorld world, MultiBufferSource buffer, PoseStack ms, float fade, float pt) {
+	protected void renderLast(PonderLevel world, MultiBufferSource buffer, PoseStack ms, float fade, float pt) {
 		EntityRenderDispatcher entityrenderermanager = Minecraft.getInstance()
 			.getEntityRenderDispatcher();
 		if (entity == null)

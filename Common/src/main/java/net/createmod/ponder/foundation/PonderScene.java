@@ -42,7 +42,7 @@ import net.createmod.ponder.foundation.element.WorldSectionElement;
 import net.createmod.ponder.foundation.instruction.HideAllInstruction;
 import net.createmod.ponder.foundation.instruction.PonderInstruction;
 import net.createmod.ponder.foundation.ui.PonderUI;
-import net.createmod.ponder.utility.WorldTickHolder;
+import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -77,7 +77,7 @@ public class PonderScene {
 	private final Set<PonderElement> elements;
 	private final List<PonderTag> tags;
 
-	@Nullable private final PonderWorld world;
+	@Nullable private final PonderLevel world;
 	private final String namespace;
 	private final ResourceLocation location;
 	private final SceneCamera camera;
@@ -102,7 +102,7 @@ public class PonderScene {
 	private int currentTime;
 	private boolean nextUpEnabled = true;
 
-	public PonderScene(@Nullable PonderWorld world, String namespace, ResourceLocation location, Collection<PonderTag> tags) {
+	public PonderScene(@Nullable PonderLevel world, String namespace, ResourceLocation location, Collection<PonderTag> tags) {
 		if (world != null)
 			world.scene = this;
 
@@ -407,7 +407,7 @@ public class PonderScene {
 		return PonderLocalization.getSpecific(sceneId, key);
 	}
 
-	@Nullable public PonderWorld getWorld() {
+	@Nullable public PonderLevel getWorld() {
 		return world;
 	}
 
@@ -530,7 +530,7 @@ public class PonderScene {
 		}
 
 		public PoseStack apply(PoseStack ms) {
-			return apply(ms, WorldTickHolder.getPartialTicks(world));
+			return apply(ms, LevelTickHolder.getPartialTicks(world));
 		}
 
 		public PoseStack apply(PoseStack ms, float pt) {

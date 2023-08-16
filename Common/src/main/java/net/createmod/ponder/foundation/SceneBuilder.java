@@ -413,7 +413,7 @@ public class SceneBuilder {
 
 		public void incrementBlockBreakingProgress(BlockPos pos) {
 			addInstruction(scene -> {
-				PonderWorld world = scene.getWorld();
+				PonderLevel world = scene.getWorld();
 				int progress = world.getBlockBreakingProgressions()
 					.getOrDefault(pos, -1) + 1;
 				if (progress == 9) {
@@ -580,7 +580,7 @@ public class SceneBuilder {
 		public ElementLink<EntityElement> createEntity(Function<Level, Entity> factory) {
 			ElementLink<EntityElement> link = new ElementLink<>(EntityElement.class, UUID.randomUUID());
 			addInstruction(scene -> {
-				PonderWorld world = scene.getWorld();
+				PonderLevel world = scene.getWorld();
 				Entity entity = factory.apply(world);
 				EntityElement handle = new EntityElement(entity);
 				scene.addElement(handle);

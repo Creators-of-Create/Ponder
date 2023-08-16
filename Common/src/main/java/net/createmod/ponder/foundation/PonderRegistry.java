@@ -2,7 +2,6 @@ package net.createmod.ponder.foundation;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 
 import javax.annotation.Nullable;
@@ -68,7 +68,7 @@ public class PonderRegistry {
 		for (int i = 0; i < entries.size(); i++) {
 			PonderStoryBoardEntry sb = entries.get(i);
 			StructureTemplate activeTemplate = loadSchematic(sb.getSchematicLocation());
-			PonderWorld world = new PonderWorld(BlockPos.ZERO, Minecraft.getInstance().level);
+			PonderLevel world = new PonderLevel(BlockPos.ZERO, Minecraft.getInstance().level);
 			activeTemplate.placeInWorld(world, BlockPos.ZERO, BlockPos.ZERO, new StructurePlaceSettings(), world.random, Block.UPDATE_CLIENTS);
 			world.createBackup();
 			PonderScene scene = compileScene(i, sb, world);
@@ -79,7 +79,7 @@ public class PonderRegistry {
 		return scenes;
 	}
 
-	public static PonderScene compileScene(int i, PonderStoryBoardEntry sb, @Nullable PonderWorld world) {
+	public static PonderScene compileScene(int i, PonderStoryBoardEntry sb, @Nullable PonderLevel world) {
 		PonderScene scene = new PonderScene(world, sb.getNamespace(), sb.getComponent(), sb.getTags());
 		SceneBuilder builder = scene.builder();
 		sb.getBoard().program(builder, scene.getSceneBuildingUtil());
@@ -95,13 +95,20 @@ public class PonderRegistry {
 		String path = "ponder/" + location.getPath() + ".nbt";
 		ResourceLocation location1 = new ResourceLocation(namespace, path);
 
-		try (Resource resource = resourceManager.getResource(location1)) {
-			return loadSchematic(resource.getInputStream());
-		} catch (FileNotFoundException e) {
-			Catnip.LOGGER.error("Ponder schematic missing: " + location1, e);
+		Optional<Resource> optionalResource = resourceManager.getResource(location1);
+		if (optionalResource.isEmpty()) {
+			Catnip.LOGGER.error("Ponder schematic missing: " + location1);
+
+			return new StructureTemplate();
+		}
+
+		Resource resource = optionalResource.get();
+		try (InputStream inputStream = resource.open()) {
+			return loadSchematic(inputStream);
 		} catch (IOException e) {
 			Catnip.LOGGER.error("Failed to read ponder schematic: " + location1, e);
 		}
+
 		return new StructureTemplate();
 	}
 

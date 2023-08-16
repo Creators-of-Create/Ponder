@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import com.jozufozu.flywheel.core.model.ModelUtil;
@@ -31,10 +30,11 @@ import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.outliner.AABBOutline;
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.foundation.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.PonderWorld;
 import net.createmod.ponder.foundation.Selection;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -46,6 +46,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -179,7 +180,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		return super.isVisible() && !isEmpty();
 	}
 
-	public Pair<Vec3, BlockHitResult> rayTrace(PonderWorld world, Vec3 source, Vec3 target) {
+	public Pair<Vec3, BlockHitResult> rayTrace(PonderLevel world, Vec3 source, Vec3 target) {
 		world.setMask(this.section);
 		Vec3 transformedTarget = reverseTransformVec(target);
 		BlockHitResult rayTraceBlocks = world.clip(new ClipContext(reverseTransformVec(source), transformedTarget,
@@ -272,7 +273,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		redraw = false;
 	}
 
-	protected void loadBEsIfMissing(PonderWorld world) {
+	protected void loadBEsIfMissing(PonderLevel world) {
 		if (renderedBlockEntities != null)
 			return;
 		tickableBlockEntities = new ArrayList<>();
@@ -300,7 +301,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 	}
 
 	@Override
-	public void renderFirst(PonderWorld world, MultiBufferSource buffer, PoseStack ms, float fade, float pt) {
+	public void renderFirst(PonderLevel world, MultiBufferSource buffer, PoseStack ms, float fade, float pt) {
 		int light = -1;
 		if (fade != 1)
 			light = (int) (Mth.lerp(fade, 5, 14));
@@ -349,7 +350,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 	}
 
 	@Override
-	protected void renderLayer(PonderWorld world, MultiBufferSource buffer, RenderType type, PoseStack ms, float fade, float pt) {
+	protected void renderLayer(PonderLevel world, MultiBufferSource buffer, RenderType type, PoseStack ms, float fade, float pt) {
 		SuperByteBufferCache bufferCache = SuperByteBufferCache.getInstance();
 
 		int code = hashCode() ^ world.hashCode();
@@ -375,7 +376,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 	}
 
 	@Override
-	protected void renderLast(PonderWorld world, MultiBufferSource buffer, PoseStack ms, float fade, float pt) {
+	protected void renderLast(PonderLevel world, MultiBufferSource buffer, PoseStack ms, float fade, float pt) {
 		redraw = false;
 		if (selectedBlock == null)
 			return;
@@ -401,7 +402,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		ms.popPose();
 	}
 
-	private void renderBlockEntities(PonderWorld world, PoseStack ms, MultiBufferSource buffer, float pt) {
+	private void renderBlockEntities(PonderLevel world, PoseStack ms, MultiBufferSource buffer, float pt) {
 		loadBEsIfMissing(world);
 
 		Iterator<BlockEntity> iterator = renderedBlockEntities.iterator();
@@ -431,12 +432,12 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		}
 	}
 
-	private SuperByteBuffer buildStructureBuffer(PonderWorld world, RenderType layer) {
+	private SuperByteBuffer buildStructureBuffer(PonderLevel world, RenderType layer) {
 		BlockRenderDispatcher dispatcher = ModelUtil.VANILLA_RENDERER;
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
 		PoseStack poseStack = objects.poseStack;
-		Random random = objects.random;
+		RandomSource random = objects.random;
 		ShadeSeparatingVertexConsumer shadeSeparatingWrapper = objects.shadeSeparatingWrapper;
 		BufferBuilder shadedBuilder = objects.shadedBuilder;
 		BufferBuilder unshadedBuilder = objects.unshadedBuilder;
@@ -446,7 +447,6 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		shadeSeparatingWrapper.prepare(shadedBuilder, unshadedBuilder);
 
 		world.setMask(this.section);
-		//ForgeHooksClient.setRenderType(layer); TODO
 		ModelBlockRenderer.enableCaching();
 		section.forEach(pos -> {
 			BlockState state = world.getBlockState(pos);
@@ -455,18 +455,21 @@ public class WorldSectionElement extends AnimatedSceneElement {
 			poseStack.pushPose();
 			poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
 
-			if (state.getRenderShape() == RenderShape.MODEL && CatnipClientServices.CLIENT_HOOKS.chunkRenderTypeMatches(state, layer)) {
+			if (state.getRenderShape() == RenderShape.MODEL) {
 				BlockEntity blockEntity = world.getBlockEntity(pos);
-				CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, shadeSeparatingWrapper, state, pos, world, true, random, blockEntity);
+				state.getSeed(pos);
+
+				if (CatnipClientServices.CLIENT_HOOKS.doesBlockModelContainRenderType(layer, state, random, blockEntity))
+					CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, shadeSeparatingWrapper, state, pos, world, true, random, layer, blockEntity);
+
 			}
 
-			if (!fluidState.isEmpty() && CatnipClientServices.CLIENT_HOOKS.fluidRenderTypeMatches(fluidState, layer))
+			if (!fluidState.isEmpty() && ItemBlockRenderTypes.getRenderLayer(fluidState) == layer)
 				dispatcher.renderLiquid(pos, world, shadedBuilder, state, fluidState);
 
 			poseStack.popPose();
 		});
 		ModelBlockRenderer.clearCache();
-		//ForgeHooksClient.setRenderType(null);
 		world.clearMask();
 
 		shadeSeparatingWrapper.clear();
@@ -518,7 +521,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 
 	private static class ThreadLocalObjects {
 		public final PoseStack poseStack = new PoseStack();
-		public final Random random = new Random();
+		public final RandomSource random = RandomSource.createNewThreadLocalInstance();
 		public final ShadeSeparatingVertexConsumer shadeSeparatingWrapper = new ShadeSeparatingVertexConsumer();
 		public final BufferBuilder shadedBuilder = new BufferBuilder(512);
 		public final BufferBuilder unshadedBuilder = new BufferBuilder(512);

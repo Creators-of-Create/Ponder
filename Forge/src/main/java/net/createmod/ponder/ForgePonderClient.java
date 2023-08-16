@@ -8,7 +8,7 @@ import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.enums.PonderConfig;
 import net.createmod.ponder.foundation.PonderTooltipHandler;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -65,8 +65,8 @@ public class ForgePonderClient {
 			ModContainer modContainer = ModList.get()
 					.getModContainerById(Ponder.MOD_ID)
 					.orElseThrow(() -> new IllegalStateException("Ponder Mod Container missing after loadCompleted"));
-			modContainer.registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
-					() -> new ConfigGuiHandler.ConfigGuiFactory(
+			modContainer.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+					() -> new ConfigScreenHandler.ConfigScreenFactory(
 							(mc, previousScreen) -> new BaseConfigScreen(previousScreen, Ponder.MOD_ID)));
 
 			BaseConfigScreen.setDefaultActionFor(Ponder.MOD_ID, base -> base

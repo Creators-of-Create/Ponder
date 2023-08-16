@@ -3,7 +3,6 @@ package net.createmod.ponder.foundation.ui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.IntStream;
 
 import javax.annotation.Nullable;
@@ -38,13 +37,13 @@ import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderConfig;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderChapter;
+import net.createmod.ponder.foundation.PonderLevel;
 import net.createmod.ponder.foundation.PonderRegistry;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
 import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
-import net.createmod.ponder.foundation.PonderWorld;
 import net.createmod.ponder.foundation.content.DebugScenes;
 import net.createmod.ponder.foundation.element.TextWindowElement;
 import net.minecraft.ChatFormatting;
@@ -59,6 +58,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -369,8 +369,8 @@ public class PonderUI extends AbstractPonderScreen {
 			List<PonderStoryBoardEntry> list = PonderRegistry.ALL.get(scene.getLocation());
 			PonderStoryBoardEntry sb = list.get(index);
 			StructureTemplate activeTemplate = PonderRegistry.loadSchematic(sb.getSchematicLocation());
-			PonderWorld world = new PonderWorld(BlockPos.ZERO, Minecraft.getInstance().level);
-			activeTemplate.placeInWorld(world, BlockPos.ZERO, BlockPos.ZERO, new StructurePlaceSettings(), new Random(),
+			PonderLevel world = new PonderLevel(BlockPos.ZERO, Minecraft.getInstance().level);
+			activeTemplate.placeInWorld(world, BlockPos.ZERO, BlockPos.ZERO, new StructurePlaceSettings(), RandomSource.create(),
 				Block.UPDATE_CLIENTS);
 			world.createBackup();
 			scene = PonderRegistry.compileScene(index, sb, world);

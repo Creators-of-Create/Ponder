@@ -2,8 +2,8 @@ package net.createmod.ponder.foundation.instruction;
 
 import java.util.function.UnaryOperator;
 
+import net.createmod.ponder.foundation.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.PonderWorld;
 import net.createmod.ponder.foundation.Selection;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,7 +24,7 @@ public class ReplaceBlocksInstruction extends WorldModifyInstruction {
 
 	@Override
 	protected void runModification(Selection selection, PonderScene scene) {
-		PonderWorld world = scene.getWorld();
+		PonderLevel world = scene.getWorld();
 		selection.forEach(pos -> {
 			if (!world.getBounds()
 				.isInside(pos))

@@ -14,8 +14,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
-import net.createmod.catnip.utility.worldWrappers.SchematicWorld;
-import net.createmod.catnip.utility.worldWrappers.WrappedClientWorld;
+import net.createmod.catnip.utility.levelWrappers.SchematicLevel;
+import net.createmod.catnip.utility.levelWrappers.WrappedClientLevel;
 import net.createmod.ponder.foundation.element.WorldSectionElement;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -43,7 +43,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class PonderWorld extends SchematicWorld {
+public class PonderLevel extends SchematicLevel {
 
 	@Nullable public PonderScene scene;
 
@@ -51,14 +51,14 @@ public class PonderWorld extends SchematicWorld {
 	protected Map<BlockPos, CompoundTag> originalBlockEntities;
 	protected Map<BlockPos, Integer> blockBreakingProgressions;
 	protected List<Entity> originalEntities;
-	private final Supplier<ClientLevel> asClientWorld = Suppliers.memoize(() -> WrappedClientWorld.of(this));
+	private final Supplier<ClientLevel> asClientWorld = Suppliers.memoize(() -> WrappedClientLevel.of(this));
 
 	protected PonderWorldParticles particles;
 
 	int overrideLight;
 	@Nullable Selection mask;
 
-	public PonderWorld(BlockPos anchor, Level original) {
+	public PonderLevel(BlockPos anchor, Level original) {
 		super(anchor, original);
 		originalBlocks = new HashMap<>();
 		originalBlockEntities = new HashMap<>();

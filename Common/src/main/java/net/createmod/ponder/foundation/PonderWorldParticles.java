@@ -26,9 +26,9 @@ public class PonderWorldParticles {
 	private final Map<ParticleRenderType, Queue<Particle>> byType = Maps.newIdentityHashMap();
 	private final Queue<Particle> queue = Queues.newArrayDeque();
 
-	PonderWorld world;
+	PonderLevel world;
 
-	public PonderWorldParticles(PonderWorld world) {
+	public PonderWorldParticles(PonderLevel world) {
 		this.world = world;
 	}
 

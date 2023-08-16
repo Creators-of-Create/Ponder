@@ -26,7 +26,7 @@ public interface PonderPlugin {
 	 */
 	default void registerSharedText(BiConsumer<String, String> adder) {}
 
-	default void onPonderWorldRestore(PonderWorld world) {}
+	default void onPonderWorldRestore(PonderLevel world) {}
 
 	default Stream<Predicate<ItemLike>> indexExclusions() {
 		return Stream.empty();

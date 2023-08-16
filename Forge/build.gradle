@@ -8,17 +8,19 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+        classpath "org.parchmentmc:librarian:${librarian_version}"
         classpath group: 'net.darkhax.curseforgegradle', name: 'CurseForgeGradle', version: '1.0.7'
         classpath group: 'net.darkhax.tweedle', name: 'Tweedle', version: '1.0.5'
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply from: '../gradle/patreon.gradle'
 
 archivesBaseName = "${mod_name}-Forge-${minecraft_version}"
 
-def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
+def commonProject = findProject(":Common") != null ? project(":Common") : project(":Ponder:Common")
 
 boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
 boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
@@ -26,12 +28,21 @@ boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywhee
 
 minecraft {
 
-    mappings channel: 'official', version: minecraft_version
+    if (Boolean.parseBoolean(project.use_parchment)) {
+        mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    } else {
+        mappings channel: 'official', version: "${minecraft_version}"
+    }
+
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
             workingDirectory project.file('run')
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             if (inMultiModWorkspace)
                 ideaModule "createmod.Ponder.Forge.main"
             else
@@ -77,7 +88,6 @@ minecraft {
             else
                 ideaModule "Ponder.Forge.main"
 
-            ideaModule "${rootProject.name}.${project.name}.main"
             taskName 'Server'
 
             if (project.ext.mixin_enabled) {

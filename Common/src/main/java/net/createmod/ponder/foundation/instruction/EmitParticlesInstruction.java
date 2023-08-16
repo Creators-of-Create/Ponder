@@ -1,8 +1,8 @@
 package net.createmod.ponder.foundation.instruction;
 
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.foundation.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.PonderWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleOptions;
@@ -31,7 +31,7 @@ public class EmitParticlesInstruction extends TickingInstruction {
 			return Minecraft.getInstance().particleEngine;
 		}
 
-		public void create(PonderWorld world, double x, double y, double z);
+		public void create(PonderLevel world, double x, double y, double z);
 
 	}
 

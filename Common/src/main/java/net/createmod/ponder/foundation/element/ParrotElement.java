@@ -8,8 +8,8 @@ import com.mojang.math.Vector3f;
 
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.foundation.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.PonderWorld;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -110,7 +110,7 @@ public class ParrotElement extends AnimatedSceneElement {
 	}
 
 	@Override
-	protected void renderLast(PonderWorld world, MultiBufferSource buffer, PoseStack ms, float fade, float pt) {
+	protected void renderLast(PonderLevel world, MultiBufferSource buffer, PoseStack ms, float fade, float pt) {
 		EntityRenderDispatcher entityrenderermanager = Minecraft.getInstance()
 			.getEntityRenderDispatcher();
 
@@ -139,7 +139,7 @@ public class ParrotElement extends AnimatedSceneElement {
 
 		protected abstract void tick(PonderScene scene, Parrot entity, Vec3 location);
 
-		Parrot create(PonderWorld world) {
+		Parrot create(PonderLevel world) {
 			Parrot entity = new Parrot(EntityType.PARROT, world);
 			int nextInt = Ponder.RANDOM.nextInt(5);
 			entity.setVariant(nextInt == 1 ? 0 : nextInt); // blue parrots are kinda hard to see
@@ -151,7 +151,7 @@ public class ParrotElement extends AnimatedSceneElement {
 	public static class DancePose extends ParrotPose {
 
 		@Override
-		Parrot create(PonderWorld world) {
+		Parrot create(PonderLevel world) {
 			Parrot entity = super.create(world);
 			entity.setRecordPlayingNearby(BlockPos.ZERO, true);
 			return entity;
