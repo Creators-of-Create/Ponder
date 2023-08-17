@@ -28,3 +28,10 @@ ${mod_description}
     versionRange="[1.19.2,1.20)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.catnip]]
+    modId="flywheel"
+    mandatory=true
+    versionRange="[0.6.9,0.6.10)"
+    ordering="AFTER"
+    side="CLIENT"
