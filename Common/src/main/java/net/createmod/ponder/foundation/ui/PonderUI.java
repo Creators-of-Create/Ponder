@@ -23,8 +23,8 @@ import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
+import net.createmod.catnip.utility.ClientFontHelper;
 import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.FontHelper;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.Pointing;
@@ -760,7 +760,7 @@ public class PonderUI extends AbstractPonderScreen {
 		ms.translate(x, y, 0);
 		ms.mulPose(Vector3f.XN.rotationDegrees(indexDiff * -75));
 		ms.translate(0, 0, 5);
-		FontHelper.drawSplitString(ms, font, title, 0, 0, left.x - 51, Theme.Key.TEXT.c()
+		ClientFontHelper.drawSplitString(ms, font, title, 0, 0, left.x - 51, Theme.Key.TEXT.c()
 			.scaleAlpha(1 - indexDiff)
 			.getRGB());
 		ms.popPose();

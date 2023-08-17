@@ -15,7 +15,7 @@ import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.utility.FontHelper;
+import net.createmod.catnip.utility.ClientFontHelper;
 import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
@@ -223,7 +223,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 				.render(ms);
 
 		ms.translate(0, 0, 100);
-		FontHelper.drawSplitString(ms, font, desc, x, y, w, Theme.Key.TEXT.i());
+		ClientFontHelper.drawSplitString(ms, font, desc, x, y, w, Theme.Key.TEXT.i());
 		ms.popPose();
 	}
 
