@@ -22,6 +22,7 @@ import net.createmod.catnip.utility.FontHelper;
 import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.layout.LayoutHelper;
+import net.createmod.catnip.utility.layout.PaginationState;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderGuiTextures;
@@ -38,17 +39,14 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 	protected List<ModTagsEntry> currentModTagEntries = new LinkedList<>();
 	protected List<Map.Entry<String, List<PonderTag>>> sortedModTags = List.of();
-	protected boolean isPaginated = false;
-	protected int modsPerScreen;
-	protected int indexStart;
+	protected PaginationState paginationState = new PaginationState();
 
 	@Nullable protected PonderButton pageNext;
 	@Nullable protected PonderButton pagePrev;
 
 	@Nullable private PonderTag hoveredItem = null;
 
-	// The ponder entry point from the menu. May be changed to include general
-	// chapters in the future
+	// The main ponder entry point from menus.
 	public PonderTagIndexScreen() {}
 
 	@Override
@@ -60,36 +58,36 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 		int modCount = sortedModTags.size();
 		int maxModsOnScreen = (height - 140 - 40) / 58;
-		if (modCount > 1 && modCount > maxModsOnScreen) {
-			//enable mod pagination
-			isPaginated = true;
-			indexStart = 0;
-			modsPerScreen = maxModsOnScreen;
-		} else {
-			isPaginated = false;
-			indexStart = 0;
-			modsPerScreen = modCount;
-		}
+
+		paginationState = new PaginationState(modCount > 1 && modCount > maxModsOnScreen, maxModsOnScreen, modCount);
 
 		setupModTagEntries();
 
-		if (isPaginated) {
-			int xOffset = (int) (width * 0.5);
+		if (!paginationState.usesPagination())
+			return;
 
-			addRenderableWidget(pagePrev = new PonderButton(xOffset - 120, height - 32)
-					.showing(PonderGuiTextures.ICON_PONDER_LEFT)
-					.withCallback(() -> updatePagination(-1))
-					.setActive(false)
-			);
+		int xOffset = (int) (width * 0.5);
 
-			pagePrev.updateColorsFromState();
+		addRenderableWidget(pagePrev = new PonderButton(xOffset - 120, height - 32)
+				.showing(PonderGuiTextures.ICON_PONDER_LEFT)
+				.withCallback(() -> {
+					paginationState.previousPage();
+					updateAfterPaginationChange();
+				})
+				.setActive(false)
+		);
 
-			addRenderableWidget(pageNext = new PonderButton(xOffset + 100, height - 32)
-					.showing(PonderGuiTextures.ICON_PONDER_RIGHT)
-					.withCallback(() -> updatePagination(1))
-					.setActive(true)
-			);
-		}
+		pagePrev.updateColorsFromState();
+
+		addRenderableWidget(pageNext = new PonderButton(xOffset + 100, height - 32)
+				.showing(PonderGuiTextures.ICON_PONDER_RIGHT)
+				.withCallback(() -> {
+					paginationState.nextPage();
+					updateAfterPaginationChange();
+				})
+				.setActive(true)
+		);
+
 	}
 
 	protected void setupModTagEntries() {
@@ -105,11 +103,8 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 		AtomicInteger yOffset = new AtomicInteger(140);
 		int xOffset = (int) (width * 0.5);
 
-		for (int i = 0; i < modsPerScreen; i++) {
-			if (indexStart + i >= sortedModTags.size())
-				break;
-
-			Map.Entry<String, List<PonderTag>> entry = sortedModTags.get(indexStart + i);
+		paginationState.iterateForCurrentPage((iPage, iOverall) -> {
+			Map.Entry<String, List<PonderTag>> entry = sortedModTags.get(iOverall);
 			String key = entry.getKey() + ".ponder.mod_name";
 			String modName = I18n.exists(key) ? I18n.get(key) : entry.getKey();
 			List<PonderTag> tags = entry.getValue();
@@ -136,24 +131,21 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 			));
 
 			yOffset.addAndGet(58 + 10);
+		});
+
+		for (int i = 0; i < paginationState.getElementsPerPage(); i++) {
+			if (paginationState.getStartIndex() + i >= sortedModTags.size())
+				break;
+
+
 		}
 	}
 
-	protected void updatePagination(int diff) {
-		if (diff == 1) {
-			indexStart = indexStart + modsPerScreen;
-		} else if (diff == -1) {
-			indexStart = Math.max(indexStart - modsPerScreen, 0);
-		} else if (diff == 0) {
-			indexStart = 0;
-		}
-
+	protected void updateAfterPaginationChange() {
 		setupModTagEntries();
 
-		pagePrev.<PonderButton>setActive(indexStart >= 1).animateGradientFromState();
-		pageNext.<PonderButton>setActive(indexStart + modsPerScreen < sortedModTags.size()).animateGradientFromState();
-
-
+		pagePrev.<PonderButton>setActive(paginationState.hasPreviousPage()).animateGradientFromState();
+		pageNext.<PonderButton>setActive(paginationState.hasNextPage()).animateGradientFromState();
 	}
 
 	@Override

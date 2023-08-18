@@ -78,7 +78,7 @@ public class PonderButton extends BoxWidget {
 
 		float flashValue = flash.getValue(partialTicks);
 		if (flashValue > .1f) {
-			float sin = 0.5f + 0.5f * Mth.sin((AnimationTickHolder.getTicks(true) + partialTicks) / 5f);
+			float sin = 0.5f + 0.5f * Mth.sin((AnimationTickHolder.getTicks(true) + partialTicks) / 10f);
 			sin *= flashValue;
 			Color nc1 = new Color(255, 255, 255, Mth.clamp(gradientColor1.getAlpha() + 150, 0, 255));
 			Color nc2 = new Color(155, 155, 155, Mth.clamp(gradientColor2.getAlpha() + 150, 0, 255));
