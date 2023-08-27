@@ -194,6 +194,14 @@ public class Color {
 		return ensureMutable().setAlphaUnchecked((int) (getAlpha() * Mth.clamp(factor, 0, 1)));
 	}
 
+	/**
+	 * Mojang's Font renderer adjusts colors with alpha values below 5 to be a solid color instead.
+	 * This method prevents the scaling to go below this threshold
+	 */
+	public Color scaleAlphaForText(float factor) {
+		return ensureMutable().setAlphaUnchecked(Math.max(0x05, (int) (getAlpha() * Mth.clamp(factor, 0, 1))));
+	}
+
 	public Color mixWith(Color other, float weight) {
 		return ensureMutable()
 				.setRedUnchecked((int) (getRed() + (other.getRed() - getRed()) * weight))
