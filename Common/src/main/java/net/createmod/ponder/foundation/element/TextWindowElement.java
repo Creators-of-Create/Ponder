@@ -137,7 +137,7 @@ public class TextWindowElement extends AnimatedOverlayElement {
 
 		//PonderUI.renderBox(ms, targetX - 10, 3, boxWidth, boxHeight - 1, 0xaa000000, 0x30eebb00, 0x10eebb00);
 
-		Color brighter = palette.getColorObject().mixWith(new Color(0xff_ffffdd), 0.5f);
+		Color brighter = palette.getColorObject().mixWith(new Color(0xff_ffffdd), 0.5f).setImmutable();
 		Color c1 = new Color(0xff_494949);
 		Color c2 = new Color(0xff_393939);
 		if (vec != null) {
@@ -154,7 +154,7 @@ public class TextWindowElement extends AnimatedOverlayElement {
 		ms.translate(0, 0, 400);
 		for (int i = 0; i < lines.size(); i++) {
 			screen.getFontRenderer()
-				.draw(ms, lines.get(i).getString(), targetX - 10, 3 + 9 * i, brighter.scaleAlpha(fade).getRGB());
+				.draw(ms, lines.get(i).getString(), targetX - 10, 3 + 9 * i, brighter.scaleAlphaForText(fade).getRGB());
 		}
 		ms.popPose();
 	}

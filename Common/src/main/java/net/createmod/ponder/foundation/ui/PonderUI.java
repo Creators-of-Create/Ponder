@@ -542,7 +542,7 @@ public class PonderUI extends AbstractPonderScreen {
 
 		float fade = fadeIn.getValue(partialTicks);
 		float lazyIndexValue = lazyIndex.getValue(partialTicks);
-		float indexDiff = Math.abs(lazyIndexValue - index);
+		float indexDiff = lazyIndexValue - index;
 		PonderScene activeScene = scenes.get(index);
 		PonderScene nextScene = scenes.size() > index + 1 ? scenes.get(index + 1) : null;
 
@@ -551,7 +551,7 @@ public class PonderUI extends AbstractPonderScreen {
 			noWidgetsHovered &= !child.isMouseOver(mouseX, mouseY);
 
 		int tooltipColor = Theme.Key.TEXT_DARKER.i();
-		renderChapterTitle(ms, fade, indexDiff, activeScene, tooltipColor);
+		renderSceneInformation(ms, fade, indexDiff, activeScene, tooltipColor);
 
 		if (identifyMode) {
 			if (noWidgetsHovered && mouseY < height - 80) {
@@ -604,7 +604,7 @@ public class PonderUI extends AbstractPonderScreen {
 		else
 			slowMode.dim();
 
-		renderSceneOverlay(ms, partialTicks, lazyIndexValue, indexDiff);
+		renderSceneOverlay(ms, partialTicks, lazyIndexValue, Math.abs(indexDiff));
 
 		renderNextUp(ms, partialTicks, nextScene);
 
@@ -629,6 +629,15 @@ public class PonderUI extends AbstractPonderScreen {
 			right.dim();
 			nextUp.updateChaseTarget(0);
 		}
+
+		// Arrows behind the main widgets
+		Color c1 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x40);
+		Color c2 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x20);
+		Color c3 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x10);
+		UIRenderHelper.breadcrumbArrow(ms, width / 2 - 20, height - 51, 0, 20, 20, 5, c1, c2);
+		UIRenderHelper.breadcrumbArrow(ms, width / 2 + 20, height - 51, 0, -20, 20, -5, c1, c2);
+		UIRenderHelper.breadcrumbArrow(ms, width / 2 - 90, height - 51, 0, 70, 20, 5, c1, c3);
+		UIRenderHelper.breadcrumbArrow(ms, width / 2 + 90, height - 51, 0, -70, 20, -5, c1, c3);
 
 		// Tags
 		List<PonderTag> sceneTags = activeScene.getTags();
@@ -730,42 +739,98 @@ public class PonderUI extends AbstractPonderScreen {
 		ms.popPose();
 	}
 
-	private void renderChapterTitle(PoseStack ms, float fade, float indexDiff, PonderScene activeScene, int tooltipColor) {
-		// Chapter title
-		ms.pushPose();
-		ms.translate(0, 0, 400);
-		int x = 31 + 20 + 8;
-		int y = 31;
+	private void renderSceneInformation(PoseStack ms, float fade, float indexDiff, PonderScene activeScene, int tooltipColor) {
+		float absoluteIndexDiff = Math.abs(indexDiff);
+		// info includes icon, scene title and the "Pondering about... " text
+
+		int otherIndex = index;
+		if (scenes.size() != 1 && absoluteIndexDiff >= 0.01) {
+			float indexOffset = Math.signum(indexDiff);
+			otherIndex = index + (int) indexOffset;
+			if (otherIndex < 0 || otherIndex >= scenes.size()) {
+				return; // should never be reached
+			}
+		}
 
 		String title = activeScene.getTitle();
-		int wordWrappedHeight = font.wordWrapHeight(title, left.x - 51);
+		String otherTitle = scenes.get(otherIndex).getTitle();
 
-		int streakHeight = 35 - 9 + wordWrappedHeight;
-		UIRenderHelper.streak(ms, 0, x - 4, y - 12 + streakHeight / 2, streakHeight, (int) (150 * fade));
-		UIRenderHelper.streak(ms, 180, x - 4, y - 12 + streakHeight / 2, streakHeight, (int) (30 * fade));
+		int maxTitleWidth = 180;
+
+		int titleWidth = font.width(title);
+		if (titleWidth > maxTitleWidth)
+			titleWidth = maxTitleWidth;
+
+		int otherTitleWidth = font.width(otherTitle);
+		if (otherTitleWidth > maxTitleWidth)
+			otherTitleWidth = maxTitleWidth;
+
+		int wrappedTitleHeight = font.wordWrapHeight(title, maxTitleWidth);
+		int otherWrappedTitleHeight = font.wordWrapHeight(otherTitle, maxTitleWidth);
+
+		// height is ideal for single line titles
+		int streakHeight = 35 - 9 + (int) Mth.lerp(absoluteIndexDiff, wrappedTitleHeight, otherWrappedTitleHeight);
+		int streakWidth = 70 + (int) Mth.lerp(absoluteIndexDiff, titleWidth, otherTitleWidth);
+
+		ms.pushPose();
+		ms.translate(0, 0, 400);
+		// translate to top left of the background streak
+		ms.translate(55, 19, 0);
+
+		// background streak
+		UIRenderHelper.streak(ms, 0, 0, streakHeight / 2, streakHeight, (int) (streakWidth * fade));
+		UIRenderHelper.streak(ms, 180, 0, streakHeight / 2, streakHeight, (int) (30 * fade));
+
+		// icon
 		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
 			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
-			.at(21, 21, 100)
+			.at(-34, 2, 100)
 			.withBounds(30, 30)
 			.render(ms);
 
 		GuiGameElement.of(stack)
 			.scale(2)
-			.at(x - 39, y - 11)
+			.at(-35, 1)
 			.render(ms);
 
-		font.draw(ms, Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(), x, y - 6, tooltipColor);
-		y += 8;
-		x += 0;
-		ms.translate(x, y, 0);
-		ms.mulPose(Vector3f.XN.rotationDegrees(indexDiff * -75));
-		ms.translate(0, 0, 5);
-		ClientFontHelper.drawSplitString(ms, font, title, 0, 0, left.x - 51, Theme.Key.TEXT.c()
-			.scaleAlpha(1 - indexDiff)
-			.getRGB());
+		// pondering about text
+		ms.translate(4, 6, 0);
+		font.draw(ms, Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(), 0, 0, tooltipColor);
+
+		// scene title
+		ms.translate(0, 14, 0);
+
+		// short version for single scene views
+		if (scenes.size() == 1 || absoluteIndexDiff < 0.01) {
+			ClientFontHelper.drawSplitString(ms, font, title, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
+					.scaleAlphaForText(fade)
+					.getRGB());
+
+			ms.popPose();
+			return;
+		}
+
+
+		ms.translate(0, 6, 0);
+		ms.pushPose();
+		ms.mulPose(Vector3f.XN.rotationDegrees(indexDiff * -90 + Math.signum(indexDiff) * 90));
+		ms.translate(0, -6, 5);
+		ClientFontHelper.drawSplitString(ms, font, otherTitle, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
+				.scaleAlphaForText(absoluteIndexDiff)
+				.getRGB()
+		);
 		ms.popPose();
 
-		if (chapter != null) {
+
+		ms.mulPose(Vector3f.XN.rotationDegrees(indexDiff * -90));
+		ms.translate(0, -6, 5);
+		ClientFontHelper.drawSplitString(ms, font, title, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
+				.scaleAlphaForText(1 - absoluteIndexDiff)
+				.getRGB()
+		);
+		ms.popPose();
+
+		/*if (chapter != null) {
 			ms.pushPose();
 
 			ms.translate(chap.x - 4 - 4, chap.y, 0);
@@ -775,15 +840,7 @@ public class PonderUI extends AbstractPonderScreen {
 			drawRightAlignedString(font, ms, chapter.getTitle(), 0, 12, Theme.Key.TEXT.i());
 
 			ms.popPose();
-		}
-
-		Color c1 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x40);
-		Color c2 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x20);
-		Color c3 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x10);
-		UIRenderHelper.breadcrumbArrow(ms, width / 2 - 20, height - 51, 0, 20, 20, 5, c1, c2);
-		UIRenderHelper.breadcrumbArrow(ms, width / 2 + 20, height - 51, 0, -20, 20, -5, c1, c2);
-		UIRenderHelper.breadcrumbArrow(ms, width / 2 - 90, height - 51, 0, 70, 20, 5, c1, c3);
-		UIRenderHelper.breadcrumbArrow(ms, width / 2 + 90, height - 51, 0, -70, 20, -5, c1, c3);
+		}*/
 	}
 
 	private void renderOverlay(PoseStack ms, int i, float partialTicks) {

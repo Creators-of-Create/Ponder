@@ -242,9 +242,9 @@ public class PonderLevel extends SchematicLevel {
 
 	protected void onBEAdded(BlockEntity blockEntity, BlockPos pos) {
 		super.onBEadded(blockEntity, pos);
-		if (!(blockEntity instanceof VirtualTileEntity virtualTile))
+		if (!(blockEntity instanceof VirtualBlockEntity virtualBlockEntity))
 			return;
-		virtualTile.markVirtual();
+		virtualBlockEntity.markVirtual();
 	}
 
 	public void setBlockBreakingProgress(BlockPos pos, int damage) {
