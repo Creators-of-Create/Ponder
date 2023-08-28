@@ -1,9 +1,11 @@
 plugins {
     id 'fabric-loom' version '1.2.+'
-    id 'idea'
 }
 
-archivesBaseName = "${mod_name}-Fabric-${minecraft_version}"
+base {
+    archivesName = "Ponder-Fabric-${minecraft_version}"
+    group = 'net.createmod.ponder'
+}
 
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
 
@@ -61,6 +63,16 @@ loom {
     accessWidenerPath = file("src/main/resources/fabric_ponder.accesswidener")
 }
 
+tasks.withType(JavaCompile).configureEach {
+    source(commonProject.sourceSets.main.allSource)
+}
+tasks.withType(Javadoc).configureEach {
+    source(commonProject.sourceSets.main.allJava)
+}
+tasks.named("sourcesJar", Jar) {
+    from(commonProject.sourceSets.main.allSource)
+}
+
 processResources {
 
     from commonProject.sourceSets.main.resources
@@ -73,8 +85,15 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile) {
-    source(commonProject.sourceSets.main.allSource)
+configurations {
+    dev {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    dev jar
 }
 
 // -- MAVEN PUBLISHING --
@@ -84,7 +103,9 @@ project.publishing {
 
         mavenJava(MavenPublication) {
 
-            artifactId project.archivesBaseName
+            groupId project.group
+            artifactId base.archivesName.get()
+            version project.version
             from components.java
         }
     }

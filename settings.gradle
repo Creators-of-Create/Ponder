@@ -16,4 +16,4 @@ pluginManagement {
 rootProject.name = "Ponder"
 include ":Common"
 include ":Forge"
-include ":Farbic"
+include ":Fabric"
