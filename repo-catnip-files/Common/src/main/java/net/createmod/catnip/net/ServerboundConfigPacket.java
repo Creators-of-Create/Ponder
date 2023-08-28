@@ -15,6 +15,8 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class ServerboundConfigPacket<T> implements ServerboundPacket {
 
+	public static final ResourceLocation ID = Catnip.asResource("config_packet");
+
 	private final String modID;
 	private final String path;
 	private final String value;
@@ -41,7 +43,7 @@ public class ServerboundConfigPacket<T> implements ServerboundPacket {
 
 	@Override
 	public ResourceLocation getId() {
-		return Catnip.asResource("config_packet");
+		return ID;
 	}
 
 	@Override

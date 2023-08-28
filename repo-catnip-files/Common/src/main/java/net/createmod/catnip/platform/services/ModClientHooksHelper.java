@@ -33,28 +33,35 @@ public interface ModClientHooksHelper {
 
 	void enableStencilBuffer(RenderTarget renderTarget);
 
-	void renderVirtualBlockStateModel(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer, BlockState state, BakedModel model, float red, float green, float blue, RenderType layer);
+	void renderVirtualBlockStateModel(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
+									  BlockState state, BakedModel model, float red, float green, float blue,
+									  RenderType layer);
 
-	default void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer, BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides, RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
+	default void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
+										 BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides,
+										 RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
 		dispatcher.renderBatched(state, pos, level, ms, consumer, checkSides, random);
 	}
 
 	void renderFullFluidState(PoseStack ms, MultiBufferSource.BufferSource buffer, FluidState fluid);
 
-	void vertexConsumerPutBulkDataWithAlpha(VertexConsumer consumer, PoseStack.Pose pose, BakedQuad quad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay);
+	void vertexConsumerPutBulkDataWithAlpha(VertexConsumer consumer, PoseStack.Pose pose, BakedQuad quad, float red,
+											float green, float blue, float alpha, int packedLight, int packedOverlay);
 
 	/**
-	 * @param state the BlockState, whose model contains the RenderType
+	 * @param state           the BlockState, whose model contains the RenderType
 	 * @param BEWithModelData an optional BlockEntity, that can contain additional ModelData
 	 */
-	public Iterable<RenderType> getRenderTypesForBlockModel(BlockState state, RandomSource random, @Nullable BlockEntity BEWithModelData);
+	public Iterable<RenderType> getRenderTypesForBlockModel(BlockState state, RandomSource random,
+															@Nullable BlockEntity BEWithModelData);
 
 	/**
-	 * @param layer the RenderType to check for
-	 * @param state the BlockState, whose model should contain the RenderType
+	 * @param layer           the RenderType to check for
+	 * @param state           the BlockState, whose model should contain the RenderType
 	 * @param BEWithModelData an optional BlockEntity, that can contain additional ModelData
 	 */
-	boolean doesBlockModelContainRenderType(RenderType layer, BlockState state, RandomSource random, BlockEntity BEWithModelData);
+	boolean doesBlockModelContainRenderType(RenderType layer, BlockState state, RandomSource random,
+											BlockEntity BEWithModelData);
 
 	@Deprecated
 	default boolean chunkRenderTypeMatches(BlockState state, RenderType layer) {
@@ -69,11 +76,16 @@ public interface ModClientHooksHelper {
 	void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
 								   PoseStack ms, BlockState state, BakedModel blockModel, int color);
 
-	<T extends ParticleOptions> Particle createParticleFromData(T data, ClientLevel level, double x, double y, double z, double mx, double my, double mz);
+	<T extends ParticleOptions> Particle createParticleFromData(T data, ClientLevel level, double x, double y, double z,
+																double mx, double my, double mz);
 
 	Minecraft getMinecraftFromScreen(Screen screen);
 
 	default boolean isKeyPressed(KeyMapping mapping) {
 		return mapping.isDown();
+	}
+
+	default BlockRenderDispatcher getBlockRenderDispatcher() {
+		return Minecraft.getInstance().getBlockRenderer();
 	}
 }

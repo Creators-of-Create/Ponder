@@ -12,7 +12,6 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.Catnip;
-import net.createmod.catnip.enums.CatnipConfig;
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -32,16 +31,8 @@ public class BaseConfigScreen extends ConfigScreen {
 	public static final FadableScreenElement DISABLED_RENDERER = (ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2, height, width, Theme.Key.BUTTON_DISABLE.p());
 	private static final Map<String, UnaryOperator<BaseConfigScreen>> DEFAULTS = new HashMap<>();
 
-	static {
-		DEFAULTS.put(Catnip.MOD_ID, base -> base
-				.withButtonLabels("Client Settings", null, null)
-				.withSpecs(CatnipConfig.Client().specification, null, null)
-		);
-	}
-
 	/**
 	 * If you want to change the config labels, add a default action here.
-	 * <br \>
 	 * Make sure you call either {@link #withSpecs(ForgeConfigSpec, ForgeConfigSpec, ForgeConfigSpec)}
 	 * or {@link #searchForConfigSpecs()}
 	 *

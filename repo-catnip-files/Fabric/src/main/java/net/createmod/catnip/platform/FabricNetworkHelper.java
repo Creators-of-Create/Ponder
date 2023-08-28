@@ -1,8 +1,8 @@
 package net.createmod.catnip.platform;
 
 import net.createmod.catnip.net.BasePacket;
-import net.createmod.catnip.net.FabricCatnipNetwork;
 import net.createmod.catnip.platform.services.NetworkHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -47,6 +47,8 @@ public class FabricNetworkHelper implements NetworkHelper {
 
 	@Override
 	public void sendToServer(BasePacket packet) {
-		FabricCatnipNetwork.sendToClient(packet);
+		FriendlyByteBuf buf = PacketByteBufs.create();
+		packet.write(buf);
+		ClientPlayNetworking.send(packet.getId(), buf);
 	}
 }

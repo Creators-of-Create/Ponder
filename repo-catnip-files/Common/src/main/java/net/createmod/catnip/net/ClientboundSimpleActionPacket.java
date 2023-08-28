@@ -12,6 +12,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ClientboundSimpleActionPacket implements ClientboundPacket {
 
+	public static final ResourceLocation ID = Catnip.asResource("simple_action_packet");
+
 	private static final Map<String, Supplier<Consumer<String>>> actions = new HashMap<>();
 
 	public static void addAction(String name, Supplier<Consumer<String>> action) {
@@ -44,7 +46,7 @@ public class ClientboundSimpleActionPacket implements ClientboundPacket {
 
 	@Override
 	public ResourceLocation getId() {
-		return Catnip.asResource("simple_action_packet");
+		return ID;
 	}
 
 	public static class Handler {

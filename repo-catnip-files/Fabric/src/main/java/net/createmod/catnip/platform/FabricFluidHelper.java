@@ -16,13 +16,28 @@ public class FabricFluidHelper implements ModFluidHelper<FluidStack> {
 	}
 
 	@Override
+	public int getColor(Fluid fluid, long amount) {
+		return getLuminosity(fluid);
+	}
+
+	@Override
 	public int getLuminosity(Fluid fluid) {
 		return FluidVariantAttributes.getLuminance(FluidVariant.of(fluid));
 	}
 
 	@Override
+	public int getLuminosity(Fluid fluid, long amount) {
+		return getLuminosity(fluid);
+	}
+
+	@Override
 	public ResourceLocation getStillTexture(Fluid fluid) {
 		return FluidVariantRendering.getSprite(FluidVariant.of(fluid)).getName();
+	}
+
+	@Override
+	public ResourceLocation getStillTexture(Fluid fluid, long amount) {
+		return getStillTexture(fluid);
 	}
 
 	@Override

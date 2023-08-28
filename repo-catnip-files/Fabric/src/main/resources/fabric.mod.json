@@ -17,6 +17,7 @@
 
     "license": "${mod_license}",
     "environment": "*",
+  "mixins": [ "catnip.mixins.json" ],
   "accessWidener": "fabric_catnip.accesswidener",
     "entrypoints": {
       "main": [
@@ -30,7 +31,7 @@
     "depends": {
       "fabricloader": ">=0.13",
       "fabric": "*",
-      "minecraft": "1.18.x",
+      "minecraft": "1.19.x",
       "java": ">=17"
     },
     "suggests": {

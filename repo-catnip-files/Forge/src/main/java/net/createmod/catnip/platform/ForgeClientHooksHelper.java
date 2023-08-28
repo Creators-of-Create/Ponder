@@ -56,57 +56,78 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	}
 
 	@Override
-	public void renderVirtualBlockStateModel(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer, BlockState state, BakedModel model, float red, float green, float blue, RenderType layer) {
-		dispatcher.getModelRenderer().renderModel(ms.last(), consumer, state, model, red, green, blue, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ModelUtil.VIRTUAL_DATA, layer);
+	public void renderVirtualBlockStateModel(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
+											 BlockState state, BakedModel model, float red, float green, float blue,
+											 RenderType layer) {
+		dispatcher.getModelRenderer().renderModel(ms.last(), consumer, state, model, red, green, blue,
+												  LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+												  ModelUtil.VIRTUAL_DATA, layer);
 	}
 
 	@Override
-	public void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer, BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides, RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
-		dispatcher.renderBatched(state, pos, level, ms, consumer, checkSides, random, BEWithModelData != null ? BEWithModelData.getModelData() : ModelData.EMPTY, layer);
+	public void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
+										BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides,
+										RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
+		dispatcher.renderBatched(state, pos, level, ms, consumer, checkSides, random,
+								 BEWithModelData != null ? BEWithModelData.getModelData() : ModelData.EMPTY, layer);
 	}
 
 	@Override
 	public void renderFullFluidState(PoseStack ms, MultiBufferSource.BufferSource buffer, FluidState fluid) {
-		BasicFluidRenderer.renderFluidBox(fluid.getType(), 1000, 0, 0, 0, 1, 1, 1, buffer, ms, LightTexture.FULL_BRIGHT, false);
+		BasicFluidRenderer.renderFluidBox(fluid.getType(), 1000, 0, 0, 0, 1, 1, 1, buffer, ms, LightTexture.FULL_BRIGHT,
+										  false);
 	}
 
 	@Override
-	public void vertexConsumerPutBulkDataWithAlpha(VertexConsumer consumer, PoseStack.Pose pose, BakedQuad quad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay) {
+	public void vertexConsumerPutBulkDataWithAlpha(VertexConsumer consumer, PoseStack.Pose pose, BakedQuad quad,
+												   float red, float green, float blue, float alpha, int packedLight,
+												   int packedOverlay) {
 		consumer.putBulkData(pose, quad, red, green, blue, alpha, packedLight, packedOverlay, true);
 	}
 
-	public Iterable<RenderType> getRenderTypesForBlockModel(BlockState state, RandomSource random, @Nullable BlockEntity BEWithModelData) {
+	public Iterable<RenderType> getRenderTypesForBlockModel(BlockState state, RandomSource random,
+															@Nullable BlockEntity BEWithModelData) {
 		BakedModel model = ModelUtil.VANILLA_RENDERER.getBlockModel(state);
 		ModelData modelData = BEWithModelData != null ? BEWithModelData.getModelData() : ModelData.EMPTY;
 		return model.getRenderTypes(state, random, modelData);
 	}
 
 	@Override
-	public boolean doesBlockModelContainRenderType(RenderType layer, BlockState state, RandomSource random, @Nullable BlockEntity BEWithModelData) {
+	public boolean doesBlockModelContainRenderType(RenderType layer, BlockState state, RandomSource random,
+												   @Nullable BlockEntity BEWithModelData) {
 		BakedModel model = ModelUtil.VANILLA_RENDERER.getBlockModel(state);
 		ModelData modelData = BEWithModelData != null ? BEWithModelData.getModelData() : ModelData.EMPTY;
 		return model.getRenderTypes(state, random, modelData).contains(layer);
 	}
 
 	@Override
-	public void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms, BlockState blockState, BakedModel blockModel, int color) {
+	public void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
+										  PoseStack ms, BlockState blockState, BakedModel blockModel, int color) {
 		if (blockState.getBlock() == Blocks.AIR) {
 			RenderType renderType = Sheets.translucentCullBlockSheet();
-			blockRenderer.getModelRenderer().renderModel(ms.last(), buffer.getBuffer(renderType), blockState, blockModel, 1, 1, 1, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ModelUtil.VIRTUAL_DATA, null);
+			blockRenderer.getModelRenderer().renderModel(ms.last(), buffer.getBuffer(renderType), blockState,
+														 blockModel, 1, 1, 1, LightTexture.FULL_BRIGHT,
+														 OverlayTexture.NO_OVERLAY, ModelUtil.VIRTUAL_DATA, null);
 		} else {
 			int blockColor = Minecraft.getInstance().getBlockColors().getColor(blockState, null, null, 0);
 			Color rgb = new Color(blockColor == -1 ? color : blockColor);
 
-			for (RenderType chunkType : blockModel.getRenderTypes(blockState, RandomSource.create(42L), ModelUtil.VIRTUAL_DATA)) {
+			for (RenderType chunkType : blockModel.getRenderTypes(blockState, RandomSource.create(42L),
+																  ModelUtil.VIRTUAL_DATA)) {
 				RenderType renderType = RenderTypeHelper.getEntityRenderType(chunkType, true);
-				blockRenderer.getModelRenderer().renderModel(ms.last(), buffer.getBuffer(renderType), blockState, blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ModelUtil.VIRTUAL_DATA, chunkType);
+				blockRenderer.getModelRenderer().renderModel(ms.last(), buffer.getBuffer(renderType), blockState,
+															 blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(),
+															 rgb.getBlueAsFloat(), LightTexture.FULL_BRIGHT,
+															 OverlayTexture.NO_OVERLAY, ModelUtil.VIRTUAL_DATA,
+															 chunkType);
 			}
 		}
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T extends ParticleOptions> Particle createParticleFromData(T data, ClientLevel level, double x, double y, double z, double mx, double my, double mz) {
+	public <T extends ParticleOptions> Particle createParticleFromData(T data, ClientLevel level, double x, double y,
+																	   double z, double mx, double my, double mz) {
 		ResourceLocation key = CatnipServices.REGISTRIES.getKeyOrThrow(data.getType());
 		ParticleProvider<T> particleProvider = (ParticleProvider<T>) particleProviders.get(key);
 		return particleProvider == null ? null : particleProvider.createParticle(data, level, x, y, z, mx, my, mz);
@@ -120,5 +141,10 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public boolean isKeyPressed(KeyMapping mapping) {
 		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), mapping.getKey().getValue());
+	}
+
+	@Override
+	public BlockRenderDispatcher getBlockRenderDispatcher() {
+		return ModelUtil.VANILLA_RENDERER;
 	}
 }
