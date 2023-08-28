@@ -1,9 +1,11 @@
 plugins {
     id 'fabric-loom' version '1.2.+'
-    id 'idea'
 }
 
-archivesBaseName = "${mod_name}-Fabric-${minecraft_version}"
+base {
+    archivesName = "Catnip-Fabric-${minecraft_version}"
+    group = 'net.createmod.catnip'
+}
 
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
 
@@ -53,6 +55,16 @@ loom {
     accessWidenerPath = file("src/main/resources/fabric_catnip.accesswidener")
 }
 
+tasks.withType(JavaCompile).configureEach {
+    source(commonProject.sourceSets.main.allSource)
+}
+tasks.withType(Javadoc).configureEach {
+    source(commonProject.sourceSets.main.allJava)
+}
+tasks.named("sourcesJar", Jar) {
+    from(commonProject.sourceSets.main.allSource)
+}
+
 processResources {
 
     from commonProject.sourceSets.main.resources
@@ -63,10 +75,6 @@ processResources {
 
         expand buildProps
     }
-}
-
-tasks.withType(JavaCompile) {
-    source(commonProject.sourceSets.main.allSource)
 }
 
 configurations {
@@ -87,18 +95,12 @@ project.publishing {
 
         mavenJava(MavenPublication) {
 
-            artifactId project.archivesBaseName
+            mavenJava(MavenPublication) {
 
-            // Base mod archive.
-            artifact(remapJar) {
-
-                builtBy remapJar
-            }
-
-            // Adds the soruces as an artifact.
-            artifact(sourcesJar) {
-
-                builtBy remapSourcesJar
+                groupId project.group
+                artifactId base.archivesName.get()
+                version project.version
+                from components.java
             }
         }
     }
@@ -109,7 +111,7 @@ project.publishing {
 
             // Sets maven credentials if they are provided. This is generally
             // only used for external/remote uploads.
-            if (commonProject.hasProperty('mavenUsername') && commonProject.hasProperty('mavenPassword')) {
+            if (project.hasProperty('mavenUsername') && project.hasProperty('mavenPassword')) {
 
                 credentials {
 
