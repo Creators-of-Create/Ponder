@@ -433,7 +433,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 	}
 
 	private SuperByteBuffer buildStructureBuffer(PonderLevel world, RenderType layer) {
-		BlockRenderDispatcher dispatcher = ModelUtil.VANILLA_RENDERER;
+		BlockRenderDispatcher dispatcher = CatnipClientServices.CLIENT_HOOKS.getBlockRenderDispatcher();
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
 		PoseStack poseStack = objects.poseStack;

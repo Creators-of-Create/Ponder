@@ -1,0 +1,5 @@
+accessWidener v2 named
+# Fabric
+
+# Common
+#accessible field net/minecraft/client/renderer/entity/ItemRenderer textureManager Lnet/minecraft/client/renderer/texture/TextureManager;

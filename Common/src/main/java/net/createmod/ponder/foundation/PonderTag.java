@@ -12,8 +12,6 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class PonderTag implements ScreenElement {
 
@@ -88,8 +86,6 @@ public class PonderTag implements ScreenElement {
 		return this.item(item, true, true);
 	}
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void render(PoseStack ms, int x, int y) {
 		ms.pushPose();
 		ms.translate(x, y, 0);

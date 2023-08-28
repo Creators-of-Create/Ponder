@@ -1,23 +1,44 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
-    id 'net.darkhax.curseforgegradle' version '1.0.7'
-    id 'net.darkhax.tweedle' version '1.0.5'
+    id 'fabric-loom' version '1.2.+'
     id 'idea'
 }
-
-apply from: '../gradle/property_helper.gradle'
-apply from: '../gradle/patreon.gradle'
 
 archivesBaseName = "${mod_name}-Fabric-${minecraft_version}"
 
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
+
+boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
+boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
+boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
+project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
+project.logger.lifecycle("Dependencies included in Workspace: [Flywheel: ${flywheelInWorkspace}], [Catnip: ${catnipInWorkspace}]")
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    modImplementation "com.terraformersmc:modmenu:3.0.0"
+
+    for (String module in port_lib_modules.split(",")) {
+        modApi "io.github.fabricators_of_create.Porting-Lib:$module:$port_lib_version+$minecraft_version"
+    }
+    //modImplementation include("io.github.fabricators_of_create:Porting-Lib:${project.port_lib_version}+${project.minecraft_version}-stable")
+
+    if (catnipInWorkspace) {
+        implementation project(path: ':catnip:Common')
+        implementation project(path: ':catnip:Fabric', configuration: 'dev')
+    } else {
+        modImplementation "net.createmod.catnip:Catnip-Fabric-${minecraft_version}:${catnip_version}"
+    }
+
+    modApi "com.jozufozu.flywheel:flywheel-fabric-$minecraft_version:$flywheel_version"
+
+    implementation 'com.electronwill.night-config:core:3.6.3'
+    implementation 'com.electronwill.night-config:toml:3.6.3'
+    modImplementation "net.minecraftforge:forgeconfigapiport-fabric:4.2.11" //source: https://github.com/Fuzss/forgeconfigapiport-fabric
+    implementation(include("javax.annotation:javax.annotation-api:1.3.2"))
+    implementation(include("com.google.code.findbugs:jsr305:3.0.2"))
+    //modImplementation "com.terraformersmc:modmenu:4.1.2"
     implementation commonProject
 }
 
@@ -25,17 +46,19 @@ loom {
     runs {
         client {
             client()
-            setConfigName("Fabric Client")
+            setConfigName("Ponder Fabric Client")
             ideConfigGenerated(true)
             runDir("run")
         }
         server {
             server()
-            setConfigName("Fabric Server")
+            setConfigName("Ponder Fabric Server")
             ideConfigGenerated(true)
             runDir("run")
         }
     }
+
+    accessWidenerPath = file("src/main/resources/fabric_ponder.accesswidener")
 }
 
 processResources {
@@ -43,23 +66,6 @@ processResources {
     from commonProject.sourceSets.main.resources
 
     def buildProps = project.properties.clone()
-
-    if (project.hasProperty('patreon')) {
-
-        def supporters = new ArrayList<String>()
-
-        for (entry in project.ext.patreon.pledges) {
-
-            def pledge = entry.value;
-
-            if (pledge.isValid()) {
-
-                supporters.add(pledge.getDisplayName())
-            }
-        }
-
-        buildProps.put('mod_supporters', supporters.join(/","/))
-    }
 
     filesMatching(['fabric.mod.json', 'pack.mcmeta']) {
 
@@ -73,37 +79,26 @@ tasks.withType(JavaCompile) {
 
 // -- MAVEN PUBLISHING --
 project.publishing {
-    
+
     publications {
-    
+
         mavenJava(MavenPublication) {
-        
+
             artifactId project.archivesBaseName
-            
-            // Base mod archive.
-            artifact(remapJar) {
-            
-                builtBy remapJar
-            }
-            
-            // Adds the soruces as an artifact.
-            artifact(sourcesJar) {
-            
-                builtBy remapSourcesJar
-            }
+            from components.java
         }
     }
-    
+
     repositories {
-    
+
         maven {
-        
+
             // Sets maven credentials if they are provided. This is generally
             // only used for external/remote uploads.
             if (project.hasProperty('mavenUsername') && project.hasProperty('mavenPassword')) {
-            
+
                 credentials {
-                
+
                     username findProperty('mavenUsername')
                     password findProperty('mavenPassword')
                 }
@@ -113,63 +108,3 @@ project.publishing {
         }
     }
 }
-
-// CurseForge Publishing
-/*task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-    
-    apiToken = findProperty('curse_auth')
-
-    def mainFile = upload(curse_project, file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
-    mainFile.changelogType = 'markdown'
-    mainFile.changelog = project.ext.mod_changelog 
-    mainFile.addJavaVersion('Java 17')
-    
-    // Append Patreon Supporters
-    def patreonInfo = project.findProperty('patreon')
-        
-    if (patreonInfo) {
-        mainFile.changelog += "\n\nThis project is made possible by [Patreon](${patreonInfo.campaignUrlTracked}) support from players like you. Thank you!\n\n${patreonInfo.pledgeLog}"
-    }
-    
-    doLast {
-    
-        if (project.hasProperty('mod_homepage')) {
-        
-            project.ext.curse_file_url = "${mod_homepage}/files/${mainFile.curseFileId}"
-        }
-    }
-}*/
-
-// Twitter Announcement
-/*
-def canTweet = project.hasProperty('twitter_api_key') && project.hasProperty('twitter_api_key_secret') && project.hasProperty('twitter_access_token') && project.hasProperty('twitter_access_token_secret')
-    
-task postTweet (type: net.darkhax.tweedle.TaskPostTweet){
-    
-    onlyIf {
-    
-        canTweet && project.hasProperty('minecraft_version') && project.hasProperty('curse_file_url')
-    }
-    
-    if (canTweet) {
-    
-        addClient(project.findProperty('twitter_api_key'), project.findProperty('twitter_api_key_secret'), project.findProperty('twitter_access_token'), project.findProperty('twitter_access_token_secret'))
-    }
-    
-    doLast {
-    
-        def tweetBody = "${project.ext.mod_name} (Fabric) ${project.version} for Minecraft ${project.ext.minecraft_version} has been released. #${project.ext.mod_name.toLowerCase().replaceAll("[^a-zA-Z]", "")} #fabric"
-        
-        if (project.hasProperty('curse_file_url')) {
-            
-            tweetBody += " ${project.findProperty('curse_file_url')}"
-        }
-        
-        sendTweet(tweetBody)
-    }
-}
-
-if (!canTweet) {
-    
-    project.logger.warn("Skipping Twitter plugin. APIKey: ${project.hasProperty('twitter_api_key')} ${project.hasProperty('twitter_api_key_secret')} AccessToken: ${project.hasProperty('twitter_access_token')} ${project.hasProperty('twitter_access_token_secret')}")
-}*/
