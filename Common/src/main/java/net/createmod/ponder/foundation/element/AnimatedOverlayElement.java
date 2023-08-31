@@ -1,10 +1,9 @@
 package net.createmod.ponder.foundation.element;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.ui.PonderUI;
+import net.minecraft.client.gui.GuiGraphics;
 
 public abstract class AnimatedOverlayElement extends PonderOverlayElement {
 
@@ -20,11 +19,11 @@ public abstract class AnimatedOverlayElement extends PonderOverlayElement {
 	}
 
 	@Override
-	public final void render(PonderScene scene, PonderUI screen, PoseStack ms, float partialTicks) {
+	public final void render(PonderScene scene, PonderUI screen, GuiGraphics graphics, float partialTicks) {
 		float currentFade = fade.getValue(partialTicks);
-		render(scene, screen, ms, partialTicks, currentFade);
+		render(scene, screen, graphics, partialTicks, currentFade);
 	}
 
-	protected abstract void render(PonderScene scene, PonderUI screen, PoseStack ms, float partialTicks, float fade);
+	protected abstract void render(PonderScene scene, PonderUI screen, GuiGraphics graphics, float partialTicks, float fade);
 
 }

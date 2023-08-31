@@ -1,12 +1,5 @@
 package net.createmod.ponder.foundation.element;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Consumer;
-
 import com.jozufozu.flywheel.core.model.ModelUtil;
 import com.jozufozu.flywheel.core.model.ShadeSeparatedBufferedData;
 import com.jozufozu.flywheel.core.model.ShadeSeparatingVertexConsumer;
@@ -16,8 +9,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Vector3f;
-
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.ShadeSpearatingSuperByteBuffer;
@@ -60,6 +51,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 public class WorldSectionElement extends AnimatedSceneElement {
 
@@ -233,17 +231,17 @@ public class WorldSectionElement extends AnimatedSceneElement {
 			double rotY = Mth.lerp(pt, prevAnimatedRotation.y, animatedRotation.y);
 
 			ms.translate(centerOfRotation.x, centerOfRotation.y, centerOfRotation.z);
-			ms.mulPose(Vector3f.XP.rotationDegrees((float) rotX));
-			ms.mulPose(Vector3f.YP.rotationDegrees((float) rotY));
-			ms.mulPose(Vector3f.ZP.rotationDegrees((float) rotZ));
+			ms.mulPose(com.mojang.math.Axis.XP.rotationDegrees((float) rotX));
+			ms.mulPose(com.mojang.math.Axis.YP.rotationDegrees((float) rotY));
+			ms.mulPose(com.mojang.math.Axis.ZP.rotationDegrees((float) rotZ));
 			ms.translate(-centerOfRotation.x, -centerOfRotation.y, -centerOfRotation.z);
 
 			if (stabilizationAnchor != null) {
 
 				ms.translate(stabilizationAnchor.x, stabilizationAnchor.y, stabilizationAnchor.z);
-				ms.mulPose(Vector3f.XP.rotationDegrees((float) -rotX));
-				ms.mulPose(Vector3f.YP.rotationDegrees((float) -rotY));
-				ms.mulPose(Vector3f.ZP.rotationDegrees((float) -rotZ));
+				ms.mulPose(com.mojang.math.Axis.XP.rotationDegrees((float) -rotX));
+				ms.mulPose(com.mojang.math.Axis.YP.rotationDegrees((float) -rotY));
+				ms.mulPose(com.mojang.math.Axis.ZP.rotationDegrees((float) -rotZ));
 				ms.translate(-stabilizationAnchor.x, -stabilizationAnchor.y, -stabilizationAnchor.z);
 			}
 		}
@@ -326,8 +324,8 @@ public class WorldSectionElement extends AnimatedSceneElement {
 
 			if (overlayMS == null) {
 				overlayMS = new PoseStack();
-				overlayMS.last().pose().load(ms.last().pose());
-				overlayMS.last().normal().load(ms.last().normal());
+				overlayMS.last().pose().set(ms.last().pose());
+				overlayMS.last().normal().set(ms.last().normal());
 
 				float scaleFactor = world.scene.getScaleFactor();
 				float f = (float) Math.pow(30 * scaleFactor, -1.2);
@@ -335,10 +333,9 @@ public class WorldSectionElement extends AnimatedSceneElement {
 			}
 
 			VertexConsumer builder = new SheetedDecalTextureGenerator(
-					buffer.getBuffer(ModelBakery.DESTROY_TYPES.get(entry.getValue())), overlayMS.last()
-					.pose(),
-					overlayMS.last()
-							.normal());
+					buffer.getBuffer(ModelBakery.DESTROY_TYPES.get(entry.getValue())), overlayMS.last().pose(),
+					overlayMS.last().normal(),
+					1);
 
 			ms.pushPose();
 			ms.translate(pos.getX(), pos.getY(), pos.getZ());

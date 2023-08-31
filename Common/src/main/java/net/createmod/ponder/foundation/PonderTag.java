@@ -1,17 +1,15 @@
 package net.createmod.ponder.foundation;
 
-import javax.annotation.Nullable;
-
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.ponder.Ponder;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+
+import javax.annotation.Nullable;
 
 public class PonderTag implements ScreenElement {
 
@@ -86,20 +84,21 @@ public class PonderTag implements ScreenElement {
 		return this.item(item, true, true);
 	}
 
-	public void render(PoseStack ms, int x, int y) {
-		ms.pushPose();
-		ms.translate(x, y, 0);
+	public void render(GuiGraphics graphics, int x, int y) {
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(x, y, 0);
 		if (icon != null) {
-			RenderSystem.setShaderTexture(0, icon);
-			ms.scale(0.25f, 0.25f, 1);
-			GuiComponent.blit(ms, 0, 0, 0, 0, 0, 64, 64, 64, 64);
+			//RenderSystem.setShaderTexture(0, icon);
+			poseStack.scale(0.25f, 0.25f, 1);
+			graphics.blit(icon, 0, 0, 0, 0, 0, 64, 64, 64, 64);
 		} else if (!itemIcon.isEmpty()) {
-			ms.translate(-2, -2, 0);
-			ms.scale(1.25f, 1.25f, 1.25f);
+			poseStack.translate(-2, -2, 0);
+			poseStack.scale(1.25f, 1.25f, 1.25f);
 			GuiGameElement.of(itemIcon)
-				.render(ms);
+				.render(graphics);
 		}
-		ms.popPose();
+		poseStack.popPose();
 	}
 
 	private static PonderTag create(String id) {

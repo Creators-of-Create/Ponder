@@ -1,14 +1,12 @@
 package net.createmod.ponder.enums;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.TextureSheetSegment;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.render.ColoredRenderable;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.Ponder;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, ColoredRenderable {
@@ -55,15 +53,15 @@ public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, Col
 	}
 
 	@Override
-	public void render(PoseStack ms, int x, int y) {
-		bind();
-		GuiComponent.blit(ms, x, y, 0, startX, startY, width, height, 256, 256);
+	public void render(GuiGraphics graphics, int x, int y) {
+		//bind();
+		graphics.blit(getLocation(), x, y, 0, startX, startY, width, height, 256, 256);
 	}
 
 	@Override
-	public void render(PoseStack ms, int x, int y, Color c) {
+	public void render(GuiGraphics graphics, int x, int y, Color c) {
 		bind();
-		UIRenderHelper.drawColoredTexture(ms, c, x, y, startX, startY, width, height);
+		UIRenderHelper.drawColoredTexture(graphics, c, x, y, startX, startY, width, height);
 	}
 
 	@Override

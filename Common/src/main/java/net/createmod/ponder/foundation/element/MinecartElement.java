@@ -1,8 +1,7 @@
 package net.createmod.ponder.foundation.element;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-
+import com.mojang.math.Axis;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.ponder.foundation.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;
@@ -103,7 +102,7 @@ public class MinecartElement extends AnimatedSceneElement {
 		ms.translate(Mth.lerp(pt, entity.xo, entity.getX()),
 			Mth.lerp(pt, entity.yo, entity.getY()), Mth.lerp(pt, entity.zo, entity.getZ()));
 
-		ms.mulPose(Vector3f.YP.rotationDegrees(rotation.getValue(pt)));
+		ms.mulPose(Axis.YP.rotationDegrees(rotation.getValue(pt)));
 
 		entityrenderermanager.render(entity, 0, 0, 0, 0, pt, ms, buffer, lightCoordsFromFade(fade));
 		ms.popPose();

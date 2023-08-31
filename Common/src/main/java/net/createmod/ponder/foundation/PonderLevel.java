@@ -1,17 +1,7 @@
 package net.createmod.ponder.foundation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.levelWrappers.SchematicLevel;
@@ -43,6 +33,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
 public class PonderLevel extends SchematicLevel {
 
 	@Nullable public PonderScene scene;
@@ -57,6 +55,7 @@ public class PonderLevel extends SchematicLevel {
 
 	int overrideLight;
 	@Nullable Selection mask;
+	boolean currentlyTickingEntities;
 
 	public PonderLevel(BlockPos anchor, Level original) {
 		super(anchor, original);
@@ -148,6 +147,8 @@ public class PonderLevel extends SchematicLevel {
 	public BlockState getBlockState(BlockPos globalPos) {
 		if (mask != null && !mask.test(globalPos.subtract(anchor)))
 			return Blocks.AIR.defaultBlockState();
+		if (currentlyTickingEntities && globalPos.getY() < 0)
+			return Blocks.AIR.defaultBlockState();
 		return super.getBlockState(globalPos);
 	}
 
@@ -195,6 +196,8 @@ public class PonderLevel extends SchematicLevel {
 	}
 
 	public void tick() {
+		currentlyTickingEntities = true;
+
 		particles.tick();
 
 		for (Iterator<Entity> iterator = entities.iterator(); iterator.hasNext();) {
@@ -212,6 +215,8 @@ public class PonderLevel extends SchematicLevel {
 			if (!entity.isAlive())
 				iterator.remove();
 		}
+
+		currentlyTickingEntities = false;
 	}
 
 	@Override

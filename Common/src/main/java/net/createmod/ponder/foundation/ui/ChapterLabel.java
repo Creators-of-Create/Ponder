@@ -1,16 +1,13 @@
 package net.createmod.ponder.foundation.ui;
 
-import java.util.function.BiConsumer;
-
-import javax.annotation.Nonnull;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.foundation.PonderChapter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+
+import java.util.function.BiConsumer;
 
 public class ChapterLabel extends AbstractSimiWidget {
 
@@ -28,13 +25,13 @@ public class ChapterLabel extends AbstractSimiWidget {
 	}
 
 	@Override
-	public void render(@Nonnull PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		UIRenderHelper.streak(ms, 0, x, y + height / 2, height - 2, width);
-		Minecraft.getInstance().font.draw(ms, chapter.getTitle(), x + 50,
-			y + 20, Theme.Key.TEXT_ACCENT_SLIGHT.i());
+	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		UIRenderHelper.streak(graphics, 0, getX(), getY() + height / 2, height - 2, width);
+		graphics.drawString(Minecraft.getInstance().font, chapter.getTitle(), getX() + 50,
+			getY() + 20, Theme.Key.TEXT_ACCENT_SLIGHT.i());
 
-		button.renderButton(ms, mouseX, mouseY, partialTicks);
-		super.render(ms, mouseX, mouseY, partialTicks);
+		button.renderButton(graphics, mouseX, mouseY, partialTicks);
+		super.render(graphics, mouseX, mouseY, partialTicks);
 	}
 
 	@Override

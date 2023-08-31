@@ -1,30 +1,7 @@
 package net.createmod.ponder.foundation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.mutable.MutableDouble;
-import org.apache.commons.lang3.mutable.MutableObject;
-
 import com.jozufozu.flywheel.util.DiffuseLightCalculator;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
-
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -45,6 +22,7 @@ import net.createmod.ponder.foundation.ui.PonderUI;
 import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,6 +37,25 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.mutable.MutableDouble;
+import org.apache.commons.lang3.mutable.MutableObject;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class PonderScene {
 
@@ -236,7 +233,8 @@ public class PonderScene {
 		activeSchedule.add(new HideAllInstruction(10, null));
 	}
 
-	public void renderScene(SuperRenderTypeBuffer buffer, PoseStack ms, float pt) {
+	public void renderScene(SuperRenderTypeBuffer buffer, GuiGraphics graphics, float pt) {
+		PoseStack ms = graphics.pose();
 		ForcedDiffuseState.pushCalculator(DiffuseLightCalculator.DEFAULT);
 		ms.pushPose();
 		Minecraft mc = Minecraft.getInstance();
@@ -259,10 +257,10 @@ public class PonderScene {
 		ForcedDiffuseState.popCalculator();
 	}
 
-	public void renderOverlay(PonderUI screen, PoseStack ms, float partialTicks) {
-		ms.pushPose();
-		forEachVisible(PonderOverlayElement.class, e -> e.render(this, screen, ms, partialTicks));
-		ms.popPose();
+	public void renderOverlay(PonderUI screen, GuiGraphics graphics, float partialTicks) {
+		graphics.pose().pushPose();
+		forEachVisible(PonderOverlayElement.class, e -> e.render(this, screen, graphics, partialTicks));
+		graphics.pose().popPose();
 	}
 
 	public void setPointOfInterest(Vec3 poi) {
@@ -536,13 +534,13 @@ public class PonderScene {
 		public PoseStack apply(PoseStack ms, float pt) {
 			ms.translate(width / 2, height / 2, 200 + offset);
 
-			ms.mulPose(Vector3f.XP.rotationDegrees(-35));
-			ms.mulPose(Vector3f.YP.rotationDegrees(55));
+			ms.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-35));
+			ms.mulPose(com.mojang.math.Axis.YP.rotationDegrees(55));
 			ms.translate(offset, 0, 0);
-			ms.mulPose(Vector3f.YP.rotationDegrees(-55));
-			ms.mulPose(Vector3f.XP.rotationDegrees(35));
-			ms.mulPose(Vector3f.XP.rotationDegrees(xRotation.getValue(pt)));
-			ms.mulPose(Vector3f.YP.rotationDegrees(yRotation.getValue(pt)));
+			ms.mulPose(com.mojang.math.Axis.YP.rotationDegrees(-55));
+			ms.mulPose(com.mojang.math.Axis.XP.rotationDegrees(35));
+			ms.mulPose(com.mojang.math.Axis.XP.rotationDegrees(xRotation.getValue(pt)));
+			ms.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yRotation.getValue(pt)));
 
 			UIRenderHelper.flipForGuiRender(ms);
 			float f = 30 * scaleFactor;
@@ -590,7 +588,7 @@ public class PonderScene {
 		public Vec2 sceneToScreen(Vec3 vec, float pt) {
 			refreshMatrix(pt);
 			Vector4f vec4 = new Vector4f((float) vec.x, (float) vec.y, (float) vec.z, 1);
-			vec4.transform(cachedMat);
+			vec4.mul(cachedMat);
 			return new Vec2(vec4.x(), vec4.y());
 		}
 

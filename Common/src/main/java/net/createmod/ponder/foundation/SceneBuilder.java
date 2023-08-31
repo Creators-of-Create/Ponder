@@ -1,13 +1,5 @@
 package net.createmod.ponder.foundation;
 
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-
-import com.mojang.math.Vector3f;
-
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.foundation.element.AnimatedSceneElement;
@@ -61,6 +53,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * Enqueue instructions to the schedule via this object's methods.

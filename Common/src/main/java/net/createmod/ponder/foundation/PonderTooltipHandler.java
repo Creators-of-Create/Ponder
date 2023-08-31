@@ -1,10 +1,6 @@
 package net.createmod.ponder.foundation;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.google.common.base.Strings;
-
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.platform.CatnipClientServices;
@@ -23,6 +19,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.List;
+import java.util.Optional;
 
 public class PonderTooltipHandler {
 
@@ -107,7 +106,8 @@ public class PonderTooltipHandler {
 
 		if (inPonderUI) {
 			PonderUI ponderUI = (PonderUI) currentScreen;
-			if (stack.sameItem(ponderUI.getSubject()))
+			ItemStack uiSubject = ponderUI.getSubject();
+			if (!uiSubject.isEmpty() && stack.is(uiSubject.getItem()))
 				subject = true;
 		}
 
@@ -116,7 +116,7 @@ public class PonderTooltipHandler {
 		if (!PonderRegistry.ALL.containsKey(CatnipServices.REGISTRIES.getKeyOrThrow(stack.getItem())))
 			return;
 
-		if (prevStack.isEmpty() || !prevStack.sameItem(stack))
+		if (prevStack.isEmpty() || !prevStack.is(stack.getItem()))
 			holdWProgress.startWithValue(0);
 
 		hoveredStack = stack;

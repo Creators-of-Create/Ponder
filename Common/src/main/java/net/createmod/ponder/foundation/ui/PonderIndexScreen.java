@@ -1,15 +1,7 @@
 package net.createmod.ponder.foundation.ui;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.function.Predicate;
-
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -22,12 +14,19 @@ import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderPlugin;
 import net.createmod.ponder.foundation.PonderRegistry;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class PonderIndexScreen extends AbstractPonderScreen {
 
@@ -177,46 +176,49 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 	}
 
 	@Override
-	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		int centerX = width / 2;
 		int centerY = height / 2;
 
-		ms.pushPose();
-		ms.translate(centerX, centerY, 0);
+		PoseStack poseStack = graphics.pose();
 
-		UIRenderHelper.streak(ms, 0, usedArea.getX() - 10, usedArea.getY() - 20, 20, 220);
-		font.draw(ms, "Items to inspect", usedArea.getX() - 5, usedArea.getY() - 25, Theme.Key.TEXT.i());
+		poseStack.pushPose();
+		poseStack.translate(centerX, centerY, 0);
 
-		ms.popPose();
+		UIRenderHelper.streak(graphics, 0, usedArea.getX() - 10, usedArea.getY() - 20, 20, 220);
+		graphics.drawString(font, "Items to inspect", usedArea.getX() - 5, usedArea.getY() - 25, Theme.Key.TEXT.i(), false);
+
+		poseStack.popPose();
 
 		if (!paginationState.usesPagination())
 			return;
 
-		ms.pushPose();
-		ms.translate(centerX, maxScreenArea.getY() + maxScreenArea.getHeight() + 14, 0);
-		ms.scale(1.5f, 1.5f, 1);
+		poseStack.pushPose();
+		poseStack.translate(centerX, maxScreenArea.getY() + maxScreenArea.getHeight() + 14, 0);
+		poseStack.scale(1.5f, 1.5f, 1);
 
 		String pageString = "Page " + (paginationState.getPageIndex() + 1) + "/" + paginationState.getMaxPages();
 		int stringWidth = font.width(pageString);
 
-		UIRenderHelper.streak(ms, 0, 0, 4, 14, 85);
-		UIRenderHelper.streak(ms, 180, 0, 4, 14, 85);
-		font.draw(ms, pageString, -stringWidth / 2f, 0, Theme.Key.TEXT.i());
+		UIRenderHelper.streak(graphics, 0, 0, 4, 14, 85);
+		UIRenderHelper.streak(graphics, 180, 0, 4, 14, 85);
+		graphics.drawString(font, pageString, (int) (-stringWidth / 2f), 0, Theme.Key.TEXT.i(), false);
 
-		ms.popPose();
+		poseStack.popPose();
 	}
 
 	@Override
-	protected void renderWindowForeground(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+	protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		if (hoveredItem.isEmpty())
 			return;
 
-		ms.pushPose();
-		ms.translate(0, 0, 200);
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(0, 0, 200);
 
-		renderTooltip(ms, hoveredItem, mouseX, mouseY);
+		graphics.renderTooltip(font, hoveredItem, mouseX, mouseY);
 
-		ms.popPose();
+		poseStack.popPose();
 	}
 
 	@Override

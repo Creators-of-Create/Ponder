@@ -1,5 +1,21 @@
 package net.createmod.ponder.foundation;
 
+import net.createmod.catnip.Catnip;
+import net.createmod.ponder.enums.PonderConfig;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+
+import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -11,22 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.zip.GZIPInputStream;
-
-import javax.annotation.Nullable;
-
-import net.createmod.catnip.Catnip;
-import net.createmod.ponder.enums.PonderConfig;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtAccounter;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 public class PonderRegistry {
 
@@ -117,7 +117,7 @@ public class PonderRegistry {
 		DataInputStream stream =
 			new DataInputStream(new BufferedInputStream(new GZIPInputStream(resourceStream)));
 		CompoundTag nbt = NbtIo.read(stream, new NbtAccounter(0x20000000L));
-		t.load(nbt);
+		t.load(Minecraft.getInstance().level.holderLookup(Registries.BLOCK), nbt);
 		return t;
 	}
 

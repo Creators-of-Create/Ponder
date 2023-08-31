@@ -1,19 +1,11 @@
 package net.createmod.ponder.foundation.ui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.platform.ClipboardManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-
+import com.mojang.blaze3d.vertex.VertexSorting;
+import com.mojang.math.Axis;
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -50,6 +42,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -65,6 +58,13 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.IntStream;
 
 public class PonderUI extends AbstractPonderScreen {
 
@@ -399,27 +399,27 @@ public class PonderUI extends AbstractPonderScreen {
 	}
 
 	@Override
-	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		partialTicks = getPartialTicks();
 		RenderSystem.enableBlend();
-		renderVisibleScenes(ms, mouseX, mouseY,
+		renderVisibleScenes(graphics, mouseX, mouseY,
 			skipCooling > 0 ? 0 : identifyMode ? ponderPartialTicksPaused : partialTicks);
-		renderWidgets(ms, mouseX, mouseY, identifyMode ? ponderPartialTicksPaused : partialTicks);
+		renderWidgets(graphics, mouseX, mouseY, identifyMode ? ponderPartialTicksPaused : partialTicks);
 	}
 
 	@Override
-	public void renderBackground(PoseStack ms) {
-		super.renderBackground(ms);
+	public void renderBackground(GuiGraphics graphics) {
+		super.renderBackground(graphics);
 	}
 
-	protected void renderVisibleScenes(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		renderScene(ms, mouseX, mouseY, index, partialTicks);
+	protected void renderVisibleScenes(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		renderScene(graphics, mouseX, mouseY, index, partialTicks);
 		float lazyIndexValue = lazyIndex.getValue(partialTicks);
 		if (Math.abs(lazyIndexValue - index) > 1 / 512f)
-			renderScene(ms, mouseX, mouseY, lazyIndexValue < index ? index - 1 : index + 1, partialTicks);
+			renderScene(graphics, mouseX, mouseY, lazyIndexValue < index ? index - 1 : index + 1, partialTicks);
 	}
 
-	protected void renderScene(PoseStack ms, int mouseX, int mouseY, int i, float partialTicks) {
+	protected void renderScene(GuiGraphics graphics, int mouseX, int mouseY, int i, float partialTicks) {
 		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
 		PonderScene scene = scenes.get(i);
 		double value = lazyIndex.getValue(minecraft.getFrameTime());
@@ -432,30 +432,31 @@ public class PonderUI extends AbstractPonderScreen {
 
 		// has to be outside of MS transforms, important for vertex sorting
 		Matrix4f matrix4f = new Matrix4f(RenderSystem.getProjectionMatrix());
-		matrix4f.multiplyWithTranslation(0, 0, 800);
-		RenderSystem.setProjectionMatrix(matrix4f);
+		matrix4f.translate(0, 0, 800);
+		RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.DISTANCE_TO_ORIGIN);
 
-		ms.pushPose();
-		ms.translate(0, 0, -800);
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(0, 0, -800);
 		scene.getTransform()
 			.updateScreenParams(width, height, slide);
 		scene.getTransform()
-			.apply(ms, partialTicks);
+			.apply(poseStack, partialTicks);
 		scene.getTransform()
 			.updateSceneRVE(partialTicks);
-		scene.renderScene(buffer, ms, partialTicks);
+		scene.renderScene(buffer, graphics, partialTicks);
 		buffer.draw();
 
 		BoundingBox bounds = scene.getBounds();
-		ms.pushPose();
+		poseStack.pushPose();
 
 		// kool shadow fx
 		if (!scene.shouldHidePlatformShadow()) {
 			RenderSystem.enableCull();
 			RenderSystem.enableDepthTest();
-			ms.pushPose();
-			ms.translate(scene.getBasePlateOffsetX(), 0, scene.getBasePlateOffsetZ());
-			UIRenderHelper.flipForGuiRender(ms);
+			poseStack.pushPose();
+			poseStack.translate(scene.getBasePlateOffsetX(), 0, scene.getBasePlateOffsetZ());
+			UIRenderHelper.flipForGuiRender(poseStack);
 
 			float flash = finishingFlash.getValue(partialTicks) * .9f;
 			float alpha = flash;
@@ -465,21 +466,21 @@ public class PonderUI extends AbstractPonderScreen {
 			flash = 1 - flash;
 
 			for (int f = 0; f < 4; f++) {
-				ms.translate(scene.getBasePlateSize(), 0, 0);
-				ms.pushPose();
-				ms.translate(0, 0, -1 / 1024f);
+				poseStack.translate(scene.getBasePlateSize(), 0, 0);
+				poseStack.pushPose();
+				poseStack.translate(0, 0, -1 / 1024f);
 				if (flash > 0) {
-					ms.pushPose();
-					ms.scale(1, .5f + flash * .75f, 1);
-					UIRenderHelper.drawGradientRect(ms.last().pose(), 0, 0, -1, -scene.getBasePlateSize(), 0, new Color(0x00_c6ffc9), new Color(0xaa_c6ffc9).scaleAlpha(alpha));
-					ms.popPose();
+					poseStack.pushPose();
+					poseStack.scale(1, .5f + flash * .75f, 1);
+					graphics.fillGradient(0, -1, -scene.getBasePlateSize(), 0, 0, new Color(0x00_c6ffc9).getRGB(), new Color(0xaa_c6ffc9).scaleAlpha(alpha).getRGB());
+					poseStack.popPose();
 				}
-				ms.translate(0, 0, 2 / 1024f);
-				UIRenderHelper.drawGradientRect(ms.last().pose(), 0, 0, 0, -scene.getBasePlateSize(), 4, new Color(0x66_000000), new Color(0x00_000000));
-				ms.popPose();
-				ms.mulPose(Vector3f.YP.rotationDegrees(-90));
+				poseStack.translate(0, 0, 2 / 1024f);
+				graphics.fillGradient(0, 0, -scene.getBasePlateSize(), 4, 0, new Color(0x66_000000).getRGB(), new Color(0x00_000000).getRGB());
+				poseStack.popPose();
+				poseStack.mulPose(Axis.YP.rotationDegrees(-90));
 			}
-			ms.popPose();
+			poseStack.popPose();
 			RenderSystem.disableCull();
 			RenderSystem.disableDepthTest();
 		}
@@ -487,57 +488,56 @@ public class PonderUI extends AbstractPonderScreen {
 		// coords for debug
 		if (PonderRegistry.editingModeActive() && !userViewMode) {
 
-			ms.scale(-1, -1, 1);
-			ms.scale(1 / 16f, 1 / 16f, 1 / 16f);
-			ms.translate(1, -8, -1 / 64f);
+			poseStack.scale(-1, -1, 1);
+			poseStack.scale(1 / 16f, 1 / 16f, 1 / 16f);
+			poseStack.translate(1, -8, -1 / 64f);
 
 			// X AXIS
-			ms.pushPose();
-			ms.translate(4, -3, 0);
-			ms.translate(0, 0, -2 / 1024f);
+			poseStack.pushPose();
+			poseStack.translate(4, -3, 0);
+			poseStack.translate(0, 0, -2 / 1024f);
 			for (int x = 0; x <= bounds.getXSpan(); x++) {
-				ms.translate(-16, 0, 0);
-				font.draw(ms, x == bounds.getXSpan() ? "x" : "" + x, 0, 0, 0xFFFFFFFF);
+				poseStack.translate(-16, 0, 0);
+				graphics.drawString(font, x == bounds.getXSpan() ? "x" : "" + x, 0, 0, 0xFFFFFFFF, false);
 			}
-			ms.popPose();
+			poseStack.popPose();
 
 			// Z AXIS
-			ms.pushPose();
-			ms.scale(-1, 1, 1);
-			ms.translate(0, -3, -4);
-			ms.mulPose(Vector3f.YP.rotationDegrees(-90));
-			ms.translate(-8, -2, 2 / 64f);
+			poseStack.pushPose();
+			poseStack.scale(-1, 1, 1);
+			poseStack.translate(0, -3, -4);
+			poseStack.mulPose(Axis.YP.rotationDegrees(-90));
+			poseStack.translate(-8, -2, 2 / 64f);
 			for (int z = 0; z <= bounds.getZSpan(); z++) {
-				ms.translate(16, 0, 0);
-				font.draw(ms, z == bounds.getZSpan() ? "z" : "" + z, 0, 0, 0xFFFFFFFF);
+				poseStack.translate(16, 0, 0);
+				graphics.drawString(font, z == bounds.getZSpan() ? "z" : "" + z, 0, 0, 0xFFFFFFFF, false);
 			}
-			ms.popPose();
+			poseStack.popPose();
 
 			// DIRECTIONS
-			ms.pushPose();
-			ms.translate(bounds.getXSpan() * -8, 0, bounds.getZSpan() * 8);
-			ms.mulPose(Vector3f.YP.rotationDegrees(-90));
+			poseStack.pushPose();
+			poseStack.translate(bounds.getXSpan() * -8, 0, bounds.getZSpan() * 8);
+			poseStack.mulPose(Axis.YP.rotationDegrees(-90));
 			for (Direction d : Iterate.horizontalDirections) {
-				ms.mulPose(Vector3f.YP.rotationDegrees(90));
-				ms.pushPose();
-				ms.translate(0, 0, bounds.getZSpan() * 16);
-				ms.mulPose(Vector3f.XP.rotationDegrees(-90));
-				font.draw(ms, d.name()
-					.substring(0, 1), 0, 0, 0x66FFFFFF);
-				font.draw(ms, "|", 2, 10, 0x44FFFFFF);
-				font.draw(ms, ".", 2, 14, 0x22FFFFFF);
-				ms.popPose();
+				poseStack.mulPose(Axis.YP.rotationDegrees(90));
+				poseStack.pushPose();
+				poseStack.translate(0, 0, bounds.getZSpan() * 16);
+				poseStack.mulPose(Axis.XP.rotationDegrees(-90));
+				graphics.drawString(font, d.name().substring(0, 1), 0, 0, 0x66FFFFFF, false);
+				graphics.drawString(font, "|", 2, 10, 0x44FFFFFF, false);
+				graphics.drawString(font, ".", 2, 14, 0x22FFFFFF, false);
+				poseStack.popPose();
 			}
-			ms.popPose();
+			poseStack.popPose();
 			buffer.draw();
 		}
 
-		ms.popPose();
-		ms.popPose();
+		poseStack.popPose();
+		poseStack.popPose();
 		RenderSystem.restoreProjectionMatrix();
 	}
 
-	protected void renderWidgets(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+	protected void renderWidgets(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		RenderSystem.disableDepthTest();
 
 		float fade = fadeIn.getValue(partialTicks);
@@ -551,7 +551,9 @@ public class PonderUI extends AbstractPonderScreen {
 			noWidgetsHovered &= !child.isMouseOver(mouseX, mouseY);
 
 		int tooltipColor = Theme.Key.TEXT_DARKER.i();
-		renderSceneInformation(ms, fade, indexDiff, activeScene, tooltipColor);
+		renderSceneInformation(graphics, fade, indexDiff, activeScene, tooltipColor);
+
+		PoseStack ms = graphics.pose();
 
 		if (identifyMode) {
 			if (noWidgetsHovered && mouseY < height - 80) {
@@ -565,8 +567,8 @@ public class PonderUI extends AbstractPonderScreen {
 							.style(ChatFormatting.GRAY)
 							.component();
 
-					renderComponentTooltip(
-							ms,
+					graphics.renderComponentTooltip(
+							font,
 							font.getSplitter()
 									.splitLines(text, width / 3, Style.EMPTY)
 									.stream()
@@ -576,14 +578,14 @@ public class PonderUI extends AbstractPonderScreen {
 							0
 					);
 				} else
-					renderTooltip(ms, hoveredTooltipItem, 0, 0);
+					graphics.renderTooltip(font, hoveredTooltipItem, 0, 0);
 				if (hoveredBlockPos != null && PonderRegistry.editingModeActive() && !userViewMode) {
 					ms.translate(0, -15, 0);
 					boolean copied = hoveredBlockPos.equals(copiedBlockPos);
 					MutableComponent coords = Components.literal(
 						hoveredBlockPos.getX() + ", " + hoveredBlockPos.getY() + ", " + hoveredBlockPos.getZ())
 							.withStyle(copied ? ChatFormatting.GREEN : ChatFormatting.GOLD);
-					renderTooltip(ms, coords, 0, 0);
+					graphics.renderTooltip(font, coords, 0, 0);
 				}
 				ms.popPose();
 			}
@@ -604,12 +606,12 @@ public class PonderUI extends AbstractPonderScreen {
 		else
 			slowMode.dim();
 
-		renderSceneOverlay(ms, partialTicks, lazyIndexValue, Math.abs(indexDiff));
+		renderSceneOverlay(graphics, partialTicks, lazyIndexValue, Math.abs(indexDiff));
 
-		renderNextUp(ms, partialTicks, nextScene);
+		renderNextUp(graphics, partialTicks, nextScene);
 
 		// Widgets
-		getWidgets().forEach(w -> {
+		getRenderables().forEach(w -> {
 			if (w instanceof PonderButton button) {
 				button.fade()
 					.startWithValue(fade);
@@ -634,10 +636,10 @@ public class PonderUI extends AbstractPonderScreen {
 		Color c1 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x40);
 		Color c2 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x20);
 		Color c3 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x10);
-		UIRenderHelper.breadcrumbArrow(ms, width / 2 - 20, height - 51, 0, 20, 20, 5, c1, c2);
-		UIRenderHelper.breadcrumbArrow(ms, width / 2 + 20, height - 51, 0, -20, 20, -5, c1, c2);
-		UIRenderHelper.breadcrumbArrow(ms, width / 2 - 90, height - 51, 0, 70, 20, 5, c1, c3);
-		UIRenderHelper.breadcrumbArrow(ms, width / 2 + 90, height - 51, 0, -70, 20, -5, c1, c3);
+		UIRenderHelper.breadcrumbArrow(graphics, width / 2 - 20, height - 51, 0, 20, 20, 5, c1, c2);
+		UIRenderHelper.breadcrumbArrow(graphics, width / 2 + 20, height - 51, 0, -20, 20, -5, c1, c2);
+		UIRenderHelper.breadcrumbArrow(graphics, width / 2 - 90, height - 51, 0, 70, 20, 5, c1, c3);
+		UIRenderHelper.breadcrumbArrow(graphics, width / 2 + 90, height - 51, 0, -70, 20, -5, c1, c3);
 
 		// Tags
 		List<PonderTag> sceneTags = activeScene.getTags();
@@ -663,51 +665,52 @@ public class PonderUI extends AbstractPonderScreen {
 				else
 					button.dim();
 
-				int x = button.x + button.getWidth() + 4;
-				int y = button.y - 2;
+				int x = button.getX() + button.getWidth() + 4;
+				int y = button.getY() - 2;
 				ms.translate(x, y + 5 * (1 - fade), 800);
 
 				float fadedWidth = 200 * chase.getValue(partialTicks);
-				UIRenderHelper.streak(ms, 0, 0, 12, 26, (int) fadedWidth);
+				UIRenderHelper.streak(graphics, 0, 0, 12, 26, (int) fadedWidth);
 
 				RenderSystem.enableScissor((int) (x * s), 0, (int) (fadedWidth * s), (int) (height * s));
 
 				String tagName = tag
 					.getTitle();
-				font.draw(ms, tagName, 3, 8, Theme.Key.TEXT_ACCENT_SLIGHT.i());
+				graphics.drawString(font, tagName, 3, 8, Theme.Key.TEXT_ACCENT_SLIGHT.i(), false);
 
 				RenderSystem.disableScissor();
 
 				ms.popPose();
 			});
 
-		renderHoverTooltips(ms, tooltipColor);
+		renderHoverTooltips(graphics, tooltipColor);
 
 		RenderSystem.enableDepthTest();
 	}
 
-	private void renderHoverTooltips(PoseStack ms, int tooltipColor) {
-		ms.pushPose();
-		ms.translate(0, 0, 500);
+	private void renderHoverTooltips(GuiGraphics graphics, int tooltipColor) {
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(0, 0, 500);
 		int tooltipY = height - 16;
 		if (scan.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.IDENTIFY).component(), scan.x + 10, tooltipY, tooltipColor);
+			graphics.drawCenteredString(font, Ponder.lang().translate(AbstractPonderScreen.IDENTIFY).component(), scan.getX() + 10, tooltipY, tooltipColor);
 		if (index != 0 && left.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.PREVIOUS).component(), left.x + 10, tooltipY, tooltipColor);
+			graphics.drawCenteredString(font, Ponder.lang().translate(AbstractPonderScreen.PREVIOUS).component(), left.getX() + 10, tooltipY, tooltipColor);
 		if (close.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.CLOSE).component(), close.x + 10, tooltipY, tooltipColor);
+			graphics.drawCenteredString(font, Ponder.lang().translate(AbstractPonderScreen.CLOSE).component(), close.getX() + 10, tooltipY, tooltipColor);
 		if (index != scenes.size() - 1 && right.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.NEXT).component(), right.x + 10, tooltipY, tooltipColor);
+			graphics.drawCenteredString(font, Ponder.lang().translate(AbstractPonderScreen.NEXT).component(), right.getX() + 10, tooltipY, tooltipColor);
 		if (replay.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.REPLAY).component(), replay.x + 10, tooltipY, tooltipColor);
+			graphics.drawCenteredString(font, Ponder.lang().translate(AbstractPonderScreen.REPLAY).component(), replay.getX() + 10, tooltipY, tooltipColor);
 		if (slowMode.isHoveredOrFocused())
-			drawCenteredString(ms, font, Ponder.lang().translate(AbstractPonderScreen.SLOW_TEXT).component(), slowMode.x + 5, tooltipY, tooltipColor);
+			graphics.drawCenteredString(font, Ponder.lang().translate(AbstractPonderScreen.SLOW_TEXT).component(), slowMode.getX() + 5, tooltipY, tooltipColor);
 		if (PonderRegistry.editingModeActive() && userMode.isHoveredOrFocused())
-			drawCenteredString(ms, font, "Editor View", userMode.x + 10, tooltipY, tooltipColor);
-		ms.popPose();
+			graphics.drawCenteredString(font, "Editor View", userMode.getX() + 10, tooltipY, tooltipColor);
+		poseStack.popPose();
 	}
 
-	private void renderNextUp(PoseStack ms, float partialTicks, @Nullable PonderScene nextScene) {
+	private void renderNextUp(GuiGraphics graphics, float partialTicks, @Nullable PonderScene nextScene) {
 		if (!getActiveScene().isFinished())
 			return;
 
@@ -717,29 +720,31 @@ public class PonderUI extends AbstractPonderScreen {
 		if (!(nextUp.getValue() > 1 / 16f))
 			return;
 
-		ms.pushPose();
-		ms.translate(right.x + 10, right.y - 6 + nextUp.getValue(partialTicks) * 5, 400);
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(right.getX() + 10, right.getY() - 6 + nextUp.getValue(partialTicks) * 5, 400);
 		MutableComponent nextUpComponent = Ponder.lang().translate(AbstractPonderScreen.NEXT_UP).component();
 		int boxWidth = (Math.max(font.width(nextScene.getTitle()), font.width(nextUpComponent)) + 5);
-		renderSpeechBox(ms, 0, 0, boxWidth, 20, right.isHoveredOrFocused(), Pointing.DOWN, false);
-		ms.translate(0, -29, 100);
-		drawCenteredString(ms, font, nextUpComponent, 0, 0, Theme.Key.TEXT_DARKER.i());
-		drawCenteredString(ms, font, nextScene.getTitle(), 0, 10, Theme.Key.TEXT.i());
-		ms.popPose();
+		renderSpeechBox(graphics, 0, 0, boxWidth, 20, right.isHoveredOrFocused(), Pointing.DOWN, false);
+		poseStack.translate(0, -29, 100);
+		graphics.drawCenteredString(font, nextUpComponent, 0, 0, Theme.Key.TEXT_DARKER.i());
+		graphics.drawCenteredString(font, nextScene.getTitle(), 0, 10, Theme.Key.TEXT.i());
+		poseStack.popPose();
 	}
 
-	private void renderSceneOverlay(PoseStack ms, float partialTicks, float lazyIndexValue, float indexDiff) {
+	private void renderSceneOverlay(GuiGraphics graphics, float partialTicks, float lazyIndexValue, float indexDiff) {
 		// Scene overlay
 		float scenePT = skipCooling > 0 ? 0 : partialTicks;
-		ms.pushPose();
-		ms.translate(0, 0, 100);
-		renderOverlay(ms, index, scenePT);
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(0, 0, 100);
+		renderOverlay(graphics, index, scenePT);
 		if (indexDiff > 1 / 512f)
-			renderOverlay(ms, lazyIndexValue < index ? index - 1 : index + 1, scenePT);
-		ms.popPose();
+			renderOverlay(graphics, lazyIndexValue < index ? index - 1 : index + 1, scenePT);
+		poseStack.popPose();
 	}
 
-	private void renderSceneInformation(PoseStack ms, float fade, float indexDiff, PonderScene activeScene, int tooltipColor) {
+	private void renderSceneInformation(GuiGraphics graphics, float fade, float indexDiff, PonderScene activeScene, int tooltipColor) {
 		float absoluteIndexDiff = Math.abs(indexDiff);
 		// info includes icon, scene title and the "Pondering about... " text
 
@@ -772,84 +777,73 @@ public class PonderUI extends AbstractPonderScreen {
 		int streakHeight = 35 - 9 + (int) Mth.lerp(absoluteIndexDiff, wrappedTitleHeight, otherWrappedTitleHeight);
 		int streakWidth = 70 + (int) Mth.lerp(absoluteIndexDiff, titleWidth, otherTitleWidth);
 
-		ms.pushPose();
-		ms.translate(0, 0, 400);
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(0, 0, 400);
 		// translate to top left of the background streak
-		ms.translate(55, 19, 0);
+		poseStack.translate(55, 19, 0);
 
 		// background streak
-		UIRenderHelper.streak(ms, 0, 0, streakHeight / 2, streakHeight, (int) (streakWidth * fade));
-		UIRenderHelper.streak(ms, 180, 0, streakHeight / 2, streakHeight, (int) (30 * fade));
+		UIRenderHelper.streak(graphics, 0, 0, streakHeight / 2, streakHeight, (int) (streakWidth * fade));
+		UIRenderHelper.streak(graphics, 180, 0, streakHeight / 2, streakHeight, (int) (30 * fade));
 
 		// icon
 		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
 			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
 			.at(-34, 2, 100)
 			.withBounds(30, 30)
-			.render(ms);
+			.render(graphics);
 
 		GuiGameElement.of(stack)
 			.scale(2)
 			.at(-35, 1)
-			.render(ms);
+			.render(graphics);
 
 		// pondering about text
-		ms.translate(4, 6, 0);
-		font.draw(ms, Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(), 0, 0, tooltipColor);
+		poseStack.translate(4, 6, 0);
+		graphics.drawString(font, Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(), 0, 0, tooltipColor, false);
 
 		// scene title
-		ms.translate(0, 14, 0);
+		poseStack.translate(0, 14, 0);
 
 		// short version for single scene views
 		if (scenes.size() == 1 || absoluteIndexDiff < 0.01) {
-			ClientFontHelper.drawSplitString(ms, font, title, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
+			ClientFontHelper.drawSplitString(poseStack, font, title, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
 					.scaleAlphaForText(fade)
 					.getRGB());
 
-			ms.popPose();
+			poseStack.popPose();
 			return;
 		}
 
 
-		ms.translate(0, 6, 0);
-		ms.pushPose();
-		ms.mulPose(Vector3f.XN.rotationDegrees(indexDiff * -90 + Math.signum(indexDiff) * 90));
-		ms.translate(0, -6, 5);
-		ClientFontHelper.drawSplitString(ms, font, otherTitle, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
+		poseStack.translate(0, 6, 0);
+		poseStack.pushPose();
+		poseStack.mulPose(Axis.XN.rotationDegrees(indexDiff * -90 + Math.signum(indexDiff) * 90));
+		poseStack.translate(0, -6, 5);
+		ClientFontHelper.drawSplitString(poseStack, font, otherTitle, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
 				.scaleAlphaForText(absoluteIndexDiff)
 				.getRGB()
 		);
-		ms.popPose();
+		poseStack.popPose();
 
 
-		ms.mulPose(Vector3f.XN.rotationDegrees(indexDiff * -90));
-		ms.translate(0, -6, 5);
-		ClientFontHelper.drawSplitString(ms, font, title, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
+		poseStack.mulPose(Axis.XN.rotationDegrees(indexDiff * -90));
+		poseStack.translate(0, -6, 5);
+		ClientFontHelper.drawSplitString(poseStack, font, title, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
 				.scaleAlphaForText(1 - absoluteIndexDiff)
 				.getRGB()
 		);
-		ms.popPose();
-
-		/*if (chapter != null) {
-			ms.pushPose();
-
-			ms.translate(chap.x - 4 - 4, chap.y, 0);
-			UIRenderHelper.streak(ms, 180, 4, 10, 26, (int) (150 * fade));
-
-			drawRightAlignedString(font, ms, Ponder.lang().translate(AbstractPonderScreen.IN_CHAPTER).string(), 0, 0, tooltipColor);
-			drawRightAlignedString(font, ms, chapter.getTitle(), 0, 12, Theme.Key.TEXT.i());
-
-			ms.popPose();
-		}*/
+		poseStack.popPose();
 	}
 
-	private void renderOverlay(PoseStack ms, int i, float partialTicks) {
+	private void renderOverlay(GuiGraphics graphics, int i, float partialTicks) {
 		if (identifyMode)
 			return;
-		ms.pushPose();
+		graphics.pose().pushPose();
 		PonderScene story = scenes.get(i);
-		story.renderOverlay(this, ms, skipCooling > 0 ? 0 : identifyMode ? ponderPartialTicksPaused : partialTicks);
-		ms.popPose();
+		story.renderOverlay(this, graphics, skipCooling > 0 ? 0 : identifyMode ? ponderPartialTicksPaused : partialTicks);
+		graphics.pose().popPose();
 	}
 
 	@Override
@@ -899,10 +893,12 @@ public class PonderUI extends AbstractPonderScreen {
 		return hovered;
 	}
 
-	public static void renderSpeechBox(PoseStack ms, int x, int y, int w, int h, boolean highlighted, Pointing pointing,
+	public static void renderSpeechBox(GuiGraphics graphics, int x, int y, int w, int h, boolean highlighted, Pointing pointing,
 		boolean returnWithLocalTransform) {
-		if (!returnWithLocalTransform)
-			ms.pushPose();
+		PoseStack poseStack = graphics.pose();
+		if (!returnWithLocalTransform) {
+			poseStack.pushPose();
+		}
 
 		int boxX = x;
 		int boxY = y;
@@ -955,22 +951,22 @@ public class PonderUI extends AbstractPonderScreen {
 			.gradientBorder(borderColors)
 			.at(boxX, boxY, 100)
 			.withBounds(w, h)
-			.render(ms);
+			.render(graphics);
 
-		ms.pushPose();
-		ms.translate(divotX + divotRadius, divotY + divotRadius, 10);
-		ms.mulPose(Vector3f.ZP.rotationDegrees(divotRotation));
-		ms.translate(-divotRadius, -divotRadius, 0);
-		PonderGuiTextures.SPEECH_TOOLTIP_BACKGROUND.render(ms, 0, 0);
-		PonderGuiTextures.SPEECH_TOOLTIP_COLOR.render(ms, 0, 0, c);
-		ms.popPose();
+		poseStack.pushPose();
+		poseStack.translate(divotX + divotRadius, divotY + divotRadius, 10);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(divotRotation));
+		poseStack.translate(-divotRadius, -divotRadius, 0);
+		PonderGuiTextures.SPEECH_TOOLTIP_BACKGROUND.render(graphics, 0, 0);
+		PonderGuiTextures.SPEECH_TOOLTIP_COLOR.render(graphics, 0, 0, c);
+		poseStack.popPose();
 
 		if (returnWithLocalTransform) {
-			ms.translate(boxX, boxY, 0);
+			poseStack.translate(boxX, boxY, 0);
 			return;
 		}
 
-		ms.popPose();
+		poseStack.popPose();
 
 	}
 
@@ -984,8 +980,8 @@ public class PonderUI extends AbstractPonderScreen {
 
 	@Override
 	public boolean isEquivalentTo(NavigatableSimiScreen other) {
-		if (other instanceof PonderUI)
-			return stack.sameItem(((PonderUI) other).stack);
+		if (other instanceof PonderUI otherUI)
+			return !otherUI.stack.isEmpty() && stack.is(otherUI.stack.getItem());
 		return super.isEquivalentTo(other);
 	}
 
@@ -1023,10 +1019,6 @@ public class PonderUI extends AbstractPonderScreen {
 	public void removed() {
 		super.removed();
 		hoveredTooltipItem = ItemStack.EMPTY;
-	}
-
-	public void drawRightAlignedString(Font fontRenderer, PoseStack ms, String string, int x, int y, int color) {
-		fontRenderer.draw(ms, string, (float) (x - fontRenderer.width(string)), (float) y, color);
 	}
 
 	public boolean isComfyReadingEnabled() {

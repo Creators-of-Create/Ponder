@@ -1,18 +1,8 @@
 package net.createmod.ponder.foundation.ui;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
@@ -29,11 +19,20 @@ import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderRegistry;
 import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+
+import javax.annotation.Nullable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class PonderTagIndexScreen extends AbstractPonderScreen {
 
@@ -172,13 +171,15 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 	}
 
 	@Override
-	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		ms.pushPose();
-		ms.translate(width / 2d, 30, 0);
+	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		PoseStack poseStack = graphics.pose();
+
+		poseStack.pushPose();
+		poseStack.translate(width / 2d, 30, 0);
 
 		//title, box for icon and streak
-		ms.pushPose();
-		ms.translate(-120, 0, 0);
+		poseStack.pushPose();
+		poseStack.translate(-120, 0, 0);
 
 		String title = Ponder.lang().translate(AbstractPonderScreen.WELCOME).string();
 
@@ -186,23 +187,23 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
 			.at(0, 0, 100)
 			.withBounds(30, 30)
-			.render(ms);
+			.render(graphics);
 
 		//todo add icon inside the box
 
 		//34 = 30 bounds + 2 padding + 2 box width
 		//-3 = 2 padding + 1 pixel of the box
-		ms.translate(34, -3, 0);
+		poseStack.translate(34, -3, 0);
 
 		int streakHeight = 36;
-		UIRenderHelper.streak(ms, 0, 0, (streakHeight / 2), streakHeight, 280);
+		UIRenderHelper.streak(graphics, 0, 0, (streakHeight / 2), streakHeight, 280);
 
-		ms.scale(2f, 2f, 2f);
-		font.draw(ms, title, 3, 5, Theme.Key.TEXT.i());
+		poseStack.scale(2f, 2f, 2f);
+		graphics.drawString(font, title, 3, 5, Theme.Key.TEXT.i(), false);
 
-		ms.popPose();
-		ms.translate(0, 50, 0);
-		ms.pushPose();
+		poseStack.popPose();
+		poseStack.translate(0, 50, 0);
+		poseStack.pushPose();
 		//at the middle, 80px from the top now
 
 		int maxWidth = (int) (width * .5f);
@@ -214,72 +215,74 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 		int descHeight = font.wordWrapHeight(desc, maxWidth);
 
-		ms.translate(-maxWidth / 2f, 0, 0);
+		poseStack.translate(-maxWidth / 2f, 0, 0);
 
 		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
 				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
 				.at(-3, -3, 0)
 				.withBounds(maxWidth + 6, descHeight + 5)
-				.render(ms);
+				.render(graphics);
 
-		ClientFontHelper.drawSplitString(ms, font, desc, 0, 0, maxWidth, Theme.Key.TEXT.i());
-		ms.popPose();
+		ClientFontHelper.drawSplitString(poseStack, font, desc, 0, 0, maxWidth, Theme.Key.TEXT.i());
+		poseStack.popPose();
 
-		ms.translate(0, -80, 0);
+		poseStack.translate(0, -80, 0);
 		//at the middle of top edge now
 
 		for(ModTagsEntry entry : currentModTagEntries) {
-			ms.pushPose();
-			renderTagsEntry(ms, entry);
-			ms.popPose();
+			poseStack.pushPose();
+			renderTagsEntry(graphics, entry);
+			poseStack.popPose();
 		}
 
-		ms.popPose();
+		poseStack.popPose();
 
 	}
 
-	protected void renderTagsEntry(PoseStack ms, ModTagsEntry entry) {
+	protected void renderTagsEntry(GuiGraphics graphics, ModTagsEntry entry) {
+		PoseStack poseStack = graphics.pose();
 
 		int layoutWidth = entry.layoutArea().getWidth();
 		int layoutHeight = entry.layoutArea().getHeight();
 
-		ms.translate(0, entry.yPos(), 0);
+		poseStack.translate(0, entry.yPos(), 0);
 
 		String categories = Ponder.lang().translate(AbstractPonderScreen.CATEGORIES, entry.modName()).string();
 		int stringWidth = font.width(categories);
-		ms.pushPose();
-		ms.translate(-stringWidth / 2f, -20, 0);
+		poseStack.pushPose();
+		poseStack.translate(-stringWidth / 2f, -20, 0);
 
 		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
 				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
 				.at(-3, -1, 0)
 				.withBounds(stringWidth + 6, 10)
-				.render(ms);
+				.render(graphics);
 
-		font.draw(ms, categories, 0, 0, Theme.Key.TEXT.i());
+		graphics.drawString(font, categories, 0, 0, Theme.Key.TEXT.i(), false);
 
-		ms.popPose();
+		poseStack.popPose();
 
 		int extraLength = Mth.clamp(entry.tagCount, 2, 8);
 
-		UIRenderHelper.streak(ms,   0, 0, layoutHeight / 2, layoutHeight + 6, layoutWidth / 2 + extraLength * 15);
-		UIRenderHelper.streak(ms, 180, 0, layoutHeight / 2, layoutHeight + 6, layoutWidth / 2 + extraLength * 15);
+		UIRenderHelper.streak(graphics,   0, 0, layoutHeight / 2, layoutHeight + 6, layoutWidth / 2 + extraLength * 15);
+		UIRenderHelper.streak(graphics, 180, 0, layoutHeight / 2, layoutHeight + 6, layoutWidth / 2 + extraLength * 15);
 
 	}
 
 	@Override
-	protected void renderWindowForeground(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+	protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		RenderSystem.disableDepthTest();
-		ms.pushPose();
-		ms.translate(0, 0, 200);
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(0, 0, 200);
 
 		if (hoveredItem != null) {
 			List<Component> list = FontHelper.cutStringTextComponent(hoveredItem.getDescription(), Palette.ALL_GRAY);
 			list.add(0, Components.literal(hoveredItem.getTitle()));
-			renderComponentTooltip(ms, list, mouseX, mouseY);
+			graphics.renderComponentTooltip(font, list, mouseX, mouseY);
 		}
 
-		ms.popPose();
+		poseStack.popPose();
 		RenderSystem.enableDepthTest();
 	}
 

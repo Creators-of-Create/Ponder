@@ -1,12 +1,6 @@
 package net.createmod.ponder.foundation.element;
 
-import java.util.List;
-import java.util.function.Supplier;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-
-import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.foundation.PonderLocalization;
@@ -15,12 +9,16 @@ import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.ui.PonderUI;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 public class TextWindowElement extends AnimatedOverlayElement {
 
@@ -90,7 +88,7 @@ public class TextWindowElement extends AnimatedOverlayElement {
 	}
 
 	@Override
-	protected void render(PonderScene scene, PonderUI screen, PoseStack ms, float partialTicks, float fade) {
+	protected void render(PonderScene scene, PonderUI screen, GuiGraphics graphics, float partialTicks, float fade) {
 		if (bakedText == null)
 			bakedText = textGetter.get();
 		if (fade < 1 / 16f)
@@ -125,38 +123,35 @@ public class TextWindowElement extends AnimatedOverlayElement {
 		int boxHeight = screen.getFontRenderer()
 				.wordWrapHeight(bakedText, boxWidth);
 
-		ms.pushPose();
-		ms.translate(0, pY, 400);
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(0, pY, 400);
 
 		new BoxElement()
 				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
 				.gradientBorder(PonderTheme.Key.TEXT_WINDOW_BORDER.p())
 				.at(targetX - 10, 3, 100)
 				.withBounds(boxWidth, boxHeight - 1)
-				.render(ms);
-
-		//PonderUI.renderBox(ms, targetX - 10, 3, boxWidth, boxHeight - 1, 0xaa000000, 0x30eebb00, 0x10eebb00);
+				.render(graphics);
 
 		Color brighter = palette.getColorObject().mixWith(new Color(0xff_ffffdd), 0.5f).setImmutable();
 		Color c1 = new Color(0xff_494949);
 		Color c2 = new Color(0xff_393939);
 		if (vec != null) {
-			ms.pushPose();
-			ms.translate(sceneToScreen.x, 0, 0);
+			poseStack.pushPose();
+			poseStack.translate(sceneToScreen.x, 0, 0);
 			double lineTarget = (targetX - sceneToScreen.x) * fade;
-			ms.scale((float) lineTarget, 1, 1);
-			Matrix4f model = ms.last().pose();
-			UIRenderHelper.drawGradientRect(model, -100, 0, 0, 1, 1, brighter, brighter);
-			UIRenderHelper.drawGradientRect(model, -100, 0, 1, 1, 2, c1, c2);
-			ms.popPose();
+			poseStack.scale((float) lineTarget, 1, 1);
+			graphics.fillGradient(0, 0, 1, 1, -100, brighter.getRGB(), brighter.getRGB());
+			graphics.fillGradient(0, 1, 1, 2, -100, c1.getRGB(), c2.getRGB());
+			poseStack.popPose();
 		}
 
-		ms.translate(0, 0, 400);
+		poseStack.translate(0, 0, 400);
 		for (int i = 0; i < lines.size(); i++) {
-			screen.getFontRenderer()
-				.draw(ms, lines.get(i).getString(), targetX - 10, 3 + 9 * i, brighter.scaleAlphaForText(fade).getRGB());
+			graphics.drawString(screen.getFontRenderer(), lines.get(i).getString(), (int) (targetX - 10), 3 + 9 * i, brighter.scaleAlphaForText(fade).getRGB(), false);
 		}
-		ms.popPose();
+		poseStack.popPose();
 	}
 
 	public PonderPalette getPalette() {

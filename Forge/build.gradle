@@ -1,4 +1,6 @@
 plugins {
+    id 'idea'
+    id 'eclipse'
     id 'net.minecraftforge.gradle' version '[6.0, 6.2)'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
     id 'org.parchmentmc.librarian.forgegradle' version "${librarian_version}"
@@ -8,7 +10,7 @@ base {
     archivesName = "Ponder-Forge-${minecraft_version}"
 }
 
-def commonProject = findProject(":Common") != null ? project(":Common") : project(":Ponder:Common")
+def commonProject = findProject(":Common") != null ? project(":Common") : project(":ponder:Common")
 
 boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
 boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
@@ -49,9 +51,9 @@ minecraft {
             workingDirectory project.file('run')
 
             if (inMultiModWorkspace)
-                ideaModule 'createmod.Ponder.Forge.main'
+                ideaModule 'createmod.ponder.Forge.main'
             else
-                ideaModule 'catnip.Ponder.main'
+                ideaModule 'ponder.Forge.main'
 
             property 'forge.logging.console.level', 'debug'
             jvmArgs '-XX:+IgnoreUnrecognizedVMOptions', '-XX:+AllowEnhancedClassRedefinition' // uncomment with jbr
@@ -123,7 +125,7 @@ dependencies {
         implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
     }
 
-    annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
 }
 
 tasks.withType(JavaCompile).configureEach {

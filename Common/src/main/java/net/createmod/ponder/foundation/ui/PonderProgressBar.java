@@ -1,9 +1,6 @@
 package net.createmod.ponder.foundation.ui;
 
-import javax.annotation.Nonnull;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
@@ -14,6 +11,7 @@ import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 
 public class PonderProgressBar extends AbstractSimiWidget {
@@ -39,8 +37,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
 	@Override
 	protected boolean clicked(double mouseX, double mouseY) {
 		return this.active && this.visible && ponder.getActiveScene().getKeyframeCount() > 0
-				&& mouseX >= (double) this.x && mouseX < (double) (this.x + this.width + 4) && mouseY >= (double) this.y - 3
-				&& mouseY < (double) (this.y + this.height + 20);
+				&& mouseX >= (double) this.getX() && mouseX < (double) (this.getX() + this.width + 4) && mouseY >= (double) this.getY() - 3
+				&& mouseY < (double) (this.getY() + this.height + 20);
 	}
 
 	@Override
@@ -59,7 +57,7 @@ public class PonderProgressBar extends AbstractSimiWidget {
 
 	public int getHoveredKeyframeIndex(PonderScene activeScene, double mouseX) {
 		int totalTime = activeScene.getTotalTime();
-		int clickedAtTime = (int) ((mouseX - x) / ((double) width + 4) * totalTime);
+		int clickedAtTime = (int) ((mouseX - getX()) / ((double) width + 4) * totalTime);
 
 		{
 			int lastKeyframeTime = activeScene.getKeyframeTime(activeScene.getKeyframeCount() - 1);
@@ -87,34 +85,35 @@ public class PonderProgressBar extends AbstractSimiWidget {
 	}
 
 	@Override
-	public void renderButton(@Nonnull PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+	public void renderButton(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		PoseStack poseStack = graphics.pose();
 
 		isHovered = clicked(mouseX, mouseY);
 
 		new BoxElement()
 				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
 				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
-				.at(x, y, 400)
+				.at(getX(), getY(), 400)
 				.withBounds(width, height)
-				.render(ms);
+				.render(graphics);
 
-		ms.pushPose();
-		ms.translate(x - 2, y - 2, 100);
+		poseStack.pushPose();
+		poseStack.translate(getX() - 2, getY() - 2, 100);
 
-		ms.pushPose();
-		ms.scale((width + 4) * progress.getValue(partialTicks), 1, 1);
+		poseStack.pushPose();
+		poseStack.scale((width + 4) * progress.getValue(partialTicks), 1, 1);
 		Color c1 = PonderTheme.Key.PONDER_PROGRESSBAR.c(true);
 		Color c2 = PonderTheme.Key.PONDER_PROGRESSBAR.c(false);
-		UIRenderHelper.drawGradientRect(ms.last().pose(), 310, 0, 3, 1, 4, c1, c1);
-		UIRenderHelper.drawGradientRect(ms.last().pose(), 310, 0, 4, 1, 5, c2, c2);
-		ms.popPose();
+		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0, 3, 1, 4, c1, c1);
+		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0, 4, 1, 5, c2, c2);
+		poseStack.popPose();
 
-		renderKeyframes(ms, mouseX, partialTicks);
+		renderKeyframes(graphics, mouseX, partialTicks);
 
-		ms.popPose();
+		poseStack.popPose();
 	}
 
-	private void renderKeyframes(PoseStack ms, int mouseX, float partialTicks) {
+	private void renderKeyframes(GuiGraphics graphics, int mouseX, float partialTicks) {
 		PonderScene activeScene = ponder.getActiveScene();
 
 		Couple<Color> hover = PonderTheme.Key.PONDER_HOVER.p().map(c -> c.setAlpha(0xa0));
@@ -132,9 +131,9 @@ public class PonderProgressBar extends AbstractSimiWidget {
 		}
 
 		if (hoverIndex == -1)
-			drawKeyframe(ms, activeScene, true, 0, 0, hover.getFirst(), hover.getSecond(), 8);
+			drawKeyframe(graphics, activeScene, true, 0, 0, hover.getFirst(), hover.getSecond(), 8);
 		else if (hoverIndex == activeScene.getKeyframeCount())
-			drawKeyframe(ms, activeScene, true, activeScene.getTotalTime(), width + 4, hover.getFirst(), hover.getSecond(), 8);
+			drawKeyframe(graphics, activeScene, true, activeScene.getTotalTime(), width + 4, hover.getFirst(), hover.getSecond(), 8);
 
 		for (int i = 0; i < activeScene.getKeyframeCount(); i++) {
 			int keyframeTime = activeScene.getKeyframeTime(i);
@@ -146,17 +145,18 @@ public class PonderProgressBar extends AbstractSimiWidget {
 			int endColor = selected ? hoverEndColor : idleEndColor;
 			int height = selected ? 8 : 4;
 
-			drawKeyframe(ms, activeScene, selected, keyframeTime, keyframePos, colors.getFirst(), colors.getSecond(), height);
+			drawKeyframe(graphics, activeScene, selected, keyframeTime, keyframePos, colors.getFirst(), colors.getSecond(), height);
 
 		}
 	}
 
-	private void drawKeyframe(PoseStack ms, PonderScene activeScene, boolean selected, int keyframeTime, int keyframePos, Color startColor, Color endColor, int height) {
+	private void drawKeyframe(GuiGraphics graphics, PonderScene activeScene, boolean selected, int keyframeTime, int keyframePos, Color startColor, Color endColor, int height) {
+		PoseStack poseStack = graphics.pose();
 		if (selected) {
 			Font font = Minecraft.getInstance().font;
-			UIRenderHelper.drawGradientRect(ms.last().pose(), 600, keyframePos, 10, keyframePos + 1, 10 + height, endColor, startColor);
-			ms.pushPose();
-			ms.translate(0, 0, 200);
+			UIRenderHelper.drawGradientRect(poseStack.last().pose(), 600, keyframePos, 10, keyframePos + 1, 10 + height, endColor, startColor);
+			poseStack.pushPose();
+			poseStack.translate(0, 0, 200);
 			String text;
 			int offset;
 			if (activeScene.getCurrentTime() < keyframeTime) {
@@ -166,11 +166,11 @@ public class PonderProgressBar extends AbstractSimiWidget {
 				text = "<";
 				offset = 3;
 			}
-			font.draw(ms, text, keyframePos + offset, 10, endColor.getRGB());
-			ms.popPose();
+			graphics.drawString(font, text, keyframePos + offset, 10, endColor.getRGB(), false);
+			poseStack.popPose();
 		}
 
-		UIRenderHelper.drawGradientRect(ms.last().pose(), 400, keyframePos, -1, keyframePos + 1, 2 + height, startColor, endColor);
+		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 400, keyframePos, -1, keyframePos + 1, 2 + height, startColor, endColor);
 	}
 
 	@Override

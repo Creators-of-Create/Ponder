@@ -1,10 +1,6 @@
 package net.createmod.ponder.foundation.ui;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.AnimationTickHolder;
@@ -15,8 +11,12 @@ import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nullable;
+import java.util.Locale;
 
 public class PonderButton extends BoxWidget {
 
@@ -73,8 +73,8 @@ public class PonderButton extends BoxWidget {
 	}
 
 	@Override
-	protected void beforeRender(@Nonnull PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		super.beforeRender(ms, mouseX, mouseY, partialTicks);
+	protected void beforeRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.beforeRender(graphics, mouseX, mouseY, partialTicks);
 
 		float flashValue = flash.getValue(partialTicks);
 		if (flashValue > .1f) {
@@ -88,18 +88,20 @@ public class PonderButton extends BoxWidget {
 	}
 
 	@Override
-	public void renderButton(@Nonnull PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		super.renderButton(ms, mouseX, mouseY, partialTicks);
+	public void renderButton(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.renderButton(graphics, mouseX, mouseY, partialTicks);
 		float fadeValue = fade.getValue();
 
 		if (fadeValue < .1f)
 			return;
 
 		if (shortcut != null) {
-			ms.pushPose();
-			ms.translate(0, 0, z + 10);
-			drawCenteredString(ms, Minecraft.getInstance().font, shortcut.getTranslatedKeyMessage(), x + width / 2 + 8, y + height - 6, Key.TEXT_DARKER.c().scaleAlpha(fadeValue).getRGB());
-			ms.popPose();
+			PoseStack poseStack = graphics.pose();
+			poseStack.pushPose();
+			poseStack.translate(0, 0, z + 10);
+			graphics.drawCenteredString(Minecraft.getInstance().font, shortcut.getTranslatedKeyMessage().getString().toLowerCase(
+					Locale.ROOT), getX() + width / 2 + 8, getY() + height - 6, Key.TEXT_DARKER.c().scaleAlpha(fadeValue).getRGB());
+			poseStack.popPose();
 		}
 	}
 

@@ -2,7 +2,6 @@ package net.createmod.ponder.foundation.element;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.utility.Pointing;
@@ -13,6 +12,7 @@ import net.createmod.ponder.foundation.PonderPalette;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
@@ -75,7 +75,7 @@ public class InputWindowElement extends AnimatedOverlayElement {
 	}
 
 	@Override
-	protected void render(PonderScene scene, PonderUI screen, PoseStack ms, float partialTicks, float fade) {
+	protected void render(PonderScene scene, PonderUI screen, GuiGraphics graphics, float partialTicks, float fade) {
 		Font font = screen.getFontRenderer();
 		int width = 0;
 		int height = 0;
@@ -111,34 +111,35 @@ public class InputWindowElement extends AnimatedOverlayElement {
 			height = 24;
 		}
 
-		ms.pushPose();
-		ms.translate(sceneToScreen.x + xFade, sceneToScreen.y + yFade, 400);
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(sceneToScreen.x + xFade, sceneToScreen.y + yFade, 400);
 
-		PonderUI.renderSpeechBox(ms, 0, 0, width, height, false, direction, true);
+		PonderUI.renderSpeechBox(graphics, 0, 0, width, height, false, direction, true);
 
-		ms.translate(0, 0, 100);
+		poseStack.translate(0, 0, 100);
 
 		if (hasText)
-			font.draw(ms, text, 2, (height - font.lineHeight) / 2f + 2,
-				PonderPalette.WHITE.getColorObject().scaleAlpha(fade).getRGB());
+			graphics.drawString(font, text, 2, (int) ((height - font.lineHeight) / 2f + 2),
+								PonderPalette.WHITE.getColorObject().scaleAlpha(fade).getRGB(), false);
 
 		if (hasIcon) {
-			ms.pushPose();
-			ms.translate(keyWidth, 0, 0);
-			ms.scale(1.5f, 1.5f, 1.5f);
-			icon.render(ms, 0, 0);
-			ms.popPose();
+			poseStack.pushPose();
+			poseStack.translate(keyWidth, 0, 0);
+			poseStack.scale(1.5f, 1.5f, 1.5f);
+			icon.render(graphics, 0, 0);
+			poseStack.popPose();
 		}
 
 		if (hasItem) {
 			GuiGameElement.of(item)
 				.<GuiGameElement.GuiRenderBuilder>at(keyWidth + (hasIcon ? 24 : 0), 0)
 				.scale(1.5)
-				.render(ms);
+				.render(graphics);
 			RenderSystem.disableDepthTest();
 		}
 
-		ms.popPose();
+		poseStack.popPose();
 	}
 
 }

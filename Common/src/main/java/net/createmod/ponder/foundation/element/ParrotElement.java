@@ -1,11 +1,8 @@
 package net.createmod.ponder.foundation.element;
 
-import java.util.function.Supplier;
-
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-
+import com.mojang.math.Axis;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.foundation.PonderLevel;
@@ -19,6 +16,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Parrot;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.function.Supplier;
 
 public class ParrotElement extends AnimatedSceneElement {
 
@@ -125,7 +124,7 @@ public class ParrotElement extends AnimatedSceneElement {
 			Mth.lerp(pt, entity.zo, entity.getZ()));
 
 		float angle = AngleHelper.angleLerp(pt, entity.yRotO, entity.getYRot());
-		ms.mulPose(Vector3f.YP.rotationDegrees(angle));
+		ms.mulPose(Axis.YP.rotationDegrees(angle));
 
 		entityrenderermanager.render(entity, 0, 0, 0, 0, pt, ms, buffer, lightCoordsFromFade(fade));
 		ms.popPose();
@@ -141,8 +140,9 @@ public class ParrotElement extends AnimatedSceneElement {
 
 		Parrot create(PonderLevel world) {
 			Parrot entity = new Parrot(EntityType.PARROT, world);
-			int nextInt = Ponder.RANDOM.nextInt(5);
-			entity.setVariant(nextInt == 1 ? 0 : nextInt); // blue parrots are kinda hard to see
+			Parrot.Variant[] variants = Parrot.Variant.values();
+			Parrot.Variant variant = variants[Ponder.RANDOM.nextInt(variants.length)];
+			entity.setVariant(variant == Parrot.Variant.BLUE ? Parrot.Variant.RED_BLUE : variant); // blue parrots are difficult to see
 			return entity;
 		}
 
