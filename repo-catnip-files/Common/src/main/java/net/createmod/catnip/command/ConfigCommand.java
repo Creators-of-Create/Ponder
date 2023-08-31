@@ -3,7 +3,6 @@ package net.createmod.catnip.command;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
-
 import net.createmod.catnip.Catnip;
 import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.net.ClientboundConfigPacket;
@@ -60,7 +59,7 @@ public class ConfigCommand {
 
 											try {
 												ConfigHelper.setConfigValue(path, value);
-												ctx.getSource().sendSuccess(Components.literal("Great Success!"), false);
+												ctx.getSource().sendSuccess(() -> Components.literal("Great Success!"), false);
 												return Command.SINGLE_SUCCESS;
 											} catch (ConfigHelper.InvalidValueException e) {
 												ctx.getSource().sendFailure(Components.literal("Config could not be set the the specified value!"));

@@ -1,20 +1,9 @@
 package net.createmod.catnip.render;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
-
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
@@ -22,6 +11,15 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
+import javax.annotation.Nullable;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 @SuppressWarnings("unchecked")
 public class DefaultSuperByteBuffer implements SuperByteBuffer {
@@ -83,16 +81,16 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 		if (isEmpty())
 			return;
 
-		Matrix4f modelMatrix = ms.last().pose().copy();
+		Matrix4f modelMatrix = new Matrix4f(ms.last().pose());
 		Matrix4f localTransforms = transforms.last().pose();
-		modelMatrix.multiply(localTransforms);
+		modelMatrix.mul(localTransforms);
 
 		Matrix3f normalMatrix;
 		if (fullNormalTransform) {
-			normalMatrix = ms.last().normal().copy();
+			normalMatrix = new Matrix3f(ms.last().normal());
 			normalMatrix.mul(transforms.last().normal());
 		} else {
-			normalMatrix = transforms.last().normal().copy();
+			normalMatrix = new Matrix3f(transforms.last().normal());
 		}
 
 		for (int i = 0; i < vertexCount(); i++) {
@@ -107,9 +105,9 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 			Vector4f pos = new Vector4f(x, y, z, 1F);
 			Vector3f normal = new Vector3f(normalX, normalY, normalZ);
 			Vector4f lightPos = new Vector4f(x, y, z, 1F);
-			pos.transform(modelMatrix);
-			normal.transform(normalMatrix);
-			lightPos.transform(localTransforms);
+			pos.mul(modelMatrix);
+			normal.mul(normalMatrix);
+			lightPos.mul(localTransforms);
 
 			consumer.vertex(pos.x(), pos.y(), pos.z());
 
@@ -142,9 +140,9 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 			int light;
 			if (useWorldLight) {
 				lightPos.set(((x - .5f) * 15 / 16f) + .5f, (y - .5f) * 15 / 16f + .5f, (z - .5f) * 15 / 16f + .5f, 1f);
-				lightPos.transform(localTransforms);
+				lightPos.mul(localTransforms);
 				if (lightTransform != null) {
-					lightPos.transform(lightTransform);
+					lightPos.mul(lightTransform);
 				}
 
 				light = getLight(Minecraft.getInstance().level, lightPos);
@@ -217,7 +215,7 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	@Override
-	public SuperByteBuffer multiply(Quaternion quaternion) {
+	public SuperByteBuffer multiply(Quaternionf quaternion) {
 		transforms.mulPose(quaternion);
 		return this;
 	}
@@ -243,7 +241,7 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 
 	@Override
 	public DefaultSuperByteBuffer mulPose(Matrix4f pose) {
-		transforms.last().pose().multiply(pose);
+		transforms.last().pose().mul(pose);
 		return this;
 	}
 
@@ -257,7 +255,7 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	public DefaultSuperByteBuffer transform(PoseStack ms) {
 		transforms.last()
 				.pose()
-				.multiply(ms.last().pose());
+				.mul(ms.last().pose());
 		transforms.last()
 				.normal()
 				.mul(ms.last().normal());
@@ -432,7 +430,7 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	private static int getLight(Level world, Vector4f lightPos) {
-		BlockPos pos = new BlockPos(lightPos.x(), lightPos.y(), lightPos.z());
+		BlockPos pos = BlockPos.containing(lightPos.x(), lightPos.y(), lightPos.z());
 		return WORLD_LIGHT_CACHE.computeIfAbsent(pos.asLong(), $ -> LevelRenderer.getLightColor(world, pos));
 	}
 }

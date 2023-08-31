@@ -1,6 +1,6 @@
 package net.createmod.catnip.gui.element;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 public interface RenderElement extends FadableScreenElement {
 
@@ -26,10 +26,10 @@ public interface RenderElement extends FadableScreenElement {
 
 	float getZ();
 
-	void render(PoseStack ms);
+	void render(GuiGraphics graphics);
 
 	@Override
-	default void render(PoseStack ms, int x, int y, float alpha) {
-		this.at(x, y).withAlpha(alpha).render(ms);
+	default void render(GuiGraphics graphics, int x, int y, float alpha) {
+		this.at(x, y).withAlpha(alpha).render(graphics);
 	}
 }

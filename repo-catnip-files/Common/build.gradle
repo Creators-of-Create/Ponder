@@ -23,9 +23,9 @@ dependencies {
 
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.4'
 
-    implementation 'com.electronwill.night-config:core:3.6.5'
-    implementation 'com.electronwill.night-config:toml:3.6.5'
-    compileOnly 'net.minecraftforge:forgeconfigapiport-fabric:3.2.3' //source: https://github.com/Fuzss/forgeconfigapiport-fabric
+    //implementation 'com.electronwill.night-config:core:3.6.5'
+    //implementation 'com.electronwill.night-config:toml:3.6.5'
+    implementation 'fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.0' //source: https://github.com/Fuzss/forgeconfigapiport-fabric
 }
 
 processResources {

@@ -1,18 +1,7 @@
 package net.createmod.catnip.config.ui.entries;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.lwjgl.glfw.GLFW;
-
 import com.mojang.blaze3d.platform.ClipboardManager;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.config.ui.ConfigAnnotations;
 import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.config.ui.ConfigScreen;
@@ -26,7 +15,15 @@ import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.common.ForgeConfigSpec;
+import org.lwjgl.glfw.GLFW;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 
@@ -124,12 +121,12 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 	}
 
 	@Override
-	public void render(PoseStack ms, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_230432_9_, float partialTicks) {
-		super.render(ms, index, y, x, width, height, mouseX, mouseY, p_230432_9_, partialTicks);
+	public void render(GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_230432_9_, float partialTicks) {
+		super.render(graphics, index, y, x, width, height, mouseX, mouseY, p_230432_9_, partialTicks);
 
-		resetButton.x = x + width - resetWidth + 6;
-		resetButton.y = y + 10;
-		resetButton.render(ms, mouseX, mouseY, partialTicks);
+		resetButton.setX(x + width - resetWidth + 6);
+		resetButton.setX(y + 10);
+		resetButton.render(graphics, mouseX, mouseY, partialTicks);
 	}
 
 	@Override

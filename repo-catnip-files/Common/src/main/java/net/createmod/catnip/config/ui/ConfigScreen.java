@@ -1,20 +1,7 @@
 package net.createmod.catnip.config.ui;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.TriConsumer;
-import org.lwjgl.opengl.GL30;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
@@ -22,23 +9,33 @@ import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.utility.animation.Force;
 import net.createmod.catnip.utility.animation.PhysicalFloat;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.PanoramaRenderer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.TriConsumer;
+import org.lwjgl.opengl.GL30;
+
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class ConfigScreen extends AbstractSimiScreen {
 
-	public static final Map<String, TriConsumer<Screen, PoseStack, Float>> backgrounds = new HashMap<>();
+	public static final Map<String, TriConsumer<Screen, GuiGraphics, Float>> backgrounds = new HashMap<>();
 	public static final PhysicalFloat cogSpin = PhysicalFloat.create().withLimit(10f).withDrag(0.3).addForce(new Force.Static(.2f));
 	@Nullable public static String modID = null;
 	@Nullable protected final Screen parent;
 
 	public static BlockState shadowState = Blocks.POTTED_CRIMSON_ROOTS.defaultBlockState();
 	public static DelegatedStencilElement shadowElement = new DelegatedStencilElement(
-			(ps, x, y, alpha) -> renderCog(ps),
-			(ps, x, y, alpha) -> fill(ps, -200, -200, 200, 200, 0x60_000000)
+			(graphics, x, y, alpha) -> renderCog(graphics),
+			(graphics, x, y, alpha) -> graphics.fill(-200, -200, 200, 200, 0x60_000000)
 	);
 
 	private static final PanoramaRenderer vanillaPanorama = new PanoramaRenderer(TitleScreen.CUBE_MAP);
@@ -54,23 +51,23 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 	}
 
 	@Override
-	public void renderBackground(@Nonnull PoseStack ms) {}
+	public void renderBackground(GuiGraphics graphics) {}
 
 	@Override
-	protected void renderWindowBackground(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+	protected void renderWindowBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		if (this.minecraft != null && this.minecraft.level != null) {
 			//in game
-			fill(ms, 0, 0, this.width, this.height, 0xb0_282c34);
+			graphics.fill(0, 0, this.width, this.height, 0xb0_282c34);
 		} else {
 			//in menus
-			renderMenuBackground(ms, partialTicks);
+			renderMenuBackground(graphics, partialTicks);
 		}
 
 		shadowElement
 				.at(width * 0.5f, height * 0.5f, 0)
-				.render(ms);
+				.render(graphics);
 
-		super.renderWindowBackground(ms, mouseX, mouseY, partialTicks);
+		super.renderWindowBackground(graphics, mouseX, mouseY, partialTicks);
 
 	}
 
@@ -86,8 +83,7 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 	}
 
 	@Override
-	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-	}
+	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {}
 
 	@Override
 	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
@@ -114,28 +110,29 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 	 * If your mod wants to render something else, please add to the
 	 * {@code backgrounds} Map in this Class with your modID as the key.
 	 */
-	protected void renderMenuBackground(PoseStack ms, float partialTicks) {
-		TriConsumer<Screen, PoseStack, Float> customBackground = backgrounds.get(modID);
+	protected void renderMenuBackground(GuiGraphics graphics, float partialTicks) {
+		TriConsumer<Screen, GuiGraphics, Float> customBackground = backgrounds.get(modID);
 		if (customBackground != null) {
-			customBackground.accept(this, ms, partialTicks);
+			customBackground.accept(this, graphics, partialTicks);
 			return;
 		}
 
 		vanillaPanorama.render(minecraft.getDeltaFrameTime(), 1);
 
-		fill(ms, 0, 0, this.width, this.height, 0x90_282c34);
+		graphics.fill(0, 0, this.width, this.height, 0x90_282c34);
 	}
 
-	protected static void renderCog(PoseStack ms) {
+	protected static void renderCog(GuiGraphics graphics) {
 		float partialTicks = Minecraft.getInstance().getFrameTime();
-		ms.pushPose();
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
 
-		ms.translate(-100, 100, -100);
-		ms.scale(200, 200, 1);
+		poseStack.translate(-100, 100, -100);
+		poseStack.scale(200, 200, 1);
 		GuiGameElement.of(shadowState)
 				.rotateBlock(22.5, cogSpin.getValue(partialTicks), 22.5)
-				.render(ms);
+				.render(graphics);
 
-		ms.popPose();
+		poseStack.popPose();
 	}
 }

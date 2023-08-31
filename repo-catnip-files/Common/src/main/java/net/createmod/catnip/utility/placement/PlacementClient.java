@@ -1,9 +1,5 @@
 package net.createmod.catnip.utility.placement;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -11,9 +7,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-
+import com.mojang.math.Axis;
 import net.createmod.catnip.config.CClient;
 import net.createmod.catnip.enums.CatnipConfig;
 import net.createmod.catnip.enums.CatnipGuiTextures;
@@ -21,6 +15,7 @@ import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.math.AngleHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
@@ -30,6 +25,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class PlacementClient {
 
@@ -126,7 +125,7 @@ public class PlacementClient {
 			lastTarget = target;
 	}
 
-	public static void onRenderCrosshairOverlay(Window window, PoseStack ms, float partialTicks) {
+	public static void onRenderCrosshairOverlay(Window window, GuiGraphics graphics, float partialTicks) {
 		Minecraft mc = Minecraft.getInstance();
 		Player player = mc.player;
 
@@ -135,7 +134,7 @@ public class PlacementClient {
 			float screenX = window.getGuiScaledWidth() / 2f;
 			float progress = getCurrentAlpha();
 
-			drawDirectionIndicator(ms, partialTicks, screenX, screenY, progress);
+			drawDirectionIndicator(graphics, partialTicks, screenX, screenY, progress);
 		}
 	}
 
@@ -143,7 +142,7 @@ public class PlacementClient {
 		return Math.min(animationTick / 10f/* + event.getPartialTicks() */, 1f);
 	}
 
-	private static void drawDirectionIndicator(PoseStack ms, float partialTicks, float centerX, float centerY,
+	private static void drawDirectionIndicator(GuiGraphics graphics, float partialTicks, float centerX, float centerY,
 		float progress) {
 		float r = .8f;
 		float g = .8f;
@@ -175,22 +174,23 @@ public class PlacementClient {
 		float length = 10;
 
 		CClient.PlacementIndicatorSetting mode = CatnipConfig.Client().placementIndicator.get();
+		PoseStack poseStack = graphics.pose();
 		if (mode == CClient.PlacementIndicatorSetting.TRIANGLE)
-			fadedArrow(ms, centerX, centerY, r, g, b, a, length, snappedAngle);
+			fadedArrow(poseStack, centerX, centerY, r, g, b, a, length, snappedAngle);
 		else if (mode == CClient.PlacementIndicatorSetting.TEXTURE)
-			textured(ms, centerX, centerY, a, snappedAngle);
+			textured(poseStack, centerX, centerY, a, snappedAngle);
 	}
 
 	private static void fadedArrow(PoseStack ms, float centerX, float centerY, float r, float g, float b, float a,
 		float length, float snappedAngle) {
-		RenderSystem.disableTexture();
+		//RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
 		ms.pushPose();
 		ms.translate(centerX, centerY, 5);
-		ms.mulPose(Vector3f.ZP.rotationDegrees(angle.getValue(0)));
+		ms.mulPose(Axis.ZP.rotationDegrees(angle.getValue(0)));
 		// RenderSystem.rotatef(snappedAngle, 0, 0, 1);
 		double scale = CatnipConfig.Client().indicatorScale.get();
 		ms.scale((float) scale, (float) scale, 1);
@@ -213,12 +213,12 @@ public class PlacementClient {
 
 		tesselator.end();
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
+		//RenderSystem.enableTexture();
 		ms.popPose();
 	}
 
 	public static void textured(PoseStack ms, float centerX, float centerY, float alpha, float snappedAngle) {
-		RenderSystem.enableTexture();
+		//RenderSystem.enableTexture();
 		CatnipGuiTextures.PLACEMENT_INDICATOR_SHEET.bind();
 		RenderSystem.enableDepthTest();
 		RenderSystem.enableBlend();

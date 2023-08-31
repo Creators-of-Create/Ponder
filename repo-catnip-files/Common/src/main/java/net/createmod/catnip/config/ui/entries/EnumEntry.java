@@ -1,9 +1,5 @@
 package net.createmod.catnip.config.ui.entries;
 
-import java.util.Locale;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -13,7 +9,10 @@ import net.createmod.catnip.gui.element.TextStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.common.ForgeConfigSpec;
+
+import java.util.Locale;
 
 public class EnumEntry extends ValueEntry<Enum<?>> {
 
@@ -77,28 +76,28 @@ public class EnumEntry extends ValueEntry<Enum<?>> {
 	}
 
 	@Override
-	public void render(PoseStack ms, int index, int y, int x, int width, int height, int mouseX, int mouseY,
-		boolean p_230432_9_, float partialTicks) {
-		super.render(ms, index, y, x, width, height, mouseX, mouseY, p_230432_9_, partialTicks);
+	public void render(GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY,
+					   boolean p_230432_9_, float partialTicks) {
+		super.render(graphics, index, y, x, width, height, mouseX, mouseY, p_230432_9_, partialTicks);
 
-		cycleLeft.x = x + getLabelWidth(width) + 4;
-		cycleLeft.y = y + 10;
-		cycleLeft.render(ms, mouseX, mouseY, partialTicks);
+		cycleLeft.setX(x + getLabelWidth(width) + 4);
+		cycleLeft.setY(y + 10);
+		cycleLeft.render(graphics, mouseX, mouseY, partialTicks);
 
-		valueText.at(cycleLeft.x + cycleWidth - 8, y + 10, 200)
+		valueText.at(cycleLeft.getX() + cycleWidth - 8, y + 10, 200)
 				.withBounds(width - getLabelWidth(width) - 2 * cycleWidth - resetWidth - 4, 16)
-				.render(ms);
+				.render(graphics);
 
-		cycleRight.x = x + width - cycleWidth * 2 - resetWidth + 10;
-		cycleRight.y = y + 10;
-		cycleRight.render(ms, mouseX, mouseY, partialTicks);
+		cycleRight.setX(x + width - cycleWidth * 2 - resetWidth + 10);
+		cycleRight.setY(y + 10);
+		cycleRight.render(graphics, mouseX, mouseY, partialTicks);
 
 		new BoxElement()
 				.withBackground(Theme.Key.BOX_BACKGROUND_FLAT.c())
 				.flatBorder(0x01_000000)
 				.withBounds(48, 6)
-				.at(cycleLeft.x + 22, cycleLeft.y + 5)
-				.render(ms);
+				.at(cycleLeft.getX() + 22, cycleLeft.getY() + 5)
+				.render(graphics);
 	}
 
 	@Override

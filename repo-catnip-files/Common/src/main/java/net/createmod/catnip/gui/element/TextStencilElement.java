@@ -1,9 +1,10 @@
 package net.createmod.catnip.gui.element;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
 
 public class TextStencilElement extends DelegatedStencilElement {
@@ -46,7 +47,7 @@ public class TextStencilElement extends DelegatedStencilElement {
 	}
 
 	@Override
-	public void renderStencil(PoseStack ms) {
+	public void renderStencil(GuiGraphics graphics) {
 
 		float x = 0, y = 0;
 		if (centerHorizontally)
@@ -55,11 +56,12 @@ public class TextStencilElement extends DelegatedStencilElement {
 		if (centerVertically)
 			y = height / 2f - (font.lineHeight - 1) / 2f;
 
-		font.draw(ms, component, x, y, 0xff_000000);
+		graphics.drawString(font, component, Math.round(x), Math.round(y), Color.BLACK.getRGB(), false);
+		graphics.flush();
 	}
 
 	@Override
-	public void renderElement(PoseStack ms) {
+	public void renderElement(GuiGraphics graphics) {
 		float x = 0, y = 0;
 		if (centerHorizontally)
 			x = width / 2f - font.width(component) / 2f;
@@ -67,10 +69,11 @@ public class TextStencilElement extends DelegatedStencilElement {
 		if (centerVertically)
 			y = height / 2f - (font.lineHeight - 1) / 2f;
 
-		ms.pushPose();
-		ms.translate(x, y, 0);
-		element.render(ms, font.width(component), font.lineHeight + 2, alpha);
-		ms.popPose();
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(x, y, 0);
+		element.render(graphics, font.width(component), font.lineHeight + 2, alpha);
+		poseStack.popPose();
 	}
 
 	public MutableComponent getComponent() {

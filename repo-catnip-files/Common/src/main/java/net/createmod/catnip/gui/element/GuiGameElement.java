@@ -1,7 +1,5 @@
 package net.createmod.catnip.gui.element;
 
-import javax.annotation.Nullable;
-
 import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
@@ -9,22 +7,22 @@ import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-
+import com.mojang.math.Axis;
 import net.createmod.catnip.gui.ILightingSettings;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.utility.VecHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.BaseFireBlock;
@@ -33,6 +31,8 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
 
 public class GuiGameElement {
 
@@ -120,9 +120,9 @@ public class GuiGameElement {
 			poseStack.translate(xLocal, yLocal, zLocal);
 			UIRenderHelper.flipForGuiRender(poseStack);
 			poseStack.translate(rotationOffset.x, rotationOffset.y, rotationOffset.z);
-			poseStack.mulPose(Vector3f.ZP.rotationDegrees((float) zRot));
-			poseStack.mulPose(Vector3f.XP.rotationDegrees((float) xRot));
-			poseStack.mulPose(Vector3f.YP.rotationDegrees((float) yRot));
+			poseStack.mulPose(Axis.ZP.rotationDegrees((float) zRot));
+			poseStack.mulPose(Axis.XP.rotationDegrees((float) xRot));
+			poseStack.mulPose(Axis.YP.rotationDegrees((float) yRot));
 			poseStack.translate(-rotationOffset.x, -rotationOffset.y, -rotationOffset.z);
 		}
 
@@ -157,7 +157,8 @@ public class GuiGameElement {
 		}
 
 		@Override
-		public void render(PoseStack poseStack) {
+		public void render(GuiGraphics graphics) {
+			PoseStack poseStack = graphics.pose();
 			prepareMatrix(poseStack);
 
 			Minecraft mc = Minecraft.getInstance();
@@ -222,7 +223,8 @@ public class GuiGameElement {
 		}
 
 		@Override
-		public void render(PoseStack poseStack) {
+		public void render(GuiGraphics graphics) {
+			PoseStack poseStack = graphics.pose();
 			prepareMatrix(poseStack);
 			transformMatrix(poseStack);
 			renderItemIntoGUI(poseStack, stack, customLighting == null);
@@ -236,10 +238,11 @@ public class GuiGameElement {
 			renderer.textureManager.getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
 			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
 			RenderSystem.enableBlend();
+			RenderSystem.enableCull();
 			RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			poseStack.pushPose();
-			poseStack.translate(0, 0, 100.0F + renderer.blitOffset);
+			poseStack.translate(0, 0, 100.0F);
 			poseStack.translate(8.0F, -8.0F, 0.0F);
 			poseStack.scale(16.0F, 16.0F, 16.0F);
 			MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
@@ -248,8 +251,10 @@ public class GuiGameElement {
 				Lighting.setupForFlatItems();
 			}
 
-			renderer.render(stack, ItemTransforms.TransformType.GUI, false, poseStack, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, bakedModel);
+			renderer.render(stack, ItemDisplayContext.GUI, false, poseStack, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, bakedModel);
+			RenderSystem.disableDepthTest();
 			buffer.endBatch();
+
 			RenderSystem.enableDepthTest();
 			if (useDefaultLighting && flatLighting) {
 				Lighting.setupFor3DItems();

@@ -1,11 +1,6 @@
 package net.createmod.catnip.utility.levelWrappers;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
-
-import javax.annotation.Nullable;
-
+import net.createmod.catnip.mixin.accessor.EntityAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -15,6 +10,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -32,17 +28,22 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.LevelTickAccess;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+
 public class WrappedLevel extends Level {
 
-	protected Level world;
+	protected Level level;
 	protected ChunkSource chunkSource;
 
 	protected LevelEntityGetter<Entity> entityGetter = new DummyLevelEntityGetter<>();
 
-	public WrappedLevel(Level world) {
-		super((WritableLevelData) world.getLevelData(), world.dimension(), world.dimensionTypeRegistration(),
-			world::getProfiler, world.isClientSide, world.isDebug(), 0, 0);
-		this.world = world;
+	public WrappedLevel(Level level) {
+		super((WritableLevelData) level.getLevelData(), level.dimension(), level.registryAccess(), level.dimensionTypeRegistration(),
+			  level::getProfiler, level.isClientSide, level.isDebug(), 0, 0);
+		this.level = level;
 	}
 
 	public void setChunkSource(ChunkSource source) {
@@ -50,33 +51,33 @@ public class WrappedLevel extends Level {
 	}
 
 	public Level getLevel() {
-		return world;
+		return level;
 	}
 
 	@Override
 	public LevelLightEngine getLightEngine() {
-		return world.getLightEngine();
+		return level.getLightEngine();
 	}
 
 	@Override
 	public BlockState getBlockState(@Nullable BlockPos pos) {
-		return world.getBlockState(pos);
+		return level.getBlockState(pos);
 	}
 
 	@Override
 	public boolean isStateAtPosition(BlockPos p_217375_1_, Predicate<BlockState> p_217375_2_) {
-		return world.isStateAtPosition(p_217375_1_, p_217375_2_);
+		return level.isStateAtPosition(p_217375_1_, p_217375_2_);
 	}
 
 	@Override
 	@Nullable
 	public BlockEntity getBlockEntity(BlockPos pos) {
-		return world.getBlockEntity(pos);
+		return level.getBlockEntity(pos);
 	}
 
 	@Override
 	public boolean setBlock(BlockPos pos, BlockState newState, int flags) {
-		return world.setBlock(pos, newState, flags);
+		return level.setBlock(pos, newState, flags);
 	}
 
 	@Override
@@ -86,22 +87,22 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags) {
-		world.sendBlockUpdated(pos, oldState, newState, flags);
+		level.sendBlockUpdated(pos, oldState, newState, flags);
 	}
 
 	@Override
 	public LevelTickAccess<Block> getBlockTicks() {
-		return world.getBlockTicks();
+		return level.getBlockTicks();
 	}
 
 	@Override
 	public LevelTickAccess<Fluid> getFluidTicks() {
-		return world.getFluidTicks();
+		return level.getFluidTicks();
 	}
 
 	@Override
 	public ChunkSource getChunkSource() {
-		return chunkSource != null ? chunkSource : world.getChunkSource();
+		return chunkSource != null ? chunkSource : level.getChunkSource();
 	}
 
 	@Override
@@ -113,13 +114,12 @@ public class WrappedLevel extends Level {
 	}
 
 	@Override
-	public void playSeededSound(Player p_220363_, double p_220364_, double p_220365_, double p_220366_,
-								SoundEvent p_220367_, SoundSource p_220368_, float p_220369_, float p_220370_,
-								long p_220371_) {}
+	public void playSeededSound(Player pPlayer, double pX, double pY, double pZ, Holder<SoundEvent> pSound,
+								SoundSource pSource, float pVolume, float pPitch, long pSeed) {}
 
 	@Override
-	public void playSeededSound(Player p_220372_, Entity p_220373_, SoundEvent p_220374_, SoundSource p_220375_,
-								float p_220376_, float p_220377_, long p_220378_) {}
+	public void playSeededSound(Player pPlayer, Entity pEntity, Holder<SoundEvent> pSound, SoundSource pCategory,
+								float pVolume, float pPitch, long pSeed) {}
 
 	@Override
 	public void playSound(@Nullable Player player, double x, double y, double z, SoundEvent soundIn,
@@ -141,8 +141,8 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public boolean addFreshEntity(Entity entityIn) {
-		entityIn.level = world;
-		return world.addFreshEntity(entityIn);
+		((EntityAccessor) entityIn).catnip$callSetLevel(level);
+		return level.addFreshEntity(entityIn);
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public int getFreeMapId() {
-		return world.getFreeMapId();
+		return level.getFreeMapId();
 	}
 
 	@Override
@@ -158,27 +158,27 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public Scoreboard getScoreboard() {
-		return world.getScoreboard();
+		return level.getScoreboard();
 	}
 
 	@Override
 	public RecipeManager getRecipeManager() {
-		return world.getRecipeManager();
+		return level.getRecipeManager();
 	}
 
 	@Override
 	public Holder<Biome> getUncachedNoiseBiome(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
-		return world.getUncachedNoiseBiome(p_225604_1_, p_225604_2_, p_225604_3_);
+		return level.getUncachedNoiseBiome(p_225604_1_, p_225604_2_, p_225604_3_);
 	}
 
 	@Override
 	public RegistryAccess registryAccess() {
-		return world.registryAccess();
+		return level.registryAccess();
 	}
 
 	@Override
 	public float getShade(Direction p_230487_1_, boolean p_230487_2_) {
-		return world.getShade(p_230487_1_, p_230487_2_);
+		return level.getShade(p_230487_1_, p_230487_2_);
 	}
 
 	@Override
@@ -192,7 +192,7 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public String gatherChunkSourceStats() {
-		return world.gatherChunkSourceStats();
+		return level.gatherChunkSourceStats();
 	}
 
 	@Override
@@ -251,5 +251,10 @@ public class WrappedLevel extends Level {
 	@Override
 	public int getSectionYFromSectionIndex(int sectionIndex) {
 		return sectionIndex + this.getMinSection();
+	}
+
+	@Override
+	public FeatureFlagSet enabledFeatures() {
+		return level.enabledFeatures();
 	}
 }

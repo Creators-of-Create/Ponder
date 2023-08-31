@@ -1,16 +1,14 @@
 package net.createmod.catnip.utility.theme;
 
-import java.util.function.UnaryOperator;
-
-import javax.annotation.Nonnull;
-
 import com.google.common.hash.Hashing;
-import com.mojang.math.Vector3f;
-
 import net.createmod.catnip.utility.Couple;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+
+import javax.annotation.Nonnull;
+import java.util.function.UnaryOperator;
 
 @SuppressWarnings("PointlessBitwiseExpression")
 public class Color {

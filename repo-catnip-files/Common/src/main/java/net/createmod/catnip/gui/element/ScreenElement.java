@@ -1,8 +1,8 @@
 package net.createmod.catnip.gui.element;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 public interface ScreenElement {
 
-	void render(PoseStack ms, int x, int y);
+	void render(GuiGraphics graphics, int x, int y);
 }

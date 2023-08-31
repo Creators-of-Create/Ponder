@@ -1,12 +1,11 @@
 package net.createmod.catnip.utility.outliner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector4f;
-
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector4f;
 
 public class ChasingAABBOutline extends AABBOutline {
 

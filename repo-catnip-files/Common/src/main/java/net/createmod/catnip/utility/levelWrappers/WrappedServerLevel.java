@@ -1,10 +1,6 @@
 package net.createmod.catnip.utility.levelWrappers;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
+import net.createmod.catnip.mixin.accessor.EntityAccessor;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -24,6 +20,10 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.ticks.LevelTicks;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+
 public class WrappedServerLevel extends ServerLevel {
 
 	protected ServerLevel level;
@@ -33,7 +33,7 @@ public class WrappedServerLevel extends ServerLevel {
 			  (ServerLevelData) level.getLevelData(), level.dimension(),
 			  new LevelStem(level.dimensionTypeRegistration(), level.getChunkSource().getGenerator()),
 			  new DummyStatusListener(), level.isDebug(), level.getBiomeManager().biomeZoomSeed,
-			  Collections.emptyList(), false);
+			  Collections.emptyList(), false, level.getRandomSequences());
 		this.level = level;
 	}
 
@@ -90,7 +90,7 @@ public class WrappedServerLevel extends ServerLevel {
 
 	@Override
 	public boolean addFreshEntity(Entity entityIn) {
-		entityIn.level = level;
+		((EntityAccessor) entityIn).catnip$callSetLevel(level);
 		return level.addFreshEntity(entityIn);
 	}
 

@@ -4,7 +4,6 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-
 import net.createmod.catnip.Catnip;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -37,7 +36,7 @@ public class FlySpeedCommand {
 		Abilities abilities = player.getAbilities();
 		abilities.setFlyingSpeed(speed);
 		player.connection.send(new ClientboundPlayerAbilitiesPacket(abilities));
-		ctx.getSource().sendSuccess(
+		ctx.getSource().sendSuccess(() ->
 				Catnip.lang()
 						.text("Temporarily set ")
 						.add(player.getName().copy())

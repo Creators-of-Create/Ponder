@@ -3,9 +3,7 @@ package net.createmod.catnip.platform;
 import net.createmod.catnip.platform.services.ModHooksHelper;
 import net.fabricmc.fabric.api.block.BlockPickInteractionAware;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -29,10 +27,5 @@ public class FabricHooksHelper implements ModHooksHelper {
 	@Override // TODO: fabric doesn't support fake players
 	public boolean isPlayerFake(ServerPlayer player) {
 		return false;
-	}
-
-	@Override
-	public CompoundTag getExtraEntityData(Entity entity) {
-		return entity.getExtraCustomData();
 	}
 }

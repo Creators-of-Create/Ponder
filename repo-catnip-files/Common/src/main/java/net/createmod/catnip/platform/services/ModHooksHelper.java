@@ -1,9 +1,7 @@
 package net.createmod.catnip.platform.services;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -25,7 +23,5 @@ public interface ModHooksHelper {
 	}
 
 	boolean isPlayerFake(ServerPlayer player);
-
-	CompoundTag getExtraEntityData(Entity entity);
 
 }

@@ -1,13 +1,12 @@
 package net.createmod.catnip.gui.element;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 public abstract class AbstractRenderElement implements RenderElement {
 
 	public static RenderElement EMPTY = new AbstractRenderElement() {
 		@Override
-		public void render(PoseStack ms) {
-		}
+		public void render(GuiGraphics graphics) {}
 	};
 
 	protected int width = 16, height = 16;
@@ -80,8 +79,8 @@ public abstract class AbstractRenderElement implements RenderElement {
 		}
 
 		@Override
-		public void render(PoseStack ms) {
-			renderable.render(ms, (int) x, (int) y);
+		public void render(GuiGraphics graphics) {
+			renderable.render(graphics, (int) x, (int) y);
 		}
 	}
 }

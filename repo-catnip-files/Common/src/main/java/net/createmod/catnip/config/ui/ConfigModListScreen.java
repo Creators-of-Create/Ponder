@@ -1,15 +1,5 @@
 package net.createmod.catnip.config.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.annotation.Nullable;
-
-import org.lwjgl.glfw.GLFW;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
@@ -19,7 +9,14 @@ import net.createmod.catnip.utility.FontHelper;
 import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Theme;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import org.lwjgl.glfw.GLFW;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class ConfigModListScreen extends ConfigScreen {
 
@@ -134,13 +131,13 @@ public class ConfigModListScreen extends ConfigScreen {
 		}
 
 		@Override
-		public void render(PoseStack ms, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_230432_9_, float partialTicks) {
-			super.render(ms, index, y, x, width, height, mouseX, mouseY, p_230432_9_, partialTicks);
+		public void render(GuiGraphics graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean p_230432_9_, float partialTicks) {
+			super.render(graphics, index, y, x, width, height, mouseX, mouseY, p_230432_9_, partialTicks);
 
-			button.x = x + width - 108;
-			button.y = y + 10;
+			button.setX(x + width - 108);
+			button.setY(y + 10);
 			button.setHeight(height - 20);
-			button.render(ms, mouseX, mouseY, partialTicks);
+			button.render(graphics, mouseX, mouseY, partialTicks);
 		}
 
 		@Override

@@ -1,10 +1,5 @@
 package net.createmod.catnip.utility;
 
-import javax.annotation.Nullable;
-
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
-
 import net.createmod.catnip.mixin.client.accessor.GameRendererAccessor;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -23,6 +18,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
+import javax.annotation.Nullable;
 
 public class VecHelper {
 
@@ -247,13 +246,12 @@ public class VecHelper {
 		 */
 		Camera ari = Minecraft.getInstance().gameRenderer.getMainCamera();
 		Vec3 camera_pos = ari.getPosition();
-		Quaternion camera_rotation_conj = ari.rotation()
-			.copy();
-		camera_rotation_conj.conj();
+		Quaternionf camera_rotation_conj = new Quaternionf(ari.rotation());
+		camera_rotation_conj.conjugate();
 
 		Vector3f result3f = new Vector3f((float) (camera_pos.x - target.x), (float) (camera_pos.y - target.y),
-			(float) (camera_pos.z - target.z));
-		result3f.transform(camera_rotation_conj);
+										 (float) (camera_pos.z - target.z));
+		result3f.rotate(camera_rotation_conj);
 
 		// ----- compensate for view bobbing (if active) -----
 		// the following code adapted from GameRenderer::applyBobbing (to invert it)
@@ -266,14 +264,15 @@ public class VecHelper {
 				float f = walkDist_modified - playerEntity.walkDistO;
 				float f1 = -(walkDist_modified + f * partialTicks);
 				float f2 = Mth.lerp(partialTicks, playerEntity.oBob, playerEntity.bob);
-				Quaternion q2 =
-					new Quaternion(Vector3f.XP, Math.abs(Mth.cos(f1 * (float) Math.PI - 0.2F) * f2) * 5.0F, true);
-				q2.conj();
-				result3f.transform(q2);
+				Quaternionf q2 =
+						com.mojang.math.Axis.XP.rotationDegrees(Math.abs(Mth.cos(f1 * (float) Math.PI - 0.2F) * f2) * 5.0F);
+				q2.conjugate();
+				result3f.rotate(q2);
 
-				Quaternion q1 = new Quaternion(Vector3f.ZP, Mth.sin(f1 * (float) Math.PI) * f2 * 3.0F, true);
-				q1.conj();
-				result3f.transform(q1);
+				Quaternionf q1 =
+						com.mojang.math.Axis.ZP.rotationDegrees(Mth.sin(f1 * (float) Math.PI) * f2 * 3.0F);
+				q1.conjugate();
+				result3f.rotate(q1);
 
 				Vector3f bob_translation = new Vector3f((Mth.sin(f1 * (float) Math.PI) * f2 * 0.5F),
 					(-Math.abs(Mth.cos(f1 * (float) Math.PI) * f2)), 0.0f);

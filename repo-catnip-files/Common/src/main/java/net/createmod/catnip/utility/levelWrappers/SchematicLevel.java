@@ -1,21 +1,12 @@
 package net.createmod.catnip.utility.levelWrappers;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
 import net.createmod.catnip.Catnip;
 import net.createmod.catnip.utility.BBHelper;
 import net.createmod.catnip.utility.NBTProcessors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -40,6 +31,15 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.ticks.BlackholeTickAccess;
 import net.minecraft.world.ticks.LevelTickAccess;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor {
 
@@ -139,7 +139,7 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor 
 
 	@Override
 	public Holder<Biome> getBiome(BlockPos pos) {
-		return BuiltinRegistries.BIOME.getHolder(Biomes.PLAINS).orElseThrow();
+		return level.registryAccess().lookupOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
 		//return ForgeRegistries.BIOMES.getHolder(Biomes.PLAINS.location()).orElse(null);
 	}
 
@@ -247,8 +247,8 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor 
 
 	@Override
 	public ServerLevel getLevel() {
-		if (this.world instanceof ServerLevel) {
-			return (ServerLevel) this.world;
+		if (this.level instanceof ServerLevel) {
+			return (ServerLevel) this.level;
 		}
 		throw new IllegalStateException("Cannot use IServerWorld#getWorld in a client environment");
 	}

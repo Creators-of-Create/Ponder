@@ -6,11 +6,11 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix4f;
-
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import org.joml.Matrix4f;
 
 public class BoxElement extends AbstractRenderElement {
 
@@ -65,14 +65,14 @@ public class BoxElement extends AbstractRenderElement {
 	}
 
 	@Override
-	public void render(PoseStack ms) {
-		renderBox(ms);
+	public void render(GuiGraphics graphics) {
+		renderBox(graphics);
 	}
 
 	//total box width = 1 * 2 (outer border) + 1 * 2 (inner color border) + 2 * borderOffset + width
 	//defaults to 2 + 2 + 4 + 16 = 24px
 	//batch everything together to save a bunch of gl calls over ScreenUtils
-	protected void renderBox(PoseStack ms) {
+	protected void renderBox(GuiGraphics graphics) {
 		/*
 		*          _____________
 		*        _|_____________|_
@@ -88,11 +88,12 @@ public class BoxElement extends AbstractRenderElement {
 		*         |_____________|
 		*
 		* */
-		RenderSystem.disableTexture();
+		//RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
+		PoseStack ms = graphics.pose();
 		Matrix4f model = ms.last().pose();
 		int f = borderOffset;
 		Color c1 = background.copy().scaleAlpha(alpha);
@@ -153,6 +154,6 @@ public class BoxElement extends AbstractRenderElement {
 		tesselator.end();
 
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
+		//RenderSystem.enableTexture();
 	}
 }

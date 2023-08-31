@@ -1,15 +1,5 @@
 package net.createmod.catnip.gui;
 
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -20,17 +10,24 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-
+import com.mojang.math.Axis;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
+import javax.annotation.Nullable;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UIRenderHelper {
 
@@ -70,61 +67,60 @@ public class UIRenderHelper {
 	}
 
 	/**
-	 * @param ms the PoseStack aka MatrixStack
 	 * @param angle angle in degrees, 0 means fading to the right
 	 * @param x x-position of the starting edge middle point
 	 * @param y y-position of the starting edge middle point
 	 * @param breadth total width of the streak
 	 * @param length total length of the streak
 	 */
-	public static void streak(PoseStack ms, float angle, int x, int y, int breadth, int length) {
-		streak(ms, angle, x, y, breadth, length, Theme.Key.STREAK.c());
+	public static void streak(GuiGraphics graphics, float angle, int x, int y, int breadth, int length) {
+		streak(graphics, angle, x, y, breadth, length, Theme.Key.STREAK.c());
 	}
 
-	public static void streak(PoseStack ms, float angle, int x, int y, int breadth, int length, Color c) {
+	public static void streak(GuiGraphics graphics, float angle, int x, int y, int breadth, int length, Color c) {
 		Color color = c.copy().setImmutable();
 		Color c1 = color.scaleAlpha(0.625f);
 		Color c2 = color.scaleAlpha(0.5f);
 		Color c3 = color.scaleAlpha(0.0625f);
 		Color c4 = color.scaleAlpha(0f);
 
-		ms.pushPose();
-		ms.translate(x, y, 0);
-		ms.mulPose(Vector3f.ZP.rotationDegrees(angle - 90));
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(x, y, 0);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(angle - 90));
 
-		streak(ms, breadth / 2, length, c1, c2, c3, c4);
+		streak(graphics, breadth / 2, length, c1, c2, c3, c4);
 
-		ms.popPose();
+		poseStack.popPose();
 	}
 
-	private static void streak(PoseStack ms, int width, int height, Color c1, Color c2, Color c3, Color c4) {
+	private static void streak(GuiGraphics graphics, int width, int height, Color c1, Color c2, Color c3, Color c4) {
 		double split1 = .5;
 		double split2 = .75;
-		Matrix4f model = ms.last().pose();
-		drawGradientRect(model, 0, -width, 0, width, (int) (split1 * height), c1, c2);
-		drawGradientRect(model, 0, -width, (int) (split1 * height), width, (int) (split2 * height), c2, c3);
-		drawGradientRect(model, 0, -width, (int) (split2 * height), width, height, c3, c4);
+		graphics.fillGradient(-width, 0, width, (int) (split1 * height), c1.getRGB(), c2.getRGB());
+		graphics.fillGradient(-width, (int) (split1 * height), width, (int) (split2 * height), c2.getRGB(), c3.getRGB());
+		graphics.fillGradient(-width, (int) (split2 * height), width, height, c3.getRGB(), c4.getRGB());
 	}
 
 	/**
-	 * @see #angledGradient(PoseStack, float, int, int, int, int, int, Color, Color)
+	 * @see #angledGradient(GuiGraphics, float, int, int, int, int, int, Color, Color)
 	 */
-	public static void angledGradient(@Nonnull PoseStack ms, float angle, int x, int y, int breadth, int length, Couple<Color> c) {
-		angledGradient(ms, angle, x, y, 0, breadth, length, c);
+	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int breadth, int length, Couple<Color> c) {
+		angledGradient(graphics, angle, x, y, 0, breadth, length, c);
 	}
 
 	/**
-	 * @see #angledGradient(PoseStack, float, int, int, int, int, int, Color, Color)
+	 * @see #angledGradient(GuiGraphics, float, int, int, int, int, int, Color, Color)
 	 */
-	public static void angledGradient(@Nonnull PoseStack ms, float angle, int x, int y, int z, int breadth, int length, Couple<Color> c) {
-		angledGradient(ms, angle, x, y, z, breadth, length, c.getFirst(), c.getSecond());
+	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int z, int breadth, int length, Couple<Color> c) {
+		angledGradient(graphics, angle, x, y, z, breadth, length, c.getFirst(), c.getSecond());
 	}
 
 	/**
-	 * @see #angledGradient(PoseStack, float, int, int, int, int, int, Color, Color)
+	 * @see #angledGradient(GuiGraphics, float, int, int, int, int, int, Color, Color)
 	 */
-	public static void angledGradient(@Nonnull PoseStack ms, float angle, int x, int y, int breadth, int length, Color color1, Color color2) {
-		angledGradient(ms, angle, x, y, 0, breadth, length, color1, color2);
+	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int breadth, int length, Color color1, Color color2) {
+		angledGradient(graphics, angle, x, y, 0, breadth, length, color1, color2);
 	}
 
 	/**
@@ -135,21 +131,21 @@ public class UIRenderHelper {
 	 * @param endColor  the color at the ending edge
 	 * @param breadth the total width of the gradient
 	 */
-	public static void angledGradient(@Nonnull PoseStack ms, float angle, int x, int y, int z, int breadth, int length, Color startColor, Color endColor) {
-		ms.pushPose();
-		ms.translate(x, y, z);
-		ms.mulPose(Vector3f.ZP.rotationDegrees(angle - 90));
+	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int z, int breadth, int length, Color startColor, Color endColor) {
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(x, y, z);
+		poseStack.mulPose(Axis.ZP.rotationDegrees(angle - 90));
 
-		Matrix4f model = ms.last().pose();
 		int w = breadth / 2;
-		drawGradientRect(model, 0, -w, 0, w, length, startColor, endColor);
+		graphics.fillGradient(-w, 0, w, length, startColor.getRGB(), endColor.getRGB());
 
-		ms.popPose();
+		poseStack.popPose();
 	}
 
 	public static void drawGradientRect(Matrix4f mat, int zLevel, int left, int top, int right, int bottom, Color startColor, Color endColor) {
 		RenderSystem.enableDepthTest();
-		RenderSystem.disableTexture();
+		//RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
@@ -164,22 +160,23 @@ public class UIRenderHelper {
 		tesselator.end();
 
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
+		//RenderSystem.enableTexture();
 	}
 
-	public static void breadcrumbArrow(PoseStack matrixStack, int x, int y, int z, int width, int height, int indent, Couple<Color> colors) {breadcrumbArrow(matrixStack, x, y, z, width, height, indent, colors.getFirst(), colors.getSecond());}
+	public static void breadcrumbArrow(GuiGraphics graphics, int x, int y, int z, int width, int height, int indent, Couple<Color> colors) {breadcrumbArrow(graphics, x, y, z, width, height, indent, colors.getFirst(), colors.getSecond());}
 
 	// draws a wide chevron-style breadcrumb arrow pointing left
-	public static void breadcrumbArrow(PoseStack matrixStack, int x, int y, int z, int width, int height, int indent, Color startColor, Color endColor) {
-		matrixStack.pushPose();
-		matrixStack.translate(x - indent, y, z);
+	public static void breadcrumbArrow(GuiGraphics graphics, int x, int y, int z, int width, int height, int indent, Color startColor, Color endColor) {
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(x - indent, y, z);
 
-		breadcrumbArrow(matrixStack, width, height, indent, startColor, endColor);
+		breadcrumbArrow(graphics, width, height, indent, startColor, endColor);
 
-		matrixStack.popPose();
+		poseStack.popPose();
 	}
 
-	private static void breadcrumbArrow(PoseStack ms, int width, int height, int indent, Color c1, Color c2) {
+	private static void breadcrumbArrow(GuiGraphics graphics, int width, int height, int indent, Color c1, Color c2) {
 
 		/*
 		 * 0,0       x1,y0 ********************* x2,y0 ***** x3,y0
@@ -208,7 +205,7 @@ public class UIRenderHelper {
 		Color fc3 = Color.mixColors(c1, c2, (indent + width) / (width + 2f * indent));
 		Color fc4 = Color.mixColors(c1, c2, 1);
 
-		RenderSystem.disableTexture();
+		//RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.disableCull();
 		RenderSystem.defaultBlendFunc();
@@ -216,7 +213,7 @@ public class UIRenderHelper {
 
 		Tesselator tessellator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuilder();
-		Matrix4f model = ms.last().pose();
+		Matrix4f model = graphics.pose().last().pose();
 		bufferbuilder.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
 
 		bufferbuilder.vertex(model, x0, y1, 0).color(fc1.getRed(), fc1.getGreen(), fc1.getBlue(), fc1.getAlpha()).endVertex();
@@ -246,7 +243,7 @@ public class UIRenderHelper {
 		tessellator.end();
 		RenderSystem.enableCull();
 		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
+		//RenderSystem.enableTexture();
 	}
 
 	/**
@@ -254,7 +251,7 @@ public class UIRenderHelper {
 	 *
 	 * @param arcAngle length of the sector arc
 	 */
-	public static void drawRadialSector(PoseStack ms, float innerRadius, float outerRadius, float startAngle, float arcAngle, Color innerColor, Color outerColor) {
+	public static void drawRadialSector(GuiGraphics graphics, float innerRadius, float outerRadius, float startAngle, float arcAngle, Color innerColor, Color outerColor) {
 
 		//todo params
 		//Color innerColor = Color.WHITE.setAlpha(0.05f);
@@ -274,8 +271,8 @@ public class UIRenderHelper {
 		//builder.begin(VertexFormat.Mode.LINE_STRIP, DefaultVertexFormat.POSITION_COLOR_NORMAL);
 		builder.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
 
-		Matrix4f pose = ms.last().pose();
-		Matrix3f n = ms.last().normal();
+		Matrix4f pose = graphics.pose().last().pose();
+		Matrix3f n = graphics.pose().last().normal();
 
 		for (int i = 0; i < innerPoints.size(); i++) {
 			Point2D point = outerPoints.get(i);
@@ -314,30 +311,30 @@ public class UIRenderHelper {
 
 
 	//just like AbstractGui#drawTexture, but with a color at every vertex
-	public static void drawColoredTexture(PoseStack ms, Color c, int x, int y, int tex_left, int tex_top, int width, int height) {
-		drawColoredTexture(ms, c, x, y, 0, (float) tex_left, (float) tex_top, width, height, 256, 256);
+	public static void drawColoredTexture(GuiGraphics graphics, Color c, int x, int y, int tex_left, int tex_top, int width, int height) {
+		drawColoredTexture(graphics, c, x, y, 0, (float) tex_left, (float) tex_top, width, height, 256, 256);
 	}
 
-	public static void drawColoredTexture(PoseStack ms, Color c, int x, int y, int z, float tex_left, float tex_top, int width, int height, int sheet_width, int sheet_height) {
-		drawColoredTexture(ms, c, x, x + width, y, y + height, z, width, height, tex_left, tex_top, sheet_width, sheet_height);
+	public static void drawColoredTexture(GuiGraphics graphics, Color c, int x, int y, int z, float tex_left, float tex_top, int width, int height, int sheet_width, int sheet_height) {
+		drawColoredTexture(graphics, c, x, x + width, y, y + height, z, width, height, tex_left, tex_top, sheet_width, sheet_height);
 	}
 
-	public static void drawStretched(PoseStack ms, int left, int top, int w, int h, int z, TextureSheetSegment tex) {
+	public static void drawStretched(GuiGraphics graphics, int left, int top, int w, int h, int z, TextureSheetSegment tex) {
 		tex.bind();
-		drawTexturedQuad(ms.last()
+		drawTexturedQuad(graphics.pose().last()
 						.pose(), Color.WHITE, left, left + w, top, top + h, z, tex.getStartX() / 256f, (tex.getStartX() + tex.getWidth()) / 256f,
 				tex.getStartY() / 256f, (tex.getStartY() + tex.getHeight()) / 256f);
 	}
 
-	public static void drawCropped(PoseStack ms, int left, int top, int w, int h, int z, TextureSheetSegment tex) {
+	public static void drawCropped(GuiGraphics graphics, int left, int top, int w, int h, int z, TextureSheetSegment tex) {
 		tex.bind();
-		drawTexturedQuad(ms.last()
+		drawTexturedQuad(graphics.pose().last()
 						.pose(), Color.WHITE, left, left + w, top, top + h, z, tex.getStartX() / 256f, (tex.getStartX() + w) / 256f,
 				tex.getStartY() / 256f, (tex.getStartY() + h) / 256f);
 	}
 
-	private static void drawColoredTexture(PoseStack ms, Color c, int left, int right, int top, int bot, int z, int tex_width, int tex_height, float tex_left, float tex_top, int sheet_width, int sheet_height) {
-		drawTexturedQuad(ms.last().pose(), c, left, right, top, bot, z, (tex_left + 0.0F) / (float) sheet_width, (tex_left + (float) tex_width) / (float) sheet_width, (tex_top + 0.0F) / (float) sheet_height, (tex_top + (float) tex_height) / (float) sheet_height);
+	private static void drawColoredTexture(GuiGraphics graphics, Color c, int left, int right, int top, int bot, int z, int tex_width, int tex_height, float tex_left, float tex_top, int sheet_width, int sheet_height) {
+		drawTexturedQuad(graphics.pose().last().pose(), c, left, right, top, bot, z, (tex_left + 0.0F) / (float) sheet_width, (tex_left + (float) tex_width) / (float) sheet_width, (tex_top + 0.0F) / (float) sheet_height, (tex_top + (float) tex_height) / (float) sheet_height);
 	}
 
 	private static void drawTexturedQuad(Matrix4f m, Color c, int left, int right, int top, int bot, int z, float u1, float u2, float v1, float v2) {
@@ -356,7 +353,7 @@ public class UIRenderHelper {
 	}
 
 	public static void flipForGuiRender(PoseStack poseStack) {
-		poseStack.mulPoseMatrix(Matrix4f.createScaleMatrix(1, -1, 1));
+		poseStack.mulPoseMatrix(new Matrix4f().scaling(1, -1, 1));
 	}
 
 	public static class CustomRenderTarget extends RenderTarget {
@@ -381,7 +378,7 @@ public class UIRenderHelper {
 			float tx = (float) viewWidth / (float) width;
 			float ty = (float) viewHeight / (float) height;
 
-			RenderSystem.enableTexture();
+			//RenderSystem.enableTexture();
 			RenderSystem.enableDepthTest();
 			RenderSystem.setShader(() -> Minecraft.getInstance().gameRenderer.blitShader);
 			RenderSystem.getShader().setSampler("DiffuseSampler", colorTextureId);

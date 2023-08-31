@@ -1,11 +1,5 @@
 package net.createmod.catnip.render;
 
-import java.nio.ByteBuffer;
-import java.util.Optional;
-import java.util.function.IntPredicate;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import com.jozufozu.flywheel.api.vertex.ShadedVertexList;
 import com.jozufozu.flywheel.api.vertex.VertexList;
 import com.jozufozu.flywheel.backend.ShadersModHandler;
@@ -15,12 +9,6 @@ import com.jozufozu.flywheel.util.DiffuseLightCalculator;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
-
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -31,6 +19,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.nio.ByteBuffer;
+import java.util.Optional;
+import java.util.function.IntPredicate;
 
 @SuppressWarnings("unchecked")
 @MethodsReturnNonnullByDefault
@@ -98,25 +96,17 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 		if (isEmpty())
 			return;
 
-		Matrix4f modelMat = input.last()
-			.pose()
-			.copy();
-		Matrix4f localTransforms = transforms.last()
-			.pose();
-		modelMat.multiply(localTransforms);
+		Matrix4f modelMat = new Matrix4f(input.last().pose());
+		Matrix4f localTransforms = transforms.last().pose();
+		modelMat.mul(localTransforms);
 
 		Matrix3f normalMat;
 		if (fullNormalTransform) {
-			normalMat = input.last()
-				.normal()
-				.copy();
-			Matrix3f localNormalTransforms = transforms.last()
-				.normal();
+			normalMat = new Matrix3f(input.last().normal());
+			Matrix3f localNormalTransforms = transforms.last().normal();
 			normalMat.mul(localNormalTransforms);
 		} else {
-			normalMat = transforms.last()
-				.normal()
-				.copy();
+			normalMat = new Matrix3f(transforms.last().normal());
 		}
 
 		if (useWorldLight) {
@@ -144,7 +134,7 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 			float z = template.getZ(i);
 
 			pos.set(x, y, z, 1F);
-			pos.transform(modelMat);
+			pos.mul(modelMat);
 			builder.vertex(pos.x(), pos.y(), pos.z());
 
 			float normalX = template.getNX(i);
@@ -152,7 +142,7 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 			float normalZ = template.getNZ(i);
 
 			normal.set(normalX, normalY, normalZ);
-			normal.transform(normalMat);
+			normal.mul(normalMat);
 			float nx = normal.x();
 			float ny = normal.y();
 			float nz = normal.z();
@@ -194,9 +184,9 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 			int light;
 			if (useWorldLight) {
 				lightPos.set(((x - .5f) * 15 / 16f) + .5f, (y - .5f) * 15 / 16f + .5f, (z - .5f) * 15 / 16f + .5f, 1f);
-				lightPos.transform(localTransforms);
+				lightPos.mul(localTransforms);
 				if (lightTransform != null) {
-					lightPos.transform(lightTransform);
+					lightPos.mul(lightTransform);
 				}
 
 				light = getLight(Minecraft.getInstance().level, lightPos);
@@ -268,7 +258,7 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	@Override
-	public ShadeSpearatingSuperByteBuffer multiply(Quaternion quaternion) {
+	public ShadeSpearatingSuperByteBuffer multiply(Quaternionf quaternion) {
 		transforms.mulPose(quaternion);
 		return this;
 	}
@@ -292,29 +282,19 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 
 	@Override
 	public ShadeSpearatingSuperByteBuffer mulPose(Matrix4f pose) {
-		transforms.last()
-			.pose()
-			.multiply(pose);
+		transforms.last().pose().mul(pose);
 		return this;
 	}
 
 	@Override
 	public ShadeSpearatingSuperByteBuffer mulNormal(Matrix3f normal) {
-		transforms.last()
-			.normal()
-			.mul(normal);
+		transforms.last().normal().mul(normal);
 		return this;
 	}
 
 	public ShadeSpearatingSuperByteBuffer transform(PoseStack stack) {
-		transforms.last()
-			.pose()
-			.multiply(stack.last()
-				.pose());
-		transforms.last()
-			.normal()
-			.mul(stack.last()
-				.normal());
+		transforms.last().pose().mul(stack.last().pose());
+		transforms.last().normal().mul(stack.last().normal());
 		return this;
 	}
 
@@ -324,7 +304,7 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 		return this;
 	}
 
-	public ShadeSpearatingSuperByteBuffer rotateCentered(Quaternion q) {
+	public ShadeSpearatingSuperByteBuffer rotateCentered(Quaternionf q) {
 		translate(.5f, .5f, .5f).multiply(q)
 			.translate(-.5f, -.5f, -.5f);
 		return this;
@@ -458,7 +438,7 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	private static int getLight(Level world, Vector4f lightPos) {
-		BlockPos pos = new BlockPos(lightPos.x(), lightPos.y(), lightPos.z());
+		BlockPos pos = BlockPos.containing(lightPos.x(), lightPos.y(), lightPos.z());
 		return WORLD_LIGHT_CACHE.computeIfAbsent(pos.asLong(), $ -> LevelRenderer.getLightColor(world, pos));
 	}
 

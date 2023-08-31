@@ -1,16 +1,5 @@
 package net.createmod.catnip.config.ui;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.UnaryOperator;
-
-import javax.annotation.Nullable;
-
-import org.lwjgl.glfw.GLFW;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.Catnip;
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ScreenOpener;
@@ -22,9 +11,17 @@ import net.createmod.catnip.utility.FontHelper;
 import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Theme;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
+import org.lwjgl.glfw.GLFW;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.UnaryOperator;
 
 public class BaseConfigScreen extends ConfigScreen {
 
@@ -207,8 +204,8 @@ public class BaseConfigScreen extends ConfigScreen {
 	}
 
 	@Override
-	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		drawCenteredString(ms, font, "Access Configs for Mod:", width / 2, height / 2 - 105, Theme.Key.TEXT_ACCENT_STRONG.i());
+	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		graphics.drawCenteredString(font, "Access Configs for Mod:", width / 2, height / 2 - 105, Theme.Key.TEXT_ACCENT_STRONG.i());
 	}
 
 	private void linkTo(@Nullable Screen screen) {

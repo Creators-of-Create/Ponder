@@ -1,13 +1,6 @@
 package net.createmod.catnip.gui.widget;
 
-import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.FadableScreenElement;
@@ -16,6 +9,10 @@ import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.catnip.utility.theme.Theme.Key;
+import net.minecraft.client.gui.GuiGraphics;
+
+import javax.annotation.Nullable;
+import java.util.function.Function;
 
 public class BoxWidget extends ElementWidget {
 
@@ -130,8 +127,8 @@ public class BoxWidget extends ElementWidget {
 	}
 
 	@Override
-	protected void beforeRender(@Nonnull PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		super.beforeRender(ms, mouseX, mouseY, partialTicks);
+	protected void beforeRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.beforeRender(graphics, mouseX, mouseY, partialTicks);
 
 		RenderSystem.enableDepthTest();
 
@@ -155,7 +152,7 @@ public class BoxWidget extends ElementWidget {
 	}
 
 	@Override
-	public void renderButton(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+	public void renderButton(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		float fadeValue = fade.getValue(partialTicks);
 		if (fadeValue < .1f)
 			return;
@@ -163,11 +160,11 @@ public class BoxWidget extends ElementWidget {
 		box.withAlpha(fadeValue);
 		box.withBackground(customBackground != null ? customBackground : Key.BOX_BACKGROUND_TRANSPARENT.c())
 				.gradientBorder(gradientColor1, gradientColor2)
-				.at(x, y, z)
+				.at(getX(), getY(), z)
 				.withBounds(width, height)
-				.render(ms);
+				.render(graphics);
 
-		super.renderButton(ms, mouseX, mouseY, partialTicks);
+		super.renderButton(graphics, mouseX, mouseY, partialTicks);
 
 		wasHovered = isHovered;
 	}
@@ -180,7 +177,7 @@ public class BoxWidget extends ElementWidget {
 		float padX = 2 + paddingX;
 		float padY = 2 + paddingY;
 
-		return x - padX <= mX && y - padY <= mY && mX < x + padX + width && mY < y + padY + height;
+		return getX() - padX <= mX && getY() - padY <= mY && mX < getX() + padX + width && mY < getY() + padY + height;
 	}
 
 	@Override

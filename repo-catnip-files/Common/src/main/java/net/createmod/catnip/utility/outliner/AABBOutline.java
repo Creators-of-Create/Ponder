@@ -2,9 +2,6 @@ package net.createmod.catnip.utility.outliner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
-
 import net.createmod.catnip.render.BindableTexture;
 import net.createmod.catnip.render.CatnipRenderTypes;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
@@ -12,6 +9,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public class AABBOutline extends Outline {
 
@@ -196,7 +195,7 @@ public class AABBOutline extends Outline {
 		float lineLengthY = maxPos.y() - minPos.y();
 		float lineLengthZ = maxPos.z() - minPos.z();
 
-		origin.load(minPos);
+		origin.set(minPos);
 		bufferCuboidLine(pose, consumer, origin, Direction.EAST, lineLengthX, lineWidth, color, lightmap, disableNormals);
 		bufferCuboidLine(pose, consumer, origin, Direction.UP, lineLengthY, lineWidth, color, lightmap, disableNormals);
 		bufferCuboidLine(pose, consumer, origin, Direction.SOUTH, lineLengthZ, lineWidth, color, lightmap, disableNormals);

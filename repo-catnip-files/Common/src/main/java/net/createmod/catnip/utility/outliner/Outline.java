@@ -1,15 +1,8 @@
 package net.createmod.catnip.utility.outliner;
 
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3d;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
-
+import com.mojang.math.Axis;
 import net.createmod.catnip.render.BindableTexture;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.math.AngleHelper;
@@ -19,6 +12,13 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
+import javax.annotation.Nullable;
 
 public abstract class Outline {
 
@@ -55,9 +55,9 @@ public abstract class Outline {
 
 		poseStack.pushPose();
 		poseStack.translate(start.x - camera.x, start.y - camera.y, start.z - camera.z);
-		poseStack.mulPose(Vector3f.YP.rotationDegrees(hAngle));
-		poseStack.mulPose(Vector3f.XP.rotationDegrees(vAngle));
-		bufferCuboidLine(poseStack.last(), consumer, Vector3f.ZERO, Direction.SOUTH, length, width, color, lightmap,
+		poseStack.mulPose(Axis.YP.rotationDegrees(hAngle));
+		poseStack.mulPose(Axis.XP.rotationDegrees(vAngle));
+		bufferCuboidLine(poseStack.last(), consumer, new Vector3f(), Direction.SOUTH, length, width, color, lightmap,
 				disableNormals);
 		poseStack.popPose();
 	}
@@ -110,49 +110,49 @@ public abstract class Outline {
 		Matrix4f posMatrix = pose.pose();
 
 		posTransformTemp.set(minX, minY, maxZ, 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x0 = posTransformTemp.x();
 		double y0 = posTransformTemp.y();
 		double z0 = posTransformTemp.z();
 
 		posTransformTemp.set(minX, minY, minZ, 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x1 = posTransformTemp.x();
 		double y1 = posTransformTemp.y();
 		double z1 = posTransformTemp.z();
 
 		posTransformTemp.set(maxX, minY, minZ, 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x2 = posTransformTemp.x();
 		double y2 = posTransformTemp.y();
 		double z2 = posTransformTemp.z();
 
 		posTransformTemp.set(maxX, minY, maxZ, 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x3 = posTransformTemp.x();
 		double y3 = posTransformTemp.y();
 		double z3 = posTransformTemp.z();
 
 		posTransformTemp.set(minX, maxY, minZ, 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x4 = posTransformTemp.x();
 		double y4 = posTransformTemp.y();
 		double z4 = posTransformTemp.z();
 
 		posTransformTemp.set(minX, maxY, maxZ, 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x5 = posTransformTemp.x();
 		double y5 = posTransformTemp.y();
 		double z5 = posTransformTemp.z();
 
 		posTransformTemp.set(maxX, maxY, maxZ, 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x6 = posTransformTemp.x();
 		double y6 = posTransformTemp.y();
 		double z6 = posTransformTemp.z();
 
 		posTransformTemp.set(maxX, maxY, minZ, 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x7 = posTransformTemp.x();
 		double y7 = posTransformTemp.y();
 		double z7 = posTransformTemp.z();
@@ -171,7 +171,7 @@ public abstract class Outline {
 		} else {
 			normalTransformTemp.set(0, -1, 0);
 		}
-		normalTransformTemp.transform(normalMatrix);
+		normalTransformTemp.mul(normalMatrix);
 		float nx0 = normalTransformTemp.x();
 		float ny0 = normalTransformTemp.y();
 		float nz0 = normalTransformTemp.z();
@@ -211,7 +211,7 @@ public abstract class Outline {
 		// up
 
 		normalTransformTemp.set(0, 1, 0);
-		normalTransformTemp.transform(normalMatrix);
+		normalTransformTemp.mul(normalMatrix);
 		float nx1 = normalTransformTemp.x();
 		float ny1 = normalTransformTemp.y();
 		float nz1 = normalTransformTemp.z();
@@ -255,7 +255,7 @@ public abstract class Outline {
 		} else {
 			normalTransformTemp.set(0, 0, -1);
 		}
-		normalTransformTemp.transform(normalMatrix);
+		normalTransformTemp.mul(normalMatrix);
 		float nx2 = normalTransformTemp.x();
 		float ny2 = normalTransformTemp.y();
 		float nz2 = normalTransformTemp.z();
@@ -299,7 +299,7 @@ public abstract class Outline {
 		} else {
 			normalTransformTemp.set(0, 0, 1);
 		}
-		normalTransformTemp.transform(normalMatrix);
+		normalTransformTemp.mul(normalMatrix);
 		float nx3 = normalTransformTemp.x();
 		float ny3 = normalTransformTemp.y();
 		float nz3 = normalTransformTemp.z();
@@ -343,7 +343,7 @@ public abstract class Outline {
 		} else {
 			normalTransformTemp.set(-1, 0, 0);
 		}
-		normalTransformTemp.transform(normalMatrix);
+		normalTransformTemp.mul(normalMatrix);
 		float nx4 = normalTransformTemp.x();
 		float ny4 = normalTransformTemp.y();
 		float nz4 = normalTransformTemp.z();
@@ -387,7 +387,7 @@ public abstract class Outline {
 		} else {
 			normalTransformTemp.set(1, 0, 0);
 		}
-		normalTransformTemp.transform(normalMatrix);
+		normalTransformTemp.mul(normalMatrix);
 		float nx5 = normalTransformTemp.x();
 		float ny5 = normalTransformTemp.y();
 		float nz5 = normalTransformTemp.z();
@@ -438,25 +438,25 @@ public abstract class Outline {
 		Matrix4f posMatrix = pose.pose();
 
 		posTransformTemp.set(pos0.x(), pos0.y(), pos0.z(), 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x0 = posTransformTemp.x();
 		double y0 = posTransformTemp.y();
 		double z0 = posTransformTemp.z();
 
 		posTransformTemp.set(pos1.x(), pos1.y(), pos1.z(), 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x1 = posTransformTemp.x();
 		double y1 = posTransformTemp.y();
 		double z1 = posTransformTemp.z();
 
 		posTransformTemp.set(pos2.x(), pos2.y(), pos2.z(), 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x2 = posTransformTemp.x();
 		double y2 = posTransformTemp.y();
 		double z2 = posTransformTemp.z();
 
 		posTransformTemp.set(pos3.x(), pos3.y(), pos3.z(), 1);
-		posTransformTemp.transform(posMatrix);
+		posTransformTemp.mul(posMatrix);
 		double x3 = posTransformTemp.x();
 		double y3 = posTransformTemp.y();
 		double z3 = posTransformTemp.z();
@@ -466,8 +466,8 @@ public abstract class Outline {
 		float b = color.z();
 		float a = color.w();
 
-		normalTransformTemp.load(normal);
-		normalTransformTemp.transform(pose.normal());
+		normalTransformTemp.set(normal);
+		normalTransformTemp.mul(pose.normal());
 		float nx = normalTransformTemp.x();
 		float ny = normalTransformTemp.y();
 		float nz = normalTransformTemp.z();

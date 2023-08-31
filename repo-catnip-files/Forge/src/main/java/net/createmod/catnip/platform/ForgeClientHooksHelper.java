@@ -1,16 +1,10 @@
 package net.createmod.catnip.platform;
 
-import java.util.Locale;
-import java.util.Map;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.jozufozu.flywheel.core.model.ModelUtil;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
 import net.createmod.catnip.mixin.client.accessor.ParticleEngineAccessor;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
 import net.createmod.catnip.utility.BasicFluidRenderer;
@@ -40,6 +34,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.model.data.ModelData;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
+import java.util.Map;
 
 public class ForgeClientHooksHelper implements ModClientHooksHelper {
 
@@ -47,7 +45,7 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 
 	@Override
 	public Locale getCurrentLocale() {
-		return Minecraft.getInstance().getLocale();
+		return Minecraft.getInstance().getLanguageManager().getJavaLocale();
 	}
 
 	@Override
@@ -68,8 +66,9 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	public void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
 										BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides,
 										RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
-		dispatcher.renderBatched(state, pos, level, ms, consumer, checkSides, random,
-								 BEWithModelData != null ? BEWithModelData.getModelData() : ModelData.EMPTY, layer);
+		ModelData modelData = BEWithModelData != null ? BEWithModelData.getModelData() : ModelData.EMPTY;
+		modelData = dispatcher.getBlockModel(state).getModelData(level, pos, state, modelData);
+		dispatcher.renderBatched(state, pos, level, ms, consumer, checkSides, random, modelData, layer);
 	}
 
 	@Override

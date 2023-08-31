@@ -8,7 +8,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -42,7 +42,10 @@ public class ForgeCatnipClient {
 		}
 
 		@SubscribeEvent
-		public static void onRenderWorld(RenderLevelLastEvent event) {
+		public static void onRenderWorld(RenderLevelStageEvent event) {
+			if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL)
+				return;
+
 			CatnipClient.onRenderWorld(event.getPoseStack());
 		}
 
@@ -61,7 +64,7 @@ public class ForgeCatnipClient {
 			if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
 				return;
 
-			PlacementClient.onRenderCrosshairOverlay(event.getWindow(), event.getPoseStack(), event.getPartialTick());
+			PlacementClient.onRenderCrosshairOverlay(event.getWindow(), event.getGuiGraphics(), event.getPartialTick());
 		}
 
 	}

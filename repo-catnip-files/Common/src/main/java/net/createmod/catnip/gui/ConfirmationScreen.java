@@ -1,25 +1,23 @@
 package net.createmod.catnip.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-
-import org.lwjgl.opengl.GL30;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.TextStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
+import org.lwjgl.opengl.GL30;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class ConfirmationScreen extends AbstractSimiScreen {
 
@@ -177,33 +175,34 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 	}
 
 	@Override
-	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		textBackground.render(ms);
+	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		textBackground.render(graphics);
 		int offset = font.lineHeight + 1;
 		int lineY = y - offset;
 
-		ms.pushPose();
-		ms.translate(0, 0, 200);
+		PoseStack poseStack = graphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(0, 0, 200);
 
 		for (FormattedText line : text) {
 			lineY += offset;
 			if (line == null)
 				continue;
-			font.draw(ms, line.getString(), x, lineY, 0xeaeaea);
+			graphics.drawString(font, line.getString(), x, lineY, 0xeaeaea, false);
 		}
 
-		ms.popPose();
+		poseStack.popPose();
 	}
 
 	@Override
-	protected void renderWindowBackground(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+	protected void renderWindowBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		endFrame();
 
-		source.render(ms, 0, 0, 10); // zero mouse coords to prevent further tooltips
+		source.render(graphics, 0, 0, 10); // zero mouse coords to prevent further tooltips
 
 		prepareFrame();
 
-		this.fillGradient(ms, 0, 0, this.width, this.height, 0x70101010, 0x80101010);
+		graphics.fillGradient(0, 0, this.width, this.height, 0x70101010, 0x80101010);
 	}
 
 

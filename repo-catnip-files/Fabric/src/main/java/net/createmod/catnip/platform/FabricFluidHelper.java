@@ -32,7 +32,7 @@ public class FabricFluidHelper implements ModFluidHelper<FluidStack> {
 
 	@Override
 	public ResourceLocation getStillTexture(Fluid fluid) {
-		return FluidVariantRendering.getSprite(FluidVariant.of(fluid)).getName();
+		return FluidVariantRendering.getSprite(FluidVariant.of(fluid)).atlasLocation();
 	}
 
 	@Override

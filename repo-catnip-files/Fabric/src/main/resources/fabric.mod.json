@@ -7,8 +7,7 @@
     "description": "${mod_description}",
     "authors": [
       "${mod_author}",
-      "This project is made possible with Patreon support from players like you. Thank you!",
-      "{mod_supporters}"
+      "${mod_credit}"
     ],
     "contact": {
       "homepage": "${mod_homepage}",
@@ -31,7 +30,7 @@
     "depends": {
       "fabricloader": ">=0.13",
       "fabric": "*",
-      "minecraft": "1.19.x",
+      "minecraft": "1.20.x",
       "java": ">=17"
     },
     "suggests": {

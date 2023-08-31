@@ -1,14 +1,12 @@
 package net.createmod.catnip.config.ui;
 
-import org.lwjgl.glfw.GLFW;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import org.lwjgl.glfw.GLFW;
 
 public class HintableTextFieldWidget extends EditBox {
 
@@ -29,8 +27,8 @@ public class HintableTextFieldWidget extends EditBox {
 	}
 
 	@Override
-	public void renderButton(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		super.renderButton(ms, mouseX, mouseY, partialTicks);
+	public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.renderWidget(graphics, mouseX, mouseY, partialTicks);
 
 		if (hint == null || hint.isEmpty())
 			return;
@@ -38,7 +36,7 @@ public class HintableTextFieldWidget extends EditBox {
 		if (!getValue().isEmpty())
 			return;
 
-		font.draw(ms, hint, x + 5, this.y + (this.height - 8) / 2, Theme.Key.TEXT.c().scaleAlpha(.75f).getRGB());
+		graphics.drawString(font, hint, getX() + 5, this.getY() + (this.height - 8) / 2, Theme.Key.TEXT.c().scaleAlpha(.75f).getRGB());
 	}
 
 	@Override

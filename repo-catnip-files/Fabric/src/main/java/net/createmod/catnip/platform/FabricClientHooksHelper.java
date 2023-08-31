@@ -1,23 +1,16 @@
 package net.createmod.catnip.platform;
 
-import java.util.List;
-import java.util.Locale;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.jozufozu.flywheel.core.virtual.VirtualEmptyBlockGetter;
 import com.jozufozu.flywheel.fabric.model.DefaultLayerFilteringBakedModel;
-import com.jozufozu.flywheel.fabric.model.FabricModelUtil;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
-import io.github.fabricators_of_create.porting_lib.mixin.client.accessor.ParticleEngineAccessor;
-import io.github.fabricators_of_create.porting_lib.render.virtual.FixedColorTintingBakedModel;
-import io.github.fabricators_of_create.porting_lib.util.client.VertexUtils;
+import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.ParticleEngineAccessor;
+import io.github.fabricators_of_create.porting_lib.models.virtual.FixedColorTintingBakedModel;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
 import net.createmod.catnip.utility.BasicFluidRenderer;
+import net.createmod.catnip.utility.VertexUtils;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.KeyMapping;
@@ -35,17 +28,21 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.Locale;
 
 public class FabricClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public Locale getCurrentLocale() {
-		return Minecraft.getInstance().getLanguageManager().getSelected().getJavaLocale();
+		return Minecraft.getInstance().getLanguageManager().getSelectedJavaLocale();
 	}
 
 	@Override
@@ -80,7 +77,7 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public boolean doesBlockModelContainRenderType(RenderType layer, BlockState state, RandomSource random,
 												   BlockEntity BEWithModelData) {
-		return FabricModelUtil.doesLayerMatch(state, layer);
+		return ItemBlockRenderTypes.getChunkRenderType(state) == layer;
 	}
 
 	/*@Override
@@ -121,7 +118,7 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 
 	@Override
 	public <T extends ParticleOptions> Particle createParticleFromData(T data, ClientLevel level, double x, double y, double z, double mx, double my, double mz) {
-		int key = Registry.PARTICLE_TYPE.getId(data.getType());
+		int key = BuiltInRegistries.PARTICLE_TYPE.getId(data.getType());
 		ParticleProvider<T> particleProvider = (ParticleProvider<T>) ((ParticleEngineAccessor) Minecraft.getInstance().particleEngine).port_lib$getProviders().get(key);
 		return particleProvider == null ? null : particleProvider.createParticle(data, level, x, y, z, mx, my, mz);
 	}

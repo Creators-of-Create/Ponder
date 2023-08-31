@@ -2,8 +2,7 @@ package net.createmod.catnip.utility;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
-
+import com.mojang.math.Axis;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.CatnipRenderTypes;
 import net.minecraft.client.Minecraft;
@@ -42,7 +41,7 @@ public class BasicFluidRenderer {
 		ms.pushPose();
 		if (CatnipServices.FLUID_HELPER.isLighterThanAir(fluid)) {
 			ms.translate(center.x, center.y, center.z);
-			ms.mulPose(Vector3f.XP.rotationDegrees(180));
+			ms.mulPose(Axis.XP.rotationDegrees(180));
 			ms.translate(-center.x, -center.y, -center.z);
 		}
 

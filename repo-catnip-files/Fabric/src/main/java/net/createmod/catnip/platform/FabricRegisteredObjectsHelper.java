@@ -3,6 +3,7 @@ package net.createmod.catnip.platform;
 import net.createmod.catnip.platform.services.RegisteredObjectsHelper;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -24,51 +25,51 @@ public class FabricRegisteredObjectsHelper implements RegisteredObjectsHelper<Re
 
 	@Override
 	public ResourceLocation getKeyOrThrow(Block value) {
-		return getKeyOrThrow(Registry.BLOCK, value);
+		return getKeyOrThrow(BuiltInRegistries.BLOCK, value);
 	}
 
 	@Override
 	public ResourceLocation getKeyOrThrow(Item value) {
-		return getKeyOrThrow(Registry.ITEM, value);
+		return getKeyOrThrow(BuiltInRegistries.ITEM, value);
 	}
 
 	@Override
 	public ResourceLocation getKeyOrThrow(Fluid value) {
-		return getKeyOrThrow(Registry.FLUID, value);
+		return getKeyOrThrow(BuiltInRegistries.FLUID, value);
 	}
 
 	@Override
 	public ResourceLocation getKeyOrThrow(EntityType<?> value) {
-		return getKeyOrThrow(Registry.ENTITY_TYPE, value);
+		return getKeyOrThrow(BuiltInRegistries.ENTITY_TYPE, value);
 	}
 
 	@Override
 	public ResourceLocation getKeyOrThrow(BlockEntityType<?> value) {
-		return getKeyOrThrow(Registry.BLOCK_ENTITY_TYPE, value);
+		return getKeyOrThrow(BuiltInRegistries.BLOCK_ENTITY_TYPE, value);
 	}
 
 	@Override
 	public ResourceLocation getKeyOrThrow(Potion value) {
-		return getKeyOrThrow(Registry.POTION, value);
+		return getKeyOrThrow(BuiltInRegistries.POTION, value);
 	}
 
 	@Override
 	public ResourceLocation getKeyOrThrow(ParticleType<?> value) {
-		return getKeyOrThrow(Registry.PARTICLE_TYPE, value);
+		return getKeyOrThrow(BuiltInRegistries.PARTICLE_TYPE, value);
 	}
 
 	@Override
 	public ResourceLocation getKeyOrThrow(RecipeSerializer<?> value) {
-		return getKeyOrThrow(Registry.RECIPE_SERIALIZER, value);
+		return getKeyOrThrow(BuiltInRegistries.RECIPE_SERIALIZER, value);
 	}
 
 	@Override
 	public Item getItem(ResourceLocation location) {
-		return Registry.ITEM.get(location);
+		return BuiltInRegistries.ITEM.get(location);
 	}
 
 	@Override
 	public Block getBlock(ResourceLocation location) {
-		return Registry.BLOCK.get(location);
+		return BuiltInRegistries.BLOCK.get(location);
 	}
 }

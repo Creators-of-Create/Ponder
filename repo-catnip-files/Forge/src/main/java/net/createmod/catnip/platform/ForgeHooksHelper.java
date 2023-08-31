@@ -3,9 +3,7 @@ package net.createmod.catnip.platform;
 import net.createmod.catnip.platform.services.ModHooksHelper;
 import net.createmod.catnip.utility.placement.IPlacementHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -41,10 +39,5 @@ public class ForgeHooksHelper implements ModHooksHelper {
 	@Override
 	public boolean isPlayerFake(ServerPlayer player) {
 		return player instanceof FakePlayer;
-	}
-
-	@Override
-	public CompoundTag getExtraEntityData(Entity entity) {
-		return entity.getPersistentData();
 	}
 }

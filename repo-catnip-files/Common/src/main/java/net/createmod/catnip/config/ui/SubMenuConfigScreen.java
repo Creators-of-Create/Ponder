@@ -1,25 +1,8 @@
 package net.createmod.catnip.config.ui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.lwjgl.glfw.GLFW;
-
 import com.electronwill.nightconfig.core.AbstractConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.config.ui.ConfigScreenList.LabeledEntry;
 import net.createmod.catnip.config.ui.entries.BooleanEntry;
 import net.createmod.catnip.config.ui.entries.EnumEntry;
@@ -44,11 +27,25 @@ import net.createmod.catnip.utility.theme.Color;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
+import org.lwjgl.glfw.GLFW;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class SubMenuConfigScreen extends ConfigScreen {
 
@@ -137,7 +134,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 			String command = change.annotations.get("Execute");
 			if (minecraft.player != null && command != null && command.startsWith("/")) {
-				minecraft.player.commandSigned(command.substring(1), null);
+				minecraft.player.connection.sendCommand(command.substring(1));
 			}
 		});
 		clearChanges();
@@ -340,16 +337,16 @@ public class SubMenuConfigScreen extends ConfigScreen {
 	}
 
 	@Override
-	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		super.renderWindow(ms, mouseX, mouseY, partialTicks);
+	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.renderWindow(graphics, mouseX, mouseY, partialTicks);
 
 		int x = width / 2;
-		drawCenteredString(ms, minecraft.font, ConfigScreen.modID + " > " + type.toString().toLowerCase(Locale.ROOT) + " > " + title, x, 15, Theme.Key.TEXT.i());
+		graphics.drawCenteredString(minecraft.font, ConfigScreen.modID + " > " + type.toString().toLowerCase(Locale.ROOT) + " > " + title, x, 15, Theme.Key.TEXT.i());
 	}
 
 	@Override
-	protected void renderWindowForeground(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		super.renderWindowForeground(ms, mouseX, mouseY, partialTicks);
+	protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.renderWindowForeground(graphics, mouseX, mouseY, partialTicks);
 	}
 
 	@Override
@@ -375,7 +372,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 		if (search != null && Screen.hasControlDown()) {
 			if (keyCode == GLFW.GLFW_KEY_F) {
-				search.setFocus(true);
+				search.setFocused(true);
 			}
 		}
 

@@ -1,12 +1,12 @@
 package net.createmod.catnip.gui;
 
-import java.util.List;
-
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
-
+import com.mojang.math.Axis;
 import net.createmod.catnip.gui.element.RenderElement;
 import net.createmod.catnip.utility.theme.Color;
+import net.minecraft.client.gui.GuiGraphics;
+
+import java.util.List;
 
 public class RadialMenu {
 
@@ -29,9 +29,11 @@ public class RadialMenu {
 		return this;
 	}
 
-	public void draw(PoseStack ms, List<? extends RenderElement> elements) {
+	public void draw(GuiGraphics graphics, List<? extends RenderElement> elements) {
 		if (sectors < 2)
 			return;
+
+		PoseStack ms = graphics.pose();
 
 		float sectorAngle = 360f / sectors;
 		int sectorWidth = outerRadius - innerRadius;
@@ -53,15 +55,15 @@ public class RadialMenu {
 			ms.pushPose();
 
 			ms.translate(0, -3, 0);
-			UIRenderHelper.drawRadialSector(ms, innerRadius - 3, outerRadius - 3, -90 - sectorAngle / 2, sectorAngle, innerColor, outerColor);
+			UIRenderHelper.drawRadialSector(graphics, innerRadius - 3, outerRadius - 3, -90 - sectorAngle / 2, sectorAngle, innerColor, outerColor);
 
 			ms.translate(0, 3 - innerRadius - (sectorWidth / 2f), 0);
-			ms.mulPose(Vector3f.ZP.rotationDegrees(-i * sectorAngle));
+			ms.mulPose(Axis.ZP.rotationDegrees(-i * sectorAngle));
 
 			elements
 					.get(i)
 					.at(-12, 12)
-					.render(ms);
+					.render(graphics);
 
 			//ms.translate(0, 0, 300);
 			//UIRenderHelper.streak(ms, 0, 0, 0, 56, 10);
@@ -69,7 +71,7 @@ public class RadialMenu {
 
 			ms.popPose();
 
-			ms.mulPose(Vector3f.ZP.rotationDegrees(sectorAngle));
+			ms.mulPose(Axis.ZP.rotationDegrees(sectorAngle));
 		}
 
 		ms.popPose();
