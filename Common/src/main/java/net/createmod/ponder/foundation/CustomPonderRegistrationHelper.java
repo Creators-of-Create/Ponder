@@ -28,7 +28,7 @@ public class CustomPonderRegistrationHelper<T> extends PonderRegistrationHelper 
 		return new MultiSceneBuilder(Stream.of(components).map(keyGen).toList());
 	}
 
-	public MultiSceneBuilder forComponentsIterable(Iterable<T> components) {
+	public MultiSceneBuilder forComponentsIterable(Iterable<? extends T> components) {
 		return new MultiSceneBuilder(StreamSupport.stream(components.spliterator(), false).map(keyGen).toList());
 	}
 
