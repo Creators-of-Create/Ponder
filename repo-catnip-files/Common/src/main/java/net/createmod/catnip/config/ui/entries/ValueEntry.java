@@ -17,6 +17,7 @@ import net.createmod.catnip.config.ui.ConfigAnnotations;
 import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.config.ui.ConfigScreenList;
+import net.createmod.catnip.config.ui.SubMenuConfigScreen;
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
@@ -26,7 +27,9 @@ import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.config.ModConfig;
 
 public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 
@@ -116,9 +119,17 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 			return false;
 		}
 
+		// workaround while config type isn't available here yet.
+		ModConfig.Type configType = ModConfig.Type.CLIENT;
+		Screen screen = Minecraft.getInstance().screen;
+		if (screen instanceof SubMenuConfigScreen subMenuScreen) {
+			configType = subMenuScreen.type;
+		}
+
+
 		// ctrl-click to copy the full path to clipboard
 		this.annotations.put("highlight", ":)");
-		clipboardHelper.setClipboard(handle, ConfigScreen.modID + ":" + path);
+		clipboardHelper.setClipboard(handle, ConfigScreen.modID + ":" + configType.extension() + "." + path);
 
 		return true;
 	}
