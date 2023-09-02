@@ -1,7 +1,22 @@
 package net.createmod.catnip.config.ui;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.TriConsumer;
+import org.lwjgl.opengl.GL30;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
@@ -13,17 +28,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.renderer.PanoramaRenderer;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.TriConsumer;
-import org.lwjgl.opengl.GL30;
-
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public abstract class ConfigScreen extends AbstractSimiScreen {
 
@@ -95,6 +102,41 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 	@Override
 	public boolean isPauseScreen() {
 		return true;
+	}
+
+	public static final List<UnaryOperator<String>> displayNameKeys = List.of(
+			modID -> "catnip." + modID + ".display_name",
+			modID -> "constants." + modID + ".mod_name",
+			modID -> "itemGroup." + modID + ".base",
+			modID -> "itemGroup." + modID + "." + modID
+	);
+
+	public static final Map<String, String> knownModDisplayNames = Map.ofEntries(
+			Map.entry("jei", "Just Enough Items"),
+			Map.entry("computercraft", "ComputerCraft"),
+			Map.entry("catnip", "Catnip"),
+			Map.entry("ponder", "Ponder"),
+			Map.entry("create", "Create"),
+			Map.entry("flywheel", "Flywheel"),
+			Map.entry("ae2", "Applied Energistics 2")
+	);
+
+	/**
+	 * This method checks some language keys to see if the mod has declared a display name via lang.
+	 * If none of those succeed, it checks a list of manually declared ones for compatibility.
+	 */
+	public static Optional<String> getModDisplayName(String modID) {
+		Optional<String> displayNameFromLang = displayNameKeys
+				.stream()
+				.map(op -> op.apply(modID))
+				.filter(I18n::exists)
+				.findFirst()
+				.map(I18n::get);
+
+		if (displayNameFromLang.isPresent())
+			return displayNameFromLang;
+
+		return Optional.ofNullable(knownModDisplayNames.get(modID));
 	}
 
 	public static String toHumanReadable(String key) {

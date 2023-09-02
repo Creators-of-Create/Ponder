@@ -166,7 +166,8 @@ public class BaseConfigScreen extends ConfigScreen {
 			serverText.withElementRenderer(BoxWidget.gradientFactory.apply(serverConfigWidget));
 		}
 
-		TextStencilElement titleText = new TextStencilElement(font, modID.toUpperCase(Locale.ROOT))
+		TextStencilElement titleText = new TextStencilElement(font, getModDisplayName(modID).orElse(modID.toLowerCase(
+				Locale.ROOT)))
 				.centered(true, true)
 				.withElementRenderer((ms, w, h, alpha) -> {
 					UIRenderHelper.angledGradient(ms, 0, 0, h / 2, h, w / 2, Theme.Key.CONFIG_TITLE_A.p());

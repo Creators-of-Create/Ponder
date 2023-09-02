@@ -61,15 +61,31 @@ public class ConfigModListScreen extends ConfigScreen {
 
 		search = new HintableTextFieldWidget(font, width / 2 - listWidth / 2, height - 35, listWidth, 20);
 		search.setResponder(this::updateFilter);
-		search.setHint("Search...");
+		search.setHint("Ctrl + F to Search...");
 		search.moveCursorToStart();
 		addRenderableWidget(search);
+	}
+
+	@Override
+	public boolean mouseClicked(double x, double y, int button) {
+		if (search != null && !search.isMouseOver(x, y))
+			search.setFocus(false);
+
+		return super.mouseClicked(x, y, button);
 	}
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (super.keyPressed(keyCode, scanCode, modifiers))
 			return true;
+
+		if (search != null && Screen.hasControlDown()) {
+			if (keyCode == GLFW.GLFW_KEY_F) {
+				this.setFocused(search);
+				search.setFocus(true);
+			}
+		}
+
 		if (keyCode == GLFW.GLFW_KEY_BACKSPACE) {
 			ScreenOpener.open(parent);
 		}
@@ -100,7 +116,7 @@ public class ConfigModListScreen extends ConfigScreen {
 		protected String id;
 
 		public ModEntry(String id, Screen parent) {
-			super(toHumanReadable(id));
+			super(modName(id));
 			this.id = id;
 
 			button = new BoxWidget(0, 0, 35, 16)
@@ -113,11 +129,15 @@ public class ConfigModListScreen extends ConfigScreen {
 				button.active = false;
 				button.updateColorsFromState();
 				button.modifyElement(e -> ((DelegatedStencilElement) e).withElementRenderer(BaseConfigScreen.DISABLED_RENDERER));
-				labelTooltip.add(Components.literal(toHumanReadable(id)));
+				labelTooltip.add(Components.literal(modName(id)));
 				labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("This Mod does not have any configs registered or is not using Forge's config system"), Palette.ALL_GRAY));
 			}
 
 			listeners.add(button);
+		}
+
+		private static String modName(String modID) {
+			return getModDisplayName(modID).orElse(toHumanReadable(modID));
 		}
 
 		public String getId() {

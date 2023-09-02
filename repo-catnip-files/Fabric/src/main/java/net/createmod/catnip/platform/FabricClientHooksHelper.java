@@ -1,11 +1,19 @@
 package net.createmod.catnip.platform;
 
+import java.util.List;
+import java.util.Locale;
+
+import org.jetbrains.annotations.Nullable;
+
+import com.jozufozu.flywheel.core.model.ShadeSeparatingVertexConsumer;
 import com.jozufozu.flywheel.core.virtual.VirtualEmptyBlockGetter;
 import com.jozufozu.flywheel.fabric.model.DefaultLayerFilteringBakedModel;
+import com.jozufozu.flywheel.fabric.model.LayerFilteringBakedModel;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.ParticleEngineAccessor;
 import io.github.fabricators_of_create.porting_lib.models.virtual.FixedColorTintingBakedModel;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
@@ -31,13 +39,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.Locale;
 
 public class FabricClientHooksHelper implements ModClientHooksHelper {
 	@Override
@@ -80,15 +85,18 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 		return ItemBlockRenderTypes.getChunkRenderType(state) == layer;
 	}
 
-	/*@Override
+	@Override
 	public void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
 										BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides,
 										RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
 		BakedModel model = dispatcher.getBlockModel(state);
 		model = CullingBakedModel.wrap(model);
 		model = LayerFilteringBakedModel.wrap(model, layer);
+		if (consumer instanceof ShadeSeparatingVertexConsumer wrapper)
+			model = wrapper.wrapModel(model);
+
 		dispatcher.getModelRenderer().tesselateBlock(level, model, state, pos, ms, consumer, checkSides, random, state.getSeed(pos), OverlayTexture.NO_OVERLAY);
-	}*/
+	}
 
 	@Override
 	public void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
