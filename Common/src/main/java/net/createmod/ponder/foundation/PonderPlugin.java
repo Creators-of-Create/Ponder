@@ -14,10 +14,13 @@ public interface PonderPlugin {
 	String getModID();
 
 	/**
-	 * Register all Ponder Scenes added by Mod
+	 * Register all the Ponder Scenes added by your Mod
 	 */
 	default void registerScenes() {}
 
+	/**
+	 * Register all the Ponder Tags added by your Mod
+	 */
 	default void registerTags() {}
 
 	/**
