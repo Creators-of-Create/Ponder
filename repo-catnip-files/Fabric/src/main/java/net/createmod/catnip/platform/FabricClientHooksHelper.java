@@ -90,7 +90,6 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 										BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides,
 										RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
 		BakedModel model = dispatcher.getBlockModel(state);
-		model = CullingBakedModel.wrap(model);
 		model = LayerFilteringBakedModel.wrap(model, layer);
 		if (consumer instanceof ShadeSeparatingVertexConsumer wrapper)
 			model = wrapper.wrapModel(model);

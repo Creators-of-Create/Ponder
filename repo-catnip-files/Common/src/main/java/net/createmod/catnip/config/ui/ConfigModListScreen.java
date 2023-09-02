@@ -1,5 +1,13 @@
 package net.createmod.catnip.config.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import javax.annotation.Nullable;
+
+import org.lwjgl.glfw.GLFW;
+
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
@@ -11,12 +19,6 @@ import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import org.lwjgl.glfw.GLFW;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 public class ConfigModListScreen extends ConfigScreen {
 
@@ -69,7 +71,7 @@ public class ConfigModListScreen extends ConfigScreen {
 	@Override
 	public boolean mouseClicked(double x, double y, int button) {
 		if (search != null && !search.isMouseOver(x, y))
-			search.setFocus(false);
+			search.setFocused(false);
 
 		return super.mouseClicked(x, y, button);
 	}
@@ -82,7 +84,6 @@ public class ConfigModListScreen extends ConfigScreen {
 		if (search != null && Screen.hasControlDown()) {
 			if (keyCode == GLFW.GLFW_KEY_F) {
 				this.setFocused(search);
-				search.setFocus(true);
 			}
 		}
 

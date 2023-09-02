@@ -1,6 +1,10 @@
 package net.createmod.catnip.gui;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,9 +14,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-
-import java.util.Collection;
-import java.util.List;
 
 public abstract class AbstractSimiScreen extends Screen {
 
@@ -143,7 +144,7 @@ public abstract class AbstractSimiScreen extends Screen {
 
 	protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		for (Renderable widget : renderables) {
-			if (widget instanceof AbstractSimiWidget simiWidget && simiWidget.isHoveredOrFocused()
+			if (widget instanceof AbstractSimiWidget simiWidget && simiWidget.isHovered()
 				&& simiWidget.visible) {
 				List<Component> tooltip = simiWidget.getToolTip();
 				if (tooltip.isEmpty())
