@@ -12,9 +12,11 @@ import org.lwjgl.glfw.GLFW;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Matrix4f;
 
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.widget.BoxWidget;
+import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.lang.Lang;
 import net.createmod.catnip.utility.theme.Color;
@@ -25,6 +27,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
+
+	protected static boolean currentlyRenderingPreviousScreen = false;
 
 	protected int depthPointX, depthPointY;
 	public final LerpedFloat transition = LerpedFloat.linear()
@@ -65,6 +69,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 
 		addRenderableWidget(backTrack = new BoxWidget(31, height - 31 - 20)
 				.withBounds(20, 20)
+				.withCustomBackground(Theme.Key.BOX_BACKGROUND_FLAT.c())
 				.enableFade(0, 5)
 				.withPadding(2, 2)
 				.fade(1)
@@ -100,11 +105,23 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 	}
 
 	@Override
-	public void render(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		super.render(ms, mouseX, mouseY, partialTicks);
+	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
 //		renderZeloBreadcrumbs(ms, mouseX, mouseY, partialTicks);
 		if (backTrack == null)
 			return;
+
+		int x = (int) Mth.lerp(arrowAnimation.getValue(partialTicks), -9, 21);
+		int maxX = backTrack.x + backTrack.getWidth();
+		Couple<Color> colors = Theme.Key.NAV_BACK_ARROW.p();
+
+		ms.pushPose();
+		ms.translate(0, 0, -300);
+		if (x + 30 < backTrack.x)
+			UIRenderHelper.breadcrumbArrow(ms, x + 30, height - 51, 0, maxX - (x + 30), 20, 5, colors);
+
+		UIRenderHelper.breadcrumbArrow(ms, x, height - 51, 0, 30, 20, 5, colors);
+		UIRenderHelper.breadcrumbArrow(ms, x - 30, height - 51, 0, 30, 20, 5, colors);
+		ms.popPose();
 
 		ms.pushPose();
 		ms.translate(0, 0, 500);
@@ -120,19 +137,13 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 	}
 
 	@Override
+	public void renderBackground(PoseStack $$0) {
+		if (!isCurrentlyRenderingPreviousScreen())
+			super.renderBackground($$0);
+	}
+
+	@Override
 	protected void renderWindowBackground(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
-		if (backTrack != null) {
-			int x = (int) Mth.lerp(arrowAnimation.getValue(partialTicks), -9, 21);
-			int maxX = backTrack.x + backTrack.getWidth();
-
-			if (x + 30 < backTrack.x)
-				UIRenderHelper.breadcrumbArrow(ms, x + 30, height - 51, 0, maxX - (x + 30), 20, 5,
-						Theme.Key.NAV_BACK_ARROW.p());
-
-			UIRenderHelper.breadcrumbArrow(ms, x, height - 51, 0, 30, 20, 5, Theme.Key.NAV_BACK_ARROW.p());
-			UIRenderHelper.breadcrumbArrow(ms, x - 30, height - 51, 0, 30, 20, 5, Theme.Key.NAV_BACK_ARROW.p());
-		}
-
 		if (transition.getChaseTarget() == 0 || transition.settled()) {
 			renderBackground(ms);
 			return;
@@ -140,50 +151,60 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 
 		renderBackground(ms);
 
+		Window window = minecraft.getWindow();
+		float guiScaledWidth = window.getGuiScaledWidth();
+		float guiScaledHeight = window.getGuiScaledHeight();
+
 		Screen lastScreen = ScreenOpener.getPreviouslyRenderedScreen();
-		float transitionValue = transition.getValue(partialTicks);
-		float scale = 1 + 0.5f * transitionValue;
+		float tValue = transition.getValue(partialTicks);
+		float tValueAbsolute = Math.abs(tValue);
 
 		// draw last screen into buffer
 		if (lastScreen != null && lastScreen != this && !transition.settled()) {
+			currentlyRenderingPreviousScreen = true;
 			ms.pushPose();
 			UIRenderHelper.framebuffer.clear(Minecraft.ON_OSX);
-			ms.translate(0, 0, -1000);
 			UIRenderHelper.framebuffer.bindWrite(true);
-			//TODO PonderTooltipHandler.enable = false;
-			lastScreen.render(ms, mouseX, mouseY, partialTicks);
-			//PonderTooltipHandler.enable = true;
-
+			lastScreen.render(ms, mouseX, mouseY, 0);
 			ms.popPose();
+
 			ms.pushPose();
+			minecraft.getMainRenderTarget().bindWrite(true);
 
-			// use the buffer texture
-			minecraft.getMainRenderTarget()
-				.bindWrite(true);
-
-			Window window = minecraft.getWindow();
-			int dpx = window.getGuiScaledWidth() / 2;
-			int dpy = window.getGuiScaledHeight() / 2;
-			if (lastScreen instanceof NavigatableSimiScreen navigableScreen) {
+			int dpx = (int) (guiScaledWidth / 2);
+			int dpy = (int) (guiScaledHeight / 2);
+			if (lastScreen instanceof NavigatableSimiScreen navigableScreen && tValue > 0) {
 				dpx = navigableScreen.depthPointX;
 				dpy = navigableScreen.depthPointY;
 			}
 
-			ms.translate(dpx, dpy, 0);
-			ms.scale(scale, scale, 1);
-			ms.translate(-dpx, -dpy, 0);
+			float scale = 1 + (0.2f * tValue);
+
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
-			UIRenderHelper.drawFramebuffer(1f - Math.abs(transitionValue));
+			Matrix4f matrix4f = Matrix4f.orthographic(guiScaledWidth, -guiScaledHeight, 1000.0F, 3000.0F);
+			PoseStack poseStack2 = new PoseStack();
+			poseStack2.last().pose().load(matrix4f);
+			poseStack2.translate(dpx, dpy, 0);
+			poseStack2.scale(scale, scale, 1);
+			poseStack2.translate(-dpx, -dpy, 0);
+
+
+			UIRenderHelper.drawFramebuffer(poseStack2, 1f - tValueAbsolute);
 			RenderSystem.disableBlend();
 			ms.popPose();
+			currentlyRenderingPreviousScreen = false;
 		}
 
 		// modify current screen as well
-		scale = transitionValue > 0 ? 1 - 0.5f * (1 - transitionValue) : 1 + .5f * (1 + transitionValue);
-		ms.translate(depthPointX, depthPointY, 0);
+		float scale = tValue > 0 ? 1 - 0.5f * (1 - tValueAbsolute) : 1 + .5f * (1 - tValueAbsolute);
+		int dpx = (int) (guiScaledWidth / 2);
+		//dpx = depthPointX;
+		int dpy = (int) (guiScaledHeight / 2);
+		//dpy = depthPointY;
+		ms.translate(dpx, dpy, 0);
 		ms.scale(scale, scale, 1);
-		ms.translate(-depthPointX, -depthPointY, 0);
+		ms.translate(-dpx, -dpy, 0);
 	}
 
 	@Override
@@ -248,6 +269,10 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 			x.add(sWidth + spacing);
 		});
 		ms.popPose();
+	}
+
+	public static boolean isCurrentlyRenderingPreviousScreen() {
+		return currentlyRenderingPreviousScreen;
 	}
 
 	private static String screenTitle(Screen screen) {

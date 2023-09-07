@@ -82,7 +82,7 @@ public class Theme {
 
 		put(Key.BOX_BACKGROUND_TRANSPARENT, new Color(0xdd_000000, true));
 		put(Key.BOX_BACKGROUND_FLAT, new Color(0xff_000000, false));
-		put(Key.NAV_BACK_ARROW, new Color(0xf0aa9999, true), new Color(0x30aa9999, true));
+		put(Key.NAV_BACK_ARROW, new Color(0x80_aa9999, true), new Color(0x30aa9999, true));
 
 		put(Key.CONFIG_TITLE_A, new Color(0xffc69fbc, true), new Color(0xfff6b8bb, true));
 		put(Key.CONFIG_TITLE_B, new Color(0xfff6b8bb, true), new Color(0xfffbf994, true));
