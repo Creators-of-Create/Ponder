@@ -51,7 +51,7 @@ minecraft {
             if (inMultiModWorkspace)
                 ideaModule 'createmod.Ponder.Forge.main'
             else
-                ideaModule 'catnip.Ponder.main'
+                ideaModule 'Ponder.Forge.main'
 
             property 'forge.logging.console.level', 'debug'
             jvmArgs '-XX:+IgnoreUnrecognizedVMOptions', '-XX:+AllowEnhancedClassRedefinition' // uncomment with jbr

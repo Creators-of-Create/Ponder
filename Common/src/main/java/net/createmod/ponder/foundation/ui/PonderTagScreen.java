@@ -166,6 +166,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
 	@Override
 	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+		super.renderWindow(ms, mouseX, mouseY, partialTicks);
 		renderItems(ms, mouseX, mouseY, partialTicks);
 
 		renderChapters(ms, mouseX, mouseY, partialTicks);

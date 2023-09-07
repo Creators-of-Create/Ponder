@@ -400,6 +400,7 @@ public class PonderUI extends AbstractPonderScreen {
 
 	@Override
 	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+		super.renderWindow(ms, mouseX, mouseY, partialTicks);
 		partialTicks = getPartialTicks();
 		RenderSystem.enableBlend();
 		renderVisibleScenes(ms, mouseX, mouseY,

@@ -113,6 +113,7 @@ public class PonderScene {
 		this.world = world;
 		this.namespace = namespace;
 		this.location = location;
+		this.sceneId = new ResourceLocation(namespace, "missing_title");
 
 		outliner = new Outliner();
 		elements = new HashSet<>();

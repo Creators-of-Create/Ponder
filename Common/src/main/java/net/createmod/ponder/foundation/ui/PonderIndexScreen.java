@@ -178,6 +178,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 
 	@Override
 	protected void renderWindow(PoseStack ms, int mouseX, int mouseY, float partialTicks) {
+		super.renderWindow(ms, mouseX, mouseY, partialTicks);
 		int centerX = width / 2;
 		int centerY = height / 2;
 
