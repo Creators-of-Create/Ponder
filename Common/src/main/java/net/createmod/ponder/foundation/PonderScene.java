@@ -41,6 +41,7 @@ import net.createmod.ponder.foundation.element.PonderSceneElement;
 import net.createmod.ponder.foundation.element.WorldSectionElement;
 import net.createmod.ponder.foundation.instruction.HideAllInstruction;
 import net.createmod.ponder.foundation.instruction.PonderInstruction;
+import net.createmod.ponder.foundation.registration.PonderLocalization;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Camera;
@@ -63,6 +64,8 @@ import net.minecraft.world.phys.Vec3;
 public class PonderScene {
 
 	public static final String TITLE_KEY = "header";
+
+	final PonderLocalization localization;
 
 	private boolean finished;
 //	private int sceneIndex;
@@ -102,9 +105,12 @@ public class PonderScene {
 	private int currentTime;
 	private boolean nextUpEnabled = true;
 
-	public PonderScene(@Nullable PonderLevel world, String namespace, ResourceLocation location, Collection<PonderTag> tags) {
+	public PonderScene(@Nullable PonderLevel world, PonderLocalization localization, String namespace,
+					   ResourceLocation location, Collection<PonderTag> tags) {
 		if (world != null)
 			world.scene = this;
+
+		this.localization = localization;
 
 		pointOfInterest = Vec3.ZERO;
 		textIndex = 1;
@@ -169,7 +175,7 @@ public class PonderScene {
 			return Pair.of(ItemStack.EMPTY, null);
 		if (BoundingBox.fromCorners(origin, origin.offset(new Vec3i(basePlateSize - 1, 0, basePlateSize - 1)))
 			.isInside(selectedPos)) {
-			if (PonderRegistry.editingModeActive())
+			if (PonderIndex.editingModeActive())
 				nearestHit.getValue()
 					.getFirst()
 					.selectBlock(selectedPos);
@@ -386,8 +392,8 @@ public class PonderScene {
 
 	public Supplier<String> registerText(String defaultText) {
 		final String key = "text_" + textIndex;
-		PonderLocalization.registerSpecific(sceneId, key, defaultText);
-		Supplier<String> supplier = () -> PonderLocalization.getSpecific(sceneId, key);
+		localization.registerSpecific(sceneId, key, defaultText);
+		Supplier<String> supplier = () -> localization.getSpecific(sceneId, key);
 		textIndex++;
 		return supplier;
 	}
@@ -405,7 +411,7 @@ public class PonderScene {
 	}
 
 	public String getString(String key) {
-		return PonderLocalization.getSpecific(sceneId, key);
+		return localization.getSpecific(sceneId, key);
 	}
 
 	@Nullable public PonderLevel getWorld() {

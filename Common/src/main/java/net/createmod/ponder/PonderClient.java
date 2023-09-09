@@ -18,6 +18,7 @@ public class PonderClient {
 
 		PonderTheme.loadClass();
 		ClientboundSimpleActionPacket.addAction("openPonder", () -> SimplePonderActions::openPonder);
+		ClientboundSimpleActionPacket.addAction("reloadPonder", () -> SimplePonderActions::reloadPonder);
 
 		PonderIndex.addPlugin(new BasePonderPlugin());
 

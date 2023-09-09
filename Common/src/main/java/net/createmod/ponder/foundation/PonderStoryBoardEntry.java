@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.createmod.ponder.foundation.api.scene.PonderStoryBoard;
 import net.minecraft.resources.ResourceLocation;
 
 public class PonderStoryBoardEntry {
@@ -61,24 +62,6 @@ public class PonderStoryBoardEntry {
 	public PonderStoryBoardEntry highlightAllTags() {
 		tags.add(PonderTag.Highlight.ALL);
 		return this;
-	}
-
-	public PonderStoryBoardEntry chapter(PonderChapter chapter) {
-		PonderRegistry.CHAPTERS.addStoriesToChapter(chapter, this);
-		return this;
-	}
-
-	public PonderStoryBoardEntry chapters(PonderChapter... chapters) {
-		for (PonderChapter c : chapters)
-			chapter(c);
-		return this;
-	}
-
-	// Builder end
-
-	@FunctionalInterface
-	public interface PonderStoryBoard {
-		void program(SceneBuilder scene, SceneBuildingUtil util);
 	}
 
 }

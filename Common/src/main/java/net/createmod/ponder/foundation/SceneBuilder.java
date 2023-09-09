@@ -121,7 +121,7 @@ public class SceneBuilder {
 	 */
 	public void title(String sceneId, String title) {
 		scene.sceneId = new ResourceLocation(scene.getNamespace(), sceneId);
-		PonderLocalization.registerSpecific(scene.sceneId, PonderScene.TITLE_KEY, title);
+		scene.localization.registerSpecific(scene.sceneId, PonderScene.TITLE_KEY, title);
 	}
 
 	/**

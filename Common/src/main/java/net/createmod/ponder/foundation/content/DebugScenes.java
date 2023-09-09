@@ -1,14 +1,13 @@
 package net.createmod.ponder.foundation.content;
 
 import net.createmod.catnip.utility.Pointing;
-import net.createmod.ponder.Ponder;
 import net.createmod.ponder.foundation.ElementLink;
 import net.createmod.ponder.foundation.PonderPalette;
-import net.createmod.ponder.foundation.PonderRegistrationHelper;
-import net.createmod.ponder.foundation.PonderStoryBoardEntry.PonderStoryBoard;
 import net.createmod.ponder.foundation.SceneBuilder;
 import net.createmod.ponder.foundation.SceneBuildingUtil;
 import net.createmod.ponder.foundation.Selection;
+import net.createmod.ponder.foundation.api.registration.PonderSceneRegistrationHelper;
+import net.createmod.ponder.foundation.api.scene.PonderStoryBoard;
 import net.createmod.ponder.foundation.element.InputWindowElement;
 import net.createmod.ponder.foundation.element.ParrotElement;
 import net.createmod.ponder.foundation.element.ParrotElement.DancePose;
@@ -27,28 +26,24 @@ import net.minecraft.world.phys.Vec3;
 
 public class DebugScenes {
 
-	private static final PonderRegistrationHelper HELPER = new PonderRegistrationHelper(Ponder.MOD_ID);
-
 	private static int index;
 
-	public static void registerAll() {
+	public static void registerAll(PonderSceneRegistrationHelper<ResourceLocation> helper) {
 		index = 1;
-		add(DebugScenes::coordinateScene);
-		add(DebugScenes::blocksScene);
-		add(DebugScenes::fluidsScene);
-		add(DebugScenes::offScreenScene);
-		add(DebugScenes::particleScene);
-		add(DebugScenes::controlsScene);
-		add(DebugScenes::birbScene);
-		add(DebugScenes::sectionsScene);
+		add(helper, DebugScenes::coordinateScene);
+		add(helper, DebugScenes::blocksScene);
+		add(helper, DebugScenes::fluidsScene);
+		add(helper, DebugScenes::offScreenScene);
+		add(helper, DebugScenes::particleScene);
+		add(helper, DebugScenes::controlsScene);
+		add(helper, DebugScenes::birbScene);
+		add(helper, DebugScenes::sectionsScene);
 		//add(DebugScenes::itemScene);
 	}
 
-	private static void add(PonderStoryBoard sb) {
+	private static void add(PonderSceneRegistrationHelper<ResourceLocation> helper, PonderStoryBoard sb) {
 		String schematicPath = "debug/scene_" + index;
-		HELPER.addStoryBoard(new ResourceLocation("spyglass"), schematicPath, sb)
-			.highlightAllTags()
-			.chapter(HELPER.getOrCreateChapter("debug"));
+		helper.addStoryBoard(new ResourceLocation("spyglass"), schematicPath, sb).highlightAllTags();
 		index++;
 	}
 
@@ -93,7 +88,7 @@ public class DebugScenes {
 			.text("Blocks can be modified");
 		scene.idle(20);
 		scene.world.replaceBlocks(util.select.fromTo(1, 1, 3, 2, 2, 4),
-			Blocks.WHITE_CONCRETE.defaultBlockState(), true);
+								  Blocks.WHITE_CONCRETE.defaultBlockState(), true);
 		scene.idle(10);
 		scene.world.replaceBlocks(util.select.position(3, 1, 1), Blocks.GOLD_BLOCK.defaultBlockState(), true);
 		scene.rotateCameraY(180);
@@ -125,7 +120,7 @@ public class DebugScenes {
 
 		for (int i = 0; i < 10; i++) {
 			scene.overlay.chaseBoundingBoxOutline(PonderPalette.RED, outlineSlot,
-				i % 2 == 0 ? boundingBox1 : boundingBox2, 15);
+												  i % 2 == 0 ? boundingBox1 : boundingBox2, 15);
 			scene.idle(3);
 			scene.special.movePointOfInterest(i % 2 == 0 ? poi1 : poi2);
 			scene.idle(12);

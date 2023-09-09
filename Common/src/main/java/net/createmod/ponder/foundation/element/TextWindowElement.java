@@ -9,7 +9,7 @@ import com.mojang.math.Matrix4f;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.utility.theme.Color;
-import net.createmod.ponder.foundation.PonderLocalization;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderPalette;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
@@ -68,7 +68,7 @@ public class TextWindowElement extends AnimatedOverlayElement {
 		}
 
 		public Builder sharedText(ResourceLocation key) {
-			textGetter = () -> PonderLocalization.getShared(key);
+			textGetter = () -> PonderIndex.getLangAccess().getShared(key);
 			return this;
 		}
 

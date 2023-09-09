@@ -3,6 +3,7 @@ package net.createmod.ponder.foundation.ui;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -20,8 +21,7 @@ import net.createmod.catnip.utility.layout.PaginationState;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderIndex;
-import net.createmod.ponder.foundation.PonderPlugin;
-import net.createmod.ponder.foundation.PonderRegistry;
+import net.createmod.ponder.foundation.api.registration.PonderPlugin;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
@@ -60,12 +60,15 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 		super.init();
 
 		items.clear();
-		PonderRegistry.ALL.keySet()
-			.stream()
-			.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
-			.filter(entry -> entry.item != null)
-			.filter(this::isItemIncluded)
-			.forEach(items::add);
+		PonderIndex.getSceneAccess()
+				.getRegisteredEntries()
+				.stream()
+				.map(Map.Entry::getKey)
+				.distinct()
+				.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
+				.filter(entry -> entry.item != null)
+				.filter(this::isItemIncluded)
+				.forEach(items::add);
 
 		items.sort(Comparator.comparing(ItemEntry::key));
 
@@ -126,7 +129,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 			PonderButton b = new PonderButton(centerX + layoutHelper.getX() + 4, centerY + layoutHelper.getY() + 4)
 					.showing(new ItemStack(entry.item))
 					.withCallback((x, y) -> {
-						if (!PonderRegistry.ALL.containsKey(entry.key))
+						if (!PonderIndex.getSceneAccess().doScenesExistForId(entry.key))
 							return;
 
 						centerScalingOn(x, y);

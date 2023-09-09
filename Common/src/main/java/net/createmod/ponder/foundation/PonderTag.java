@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.foundation.registration.PonderLocalization;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +28,8 @@ public class PonderTag implements ScreenElement {
 	@Nullable private ResourceLocation icon;
 	private ItemStack itemIcon = ItemStack.EMPTY;
 	private ItemStack mainItem = ItemStack.EMPTY;
+	private String defaultTitle = "";
+	private String defaultDescription = "";
 
 	public PonderTag(ResourceLocation id) {
 		this.id = id;
@@ -41,22 +44,18 @@ public class PonderTag implements ScreenElement {
 	}
 
 	public String getTitle() {
-		return PonderLocalization.getTag(id);
+		return PonderIndex.getLangAccess().getTagName(id);
 	}
 
 	public String getDescription() {
-		return PonderLocalization.getTagDescription(id);
+		return PonderIndex.getLangAccess().getTagDescription(id);
 	}
 
 	// Builder
 
 	public PonderTag defaultLang(String title, String description) {
-		PonderLocalization.registerTag(id, title, description);
-		return this;
-	}
-
-	public PonderTag addToIndex() {
-		PonderRegistry.TAGS.listTag(this);
+		this.defaultTitle = title;
+		this.defaultDescription = description;
 		return this;
 	}
 
@@ -100,6 +99,10 @@ public class PonderTag implements ScreenElement {
 				.render(ms);
 		}
 		ms.popPose();
+	}
+
+	public void registerLang(PonderLocalization localization) {
+		localization.registerTag(id, defaultTitle, defaultDescription);
 	}
 
 	private static PonderTag create(String id) {

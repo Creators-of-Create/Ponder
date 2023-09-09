@@ -1,7 +1,5 @@
 package net.createmod.ponder.foundation;
 
-import javax.annotation.Nonnull;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -24,13 +22,7 @@ public class PonderChapter implements ScreenElement {
 	}
 
 	public String getTitle() {
-		return PonderLocalization.getChapter(id);
-	}
-
-	public PonderChapter addTagsToChapter(PonderTag... tags) {
-		for (PonderTag t : tags)
-			PonderRegistry.TAGS.add(t, this);
-		return this;
+		return "";
 	}
 
 	@Override
@@ -43,13 +35,14 @@ public class PonderChapter implements ScreenElement {
 		ms.popPose();
 	}
 
-	@Nonnull
+	@Deprecated
 	public static PonderChapter of(ResourceLocation id) {
-		PonderChapter chapter = PonderRegistry.CHAPTERS.getChapter(id);
+		/*PonderChapter chapter = PonderRegistry.CHAPTERS.getChapter(id);
 		if (chapter == null) {
 			 chapter = PonderRegistry.CHAPTERS.addChapter(new PonderChapter(id));
 		}
 
-		return chapter;
+		return chapter;*/
+		return null;
 	}
 }

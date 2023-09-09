@@ -1,6 +1,6 @@
 package net.createmod.ponder.foundation.ui;
 
-import static net.createmod.ponder.foundation.PonderLocalization.UI_PREFIX;
+import static net.createmod.ponder.foundation.registration.PonderLocalization.UI_PREFIX;
 
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;

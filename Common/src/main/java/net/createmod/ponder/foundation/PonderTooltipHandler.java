@@ -14,6 +14,7 @@ import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.foundation.registration.PonderLocalization;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
@@ -113,7 +114,7 @@ public class PonderTooltipHandler {
 
 		if (stack.isEmpty())
 			return;
-		if (!PonderRegistry.ALL.containsKey(CatnipServices.REGISTRIES.getKeyOrThrow(stack.getItem())))
+		if (!PonderIndex.getSceneAccess().doScenesExistForId(CatnipServices.REGISTRIES.getKeyOrThrow(stack.getItem())))
 			return;
 
 		if (prevStack.isEmpty() || !prevStack.sameItem(stack))

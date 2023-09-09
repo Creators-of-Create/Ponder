@@ -5,11 +5,31 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import net.minecraft.resources.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.base.Stopwatch;
+
+import net.createmod.ponder.enums.PonderConfig;
+import net.createmod.ponder.foundation.api.registration.PonderPlugin;
+import net.createmod.ponder.foundation.api.registration.SceneRegistryAccess;
+import net.createmod.ponder.foundation.api.registration.TagRegistryAccess;
+import net.createmod.ponder.foundation.registration.DefaultPonderSceneRegistrationHelper;
+import net.createmod.ponder.foundation.registration.DefaultPonderTagRegistrationHelper;
+import net.createmod.ponder.foundation.registration.DefaultSharedTextRegistrationHelper;
+import net.createmod.ponder.foundation.registration.PonderLocalization;
+import net.createmod.ponder.foundation.registration.PonderSceneRegistry;
+import net.createmod.ponder.foundation.registration.PonderTagRegistry;
 
 public class PonderIndex {
 
+	private static final PonderLocalization LOCALIZATION = new PonderLocalization();
+	private static final PonderSceneRegistry SCENES = new PonderSceneRegistry(LOCALIZATION);
+	private static final PonderTagRegistry TAGS = new PonderTagRegistry(LOCALIZATION);
+
 	private static final Set<PonderPlugin> plugins = new HashSet<>();
+
+	private static final Logger LOGGER = LogManager.getLogger("PonderIndex");
 
 	public static void addPlugin(PonderPlugin plugin) {
 		plugins.add(plugin);
@@ -23,19 +43,45 @@ public class PonderIndex {
 		return plugins.stream();
 	}
 
+	public static void reload() {
+		LOGGER.info("Reloading all Ponder Plugins ...");
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		LOCALIZATION.clearShared();
+		SCENES.clearRegistry();
+		TAGS.clearRegistry();
+
+		registerAll();
+		gatherSharedText();
+		LOGGER.info("Reloading Ponder Plugins took {}", stopwatch.stop());
+	}
+
 	public static void registerAll() {
-		forEachPlugin(PonderPlugin::registerScenes);
-		forEachPlugin(PonderPlugin::registerTags);
-		//forEachPlugin(PonderPlugin::registerChapters);
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		forEachPlugin(plugin -> plugin.registerScenes(new DefaultPonderSceneRegistrationHelper(plugin.getModId(), SCENES)));
+		LOGGER.info("Registering Ponder Scenes took {}", stopwatch.stop());
+
+		stopwatch.reset().start();
+		forEachPlugin(plugin -> plugin.registerTags(new DefaultPonderTagRegistrationHelper(plugin.getModId(), TAGS, LOCALIZATION)));
+		LOGGER.info("Registering Ponder Tags took {}", stopwatch.stop());
 	}
 
 	public static void gatherSharedText() {
-		forEachPlugin(plugin ->
-				plugin.registerSharedText((key, value) -> add(plugin.getModID(), key, value))
-		);
+		forEachPlugin(plugin -> plugin.registerSharedText(new DefaultSharedTextRegistrationHelper(plugin.getModId(), LOCALIZATION)));
 	}
 
-	private static void add(String modID, String key, String value) {
-		PonderLocalization.registerShared(new ResourceLocation(modID, key), value);
+	public static SceneRegistryAccess getSceneAccess() {
+		return SCENES.access();
+	}
+
+	public static TagRegistryAccess getTagAccess() {
+		return TAGS.access();
+	}
+
+	public static PonderLocalization getLangAccess() {
+		return LOCALIZATION;
+	}
+
+	public static boolean editingModeActive() {
+		return PonderConfig.Client().editingMode.get();
 	}
 }
