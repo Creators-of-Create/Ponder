@@ -25,13 +25,13 @@ dependencies {
     if (catnipInWorkspace) {
         modCompileOnly project(":catnip:Common")
     } else {
-        compileOnly "net.createmod.catnip:Catnip-Common-${minecraft_version}:${catnip_version}"
+        modCompileOnly "net.createmod.catnip:Catnip-Common-${minecraft_version}:${catnip_version}"
     }
 
     if (flywheelInWorkspace) {
         compileOnly project(':Flywheel')
     } else {
-        compileOnly "com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"
+        modCompileOnly "com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"
     }
 
     implementation 'com.electronwill.night-config:core:3.6.5'
