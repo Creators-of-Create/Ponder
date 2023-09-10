@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.2.+'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 base {
@@ -7,7 +7,8 @@ base {
     group = 'net.createmod.ponder'
 }
 
-def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
+def commonPath = findProject(":Common") != null ? ":Common" : ":${project_id}:Common"
+def commonProject = project(commonPath)
 
 boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
 boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
@@ -15,16 +16,44 @@ boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
 project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
 project.logger.lifecycle("Dependencies included in Workspace: [Flywheel: ${flywheelInWorkspace}], [Catnip: ${catnipInWorkspace}]")
 
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+loom {
+    accessWidenerPath = commonProject.loom.accessWidenerPath
+
+    mods {
+        main { // to match the default mod generated for Forge
+            sourceSet project.sourceSets.main
+            sourceSet commonProject.sourceSets.main
+        }
+    }
+}
+
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin since it *excludes* files.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
+    // The following line declares the mojmap mappings, you may use other mappings as well
     mappings loom.officialMojangMappings()
+
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    common(project(path: commonPath, configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: commonPath, configuration: "transformProductionFabric")) { transitive false }
 
     for (String module in port_lib_modules.split(",")) {
         modApi "io.github.fabricators_of_create.Porting-Lib:$module:$port_lib_version+$minecraft_version"
     }
-    //modImplementation include("io.github.fabricators_of_create:Porting-Lib:${project.port_lib_version}+${project.minecraft_version}-stable")
 
     if (catnipInWorkspace) {
         implementation project(path: ':catnip:Common')
@@ -41,41 +70,11 @@ dependencies {
     implementation(include("javax.annotation:javax.annotation-api:1.3.2"))
     implementation(include("com.google.code.findbugs:jsr305:3.0.2"))
     //modImplementation "com.terraformersmc:modmenu:4.1.2"
-    implementation commonProject
-}
-
-loom {
-    runs {
-        client {
-            client()
-            setConfigName("Ponder Fabric Client")
-            ideConfigGenerated(true)
-            runDir("run")
-        }
-        server {
-            server()
-            setConfigName("Ponder Fabric Server")
-            ideConfigGenerated(true)
-            runDir("run")
-        }
-    }
-
-    accessWidenerPath = file("src/main/resources/fabric_ponder.accesswidener")
-}
-
-tasks.withType(JavaCompile).configureEach {
-    source(commonProject.sourceSets.main.allSource)
-}
-tasks.withType(Javadoc).configureEach {
-    source(commonProject.sourceSets.main.allJava)
-}
-tasks.named("sourcesJar", Jar) {
-    from(commonProject.sourceSets.main.allSource)
 }
 
 processResources {
 
-    from commonProject.sourceSets.main.resources
+    //from commonProject.sourceSets.main.resources
 
     def buildProps = project.properties.clone()
 
@@ -96,13 +95,38 @@ artifacts {
     dev jar
 }
 
+shadowJar {
+    configurations = [project.configurations.shadowCommon]
+    archiveClassifier = "dev-shadow"
+}
+
+remapJar {
+    injectAccessWidener = true
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+    archiveClassifier = null
+}
+
+jar {
+    archiveClassifier = "dev"
+}
+
+sourcesJar {
+    def commonSources = commonProject.sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
+}
+
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
+
 // -- MAVEN PUBLISHING --
 project.publishing {
-
     publications {
-
         mavenJava(MavenPublication) {
-
             groupId project.group
             artifactId base.archivesName.get()
             version project.version
@@ -111,15 +135,11 @@ project.publishing {
     }
 
     repositories {
-
         maven {
-
             // Sets maven credentials if they are provided. This is generally
             // only used for external/remote uploads.
             if (project.hasProperty('mavenUsername') && project.hasProperty('mavenPassword')) {
-
                 credentials {
-
                     username findProperty('mavenUsername')
                     password findProperty('mavenPassword')
                 }
@@ -127,5 +147,6 @@ project.publishing {
 
             url getDefaultString('mavenURL', 'undefined', true)
         }
+        //mavenLocal()
     }
 }
