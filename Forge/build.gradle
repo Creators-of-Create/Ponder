@@ -139,8 +139,8 @@ dependencies {
     shadowCommon(project(path: commonPath, configuration: "transformProductionForge")) { transitive false }
 
     if (catnipInWorkspace) {
-        modImplementation project(path: ":catnip:Common")
-        modImplementation project(path: ":catnip:Forge")
+        implementation(project(path: ":catnip:Common", configuration: "namedElements"))
+        implementation(project(path: ":catnip:Forge", configuration: "namedElements"))
     } else {
         modImplementation("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}")
     }

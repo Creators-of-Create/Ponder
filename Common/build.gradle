@@ -23,7 +23,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
 
     if (catnipInWorkspace) {
-        modCompileOnly project(":catnip:Common")
+        implementation(project(path: ":catnip:Common", configuration: "namedElements"))
     } else {
         modCompileOnly "net.createmod.catnip:Catnip-Common-${minecraft_version}:${catnip_version}"
     }

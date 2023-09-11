@@ -56,8 +56,8 @@ dependencies {
     }
 
     if (catnipInWorkspace) {
-        implementation project(path: ':catnip:Common')
-        implementation project(path: ':catnip:Fabric', configuration: 'dev')
+        implementation(project(path: ":catnip:Common", configuration: "namedElements"))
+        implementation(project(path: ":catnip:Fabric", configuration: "namedElements"))
     } else {
         modImplementation "net.createmod.catnip:Catnip-Fabric-${minecraft_version}:${catnip_version}"
     }
