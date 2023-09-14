@@ -12,6 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 @Mixin(ParticleEngine.class)
 public interface ParticleEngineAccessor {
 	// This field cannot be ATed because its type is patched by Forge
-	@Accessor("f_107293_")
+	@Accessor("providers")
 	Map<ResourceLocation, ParticleProvider<?>> create$getProviders();
 }
