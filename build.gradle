@@ -1,28 +1,9 @@
-plugins {
-    id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.1-SNAPSHOT" apply false
-}
-
 apply from: 'gradle/property_loader.gradle'
 apply from: 'gradle/build_number.gradle'
 
 def projVersion = project.version
 
-architectury {
-    minecraft = project.minecraft_version
-}
-
 subprojects {
-    apply plugin: "dev.architectury.loom"
-    apply plugin: "architectury-plugin"
-
-    architectury {
-        compileOnly()
-    }
-
-    loom {
-        silentMojangMappingsLicense()
-    }
 
     project.version = projVersion
 
@@ -41,16 +22,37 @@ subprojects {
     project.logger.lifecycle("Mixin ${project.ext.mixin_enabled ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
 
     repositories {
-        //mavenLocal()
-        mavenCentral()
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' } // Sponge / Mixin
-        maven { url = 'https://maven.blamejared.com' } // BlameJared Maven (CrT / Bookshelf)
-        maven { url = 'https://maven.terraformersmc.com/releases/' } // modmenu
-        maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // Fuzs Mod Resources
-        maven { url = "https://jitpack.io" }
-        maven { url = "https://mvn.devos.one/snapshots/" } // Jay's Maven
-        maven { url = 'https://maven.tterrag.com' } // Registrate and Flywheel
-        maven { url = "https://maven.createmod.net" } // Catnip and Ponder
+
+        maven {
+            name = 'Mod Menu'
+            url = 'https://maven.terraformersmc.com/releases/'
+        }
+
+        maven {
+            name = "Fuzs Mod Resources"
+            url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+        }
+
+        maven {
+            name = "JitPack"
+            url = "https://jitpack.io"
+        }
+
+        maven {
+            name = "Jay's Maven"
+            url = "https://mvn.devos.one/snapshots/"
+        }
+
+        maven {
+            // location of the maven for Registrate and Flywheel
+            name = 'tterrag Maven'
+            url = 'https://maven.tterrag.com'
+        }
+
+        maven {
+            name = "Createmod"
+            url = "https://maven.createmod.net"
+        }
 
     }
 }

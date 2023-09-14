@@ -21,6 +21,22 @@ jar {
     }
 }
 
+repositories {
+
+    mavenCentral()
+
+    maven {
+        name = 'Sponge / Mixin'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+
+    maven {
+        name = 'BlameJared Maven (CrT / Bookshelf)'
+        url = 'https://maven.blamejared.com'
+    }
+}
+
+
 tasks.withType(JavaCompile).configureEach {
 
     it.options.encoding = 'UTF-8'
