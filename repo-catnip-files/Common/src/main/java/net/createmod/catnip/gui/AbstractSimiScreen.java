@@ -94,7 +94,7 @@ public abstract class AbstractSimiScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		partialTicks = minecraft.getFrameTime();
+		partialTicks = NavigatableSimiScreen.currentlyRenderingPreviousScreen ? 0 : minecraft.getFrameTime();
 		PoseStack poseStack = graphics.pose();
 
 		poseStack.pushPose();

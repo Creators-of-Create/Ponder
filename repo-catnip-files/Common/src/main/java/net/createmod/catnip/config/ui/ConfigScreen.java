@@ -34,6 +34,24 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class ConfigScreen extends AbstractSimiScreen {
 
+	public static final List<UnaryOperator<String>> displayNameKeys = List.of(
+			modID -> "catnip." + modID + ".display_name",
+			modID -> "constants." + modID + ".mod_name",
+			modID -> "itemGroup." + modID + ".base",
+			modID -> "itemGroup." + modID + "." + modID
+	);
+
+	public static final Map<String, String> knownModDisplayNames = Map.ofEntries(
+			Map.entry("forge", "Forge"),
+			Map.entry("jei", "Just Enough Items"),
+			Map.entry("computercraft", "ComputerCraft"),
+			Map.entry("catnip", "Catnip"),
+			Map.entry("ponder", "Ponder"),
+			Map.entry("create", "Create"),
+			Map.entry("flywheel", "Flywheel"),
+			Map.entry("ae2", "Applied Energistics 2")
+	);
+
 	public static final Map<String, TriConsumer<Screen, GuiGraphics, Float>> backgrounds = new HashMap<>();
 	public static final PhysicalFloat cogSpin = PhysicalFloat.create().withLimit(10f).withDrag(0.3).addForce(new Force.Static(.2f));
 	@Nullable public static String modID = null;
@@ -103,23 +121,6 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 	public boolean isPauseScreen() {
 		return true;
 	}
-
-	public static final List<UnaryOperator<String>> displayNameKeys = List.of(
-			modID -> "catnip." + modID + ".display_name",
-			modID -> "constants." + modID + ".mod_name",
-			modID -> "itemGroup." + modID + ".base",
-			modID -> "itemGroup." + modID + "." + modID
-	);
-
-	public static final Map<String, String> knownModDisplayNames = Map.ofEntries(
-			Map.entry("jei", "Just Enough Items"),
-			Map.entry("computercraft", "ComputerCraft"),
-			Map.entry("catnip", "Catnip"),
-			Map.entry("ponder", "Ponder"),
-			Map.entry("create", "Create"),
-			Map.entry("flywheel", "Flywheel"),
-			Map.entry("ae2", "Applied Energistics 2")
-	);
 
 	/**
 	 * This method checks some language keys to see if the mod has declared a display name via lang.

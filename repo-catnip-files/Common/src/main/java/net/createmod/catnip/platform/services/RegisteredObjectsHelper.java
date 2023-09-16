@@ -48,4 +48,14 @@ public interface RegisteredObjectsHelper<R> {
 		return getBlock(location);
 	}
 
+	default ResourceLocation getKeyOrThrow(ItemLike itemLike) {
+		if (itemLike instanceof Item item) {
+			return getKeyOrThrow(item);
+		} else if (itemLike instanceof Block block) {
+			return getKeyOrThrow(block);
+		}
+
+		throw new IllegalArgumentException("Could not get key for itemLike " + itemLike + "!");
+	}
+
 }

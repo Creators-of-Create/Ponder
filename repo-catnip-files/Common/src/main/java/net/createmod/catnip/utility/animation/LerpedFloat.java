@@ -50,6 +50,11 @@ public class LerpedFloat {
 		return this;
 	}
 
+	public LerpedFloat chaseTimed(double value, int ticks) {
+		double diff = value - this.value;
+		return chase(value, Math.abs(diff / ticks), Chaser.LINEAR);
+	}
+
 	public LerpedFloat disableSmartAngleChasing() {
 		angularChase = false;
 		return this;
