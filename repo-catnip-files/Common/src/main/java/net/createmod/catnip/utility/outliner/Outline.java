@@ -1,8 +1,8 @@
 package net.createmod.catnip.utility.outliner;
 
+import com.jozufozu.flywheel.util.transform.TransformStack;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.createmod.catnip.render.BindableTexture;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.math.AngleHelper;
@@ -54,9 +54,13 @@ public abstract class Outline {
 		float vAngle = AngleHelper.deg(Mth.atan2(hDistance, diff.y())) - 90;
 
 		poseStack.pushPose();
-		poseStack.translate(start.x - camera.x, start.y - camera.y, start.z - camera.z);
-		poseStack.mulPose(Axis.YP.rotationDegrees(hAngle));
-		poseStack.mulPose(Axis.XP.rotationDegrees(vAngle));
+		TransformStack.cast(poseStack)
+				.translate(start.x - camera.x, start.y - camera.y, start.z - camera.z)
+				.rotateY(hAngle)
+				.rotateX(vAngle);
+		//poseStack.translate(start.x - camera.x, start.y - camera.y, start.z - camera.z);
+		//poseStack.mulPose(Axis.YP.rotationDegrees(hAngle));
+		//poseStack.mulPose(Axis.XP.rotationDegrees(vAngle));
 		bufferCuboidLine(poseStack.last(), consumer, new Vector3f(), Direction.SOUTH, length, width, color, lightmap,
 				disableNormals);
 		poseStack.popPose();

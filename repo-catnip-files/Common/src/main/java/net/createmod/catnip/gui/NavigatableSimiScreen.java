@@ -1,19 +1,8 @@
 package net.createmod.catnip.gui;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.apache.commons.lang3.mutable.MutableInt;
-import org.joml.Matrix4f;
-import org.lwjgl.glfw.GLFW;
-
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.Couple;
@@ -26,6 +15,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import org.apache.commons.lang3.mutable.MutableBoolean;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 
@@ -170,7 +167,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 			ms.pushPose();
 			UIRenderHelper.framebuffer.clear(Minecraft.ON_OSX);
 			UIRenderHelper.framebuffer.bindWrite(true);
-			lastScreen.render(graphics, mouseX, mouseY, partialTicks);
+			lastScreen.render(graphics, 0, 0, partialTicks);
 
 			ms.popPose();
 
@@ -188,9 +185,9 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
-			Matrix4f matrix4f = Matrix4f.orthographic(guiScaledWidth, -guiScaledHeight, 1000.0F, 3000.0F);
+			Matrix4f matrix4f = new Matrix4f().setOrtho(0.0F, guiScaledWidth, guiScaledHeight, 0.0F, 1000.0F, 3000.0F);
 			PoseStack poseStack2 = new PoseStack();
-			poseStack2.last().pose().load(matrix4f);
+			poseStack2.last().pose().set(matrix4f);
 			poseStack2.translate(dpx, dpy, 0);
 			poseStack2.scale(scale, scale, 1);
 			poseStack2.translate(-dpx, -dpy, 0);

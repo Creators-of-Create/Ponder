@@ -43,7 +43,7 @@ public class ForgeCatnipClient {
 
 		@SubscribeEvent
 		public static void onRenderWorld(RenderLevelStageEvent event) {
-			if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_LEVEL)
+			if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES)
 				return;
 
 			CatnipClient.onRenderWorld(event.getPoseStack());

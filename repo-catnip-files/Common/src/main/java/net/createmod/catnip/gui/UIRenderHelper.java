@@ -1,16 +1,5 @@
 package net.createmod.catnip.gui;
 
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -22,8 +11,8 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
-
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
@@ -33,6 +22,15 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.util.Mth;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
+import javax.annotation.Nullable;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UIRenderHelper {
 
@@ -213,7 +211,7 @@ public class UIRenderHelper {
 		Color fc3 = Color.mixColors(c1, c2, (indent + width) / (width + 2f * indent));
 		Color fc4 = Color.mixColors(c1, c2, 1);
 
-		//RenderSystem.disableTexture();
+		RenderSystem.disableDepthTest();
 		RenderSystem.enableBlend();
 		RenderSystem.disableCull();
 		RenderSystem.defaultBlendFunc();
@@ -389,15 +387,17 @@ public class UIRenderHelper {
 			float tx = (float) viewWidth / (float) width;
 			float ty = (float) viewHeight / (float) height;
 
+			RenderSystem.disableDepthTest();
+
 			Minecraft minecraft = Minecraft.getInstance();
 			ShaderInstance shaderinstance = minecraft.gameRenderer.blitShader;
 			shaderinstance.setSampler("DiffuseSampler", colorTextureId);
 			//Matrix4f matrix4f = Matrix4f.orthographic(guiScaledWidth, -guiScaledHeight, 1000.0F, 3000.0F);
 			Matrix4f matrix4f = poseStack.last().pose();
 			Matrix4f projectionMatrix = RenderSystem.getProjectionMatrix();
-			RenderSystem.setProjectionMatrix(matrix4f);
+			RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.ORTHOGRAPHIC_Z);
 			if (shaderinstance.MODEL_VIEW_MATRIX != null) {
-				shaderinstance.MODEL_VIEW_MATRIX.set(Matrix4f.createTranslateMatrix(0.0F, 0.0F, -2000.0F));
+				shaderinstance.MODEL_VIEW_MATRIX.set(new Matrix4f().translation(0.0F, 0.0F, -2000.0F));
 			}
 
 			if (shaderinstance.PROJECTION_MATRIX != null) {
@@ -408,24 +408,19 @@ public class UIRenderHelper {
 
 			//bindRead();
 
-			// test
-			float progress = 1 - alpha;
-			int z = (int) (progress * -1000);
-			//
-
 			Tesselator tesselator = RenderSystem.renderThreadTesselator();
 			BufferBuilder bufferbuilder = tesselator.getBuilder();
 			bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
-			bufferbuilder.vertex(0 , vy, z).uv(0 , 0 ).color(1, 1, 1, alpha).endVertex();
-			bufferbuilder.vertex(vx, vy, z).uv(tx, 0 ).color(1, 1, 1, alpha).endVertex();
-			bufferbuilder.vertex(vx, 0 , z).uv(tx, ty).color(1, 1, 1, alpha).endVertex();
-			bufferbuilder.vertex(0 , 0 , z).uv(0 , ty).color(1, 1, 1, alpha).endVertex();
+			bufferbuilder.vertex(0 , vy, 0).uv(0 , 0 ).color(1, 1, 1, alpha).endVertex();
+			bufferbuilder.vertex(vx, vy, 0).uv(tx, 0 ).color(1, 1, 1, alpha).endVertex();
+			bufferbuilder.vertex(vx, 0 , 0).uv(tx, ty).color(1, 1, 1, alpha).endVertex();
+			bufferbuilder.vertex(0 , 0 , 0).uv(0 , ty).color(1, 1, 1, alpha).endVertex();
 
 			BufferUploader.draw(bufferbuilder.end());
 
 			shaderinstance.clear();
-			RenderSystem.setProjectionMatrix(projectionMatrix);
+			RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.ORTHOGRAPHIC_Z);
 			//unbindRead();
 		}
 

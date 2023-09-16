@@ -8,6 +8,7 @@ import net.createmod.catnip.utility.FabricClientResourceReloadListener;
 import net.createmod.catnip.utility.placement.PlacementClient;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.server.packs.PackType;
 
@@ -21,6 +22,7 @@ public class FabricCatnipClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> CatnipClient.onTick());
 		ClientWorldEvents.LOAD.register((client, world) -> CatnipClient.onLoadWorld(world));
 		ClientWorldEvents.UNLOAD.register((client, world) -> CatnipClient.onUnloadWorld(world));
+		WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> CatnipClient.onRenderWorld(context.matrixStack()));
 		OverlayRenderCallback.EVENT.register((stack, partialTicks, window, type) -> {
 			if (type != OverlayRenderCallback.Types.CROSSHAIRS)
 				return false;
