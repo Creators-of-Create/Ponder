@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.createmod.ponder.api.scene.PonderStoryBoard;
 import net.minecraft.resources.ResourceLocation;
 
 public class PonderStoryBoardEntry {
@@ -12,7 +13,8 @@ public class PonderStoryBoardEntry {
 	private final String namespace;
 	private final ResourceLocation schematicLocation;
 	private final ResourceLocation component;
-	private final List<PonderTag> tags;
+	private final List<ResourceLocation> tags;
+	private final List<SceneOrderingEntry> orderingEntries;
 
 	public PonderStoryBoardEntry(PonderStoryBoard board, String namespace, ResourceLocation schematicLocation, ResourceLocation component) {
 		this.board = board;
@@ -20,6 +22,7 @@ public class PonderStoryBoardEntry {
 		this.schematicLocation = schematicLocation;
 		this.component = component;
 		this.tags = new ArrayList<>();
+		this.orderingEntries = new ArrayList<>();
 	}
 
 	public PonderStoryBoardEntry(PonderStoryBoard board, String namespace, String schematicPath, ResourceLocation component) {
@@ -42,18 +45,40 @@ public class PonderStoryBoardEntry {
 		return component;
 	}
 
-	public List<PonderTag> getTags() {
+	public List<ResourceLocation> getTags() {
 		return tags;
+	}
+
+	public List<SceneOrderingEntry> getOrderingEntries() {
+		return orderingEntries;
 	}
 
 	// Builder start
 
-	public PonderStoryBoardEntry highlightTag(PonderTag tag) {
+	public PonderStoryBoardEntry orderBefore(String otherSceneId) {
+		return orderBefore(namespace, otherSceneId);
+	}
+
+	public PonderStoryBoardEntry orderBefore(String namespace, String otherSceneId) {
+		this.orderingEntries.add(SceneOrderingEntry.before(namespace, otherSceneId));
+		return this;
+	}
+
+	public PonderStoryBoardEntry orderAfter(String otherSceneId) {
+		return orderAfter(namespace, otherSceneId);
+	}
+
+	public PonderStoryBoardEntry orderAfter(String namespace, String otherSceneId) {
+		this.orderingEntries.add(SceneOrderingEntry.after(namespace, otherSceneId));
+		return this;
+	}
+
+	public PonderStoryBoardEntry highlightTag(ResourceLocation tag) {
 		tags.add(tag);
 		return this;
 	}
 
-	public PonderStoryBoardEntry highlightTags(PonderTag... tags) {
+	public PonderStoryBoardEntry highlightTags(ResourceLocation... tags) {
 		Collections.addAll(this.tags, tags);
 		return this;
 	}
@@ -63,22 +88,19 @@ public class PonderStoryBoardEntry {
 		return this;
 	}
 
-	public PonderStoryBoardEntry chapter(PonderChapter chapter) {
-		PonderRegistry.CHAPTERS.addStoriesToChapter(chapter, this);
-		return this;
+	public record SceneOrderingEntry(SceneOrderingType type, ResourceLocation sceneId) {
+
+		public static SceneOrderingEntry after(String namespace, String sceneId) {
+			return new SceneOrderingEntry(SceneOrderingType.AFTER, new ResourceLocation(namespace, sceneId));
+		}
+
+		public static SceneOrderingEntry before(String namespace, String sceneId) {
+			return new SceneOrderingEntry(SceneOrderingType.BEFORE, new ResourceLocation(namespace, sceneId));
+		}
 	}
 
-	public PonderStoryBoardEntry chapters(PonderChapter... chapters) {
-		for (PonderChapter c : chapters)
-			chapter(c);
-		return this;
-	}
-
-	// Builder end
-
-	@FunctionalInterface
-	public interface PonderStoryBoard {
-		void program(SceneBuilder scene, SceneBuildingUtil util);
+	public enum SceneOrderingType {
+		BEFORE, AFTER
 	}
 
 }

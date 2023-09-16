@@ -16,7 +16,7 @@ import net.createmod.catnip.utility.layout.PaginationState;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderGuiTextures;
-import net.createmod.ponder.foundation.PonderRegistry;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.gui.GuiGraphics;
@@ -52,7 +52,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 	protected void init() {
 		super.init();
 
-		Map<String, List<PonderTag>> tagsByModID = PonderRegistry.TAGS.getListedTags().stream().collect(Collectors.groupingBy(tag -> tag.getId().getNamespace()));
+		Map<String, List<PonderTag>> tagsByModID = PonderIndex.getTagAccess().getListedTags().stream().collect(Collectors.groupingBy(tag -> tag.getId().getNamespace()));
 		sortedModTags = new TreeMap<>(tagsByModID).entrySet().stream().toList();
 
 		int modCount = sortedModTags.size();
@@ -172,6 +172,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 	@Override
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.renderWindow(graphics, mouseX, mouseY, partialTicks);
 		PoseStack poseStack = graphics.pose();
 
 		poseStack.pushPose();

@@ -1,4 +1,4 @@
-package net.createmod.ponder.foundation;
+package net.createmod.ponder.api;
 
 /**
  * Used for simulating BE's in a client-only setting (like Ponder)

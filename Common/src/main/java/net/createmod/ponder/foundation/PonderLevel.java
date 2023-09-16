@@ -6,6 +6,7 @@ import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.levelWrappers.SchematicLevel;
 import net.createmod.catnip.utility.levelWrappers.WrappedClientLevel;
+import net.createmod.ponder.api.VirtualBlockEntity;
 import net.createmod.ponder.foundation.element.WorldSectionElement;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;

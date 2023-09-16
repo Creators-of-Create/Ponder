@@ -12,12 +12,16 @@ import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.ponder.api.scene.SceneBuilder;
+import net.createmod.ponder.api.scene.SceneBuildingUtil;
+import net.createmod.ponder.foundation.PonderStoryBoardEntry.SceneOrderingEntry;
 import net.createmod.ponder.foundation.element.PonderElement;
 import net.createmod.ponder.foundation.element.PonderOverlayElement;
 import net.createmod.ponder.foundation.element.PonderSceneElement;
 import net.createmod.ponder.foundation.element.WorldSectionElement;
 import net.createmod.ponder.foundation.instruction.HideAllInstruction;
 import net.createmod.ponder.foundation.instruction.PonderInstruction;
+import net.createmod.ponder.foundation.registration.PonderLocalization;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Camera;
@@ -61,6 +65,8 @@ public class PonderScene {
 
 	public static final String TITLE_KEY = "header";
 
+	final PonderLocalization localization;
+
 	private boolean finished;
 //	private int sceneIndex;
 	private int textIndex;
@@ -73,6 +79,7 @@ public class PonderScene {
 	private final Map<UUID, PonderElement> linkedElements;
 	private final Set<PonderElement> elements;
 	private final List<PonderTag> tags;
+	private final List<SceneOrderingEntry> orderingEntries;
 
 	@Nullable private final PonderLevel world;
 	private final String namespace;
@@ -99,9 +106,13 @@ public class PonderScene {
 	private int currentTime;
 	private boolean nextUpEnabled = true;
 
-	public PonderScene(@Nullable PonderLevel world, String namespace, ResourceLocation location, Collection<PonderTag> tags) {
+	public PonderScene(@Nullable PonderLevel world, PonderLocalization localization, String namespace,
+					   ResourceLocation location, Collection<ResourceLocation> tags,
+					   Collection<SceneOrderingEntry> orderingEntries) {
 		if (world != null)
 			world.scene = this;
+
+		this.localization = localization;
 
 		pointOfInterest = Vec3.ZERO;
 		textIndex = 1;
@@ -110,11 +121,13 @@ public class PonderScene {
 		this.world = world;
 		this.namespace = namespace;
 		this.location = location;
+		this.sceneId = new ResourceLocation(namespace, "missing_title");
 
 		outliner = new Outliner();
 		elements = new HashSet<>();
 		linkedElements = new HashMap<>();
-		this.tags = new ArrayList<>(tags);
+		this.tags = tags.stream().map(PonderIndex.getTagAccess()::getRegisteredTag).toList();
+		this.orderingEntries = new ArrayList<>(orderingEntries);
 		schedule = new ArrayList<>();
 		activeSchedule = new ArrayList<>();
 		transform = new SceneTransform();
@@ -165,7 +178,7 @@ public class PonderScene {
 			return Pair.of(ItemStack.EMPTY, null);
 		if (BoundingBox.fromCorners(origin, origin.offset(new Vec3i(basePlateSize - 1, 0, basePlateSize - 1)))
 			.isInside(selectedPos)) {
-			if (PonderRegistry.editingModeActive())
+			if (PonderIndex.editingModeActive())
 				nearestHit.getValue()
 					.getFirst()
 					.selectBlock(selectedPos);
@@ -383,18 +396,18 @@ public class PonderScene {
 
 	public Supplier<String> registerText(String defaultText) {
 		final String key = "text_" + textIndex;
-		PonderLocalization.registerSpecific(sceneId, key, defaultText);
-		Supplier<String> supplier = () -> PonderLocalization.getSpecific(sceneId, key);
+		localization.registerSpecific(sceneId, key, defaultText);
+		Supplier<String> supplier = () -> localization.getSpecific(sceneId, key);
 		textIndex++;
 		return supplier;
 	}
 
 	public SceneBuilder builder() {
-		return new SceneBuilder(this);
+		return new PonderSceneBuilder(this);
 	}
 
 	public SceneBuildingUtil getSceneBuildingUtil() {
-		return new SceneBuildingUtil(getBounds());
+		return new PonderSceneBuildingUtil(getBounds());
 	}
 
 	public String getTitle() {
@@ -402,7 +415,7 @@ public class PonderScene {
 	}
 
 	public String getString(String key) {
-		return PonderLocalization.getSpecific(sceneId, key);
+		return localization.getSpecific(sceneId, key);
 	}
 
 	@Nullable public PonderLevel getWorld() {
@@ -423,6 +436,10 @@ public class PonderScene {
 
 	public List<PonderTag> getTags() {
 		return tags;
+	}
+
+	public List<SceneOrderingEntry> getOrderingEntries() {
+		return orderingEntries;
 	}
 
 	public ResourceLocation getLocation() {

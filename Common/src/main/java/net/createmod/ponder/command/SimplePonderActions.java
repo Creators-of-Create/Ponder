@@ -2,7 +2,7 @@ package net.createmod.ponder.command;
 
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.ponder.Ponder;
-import net.createmod.ponder.foundation.PonderRegistry;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.ui.PonderIndexScreen;
 import net.createmod.ponder.foundation.ui.PonderTagIndexScreen;
 import net.createmod.ponder.foundation.ui.PonderUI;
@@ -22,13 +22,17 @@ public class SimplePonderActions {
 		}
 
 		ResourceLocation id = new ResourceLocation(value);
-		if (!PonderRegistry.ALL.containsKey(id)) {
+		if (!PonderIndex.getSceneAccess().doScenesExistForId(id)) {
 			Ponder.LOGGER.error("Could not find ponder scenes for item: " + id);
 			return;
 		}
 
 		ScreenOpener.transitionTo(PonderUI.of(id));
 
+	}
+
+	public static void reloadPonder(String value) {
+		PonderIndex.reload();
 	}
 
 }

@@ -12,8 +12,7 @@ import net.createmod.catnip.utility.layout.PaginationState;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderIndex;
-import net.createmod.ponder.foundation.PonderPlugin;
-import net.createmod.ponder.foundation.PonderRegistry;
+import net.createmod.ponder.foundation.registration.PonderIndexExclusionHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
@@ -26,6 +25,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class PonderIndexScreen extends AbstractPonderScreen {
@@ -50,7 +50,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 		items = new ArrayList<>();
 		// collect exclusions once at screen creation instead of every time they are needed
 		exclusions = PonderIndex.streamPlugins()
-				.flatMap(PonderPlugin::indexExclusions)
+				.flatMap(PonderIndexExclusionHelper::pluginToExclusions)
 				.toList();
 	}
 
@@ -59,12 +59,15 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 		super.init();
 
 		items.clear();
-		PonderRegistry.ALL.keySet()
-			.stream()
-			.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
-			.filter(entry -> entry.item != null)
-			.filter(this::isItemIncluded)
-			.forEach(items::add);
+		PonderIndex.getSceneAccess()
+				.getRegisteredEntries()
+				.stream()
+				.map(Map.Entry::getKey)
+				.distinct()
+				.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
+				.filter(entry -> entry.item != null)
+				.filter(this::isItemIncluded)
+				.forEach(items::add);
 
 		items.sort(Comparator.comparing(ItemEntry::key));
 
@@ -125,7 +128,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 			PonderButton b = new PonderButton(centerX + layoutHelper.getX() + 4, centerY + layoutHelper.getY() + 4)
 					.showing(new ItemStack(entry.item))
 					.withCallback((x, y) -> {
-						if (!PonderRegistry.ALL.containsKey(entry.key))
+						if (!PonderIndex.getSceneAccess().doScenesExistForId(entry.key))
 							return;
 
 						centerScalingOn(x, y);
@@ -177,6 +180,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 
 	@Override
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.renderWindow(graphics, mouseX, mouseY, partialTicks);
 		int centerX = width / 2;
 		int centerY = height / 2;
 

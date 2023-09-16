@@ -7,7 +7,6 @@ import net.createmod.ponder.Ponder;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.ItemLike;
 
 import javax.annotation.Nullable;
 
@@ -18,16 +17,21 @@ public class PonderTag implements ScreenElement {
 	 * for a certain Scene should be highlighted instead of selected single ones
 	 */
 	public static final class Highlight {
-		public static final PonderTag ALL = create("_all");
+		public static final ResourceLocation ALL = Ponder.asResource("_all");
 	}
 
 	private final ResourceLocation id;
-	@Nullable private ResourceLocation icon;
-	private ItemStack itemIcon = ItemStack.EMPTY;
-	private ItemStack mainItem = ItemStack.EMPTY;
+	@Nullable private final ResourceLocation textureIconLocation;
+	private final ItemStack itemIcon;
+	private final ItemStack mainItem;
 
-	public PonderTag(ResourceLocation id) {
+
+	public PonderTag(ResourceLocation id, @Nullable ResourceLocation textureIconLocation, ItemStack itemIcon,
+					 ItemStack mainItem) {
 		this.id = id;
+		this.textureIconLocation = textureIconLocation;
+		this.itemIcon = itemIcon;
+		this.mainItem = mainItem;
 	}
 
 	public ResourceLocation getId() {
@@ -39,59 +43,21 @@ public class PonderTag implements ScreenElement {
 	}
 
 	public String getTitle() {
-		return PonderLocalization.getTag(id);
+		return PonderIndex.getLangAccess().getTagName(id);
 	}
 
 	public String getDescription() {
-		return PonderLocalization.getTagDescription(id);
-	}
-
-	// Builder
-
-	public PonderTag defaultLang(String title, String description) {
-		PonderLocalization.registerTag(id, title, description);
-		return this;
-	}
-
-	public PonderTag addToIndex() {
-		PonderRegistry.TAGS.listTag(this);
-		return this;
-	}
-
-	public PonderTag icon(ResourceLocation location) {
-		this.icon = new ResourceLocation(location.getNamespace(), "textures/ponder/tag/" + location.getPath() + ".png");
-		return this;
-	}
-
-	public PonderTag icon(String location) {
-		this.icon = new ResourceLocation(id.getNamespace(), "textures/ponder/tag/" + location + ".png");
-		return this;
-	}
-
-	public PonderTag idAsIcon() {
-		return icon(id);
-	}
-
-	public PonderTag item(ItemLike item, boolean useAsIcon, boolean useAsMainItem) {
-		if (useAsIcon)
-			this.itemIcon = new ItemStack(item);
-		if (useAsMainItem)
-			this.mainItem = new ItemStack(item);
-		return this;
-	}
-
-	public PonderTag item(ItemLike item) {
-		return this.item(item, true, true);
+		return PonderIndex.getLangAccess().getTagDescription(id);
 	}
 
 	public void render(GuiGraphics graphics, int x, int y) {
 		PoseStack poseStack = graphics.pose();
 		poseStack.pushPose();
 		poseStack.translate(x, y, 0);
-		if (icon != null) {
+		if (textureIconLocation != null) {
 			//RenderSystem.setShaderTexture(0, icon);
 			poseStack.scale(0.25f, 0.25f, 1);
-			graphics.blit(icon, 0, 0, 0, 0, 0, 64, 64, 64, 64);
+			graphics.blit(textureIconLocation, 0, 0, 0, 0, 0, 64, 64, 64, 64);
 		} else if (!itemIcon.isEmpty()) {
 			poseStack.translate(-2, -2, 0);
 			poseStack.scale(1.25f, 1.25f, 1.25f);
@@ -101,12 +67,14 @@ public class PonderTag implements ScreenElement {
 		poseStack.popPose();
 	}
 
-	private static PonderTag create(String id) {
-		return create(Ponder.MOD_ID, id);
-	}
+	@Override
+	public boolean equals(Object other) {
+		if (this == other)
+			return true;
 
-	protected static PonderTag create(String namespace, String id) {
-		return new PonderTag(new ResourceLocation(namespace, id));
-	}
+		if (!(other instanceof PonderTag otherTag))
+			return false;
 
+		return getId().equals(otherTag.getId());
+	}
 }

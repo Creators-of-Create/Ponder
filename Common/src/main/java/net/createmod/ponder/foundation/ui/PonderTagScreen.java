@@ -14,7 +14,7 @@ import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.foundation.PonderChapter;
-import net.createmod.ponder.foundation.PonderRegistry;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.gui.GuiGraphics;
@@ -43,6 +43,10 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
 	private ItemStack hoveredItem = ItemStack.EMPTY;
 
+	public PonderTagScreen(ResourceLocation tag) {
+		this.tag = PonderIndex.getTagAccess().getRegisteredTag(tag);
+	}
+
 	public PonderTagScreen(PonderTag tag) {
 		this.tag = tag;
 	}
@@ -53,11 +57,12 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
 		// items
 		items.clear();
-		PonderRegistry.TAGS.getItems(tag)
-			.stream()
-			.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
-			.filter(entry -> entry.item != null)
-			.forEach(items::add);
+		PonderIndex.getTagAccess()
+				.getItems(tag)
+				.stream()
+				.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
+				.filter(entry -> entry.item != null)
+				.forEach(items::add);
 
 		if (!tag.getMainItem().isEmpty())
 			items.removeIf(entry -> entry.item == tag.getMainItem().getItem());
@@ -72,7 +77,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 			PonderButton b = new PonderButton(itemCenterX + layout.getX() + 4, itemCenterY + layout.getY() + 4)
 					.showing(new ItemStack(entry.item));
 
-			if (PonderRegistry.ALL.containsKey(entry.key)) {
+			if (PonderIndex.getSceneAccess().doScenesExistForId(entry.key)) {
 				b.withCallback((mouseX, mouseY) -> {
 					centerScalingOn(mouseX, mouseY);
 					ScreenOpener.transitionTo(PonderUI.of(new ItemStack(entry.item), tag));
@@ -98,7 +103,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 					.showing(tag.getMainItem());
 			//b.withCustomBackground(PonderTheme.Key.PONDER_BACKGROUND_IMPORTANT.c());
 
-			if (PonderRegistry.ALL.containsKey(registryName)) {
+			if (PonderIndex.getSceneAccess().doScenesExistForId(registryName)) {
 				b.withCallback((mouseX, mouseY) -> {
 					centerScalingOn(mouseX, mouseY);
 					ScreenOpener.transitionTo(PonderUI.of(tag.getMainItem(), tag));
@@ -114,27 +119,6 @@ public class PonderTagScreen extends AbstractPonderScreen {
 			}
 
 			addRenderableWidget(b);
-		}
-
-		// chapters
-		chapters.clear();
-		chapters.addAll(PonderRegistry.TAGS.getChapters(tag));
-
-		rowCount = Mth.clamp((int) Math.ceil(chapters.size() / 3f), 1, 3);
-		layout = LayoutHelper.centeredHorizontal(chapters.size(), rowCount, 200, 38, 16);
-		chapterArea = layout.getArea();
-		int chapterCenterX = (int) (width * chapterXmult);
-		int chapterCenterY = (int) (height * chapterYmult);
-
-		for (PonderChapter chapter : chapters) {
-			ChapterLabel label = new ChapterLabel(chapter, chapterCenterX + layout.getX(),
-				chapterCenterY + layout.getY(), (mouseX, mouseY) -> {
-					centerScalingOn(mouseX, mouseY);
-					ScreenOpener.transitionTo(PonderUI.of(chapter));
-				});
-
-			addRenderableWidget(label);
-			layout.next();
 		}
 
 	}
@@ -165,6 +149,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
 	@Override
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		super.renderWindow(graphics, mouseX, mouseY, partialTicks);
 		renderItems(graphics, mouseX, mouseY, partialTicks);
 
 		renderChapters(graphics, mouseX, mouseY, partialTicks);

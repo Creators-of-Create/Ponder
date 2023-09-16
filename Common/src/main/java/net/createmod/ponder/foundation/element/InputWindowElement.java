@@ -7,7 +7,7 @@ import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.utility.Pointing;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderGuiTextures;
-import net.createmod.ponder.foundation.PonderLocalization;
+import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderPalette;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.ui.PonderUI;
@@ -89,7 +89,7 @@ public class InputWindowElement extends AnimatedOverlayElement {
 		boolean hasText = key != null;
 		boolean hasIcon = icon != null;
 		int keyWidth = 0;
-		String text = hasText ? PonderLocalization.getShared(key) : "";
+		String text = hasText ? PonderIndex.getLangAccess().getShared(key) : "";
 
 		if (fade < 1 / 16f)
 			return;
