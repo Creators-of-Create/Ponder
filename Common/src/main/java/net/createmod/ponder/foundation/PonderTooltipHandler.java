@@ -1,6 +1,10 @@
 package net.createmod.ponder.foundation;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.google.common.base.Strings;
+
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.platform.CatnipClientServices;
@@ -20,9 +24,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.List;
-import java.util.Optional;
 
 public class PonderTooltipHandler {
 
@@ -75,6 +76,9 @@ public class PonderTooltipHandler {
 
 	public static void addToTooltip(List<Component> toolTip, ItemStack stack) {
 		if (!enable)
+			return;
+
+		if (NavigatableSimiScreen.isCurrentlyRenderingPreviousScreen())
 			return;
 
 		updateHovered(stack);

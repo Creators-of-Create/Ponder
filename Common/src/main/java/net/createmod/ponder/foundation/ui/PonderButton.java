@@ -1,6 +1,11 @@
 package net.createmod.ponder.foundation.ui;
 
+import java.util.Locale;
+
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.AnimationTickHolder;
@@ -14,9 +19,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-
-import javax.annotation.Nullable;
-import java.util.Locale;
 
 public class PonderButton extends BoxWidget {
 
@@ -103,6 +105,11 @@ public class PonderButton extends BoxWidget {
 					Locale.ROOT), getX() + width / 2 + 8, getY() + height - 6, Key.TEXT_DARKER.c().scaleAlpha(fadeValue).getRGB());
 			poseStack.popPose();
 		}
+	}
+
+	@Override
+	public boolean isFocused() {
+		return false;
 	}
 
 	@Override
