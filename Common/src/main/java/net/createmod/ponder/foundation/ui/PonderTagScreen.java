@@ -44,6 +44,10 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
 	private ItemStack hoveredItem = ItemStack.EMPTY;
 
+	public PonderTagScreen(ResourceLocation tag) {
+		this.tag = PonderIndex.getTagAccess().getRegisteredTag(tag);
+	}
+
 	public PonderTagScreen(PonderTag tag) {
 		this.tag = tag;
 	}

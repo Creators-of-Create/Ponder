@@ -1,4 +1,4 @@
-package net.createmod.ponder.foundation.api.registration;
+package net.createmod.ponder.api.registration;
 
 import java.util.Collection;
 import java.util.List;

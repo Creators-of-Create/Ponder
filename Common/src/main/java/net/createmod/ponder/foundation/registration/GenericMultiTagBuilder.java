@@ -1,8 +1,8 @@
 package net.createmod.ponder.foundation.registration;
 
-import net.createmod.ponder.foundation.PonderTag;
-import net.createmod.ponder.foundation.api.registration.MultiTagBuilder;
-import net.createmod.ponder.foundation.api.registration.PonderTagRegistrationHelper;
+import net.createmod.ponder.api.registration.MultiTagBuilder;
+import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
+import net.minecraft.resources.ResourceLocation;
 
 public class GenericMultiTagBuilder<T> implements MultiTagBuilder {
 
@@ -10,9 +10,9 @@ public class GenericMultiTagBuilder<T> implements MultiTagBuilder {
 
 	public class Tag implements MultiTagBuilder.Tag<T> {
 
-		Iterable<PonderTag> tags;
+		Iterable<ResourceLocation> tags;
 
-		public Tag(PonderTagRegistrationHelper<T> helper, Iterable<PonderTag> tags) {
+		public Tag(PonderTagRegistrationHelper<T> helper, Iterable<ResourceLocation> tags) {
 			GenericMultiTagBuilder.this.helper = helper;
 			this.tags = tags;
 		}
@@ -34,7 +34,7 @@ public class GenericMultiTagBuilder<T> implements MultiTagBuilder {
 		}
 
 		@Override
-		public Component add(PonderTag tag) {
+		public Component add(ResourceLocation tag) {
 			components.forEach(component -> helper.addTagToComponent(component, tag));
 			return this;
 		}

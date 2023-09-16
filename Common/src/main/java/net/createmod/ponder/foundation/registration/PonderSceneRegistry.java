@@ -18,12 +18,12 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.api.registration.SceneRegistryAccess;
+import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
-import net.createmod.ponder.foundation.SceneBuilder;
-import net.createmod.ponder.foundation.api.registration.SceneRegistryAccess;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -36,7 +36,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
-public class PonderSceneRegistry {
+public class PonderSceneRegistry implements SceneRegistryAccess {
 
 	private final PonderLocalization localization;
 	private final Multimap<ResourceLocation, PonderStoryBoardEntry> scenes;
@@ -48,14 +48,12 @@ public class PonderSceneRegistry {
 		scenes = LinkedHashMultimap.create();
 	}
 
-	public SceneRegistryAccess access() {
-		return new PonderSceneRegistryAccess();
-	}
-
 	public void clearRegistry() {
 		scenes.clear();
 		allowRegistration = true;
 	}
+
+	//
 
 	public void addStoryBoard(PonderStoryBoardEntry entry) {
 		if (!allowRegistration)
@@ -64,7 +62,22 @@ public class PonderSceneRegistry {
 		scenes.put(entry.getComponent(), entry);
 	}
 
-	private List<PonderScene> compile(ResourceLocation id) {
+	//
+
+	@Override
+	public Collection<Map.Entry<ResourceLocation, PonderStoryBoardEntry>> getRegisteredEntries() {
+		return scenes.entries();
+	}
+
+	@Override
+	public boolean doScenesExistForId(ResourceLocation id) {
+		return scenes.containsKey(id);
+	}
+
+	//
+
+	@Override
+	public List<PonderScene> compile(ResourceLocation id) {
 		if (PonderIndex.editingModeActive())
 			PonderIndex.reload();
 
@@ -76,7 +89,8 @@ public class PonderSceneRegistry {
 
 	}
 
-	private List<PonderScene> compile(Collection<PonderStoryBoardEntry> entries) {
+	@Override
+	public List<PonderScene> compile(Collection<PonderStoryBoardEntry> entries) {
 		if (PonderIndex.editingModeActive()) {
 			localization.clearShared();
 			PonderIndex.gatherSharedText();
@@ -99,7 +113,8 @@ public class PonderSceneRegistry {
 	}
 
 	public static PonderScene compileScene(PonderLocalization localization, PonderStoryBoardEntry sb, @Nullable PonderLevel level) {
-		PonderScene scene = new PonderScene(level, localization, sb.getNamespace(), sb.getComponent(), sb.getTags());
+		PonderScene scene = new PonderScene(level, localization, sb.getNamespace(), sb.getComponent(), sb.getTags(),
+											sb.getOrderingEntries());
 		SceneBuilder builder = scene.builder();
 		sb.getBoard().program(builder, scene.getSceneBuildingUtil());
 		return scene;
@@ -137,28 +152,5 @@ public class PonderSceneRegistry {
 		CompoundTag nbt = NbtIo.read(stream, new NbtAccounter(0x20000000L));
 		t.load(nbt);
 		return t;
-	}
-
-	public class PonderSceneRegistryAccess implements SceneRegistryAccess {
-
-		@Override
-		public Collection<Map.Entry<ResourceLocation, PonderStoryBoardEntry>> getRegisteredEntries() {
-			return scenes.entries();
-		}
-
-		@Override
-		public boolean doScenesExistForId(ResourceLocation id) {
-			return scenes.containsKey(id);
-		}
-
-		@Override
-		public List<PonderScene> compile(ResourceLocation id) {
-			return PonderSceneRegistry.this.compile(id);
-		}
-
-		@Override
-		public List<PonderScene> compile(Collection<PonderStoryBoardEntry> entries) {
-			return PonderSceneRegistry.this.compile(entries);
-		}
 	}
 }

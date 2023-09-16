@@ -1,6 +1,6 @@
 package net.createmod.ponder.foundation.registration;
 
-import net.createmod.ponder.foundation.api.registration.SharedTextRegistrationHelper;
+import net.createmod.ponder.api.registration.SharedTextRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 
 public class DefaultSharedTextRegistrationHelper implements SharedTextRegistrationHelper {

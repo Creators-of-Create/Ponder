@@ -1,12 +1,20 @@
 package net.createmod.ponder.foundation.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.annotation.Nullable;
 
+import com.google.common.graph.ElementOrder;
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.MutableGraph;
 import com.mojang.blaze3d.platform.ClipboardManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -41,6 +49,8 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
+import net.createmod.ponder.foundation.PonderStoryBoardEntry.SceneOrderingEntry;
+import net.createmod.ponder.foundation.PonderStoryBoardEntry.SceneOrderingType;
 import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.content.DebugScenes;
@@ -122,12 +132,24 @@ public class PonderUI extends AbstractPonderScreen {
 		stack = new ItemStack(CatnipServices.REGISTRIES.getItemOrBlock(location));
 
 		tags = new ArrayList<>(PonderIndex.getTagAccess().getTags(location));
-		this.scenes = scenes;
-		if (scenes.isEmpty()) {
+
+		Ponder.LOGGER.debug("Ponder Scenes before ordering: {}", Arrays.toString(scenes.stream().map(PonderScene::getId).toArray()));
+
+		List<PonderScene> orderedScenes;
+		try {
+			orderedScenes = orderScenes(scenes);
+			Ponder.LOGGER.debug("Ponder Scenes after ordering: {}", Arrays.toString(orderedScenes.stream().map(PonderScene::getId).toArray()));
+		} catch (Exception e) {
+			Ponder.LOGGER.warn("Unable to sort PonderScenes, using unordered List", e);
+			orderedScenes = scenes;
+		}
+		this.scenes = orderedScenes;
+
+		if (this.scenes.isEmpty()) {
 			List<PonderStoryBoardEntry> list = Collections.singletonList(
 					new PonderStoryBoardEntry(DebugScenes::empty, Ponder.MOD_ID, "debug/scene_1",
 											  new ResourceLocation("minecraft", "stick")));
-			scenes.addAll(PonderIndex.getSceneAccess().compile(list));
+			this.scenes.addAll(PonderIndex.getSceneAccess().compile(list));
 		}
 		lazyIndex = LerpedFloat.linear()
 				.startWithValue(index);
@@ -141,6 +163,137 @@ public class PonderUI extends AbstractPonderScreen {
 		nextUp = LerpedFloat.linear()
 				.startWithValue(0)
 				.chase(0, .4f, Chaser.EXP);
+	}
+
+	@SuppressWarnings("UnstableApiUsage")
+	private List<PonderScene> orderScenes(List<PonderScene> scenes) {
+		Map<Boolean, List<PonderScene>> partitioned = scenes.stream()
+				.collect(Collectors.partitioningBy(scene -> scene.getOrderingEntries().isEmpty()));
+
+		List<PonderScene> scenesWithOrdering = partitioned.get(false);
+		List<PonderScene> scenesWithoutOrdering = partitioned.get(true);
+
+		if (scenesWithOrdering.isEmpty())
+			return scenes;
+
+		List<PonderScene> sceneList = new ArrayList<>(scenes);
+		Collections.reverse(sceneList);
+
+		Map<ResourceLocation, PonderScene> sceneLookup = scenes.stream()
+				.collect(Collectors.toMap(PonderScene::getId, scene -> scene));
+
+		MutableGraph<PonderScene> graph = GraphBuilder.directed().nodeOrder(ElementOrder.insertion()).build();
+		sceneList.forEach(graph::addNode);
+
+		IntStream.range(1, scenesWithoutOrdering.size())
+				.forEach(i -> graph.putEdge(scenesWithoutOrdering.get(i - 1), scenesWithoutOrdering.get(i)));
+
+		scenesWithOrdering.forEach(scene -> {
+			List<SceneOrderingEntry> relevantOrderings = scene.getOrderingEntries()
+					.stream()
+					.filter(entry -> scenes.stream().anyMatch(sc -> sc.getId().equals(entry.sceneId())))
+					.toList();
+
+			if (relevantOrderings.isEmpty())
+				return;
+
+			relevantOrderings.forEach(entry -> {
+				PonderScene otherScene = sceneLookup.get(entry.sceneId());
+				if (entry.type() == SceneOrderingType.BEFORE) {
+					graph.putEdge(scene, otherScene);
+				} else if (entry.type() == SceneOrderingType.AFTER) {
+					graph.putEdge(otherScene, scene);
+				}
+			});
+		});
+
+		return topologicalSort(graph);
+
+		/*sceneList.sort((scene1, scene2) -> {
+			boolean hasOrderings1 = !scene1.getOrderingEntries().isEmpty();
+			boolean hasOrderings2 = !scene2.getOrderingEntries().isEmpty();
+
+			if (!hasOrderings1 && !hasOrderings2)
+				return 0;
+
+			Map<SceneOrderingType, Long> relevantOrderings1 = scene1.getOrderingEntries()
+					.stream()
+					.filter(entry -> entry.sceneId().equals(scene2.getId()))
+					.collect(Collectors.groupingBy(SceneOrderingEntry::type, Collectors.counting()));
+
+			Map<SceneOrderingType, Long> relevantOrderings2 = scene2.getOrderingEntries()
+					.stream()
+					.filter(entry -> entry.sceneId().equals(scene1.getId()))
+					.collect(Collectors.groupingBy(SceneOrderingEntry::type, Collectors.counting()));
+
+			// both scenes don't want to be ordered compared to each other
+			if (relevantOrderings1.isEmpty() && relevantOrderings2.isEmpty())
+				return 0;
+
+			// only scene2 wants to be ordered either before or after scene1
+			if (relevantOrderings1.isEmpty())
+				return relevantOrderings2.containsKey(SceneOrderingType.AFTER) ? -1 : 1;
+
+			// only scene1 wants to be ordered either before or after scene2
+			if (relevantOrderings2.isEmpty())
+				return relevantOrderings1.containsKey(SceneOrderingType.AFTER) ? 1 : -1;
+
+			// both scenes want scene1 to be ordered after scene2
+			if (relevantOrderings1.containsKey(SceneOrderingType.AFTER) && relevantOrderings2.containsKey(SceneOrderingType.BEFORE))
+				return 1;
+
+			// both scenes want scene1 to be ordered before scene2
+			if (relevantOrderings1.containsKey(SceneOrderingType.BEFORE) && relevantOrderings2.containsKey(SceneOrderingType.AFTER))
+				return -1;
+
+			// everything else is contradictory so we ignore it
+			return 0;
+		});
+
+		return sceneList;*/
+	}
+
+	private static List<PonderScene> topologicalSort(MutableGraph<PonderScene> graph) {
+		List<PonderScene> result = new ArrayList<>();
+		Set<PonderScene> visited = new HashSet<>();
+		Set<PonderScene> currentlyVisiting = new HashSet<>();
+
+		for (PonderScene node : graph.nodes()) {
+			if (!visited.contains(node)) {
+				if (!dfs(node, graph, visited, currentlyVisiting, result)) {
+					throw new IllegalArgumentException("Graph has a cycle!");
+				}
+			}
+		}
+
+		Collections.reverse(result);
+		return result;
+	}
+
+	private static boolean dfs(
+			PonderScene node,
+			MutableGraph<PonderScene> graph,
+			Set<PonderScene> visited,
+			Set<PonderScene> currentlyVisiting,
+			List<PonderScene> result
+	) {
+		if (currentlyVisiting.contains(node)) {
+			return false; // Detected a cycle
+		}
+
+		if (!visited.contains(node)) {
+			currentlyVisiting.add(node);
+			for (PonderScene neighbor : graph.successors(node)) {
+				if (!dfs(neighbor, graph, visited, currentlyVisiting, result)) {
+					return false; // Detected a cycle
+				}
+			}
+			currentlyVisiting.remove(node);
+			visited.add(node);
+			result.add(node);
+		}
+
+		return true;
 	}
 
 	@Override
@@ -650,7 +803,7 @@ public class PonderUI extends AbstractPonderScreen {
 
 		// Tags
 		List<PonderTag> sceneTags = activeScene.getTags();
-		boolean highlightAll = sceneTags.contains(PonderTag.Highlight.ALL);
+		boolean highlightAll = sceneTags.stream().anyMatch(tag -> tag.getId() == PonderTag.Highlight.ALL);
 		double s = Minecraft.getInstance()
 				.getWindow()
 				.getGuiScale();
@@ -875,7 +1028,7 @@ public class PonderUI extends AbstractPonderScreen {
 					.getWindow();
 			if (copiedBlockPos != null && button == 1) {
 				clipboardHelper.setClipboard(handle,
-											 "util.select.fromTo(" + copiedBlockPos.getX() + ", " + copiedBlockPos.getY() + ", "
+											 "util.select().fromTo(" + copiedBlockPos.getX() + ", " + copiedBlockPos.getY() + ", "
 													 + copiedBlockPos.getZ() + ", " + hoveredBlockPos.getX() + ", " + hoveredBlockPos.getY() + ", "
 													 + hoveredBlockPos.getZ() + ")");
 				copiedBlockPos = hoveredBlockPos;
@@ -883,10 +1036,10 @@ public class PonderUI extends AbstractPonderScreen {
 			}
 
 			if (hasShiftDown())
-				clipboardHelper.setClipboard(handle, "util.select.position(" + hoveredBlockPos.getX() + ", "
+				clipboardHelper.setClipboard(handle, "util.select().position(" + hoveredBlockPos.getX() + ", "
 						+ hoveredBlockPos.getY() + ", " + hoveredBlockPos.getZ() + ")");
 			else
-				clipboardHelper.setClipboard(handle, "util.grid.at(" + hoveredBlockPos.getX() + ", "
+				clipboardHelper.setClipboard(handle, "util.grid().at(" + hoveredBlockPos.getX() + ", "
 						+ hoveredBlockPos.getY() + ", " + hoveredBlockPos.getZ() + ")");
 			copiedBlockPos = hoveredBlockPos;
 			return true;

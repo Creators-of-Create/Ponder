@@ -21,7 +21,7 @@ import net.createmod.catnip.utility.layout.PaginationState;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderIndex;
-import net.createmod.ponder.foundation.api.registration.PonderPlugin;
+import net.createmod.ponder.foundation.registration.PonderIndexExclusionHelper;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
@@ -51,7 +51,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 		items = new ArrayList<>();
 		// collect exclusions once at screen creation instead of every time they are needed
 		exclusions = PonderIndex.streamPlugins()
-				.flatMap(PonderPlugin::indexExclusions)
+				.flatMap(PonderIndexExclusionHelper::pluginToExclusions)
 				.toList();
 	}
 

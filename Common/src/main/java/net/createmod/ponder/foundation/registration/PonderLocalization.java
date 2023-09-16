@@ -7,13 +7,14 @@ import com.google.gson.JsonObject;
 
 import net.createmod.catnip.utility.Couple;
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.api.registration.LangRegistryAccess;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderTooltipHandler;
 import net.createmod.ponder.foundation.ui.AbstractPonderScreen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 
-public class PonderLocalization {
+public class PonderLocalization implements LangRegistryAccess {
 
 	public final Map<ResourceLocation, String> shared = new HashMap<>();
 	public final Map<ResourceLocation, Couple<String>> tag = new HashMap<>();
@@ -35,8 +36,8 @@ public class PonderLocalization {
 		shared.put(key, enUS);
 	}
 
-	public void registerTag(ResourceLocation key, String enUS, String description) {
-		tag.put(key, Couple.create(enUS, description));
+	public void registerTag(ResourceLocation key, String title, String description) {
+		tag.put(key, Couple.create(title, description));
 	}
 
 	public void registerSpecific(ResourceLocation sceneId, String key, String enUS) {
@@ -46,12 +47,14 @@ public class PonderLocalization {
 
 	//
 
+	@Override
 	public String getShared(ResourceLocation key) {
 		if (PonderIndex.editingModeActive())
 			return shared.containsKey(key) ? shared.get(key) : ("unregistered shared entry: " + key);
 		return I18n.get(langKeyForShared(key));
 	}
 
+	@Override
 	public String getTagName(ResourceLocation key) {
 		if (PonderIndex.editingModeActive())
 			return tag.containsKey(key) ? tag.get(key)
@@ -59,6 +62,7 @@ public class PonderLocalization {
 		return I18n.get(langKeyForTag(key));
 	}
 
+	@Override
 	public String getTagDescription(ResourceLocation key) {
 		if (PonderIndex.editingModeActive())
 			return tag.containsKey(key) ? tag.get(key)
@@ -66,6 +70,7 @@ public class PonderLocalization {
 		return I18n.get(langKeyForTagDescription(key));
 	}
 
+	@Override
 	public String getSpecific(ResourceLocation sceneId, String k) {
 		if (PonderIndex.editingModeActive())
 			try {
@@ -146,6 +151,7 @@ public class PonderLocalization {
 	/**
 	 * Generate a JsonObject holding all Lang-entries and their enUS default that was declared in code
 	 */
+	@Override
 	public JsonObject provideLangEntries(String modID) {
 		PonderIndex.registerAll();
 		PonderIndex.gatherSharedText();

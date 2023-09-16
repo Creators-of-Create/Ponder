@@ -3,11 +3,10 @@ package net.createmod.ponder.foundation.registration;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import net.createmod.ponder.api.registration.MultiSceneBuilder;
+import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.createmod.ponder.api.scene.PonderStoryBoard;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
-import net.createmod.ponder.foundation.PonderTag;
-import net.createmod.ponder.foundation.api.registration.MultiSceneBuilder;
-import net.createmod.ponder.foundation.api.registration.PonderSceneRegistrationHelper;
-import net.createmod.ponder.foundation.api.scene.PonderStoryBoard;
 import net.minecraft.resources.ResourceLocation;
 
 public class GenericPonderSceneRegistrationHelper<T> implements PonderSceneRegistrationHelper<T> {
@@ -27,12 +26,12 @@ public class GenericPonderSceneRegistrationHelper<T> implements PonderSceneRegis
 	}
 
 	public PonderStoryBoardEntry addStoryBoard(T component, ResourceLocation schematicLocation,
-											   PonderStoryBoard storyBoard, PonderTag... tags) {
+											   PonderStoryBoard storyBoard, ResourceLocation... tags) {
 		return helperDelegate.addStoryBoard(keyGen.apply(component), schematicLocation, storyBoard, tags);
 	}
 
 	public PonderStoryBoardEntry addStoryBoard(T component, String schematicPath, PonderStoryBoard storyBoard,
-											   PonderTag... tags) {
+											   ResourceLocation... tags) {
 		return helperDelegate.addStoryBoard(keyGen.apply(component), schematicPath, storyBoard, tags);
 	}
 

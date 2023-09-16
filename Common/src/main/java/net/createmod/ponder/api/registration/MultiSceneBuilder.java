@@ -1,10 +1,9 @@
-package net.createmod.ponder.foundation.api.registration;
+package net.createmod.ponder.api.registration;
 
 import java.util.function.Consumer;
 
+import net.createmod.ponder.api.scene.PonderStoryBoard;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
-import net.createmod.ponder.foundation.PonderTag;
-import net.createmod.ponder.foundation.api.scene.PonderStoryBoard;
 import net.minecraft.resources.ResourceLocation;
 
 public interface MultiSceneBuilder {
@@ -12,7 +11,7 @@ public interface MultiSceneBuilder {
 									PonderStoryBoard storyBoard);
 
 	MultiSceneBuilder addStoryBoard(ResourceLocation schematicLocation,
-									PonderStoryBoard storyBoard, PonderTag... tags);
+									PonderStoryBoard storyBoard, ResourceLocation... tags);
 
 	MultiSceneBuilder addStoryBoard(ResourceLocation schematicLocation,
 									PonderStoryBoard storyBoard,
@@ -21,7 +20,7 @@ public interface MultiSceneBuilder {
 	MultiSceneBuilder addStoryBoard(String schematicPath, PonderStoryBoard storyBoard);
 
 	MultiSceneBuilder addStoryBoard(String schematicPath, PonderStoryBoard storyBoard,
-									PonderTag... tags);
+									ResourceLocation... tags);
 
 	MultiSceneBuilder addStoryBoard(String schematicPath, PonderStoryBoard storyBoard,
 									Consumer<PonderStoryBoardEntry> extras);

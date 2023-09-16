@@ -3,9 +3,9 @@ package net.createmod.ponder.foundation.registration;
 import java.util.List;
 import java.util.function.Function;
 
-import net.createmod.ponder.foundation.PonderTag;
-import net.createmod.ponder.foundation.api.registration.MultiTagBuilder;
-import net.createmod.ponder.foundation.api.registration.PonderTagRegistrationHelper;
+import net.createmod.ponder.api.registration.MultiTagBuilder;
+import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
+import net.createmod.ponder.api.registration.TagBuilder;
 import net.minecraft.resources.ResourceLocation;
 
 public class GenericPonderTagRegistrationHelper<T> implements PonderTagRegistrationHelper<T> {
@@ -25,23 +25,27 @@ public class GenericPonderTagRegistrationHelper<T> implements PonderTagRegistrat
 	}
 
 	@Override
-	public PonderTagRegistrationHelper<T> registerTag(PonderTag tag, boolean listTagInIndexScreens) {
-		helperDelegate.registerTag(tag, listTagInIndexScreens);
-		return this;
+	public TagBuilder registerTag(ResourceLocation location) {
+		return helperDelegate.registerTag(location);
 	}
 
 	@Override
-	public void addTagToComponent(T component, PonderTag tag) {
+	public TagBuilder registerTag(String id) {
+		return helperDelegate.registerTag(id);
+	}
+
+	@Override
+	public void addTagToComponent(T component, ResourceLocation tag) {
 		helperDelegate.addTagToComponent(keyGen.apply(component), tag);
 	}
 
 	@Override
-	public MultiTagBuilder.Tag<T> addToTag(PonderTag tag) {
+	public MultiTagBuilder.Tag<T> addToTag(ResourceLocation tag) {
 		return new GenericMultiTagBuilder<T>().new Tag(this, List.of(tag));
 	}
 
 	@Override
-	public MultiTagBuilder.Tag<T> addToTag(PonderTag... tags) {
+	public MultiTagBuilder.Tag<T> addToTag(ResourceLocation... tags) {
 		return new GenericMultiTagBuilder<T>().new Tag(this, List.of(tags));
 	}
 

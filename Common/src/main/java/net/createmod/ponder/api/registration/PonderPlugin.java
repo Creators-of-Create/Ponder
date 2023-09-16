@@ -1,11 +1,7 @@
-package net.createmod.ponder.foundation.api.registration;
-
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+package net.createmod.ponder.api.registration;
 
 import net.createmod.ponder.foundation.PonderLevel;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.ItemLike;
 
 public interface PonderPlugin {
 
@@ -28,8 +24,6 @@ public interface PonderPlugin {
 
 	default void onPonderWorldRestore(PonderLevel world) {}
 
-	default Stream<Predicate<ItemLike>> indexExclusions() {
-		return Stream.empty();
-	}
+	default void indexExclusions(IndexExclusionHelper helper) {}
 
 }

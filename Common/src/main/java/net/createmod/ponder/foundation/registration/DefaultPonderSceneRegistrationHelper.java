@@ -3,11 +3,10 @@ package net.createmod.ponder.foundation.registration;
 import java.util.Arrays;
 import java.util.function.Function;
 
+import net.createmod.ponder.api.registration.MultiSceneBuilder;
+import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.createmod.ponder.api.scene.PonderStoryBoard;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
-import net.createmod.ponder.foundation.PonderTag;
-import net.createmod.ponder.foundation.api.registration.MultiSceneBuilder;
-import net.createmod.ponder.foundation.api.registration.PonderSceneRegistrationHelper;
-import net.createmod.ponder.foundation.api.scene.PonderStoryBoard;
 import net.minecraft.resources.ResourceLocation;
 
 public class DefaultPonderSceneRegistrationHelper implements PonderSceneRegistrationHelper<ResourceLocation> {
@@ -27,7 +26,7 @@ public class DefaultPonderSceneRegistrationHelper implements PonderSceneRegistra
 
 	@Override
 	public PonderStoryBoardEntry addStoryBoard(ResourceLocation component, ResourceLocation schematicLocation,
-											   PonderStoryBoard storyBoard, PonderTag... tags) {
+											   PonderStoryBoard storyBoard, ResourceLocation... tags) {
 		PonderStoryBoardEntry entry = this.createStoryBoardEntry(storyBoard, schematicLocation, component);
 		entry.highlightTags(tags);
 		sceneRegistry.addStoryBoard(entry);
@@ -36,7 +35,7 @@ public class DefaultPonderSceneRegistrationHelper implements PonderSceneRegistra
 
 	@Override
 	public PonderStoryBoardEntry addStoryBoard(ResourceLocation component, String schematicPath,
-											   PonderStoryBoard storyBoard, PonderTag... tags) {
+											   PonderStoryBoard storyBoard, ResourceLocation... tags) {
 		return addStoryBoard(component, asLocation(schematicPath), storyBoard, tags);
 	}
 

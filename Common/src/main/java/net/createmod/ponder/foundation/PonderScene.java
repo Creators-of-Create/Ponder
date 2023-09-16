@@ -35,6 +35,9 @@ import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.ponder.api.scene.SceneBuilder;
+import net.createmod.ponder.api.scene.SceneBuildingUtil;
+import net.createmod.ponder.foundation.PonderStoryBoardEntry.SceneOrderingEntry;
 import net.createmod.ponder.foundation.element.PonderElement;
 import net.createmod.ponder.foundation.element.PonderOverlayElement;
 import net.createmod.ponder.foundation.element.PonderSceneElement;
@@ -79,6 +82,7 @@ public class PonderScene {
 	private final Map<UUID, PonderElement> linkedElements;
 	private final Set<PonderElement> elements;
 	private final List<PonderTag> tags;
+	private final List<SceneOrderingEntry> orderingEntries;
 
 	@Nullable private final PonderLevel world;
 	private final String namespace;
@@ -106,7 +110,8 @@ public class PonderScene {
 	private boolean nextUpEnabled = true;
 
 	public PonderScene(@Nullable PonderLevel world, PonderLocalization localization, String namespace,
-					   ResourceLocation location, Collection<PonderTag> tags) {
+					   ResourceLocation location, Collection<ResourceLocation> tags,
+					   Collection<SceneOrderingEntry> orderingEntries) {
 		if (world != null)
 			world.scene = this;
 
@@ -124,7 +129,8 @@ public class PonderScene {
 		outliner = new Outliner();
 		elements = new HashSet<>();
 		linkedElements = new HashMap<>();
-		this.tags = new ArrayList<>(tags);
+		this.tags = tags.stream().map(PonderIndex.getTagAccess()::getRegisteredTag).toList();
+		this.orderingEntries = new ArrayList<>(orderingEntries);
 		schedule = new ArrayList<>();
 		activeSchedule = new ArrayList<>();
 		transform = new SceneTransform();
@@ -399,11 +405,11 @@ public class PonderScene {
 	}
 
 	public SceneBuilder builder() {
-		return new SceneBuilder(this);
+		return new PonderSceneBuilder(this);
 	}
 
 	public SceneBuildingUtil getSceneBuildingUtil() {
-		return new SceneBuildingUtil(getBounds());
+		return new PonderSceneBuildingUtil(getBounds());
 	}
 
 	public String getTitle() {
@@ -432,6 +438,10 @@ public class PonderScene {
 
 	public List<PonderTag> getTags() {
 		return tags;
+	}
+
+	public List<SceneOrderingEntry> getOrderingEntries() {
+		return orderingEntries;
 	}
 
 	public ResourceLocation getLocation() {

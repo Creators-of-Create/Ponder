@@ -10,10 +10,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Stopwatch;
 
+import net.createmod.ponder.api.registration.LangRegistryAccess;
+import net.createmod.ponder.api.registration.PonderPlugin;
+import net.createmod.ponder.api.registration.SceneRegistryAccess;
+import net.createmod.ponder.api.registration.TagRegistryAccess;
 import net.createmod.ponder.enums.PonderConfig;
-import net.createmod.ponder.foundation.api.registration.PonderPlugin;
-import net.createmod.ponder.foundation.api.registration.SceneRegistryAccess;
-import net.createmod.ponder.foundation.api.registration.TagRegistryAccess;
 import net.createmod.ponder.foundation.registration.DefaultPonderSceneRegistrationHelper;
 import net.createmod.ponder.foundation.registration.DefaultPonderTagRegistrationHelper;
 import net.createmod.ponder.foundation.registration.DefaultSharedTextRegistrationHelper;
@@ -70,14 +71,14 @@ public class PonderIndex {
 	}
 
 	public static SceneRegistryAccess getSceneAccess() {
-		return SCENES.access();
+		return SCENES;
 	}
 
 	public static TagRegistryAccess getTagAccess() {
-		return TAGS.access();
+		return TAGS;
 	}
 
-	public static PonderLocalization getLangAccess() {
+	public static LangRegistryAccess getLangAccess() {
 		return LOCALIZATION;
 	}
 

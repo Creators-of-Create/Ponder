@@ -2,11 +2,10 @@ package net.createmod.ponder.foundation.registration;
 
 import java.util.function.Consumer;
 
+import net.createmod.ponder.api.registration.MultiSceneBuilder;
+import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.createmod.ponder.api.scene.PonderStoryBoard;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
-import net.createmod.ponder.foundation.PonderTag;
-import net.createmod.ponder.foundation.api.registration.MultiSceneBuilder;
-import net.createmod.ponder.foundation.api.registration.PonderSceneRegistrationHelper;
-import net.createmod.ponder.foundation.api.scene.PonderStoryBoard;
 import net.minecraft.resources.ResourceLocation;
 
 public class GenericMultiSceneBuilder<T> implements MultiSceneBuilder {
@@ -29,7 +28,7 @@ public class GenericMultiSceneBuilder<T> implements MultiSceneBuilder {
 	@Override
 	public MultiSceneBuilder addStoryBoard(ResourceLocation schematicLocation,
 										   PonderStoryBoard storyBoard,
-										   PonderTag... tags) {
+										   ResourceLocation... tags) {
 		return addStoryBoard(schematicLocation, storyBoard, sb -> sb.highlightTags(tags));
 	}
 
@@ -48,7 +47,7 @@ public class GenericMultiSceneBuilder<T> implements MultiSceneBuilder {
 
 	@Override
 	public MultiSceneBuilder addStoryBoard(String schematicPath, PonderStoryBoard storyBoard,
-										   PonderTag... tags) {
+										   ResourceLocation... tags) {
 		return addStoryBoard(helper.asLocation(schematicPath), storyBoard, tags);
 	}
 
