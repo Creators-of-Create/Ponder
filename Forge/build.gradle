@@ -39,6 +39,12 @@ loom {
             sourceSet project.sourceSets.main
             sourceSet commonProject.sourceSets.main
         }
+
+        if (catnipInWorkspace) {
+            catnip {
+
+            }
+        }
     }
 }
 
