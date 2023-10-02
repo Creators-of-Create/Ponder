@@ -11,8 +11,7 @@ loom {
     accessWidenerPath = file('src/main/resources/ponder.accesswidener')
 }
 
-boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
-boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
+def catnipProject = getParent().getParent() == null ? null : getParent().getParent().project("catnip:Common")
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
@@ -22,13 +21,13 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
 
-    if (catnipInWorkspace) {
-        implementation(project(path: ":catnip:Common", configuration: "namedElements"))
+    if (catnipProject != null) {
+        implementation(project(path: catnipProject.path, configuration: "namedElements"))
     } else {
         modCompileOnly "net.createmod.catnip:Catnip-Common-${minecraft_version}:${catnip_version}"
     }
 
-    if (flywheelInWorkspace) {
+    if (findProject(":Flywheel") != null) {
         compileOnly project(':Flywheel')
     } else {
         modCompileOnly "com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"

@@ -7,14 +7,10 @@ base {
     group = 'net.createmod.ponder'
 }
 
-def commonPath = findProject(":Common") != null ? ":Common" : ":${project_id}:Common"
-def commonProject = project(commonPath)
-
-boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
-boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
-boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
-project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Flywheel: ${flywheelInWorkspace}], [Catnip: ${catnipInWorkspace}]")
+def commonProject = getParent().project("Common")
+def catnipProject = getParent().getParent() == null ? null : getParent().getParent().project("catnip")
+def catnipSource = getParent().getParent() == null ? "Maven" : "Project"
+project.logger.lifecycle("$mod_id:$project.name is using Catnip from $catnipSource")
 
 project.logger.lifecycle "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
@@ -141,17 +137,17 @@ dependencies {
 
     forge "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    common(project(path: commonPath, configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: commonPath, configuration: "transformProductionForge")) { transitive false }
+    common(project(path: commonProject.path, configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: commonProject.path, configuration: "transformProductionForge")) { transitive false }
 
-    if (catnipInWorkspace) {
-        implementation(project(path: ":catnip:Common", configuration: "namedElements"))
-        implementation(project(path: ":catnip:Forge", configuration: "namedElements"))
+    if (catnipProject != null) {
+        implementation(project(path: catnipProject.path + ":Common", configuration: "namedElements"))
+        implementation(project(path: catnipProject.path + ":Forge", configuration: "namedElements"))
     } else {
         modImplementation("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}")
     }
 
-    if (flywheelInWorkspace) {
+    if (findProject(":Flywheel") != null) {
         implementation project(':Flywheel')
     } else {
         modImplementation("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")

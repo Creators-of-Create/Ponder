@@ -7,14 +7,10 @@ base {
     group = 'net.createmod.ponder'
 }
 
-def commonPath = findProject(":Common") != null ? ":Common" : ":${project_id}:Common"
-def commonProject = project(commonPath)
-
-boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
-boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
-boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
-project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Flywheel: ${flywheelInWorkspace}], [Catnip: ${catnipInWorkspace}]")
+def commonProject = getParent().project("Common")
+def catnipProject = getParent().getParent() == null ? null : getParent().getParent().project("catnip")
+def catnipSource = getParent().getParent() == null ? "Maven" : "Project"
+project.logger.lifecycle("$mod_id:$project.name is using Catnip from $catnipSource")
 
 architectury {
     platformSetupLoomIde()
@@ -48,16 +44,16 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modApi "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
-    common(project(path: commonPath, configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: commonPath, configuration: "transformProductionFabric")) { transitive false }
+    common(project(path: commonProject.path, configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: commonProject.path, configuration: "transformProductionFabric")) { transitive false }
 
     for (String module in port_lib_modules.split(",")) {
         modApi "io.github.fabricators_of_create.Porting-Lib:$module:$port_lib_version+$minecraft_version"
     }
 
-    if (catnipInWorkspace) {
-        implementation(project(path: ":catnip:Common", configuration: "namedElements"))
-        implementation(project(path: ":catnip:Fabric", configuration: "namedElements"))
+    if (catnipProject != null) {
+        implementation(project(path: catnipProject.path + ":Common", configuration: "namedElements"))
+        implementation(project(path: catnipProject.path + ":Fabric", configuration: "namedElements"))
     } else {
         modImplementation "net.createmod.catnip:Catnip-Fabric-${minecraft_version}:${catnip_version}"
     }
