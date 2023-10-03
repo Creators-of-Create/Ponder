@@ -36,9 +36,11 @@ loom {
             sourceSet commonProject.sourceSets.main
         }
 
-        if (catnipInWorkspace) {
+        if (catnipProject != null) {
+            println("Adding Catnip as a mod in Ponder Forge")
             catnip {
-
+                sourceSet catnipProject.project("Common").sourceSets.main
+                sourceSet catnipProject.project("Forge").sourceSets.main
             }
         }
     }
