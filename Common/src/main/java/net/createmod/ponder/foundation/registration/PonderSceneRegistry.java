@@ -18,12 +18,12 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.api.registration.SceneRegistryAccess;
+import net.createmod.ponder.api.registration.StoryBoardEntry;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.foundation.PonderIndex;
-import net.createmod.ponder.foundation.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.PonderStoryBoardEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -39,7 +39,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 public class PonderSceneRegistry implements SceneRegistryAccess {
 
 	private final PonderLocalization localization;
-	private final Multimap<ResourceLocation, PonderStoryBoardEntry> scenes;
+	private final Multimap<ResourceLocation, StoryBoardEntry> scenes;
 
 	private boolean allowRegistration = true;
 
@@ -55,7 +55,7 @@ public class PonderSceneRegistry implements SceneRegistryAccess {
 
 	//
 
-	public void addStoryBoard(PonderStoryBoardEntry entry) {
+	public void addStoryBoard(StoryBoardEntry entry) {
 		if (!allowRegistration)
 			throw new IllegalStateException("Registration Phase has already ended!");
 
@@ -65,7 +65,7 @@ public class PonderSceneRegistry implements SceneRegistryAccess {
 	//
 
 	@Override
-	public Collection<Map.Entry<ResourceLocation, PonderStoryBoardEntry>> getRegisteredEntries() {
+	public Collection<Map.Entry<ResourceLocation, StoryBoardEntry>> getRegisteredEntries() {
 		return scenes.entries();
 	}
 
@@ -81,7 +81,7 @@ public class PonderSceneRegistry implements SceneRegistryAccess {
 		if (PonderIndex.editingModeActive())
 			PonderIndex.reload();
 
-		Collection<PonderStoryBoardEntry> entries = scenes.get(id);
+		Collection<StoryBoardEntry> entries = scenes.get(id);
 
 		if (entries.isEmpty()) return Collections.emptyList();
 
@@ -90,7 +90,7 @@ public class PonderSceneRegistry implements SceneRegistryAccess {
 	}
 
 	@Override
-	public List<PonderScene> compile(Collection<PonderStoryBoardEntry> entries) {
+	public List<PonderScene> compile(Collection<StoryBoardEntry> entries) {
 		if (PonderIndex.editingModeActive()) {
 			localization.clearShared();
 			PonderIndex.gatherSharedText();
@@ -98,7 +98,7 @@ public class PonderSceneRegistry implements SceneRegistryAccess {
 
 		List<PonderScene> scenes = new ArrayList<>();
 
-		for (PonderStoryBoardEntry storyBoard : entries) {
+		for (StoryBoardEntry storyBoard : entries) {
 			StructureTemplate activeTemplate = loadSchematic(storyBoard.getSchematicLocation());
 			PonderLevel level = new PonderLevel(BlockPos.ZERO, Minecraft.getInstance().level);
 			activeTemplate.placeInWorld(level, BlockPos.ZERO, BlockPos.ZERO, new StructurePlaceSettings(), level.random,
@@ -112,7 +112,7 @@ public class PonderSceneRegistry implements SceneRegistryAccess {
 		return scenes;
 	}
 
-	public static PonderScene compileScene(PonderLocalization localization, PonderStoryBoardEntry sb, @Nullable PonderLevel level) {
+	public static PonderScene compileScene(PonderLocalization localization, StoryBoardEntry sb, @Nullable PonderLevel level) {
 		PonderScene scene = new PonderScene(level, localization, sb.getNamespace(), sb.getComponent(), sb.getTags(),
 											sb.getOrderingEntries());
 		SceneBuilder builder = scene.builder();

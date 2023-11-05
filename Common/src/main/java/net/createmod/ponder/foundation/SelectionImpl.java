@@ -3,41 +3,27 @@ package net.createmod.ponder.foundation;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
 
 import net.createmod.catnip.utility.outliner.Outline.OutlineParams;
 import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class Selection implements Predicate<BlockPos> {
+public class SelectionImpl {
 
 	public static Selection of(BoundingBox bb) {
 		return new Simple(bb);
 	}
 
-	public abstract Selection add(Selection other);
-
-	public abstract Selection substract(Selection other);
-
-	public abstract Selection copy();
-
-	public abstract Vec3 getCenter();
-
-	public abstract void forEach(Consumer<BlockPos> callback);
-
-	public abstract OutlineParams makeOutline(Outliner outliner, Object slot);
-
-	public OutlineParams makeOutline(Outliner outliner) {
-		return makeOutline(outliner, this);
-	}
-
-	private static class Compound extends Selection {
+	private static class Compound implements Selection {
 
 		Set<BlockPos> posSet;
-		Vec3 center;
+		@Nullable Vec3 center;
 
 		public Compound(Simple initial) {
 			posSet = new HashSet<>();
@@ -99,10 +85,10 @@ public abstract class Selection implements Predicate<BlockPos> {
 
 	}
 
-	private static class Simple extends Selection {
+	private static class Simple implements Selection {
 
-		private BoundingBox bb;
-		private AABB aabb;
+		private final BoundingBox bb;
+		private final AABB aabb;
 
 		public Simple(BoundingBox bb) {
 			this.bb = bb;

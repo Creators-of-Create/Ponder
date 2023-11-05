@@ -3,31 +3,35 @@ package net.createmod.ponder.foundation.element;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.ponder.foundation.PonderLevel;
+import net.createmod.ponder.api.element.AnimatedSceneElement;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-public abstract class AnimatedSceneElement extends PonderSceneElement {
+public abstract class AnimatedSceneElementBase extends PonderElementBase implements AnimatedSceneElement {
 
 	protected Vec3 fadeVec;
 	protected LerpedFloat fade;
 
-	public AnimatedSceneElement() {
+	public AnimatedSceneElementBase() {
 		fade = LerpedFloat.linear()
 			.startWithValue(0);
 	}
 
+	@Override
 	public void forceApplyFade(float fade) {
 		this.fade.startWithValue(fade);
 	}
 
+	@Override
 	public void setFade(float fade) {
 		this.fade.setValue(fade);
 	}
 
+	@Override
 	public void setFadeVec(Vec3 fadeVec) {
 		this.fadeVec = fadeVec;
 	}

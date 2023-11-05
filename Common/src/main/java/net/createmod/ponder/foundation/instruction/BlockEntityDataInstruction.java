@@ -2,9 +2,9 @@ package net.createmod.ponder.foundation.instruction;
 
 import java.util.function.UnaryOperator;
 
-import net.createmod.ponder.foundation.PonderLevel;
+import net.createmod.ponder.api.level.PonderLevel;
+import net.createmod.ponder.api.scene.Selection;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.Selection;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 

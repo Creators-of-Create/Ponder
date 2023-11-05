@@ -4,8 +4,8 @@ import java.util.function.Consumer;
 
 import net.createmod.ponder.api.registration.MultiSceneBuilder;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.createmod.ponder.api.registration.StoryBoardEntry;
 import net.createmod.ponder.api.scene.PonderStoryBoard;
-import net.createmod.ponder.foundation.PonderStoryBoardEntry;
 import net.minecraft.resources.ResourceLocation;
 
 public class GenericMultiSceneBuilder<T> implements MultiSceneBuilder {
@@ -35,7 +35,7 @@ public class GenericMultiSceneBuilder<T> implements MultiSceneBuilder {
 	@Override
 	public MultiSceneBuilder addStoryBoard(ResourceLocation schematicLocation,
 										   PonderStoryBoard storyBoard,
-										   Consumer<PonderStoryBoardEntry> extras) {
+										   Consumer<StoryBoardEntry> extras) {
 		components.forEach(c -> extras.accept(helper.addStoryBoard(c, schematicLocation, storyBoard)));
 		return this;
 	}
@@ -53,7 +53,7 @@ public class GenericMultiSceneBuilder<T> implements MultiSceneBuilder {
 
 	@Override
 	public MultiSceneBuilder addStoryBoard(String schematicPath, PonderStoryBoard storyBoard,
-										   Consumer<PonderStoryBoardEntry> extras) {
+										   Consumer<StoryBoardEntry> extras) {
 		return addStoryBoard(helper.asLocation(schematicPath), storyBoard, extras);
 	}
 

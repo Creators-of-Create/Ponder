@@ -1,5 +1,7 @@
 package net.createmod.ponder.foundation.element;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -7,9 +9,10 @@ import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.utility.Pointing;
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.api.PonderPalette;
+import net.createmod.ponder.api.element.InputElementBuilder;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderIndex;
-import net.createmod.ponder.foundation.PonderPalette;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.client.gui.Font;
@@ -18,64 +21,71 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
-public class InputWindowElement extends AnimatedOverlayElement {
+public class InputWindowElement extends AnimatedOverlayElementBase {
 
-	private Pointing direction;
-	ResourceLocation key;
-	ScreenElement icon;
+	private final Vec3 sceneSpace;
+	private final Pointing direction;
+	@Nullable ResourceLocation key;
+	@Nullable ScreenElement icon;
 	ItemStack item = ItemStack.EMPTY;
-	private Vec3 sceneSpace;
-
-	public InputWindowElement clone() {
-		InputWindowElement inputWindowElement = new InputWindowElement(sceneSpace, direction);
-		inputWindowElement.key = key;
-		inputWindowElement.icon = icon;
-		inputWindowElement.item = item.copy();
-		return inputWindowElement;
-	}
 
 	public InputWindowElement(Vec3 sceneSpace, Pointing direction) {
 		this.sceneSpace = sceneSpace;
 		this.direction = direction;
 	}
 
-	public InputWindowElement withItem(ItemStack stack) {
-		item = stack;
-		return this;
+	public InputElementBuilder builder() {
+		return new Builder();
 	}
 
-	public InputWindowElement leftClick() {
-		icon = PonderGuiTextures.ICON_LMB;
-		return this;
-	}
+	private class Builder implements InputElementBuilder {
 
-	public InputWindowElement scroll() {
-		icon = PonderGuiTextures.ICON_SCROLL;
-		return this;
-	}
+		@Override
+		public InputElementBuilder withItem(ItemStack stack) {
+			item = stack;
+			return this;
+		}
 
-	public InputWindowElement rightClick() {
-		icon = PonderGuiTextures.ICON_RMB;
-		return this;
-	}
+		@Override
+		public InputElementBuilder leftClick() {
+			icon = PonderGuiTextures.ICON_LMB;
+			return this;
+		}
 
-	public InputWindowElement showing(ScreenElement icon) {
-		this.icon = icon;
-		return this;
-	}
+		@Override
+		public InputElementBuilder scroll() {
+			icon = PonderGuiTextures.ICON_SCROLL;
+			return this;
+		}
 
-	public InputWindowElement whileSneaking() {
-		key = Ponder.asResource("sneak_and");
-		return this;
-	}
+		@Override
+		public InputElementBuilder rightClick() {
+			icon = PonderGuiTextures.ICON_RMB;
+			return this;
+		}
 
-	public InputWindowElement whileCTRL() {
-		key = Ponder.asResource("ctrl_and");
-		return this;
+		@Override
+		public InputElementBuilder showing(ScreenElement icon) {
+			InputWindowElement.this.icon = icon;
+			return this;
+		}
+
+		@Override
+		public InputElementBuilder whileSneaking() {
+			key = Ponder.asResource("sneak_and");
+			return this;
+		}
+
+		@Override
+		public InputElementBuilder whileCTRL() {
+			key = Ponder.asResource("ctrl_and");
+			return this;
+		}
+
 	}
 
 	@Override
-	protected void render(PonderScene scene, PonderUI screen, PoseStack ms, float partialTicks, float fade) {
+	public void render(PonderScene scene, PonderUI screen, PoseStack ms, float partialTicks, float fade) {
 		Font font = screen.getFontRenderer();
 		int width = 0;
 		int height = 0;

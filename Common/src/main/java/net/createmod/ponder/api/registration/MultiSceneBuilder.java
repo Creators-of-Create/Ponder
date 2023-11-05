@@ -3,7 +3,6 @@ package net.createmod.ponder.api.registration;
 import java.util.function.Consumer;
 
 import net.createmod.ponder.api.scene.PonderStoryBoard;
-import net.createmod.ponder.foundation.PonderStoryBoardEntry;
 import net.minecraft.resources.ResourceLocation;
 
 public interface MultiSceneBuilder {
@@ -15,7 +14,7 @@ public interface MultiSceneBuilder {
 
 	MultiSceneBuilder addStoryBoard(ResourceLocation schematicLocation,
 									PonderStoryBoard storyBoard,
-									Consumer<PonderStoryBoardEntry> extras);
+									Consumer<StoryBoardEntry> extras);
 
 	MultiSceneBuilder addStoryBoard(String schematicPath, PonderStoryBoard storyBoard);
 
@@ -23,5 +22,5 @@ public interface MultiSceneBuilder {
 									ResourceLocation... tags);
 
 	MultiSceneBuilder addStoryBoard(String schematicPath, PonderStoryBoard storyBoard,
-									Consumer<PonderStoryBoardEntry> extras);
+									Consumer<StoryBoardEntry> extras);
 }

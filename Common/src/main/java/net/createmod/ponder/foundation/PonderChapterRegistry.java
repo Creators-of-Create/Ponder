@@ -11,11 +11,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.createmod.catnip.utility.Pair;
+import net.createmod.ponder.api.registration.StoryBoardEntry;
 import net.minecraft.resources.ResourceLocation;
 
 public class PonderChapterRegistry {
 
-	private final Map<ResourceLocation, Pair<PonderChapter, List<PonderStoryBoardEntry>>> chapters;
+	private final Map<ResourceLocation, Pair<PonderChapter, List<StoryBoardEntry>>> chapters;
 
 	public PonderChapterRegistry() {
 		chapters = new HashMap<>();
@@ -30,15 +31,15 @@ public class PonderChapterRegistry {
 
 	@Nullable
 	PonderChapter getChapter(ResourceLocation id) {
-		Pair<PonderChapter, List<PonderStoryBoardEntry>> pair = chapters.get(id);
+		Pair<PonderChapter, List<StoryBoardEntry>> pair = chapters.get(id);
 		if (pair == null)
 			return null;
 
 		return pair.getFirst();
 	}
 
-	public void addStoriesToChapter(@Nonnull PonderChapter chapter, PonderStoryBoardEntry... entries) {
-		List<PonderStoryBoardEntry> entryList = chapters.get(chapter.getId()).getSecond();
+	public void addStoriesToChapter(@Nonnull PonderChapter chapter, StoryBoardEntry... entries) {
+		List<StoryBoardEntry> entryList = chapters.get(chapter.getId()).getSecond();
 		synchronized (entryList) {
 			Collections.addAll(entryList, entries);
 		}
@@ -52,8 +53,8 @@ public class PonderChapterRegistry {
 				.collect(Collectors.toList());
 	}
 
-	public List<PonderStoryBoardEntry> getStories(PonderChapter chapter) {
-		Pair<PonderChapter, List<PonderStoryBoardEntry>> chapterPair = chapters.get(chapter.getId());
+	public List<StoryBoardEntry> getStories(PonderChapter chapter) {
+		Pair<PonderChapter, List<StoryBoardEntry>> chapterPair = chapters.get(chapter.getId());
 		if (chapterPair == null)
 			return List.of();
 		return chapterPair.getSecond();

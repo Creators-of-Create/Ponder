@@ -1,6 +1,5 @@
 package net.createmod.ponder.api.scene;
 
-import net.createmod.ponder.foundation.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 

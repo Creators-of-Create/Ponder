@@ -42,6 +42,9 @@ import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.api.registration.StoryBoardEntry;
+import net.createmod.ponder.api.registration.StoryBoardEntry.SceneOrderingEntry;
+import net.createmod.ponder.api.registration.StoryBoardEntry.SceneOrderingType;
 import net.createmod.ponder.enums.PonderConfig;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderChapter;
@@ -49,8 +52,6 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
-import net.createmod.ponder.foundation.PonderStoryBoardEntry.SceneOrderingEntry;
-import net.createmod.ponder.foundation.PonderStoryBoardEntry.SceneOrderingType;
 import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.content.DebugScenes;
@@ -146,7 +147,7 @@ public class PonderUI extends AbstractPonderScreen {
 		this.scenes = orderedScenes;
 
 		if (this.scenes.isEmpty()) {
-			List<PonderStoryBoardEntry> list = Collections.singletonList(
+			List<StoryBoardEntry> list = Collections.singletonList(
 					new PonderStoryBoardEntry(DebugScenes::empty, Ponder.MOD_ID, "debug/scene_1",
 											  new ResourceLocation("minecraft", "stick")));
 			this.scenes.addAll(PonderIndex.getSceneAccess().compile(list));

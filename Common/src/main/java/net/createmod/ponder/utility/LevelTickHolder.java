@@ -2,7 +2,7 @@ package net.createmod.ponder.utility;
 
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.levelWrappers.WrappedClientLevel;
-import net.createmod.ponder.foundation.PonderLevel;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.world.level.LevelAccessor;
 

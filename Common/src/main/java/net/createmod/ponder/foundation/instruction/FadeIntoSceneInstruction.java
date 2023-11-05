@@ -1,8 +1,9 @@
 package net.createmod.ponder.foundation.instruction;
 
-import net.createmod.ponder.foundation.ElementLink;
+import net.createmod.ponder.api.element.AnimatedSceneElement;
+import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.element.AnimatedSceneElement;
+import net.createmod.ponder.foundation.element.ElementLinkImpl;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 
@@ -44,7 +45,7 @@ public abstract class FadeIntoSceneInstruction<T extends AnimatedSceneElement> e
 	}
 
 	public ElementLink<T> createLink(PonderScene scene) {
-		elementLink = new ElementLink<>(getElementClass());
+		elementLink = new ElementLinkImpl<>(getElementClass());
 		scene.linkElement(element, elementLink);
 		return elementLink;
 	}

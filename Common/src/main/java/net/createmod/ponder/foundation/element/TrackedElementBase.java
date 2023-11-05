@@ -5,29 +5,25 @@ import java.util.function.Consumer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.createmod.ponder.foundation.PonderLevel;
+import net.createmod.ponder.api.element.TrackedElement;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 
-public abstract class TrackedElement<T> extends PonderSceneElement {
+public abstract class TrackedElementBase<T> extends PonderElementBase implements TrackedElement<T> {
 
-	private WeakReference<T> reference;
+	private final WeakReference<T> reference;
 
-	public TrackedElement(T wrapped) {
+	public TrackedElementBase(T wrapped) {
 		this.reference = new WeakReference<>(wrapped);
 	}
 
+	@Override
 	public void ifPresent(Consumer<T> func) {
-		if (reference == null)
-			return;
 		T resolved = reference.get();
 		if (resolved == null)
 			return;
 		func.accept(resolved);
-	}
-
-	protected boolean isStillValid(T element) {
-		return true;
 	}
 
 	@Override

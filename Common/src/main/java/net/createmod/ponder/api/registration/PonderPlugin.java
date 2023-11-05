@@ -1,6 +1,6 @@
 package net.createmod.ponder.api.registration;
 
-import net.createmod.ponder.foundation.PonderLevel;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.resources.ResourceLocation;
 
 public interface PonderPlugin {
@@ -22,7 +22,7 @@ public interface PonderPlugin {
 
 	default void registerSharedText(SharedTextRegistrationHelper helper) {}
 
-	default void onPonderWorldRestore(PonderLevel world) {}
+	default void onPonderLevelRestore(PonderLevel ponderLevel) {}
 
 	default void indexExclusions(IndexExclusionHelper helper) {}
 

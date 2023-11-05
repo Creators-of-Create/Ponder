@@ -1,4 +1,4 @@
-package net.createmod.ponder.foundation;
+package net.createmod.ponder.api.level;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +17,11 @@ import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.levelWrappers.SchematicLevel;
 import net.createmod.catnip.utility.levelWrappers.WrappedClientLevel;
 import net.createmod.ponder.api.VirtualBlockEntity;
-import net.createmod.ponder.foundation.element.WorldSectionElement;
+import net.createmod.ponder.api.element.WorldSectionElement;
+import net.createmod.ponder.api.scene.Selection;
+import net.createmod.ponder.foundation.PonderIndex;
+import net.createmod.ponder.foundation.PonderScene;
+import net.createmod.ponder.foundation.PonderWorldParticles;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -57,7 +61,8 @@ public class PonderLevel extends SchematicLevel {
 	protected PonderWorldParticles particles;
 
 	int overrideLight;
-	@Nullable Selection mask;
+	@Nullable
+	Selection mask;
 
 	public PonderLevel(BlockPos anchor, Level original) {
 		super(anchor, original);
@@ -101,7 +106,7 @@ public class PonderLevel extends SchematicLevel {
 		});
 		particles.clearEffects();
 
-		PonderIndex.forEachPlugin(plugin -> plugin.onPonderWorldRestore(this));
+		PonderIndex.forEachPlugin(plugin -> plugin.onPonderLevelRestore(this));
 	}
 
 	public void restoreBlocks(Selection selection) {
@@ -137,7 +142,7 @@ public class PonderLevel extends SchematicLevel {
 		return overrideLight == -1 ? 15 : overrideLight;
 	}
 
-	public void setMask(Selection mask) {
+	public void setMask(@Nullable Selection mask) {
 		this.mask = mask;
 	}
 

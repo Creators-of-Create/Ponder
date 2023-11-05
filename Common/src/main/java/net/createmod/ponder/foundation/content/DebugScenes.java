@@ -1,19 +1,16 @@
 package net.createmod.ponder.foundation.content;
 
 import net.createmod.catnip.utility.Pointing;
+import net.createmod.ponder.api.ParticleEmitter;
+import net.createmod.ponder.api.PonderPalette;
+import net.createmod.ponder.api.element.ElementLink;
+import net.createmod.ponder.api.element.ParrotPose;
+import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.createmod.ponder.api.scene.PonderStoryBoard;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
-import net.createmod.ponder.foundation.ElementLink;
-import net.createmod.ponder.foundation.PonderPalette;
-import net.createmod.ponder.foundation.Selection;
-import net.createmod.ponder.foundation.element.InputWindowElement;
-import net.createmod.ponder.foundation.element.ParrotElement;
-import net.createmod.ponder.foundation.element.ParrotElement.DancePose;
-import net.createmod.ponder.foundation.element.ParrotElement.FacePointOfInterestPose;
-import net.createmod.ponder.foundation.element.WorldSectionElement;
-import net.createmod.ponder.foundation.instruction.EmitParticlesInstruction.Emitter;
+import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -64,15 +61,15 @@ public class DebugScenes {
 		Selection zAxis = util.select().fromTo(1, 1, 2, 1, 1, 4);
 
 		scene.idle(10);
-		scene.overlay().showSelectionWithText(xAxis, 20)
+		scene.overlay().showOutlineWithText(xAxis, 20)
 			.colored(PonderPalette.RED)
 			.text("Das X axis");
 		scene.idle(20);
-		scene.overlay().showSelectionWithText(yAxis, 20)
+		scene.overlay().showOutlineWithText(yAxis, 20)
 			.colored(PonderPalette.GREEN)
 			.text("Das Y axis");
 		scene.idle(20);
-		scene.overlay().showSelectionWithText(zAxis, 20)
+		scene.overlay().showOutlineWithText(zAxis, 20)
 			.colored(PonderPalette.BLUE)
 			.text("Das Z axis");
 	}
@@ -100,7 +97,7 @@ public class DebugScenes {
 		scene.showBasePlate();
 		scene.idle(10);
 		Vec3 parrotPos = util.vector().topOf(1, 0, 1);
-		scene.special().createBirb(parrotPos, FacePointOfInterestPose::new);
+		scene.special().createBirb(parrotPos, ParrotPose.FacePointOfInterestPose::new);
 		scene.world().showSection(util.select().layersFrom(1), Direction.DOWN);
 		scene.overlay().showText(1000)
 			.text("Fluid rendering test.")
@@ -150,10 +147,10 @@ public class DebugScenes {
 		scene.world().showSection(blocksExceptBasePlate, Direction.DOWN);
 		scene.idle(10);
 
-		scene.overlay().showSelectionWithText(out1, 100)
+		scene.overlay().showOutlineWithText(out1, 100)
 			.colored(PonderPalette.BLACK)
 			.text("Blocks outside of the base plate do not affect scaling");
-		scene.overlay().showSelectionWithText(out2, 100)
+		scene.overlay().showOutlineWithText(out2, 100)
 			.colored(PonderPalette.BLACK)
 			.text("configureBasePlate() makes sure of that.");
 		scene.markAsFinished();
@@ -167,8 +164,8 @@ public class DebugScenes {
 		scene.idle(10);
 
 		Vec3 emitterPos = util.vector().of(2.5, 2.25, 2.5);
-		Emitter emitter = Emitter.simple(ParticleTypes.LAVA, util.vector().of(0, .1, 0));
-		Emitter rotation = Emitter.simple(ParticleTypes.BUBBLE_COLUMN_UP, util.vector().of(0, .1, 0));
+		ParticleEmitter emitter = scene.effects().simpleParticleEmitter(ParticleTypes.LAVA, util.vector().of(0, .1, 0));
+		ParticleEmitter rotation = scene.effects().simpleParticleEmitter(ParticleTypes.BUBBLE_COLUMN_UP, util.vector().of(0, .1, 0));
 
 		scene.overlay().showText(20)
 			.text("Incoming...")
@@ -193,9 +190,9 @@ public class DebugScenes {
 
 		BlockPos shaftPos = util.grid().at(3, 1, 1);
 		Selection shaftSelection = util.select().position(shaftPos);
-		scene.overlay().showControls(new InputWindowElement(util.vector().topOf(shaftPos), Pointing.DOWN).rightClick()
+		scene.overlay().showControls(util.vector().topOf(shaftPos), Pointing.DOWN, 40).rightClick()
 			.whileSneaking()
-			.withItem(Items.SALMON.getDefaultInstance()), 40);
+			.withItem(Items.SALMON.getDefaultInstance());
 		scene.idle(20);
 		scene.world().replaceBlocks(shaftSelection, Blocks.BIRCH_SIGN.defaultBlockState(), true);
 
@@ -204,8 +201,8 @@ public class DebugScenes {
 
 		scene.idle(20);
 
-		scene.overlay().showControls(new InputWindowElement(util.vector().of(1, 4.5, 3.5), Pointing.LEFT).rightClick()
-			.withItem(new ItemStack(Blocks.POLISHED_ANDESITE)), 20);
+		scene.overlay().showControls(util.vector().of(1, 4.5, 3.5), Pointing.LEFT, 20).rightClick()
+			.withItem(new ItemStack(Blocks.POLISHED_ANDESITE));
 		scene.world().showSection(util.select().layer(4), Direction.DOWN);
 
 		scene.idle(40);
@@ -231,8 +228,8 @@ public class DebugScenes {
 		scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, chassisValueBoxHighlight, point, 1);
 		scene.idle(1);
 		scene.overlay().chaseBoundingBoxOutline(PonderPalette.GREEN, chassisValueBoxHighlight, expanded, 120);
-		scene.overlay().showControls(new InputWindowElement(chassisSurface, Pointing.UP).scroll()
-			.withItem(Items.SALMON.getDefaultInstance()), 40);
+		scene.overlay().showControls(chassisSurface, Pointing.UP, 40).scroll()
+			.withItem(Items.SALMON.getDefaultInstance());
 
 		PonderPalette white = PonderPalette.WHITE;
 		scene.overlay().showOutline(white, chassisEffectHighlight, singleBlock, 10);
@@ -247,9 +244,9 @@ public class DebugScenes {
 		scene.idle(10);
 
 		scene.idle(30);
-		scene.overlay().showControls(new InputWindowElement(chassisSurface, Pointing.UP).whileCTRL()
+		scene.overlay().showControls(chassisSurface, Pointing.UP, 40).whileCTRL()
 			.scroll()
-			.withItem(Items.SALMON.getDefaultInstance()), 40);
+			.withItem(Items.SALMON.getDefaultInstance());
 
 		scene.overlay().showOutline(white, chassisEffectHighlight, singleRow, 10);
 		scene.idle(10);
@@ -273,7 +270,7 @@ public class DebugScenes {
 		scene.idle(10);
 
 		BlockPos pos = new BlockPos(1, 2, 3);
-		scene.special().createBirb(util.vector().blockSurface(pos, Direction.UP), ParrotElement.FaceCursorPose::new);
+		scene.special().createBirb(util.vector().blockSurface(pos, Direction.UP), ParrotPose.FaceCursorPose::new);
 		//scene.special.birbOnSpinnyShaft(pos);
 		scene.overlay().showText(100)
 			.colored(PonderPalette.GREEN)
@@ -281,11 +278,11 @@ public class DebugScenes {
 			.pointAt(util.vector().topOf(pos));
 
 		scene.idle(10);
-		scene.special().createBirb(util.vector().topOf(0, 1, 2), DancePose::new);
+		scene.special().createBirb(util.vector().topOf(0, 1, 2), ParrotPose.DancePose::new);
 		scene.idle(10);
 
 		scene.special().createBirb(util.vector().centerOf(3, 1, 3)
-			.add(0, 0.25f, 0), FacePointOfInterestPose::new);
+			.add(0, 0.25f, 0), ParrotPose.FacePointOfInterestPose::new);
 		scene.idle(20);
 
 		BlockPos poi1 = util.grid().at(4, 1, 0);
@@ -358,7 +355,7 @@ public class DebugScenes {
 		scene.world().setBlocks(hiddenReplaceArea, Blocks.BLACK_CONCRETE.defaultBlockState(), false);
 		scene.world().showSection(hiddenReplaceArea, Direction.DOWN);
 		scene.idle(20);
-		scene.overlay().showSelectionWithText(hiddenReplaceArea, 30)
+		scene.overlay().showOutlineWithText(hiddenReplaceArea, 30)
 			.colored(PonderPalette.BLUE)
 			.text("Seamless substitution of blocks");
 

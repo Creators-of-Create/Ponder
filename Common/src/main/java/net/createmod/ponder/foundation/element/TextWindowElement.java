@@ -1,16 +1,19 @@
 package net.createmod.ponder.foundation.element;
 
 import java.util.List;
-import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
+import com.jozufozu.flywheel.util.NonNullSupplier;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.utility.theme.Color;
+import net.createmod.ponder.api.PonderPalette;
+import net.createmod.ponder.api.element.TextElementBuilder;
 import net.createmod.ponder.foundation.PonderIndex;
-import net.createmod.ponder.foundation.PonderPalette;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
 import net.createmod.ponder.foundation.PonderTheme;
@@ -22,82 +25,90 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
-public class TextWindowElement extends AnimatedOverlayElement {
+public class TextWindowElement extends AnimatedOverlayElementBase {
 
-	Supplier<String> textGetter = () -> "(?) No text was provided";
-	String bakedText;
+	NonNullSupplier<String> textGetter = () -> "(?) No text was provided";
+	@Nullable String bakedText;
 
 	// from 0 to 200
 	int y;
 
-	Vec3 vec;
+	@Nullable Vec3 vec;
 
 	boolean nearScene = false;
 	PonderPalette palette = PonderPalette.WHITE;
 
-	public class Builder {
+	public TextElementBuilder builder(PonderScene scene) {
+		return new Builder(scene);
+	}
 
-		private PonderScene scene;
+	private class Builder implements TextElementBuilder {
+
+		private final PonderScene scene;
 
 		public Builder(PonderScene scene) {
 			this.scene = scene;
 		}
 
+		@Override
 		public Builder colored(PonderPalette color) {
 			TextWindowElement.this.palette = color;
 			return this;
 		}
 
+		@Override
 		public Builder pointAt(Vec3 vec) {
 			TextWindowElement.this.vec = vec;
 			return this;
 		}
 
+		@Override
 		public Builder independent(int y) {
 			TextWindowElement.this.y = y;
 			return this;
 		}
 
-		public Builder independent() {
-			return independent(0);
-		}
-
+		@Override
 		public Builder text(String defaultText) {
 			textGetter = scene.registerText(defaultText);
 			return this;
 		}
 
+		@Override
 		public Builder sharedText(ResourceLocation key) {
 			textGetter = () -> PonderIndex.getLangAccess().getShared(key);
 			return this;
 		}
 
+		@Override
 		public Builder sharedText(String key) {
 			return sharedText(new ResourceLocation(scene.getNamespace(), key));
 		}
 
+		@Override
 		public Builder placeNearTarget() {
 			TextWindowElement.this.nearScene = true;
 			return this;
 		}
 
+		@Override
 		public Builder attachKeyFrame() {
 			scene.builder()
 				.addLazyKeyframe();
 			return this;
 		}
-
 	}
 
 	@Override
-	protected void render(PonderScene scene, PonderUI screen, PoseStack ms, float partialTicks, float fade) {
+	public void render(PonderScene scene, PonderUI screen, PoseStack ms, float partialTicks, float fade) {
 		if (bakedText == null)
 			bakedText = textGetter.get();
-		if (fade < 1 / 16f)
+
+        if (fade < 1 / 16f)
 			return;
 		SceneTransform transform = scene.getTransform();
 		Vec2 sceneToScreen = vec != null ? transform.sceneToScreen(vec, partialTicks)
-				: new Vec2(screen.width / 2, (screen.height - 200) / 2 + y - 8);
+				: new Vec2(screen.width / 2f, (screen.height - 200) / 2f + y - 8);
 
 		boolean settled = transform.xRotation.settled() && transform.yRotation.settled();
 		float pY = settled ? (int) sceneToScreen.y : sceneToScreen.y;

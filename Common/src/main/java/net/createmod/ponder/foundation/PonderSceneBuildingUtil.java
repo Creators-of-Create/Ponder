@@ -3,6 +3,7 @@ package net.createmod.ponder.foundation;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.ponder.api.scene.PositionUtil;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
+import net.createmod.ponder.api.scene.Selection;
 import net.createmod.ponder.api.scene.SelectionUtil;
 import net.createmod.ponder.api.scene.VectorUtil;
 import net.minecraft.core.BlockPos;
@@ -102,7 +103,7 @@ public class PonderSceneBuildingUtil implements SceneBuildingUtil {
 
 		@Override
 		public Selection everywhere() {
-			return Selection.of(sceneBounds);
+			return SelectionImpl.of(sceneBounds);
 		}
 
 		@Override
@@ -148,7 +149,7 @@ public class PonderSceneBuildingUtil implements SceneBuildingUtil {
 
 		@Override
 		public Selection cuboid(BlockPos origin, Vec3i size) {
-			return Selection.of(BoundingBox.fromCorners(origin, origin.offset(size)));
+			return SelectionImpl.of(BoundingBox.fromCorners(origin, origin.offset(size)));
 		}
 
 	}

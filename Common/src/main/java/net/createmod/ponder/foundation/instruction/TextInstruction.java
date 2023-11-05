@@ -1,13 +1,13 @@
 package net.createmod.ponder.foundation.instruction;
 
+import net.createmod.ponder.api.scene.Selection;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.Selection;
 import net.createmod.ponder.foundation.element.OutlinerElement;
 import net.createmod.ponder.foundation.element.TextWindowElement;
 
 public class TextInstruction extends FadeInOutInstruction {
 
-	private TextWindowElement element;
+	private final TextWindowElement element;
 	private OutlinerElement outline;
 
 	public TextInstruction(TextWindowElement element, int duration) {

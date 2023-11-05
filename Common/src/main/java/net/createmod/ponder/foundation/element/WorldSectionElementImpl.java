@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import javax.annotation.Nullable;
+
 import com.jozufozu.flywheel.core.model.ModelUtil;
 import com.jozufozu.flywheel.core.model.ShadeSeparatedBufferedData;
 import com.jozufozu.flywheel.core.model.ShadeSeparatingVertexConsumer;
@@ -30,9 +32,10 @@ import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.outliner.AABBOutline;
 import net.createmod.ponder.Ponder;
-import net.createmod.ponder.foundation.PonderLevel;
+import net.createmod.ponder.api.element.WorldSectionElement;
+import net.createmod.ponder.api.level.PonderLevel;
+import net.createmod.ponder.api.scene.Selection;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.Selection;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -61,15 +64,15 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class WorldSectionElement extends AnimatedSceneElement {
+public class WorldSectionElementImpl extends AnimatedSceneElementBase implements WorldSectionElement {
 
 	public static final Compartment<Pair<Integer, Integer>> PONDER_WORLD_SECTION = new Compartment<>();
 
 	private static final ThreadLocal<ThreadLocalObjects> THREAD_LOCAL_OBJECTS = ThreadLocal.withInitial(ThreadLocalObjects::new);
 
-	List<BlockEntity> renderedBlockEntities;
-	List<Pair<BlockEntity, Consumer<Level>>> tickableBlockEntities;
-	Selection section;
+	@Nullable List<BlockEntity> renderedBlockEntities;
+	@Nullable List<Pair<BlockEntity, Consumer<Level>>> tickableBlockEntities;
+	@Nullable Selection section;
 	boolean redraw;
 
 	Vec3 prevAnimatedOffset = Vec3.ZERO;
@@ -77,17 +80,18 @@ public class WorldSectionElement extends AnimatedSceneElement {
 	Vec3 prevAnimatedRotation = Vec3.ZERO;
 	Vec3 animatedRotation = Vec3.ZERO;
 	Vec3 centerOfRotation = Vec3.ZERO;
-	Vec3 stabilizationAnchor = null;
+	@Nullable Vec3 stabilizationAnchor = null;
 
-	BlockPos selectedBlock;
+	@Nullable BlockPos selectedBlock;
 
-	public WorldSectionElement() {}
+	public WorldSectionElementImpl() {}
 
-	public WorldSectionElement(Selection section) {
+	public WorldSectionElementImpl(Selection section) {
 		this.section = section.copy();
 		centerOfRotation = section.getCenter();
 	}
 
+	@Override
 	public void mergeOnto(WorldSectionElement other) {
 		setVisible(false);
 		if (other.isEmpty())
@@ -96,14 +100,17 @@ public class WorldSectionElement extends AnimatedSceneElement {
 			other.add(section);
 	}
 
+	@Override
 	public void set(Selection selection) {
 		applyNewSelection(selection.copy());
 	}
 
+	@Override
 	public void add(Selection toAdd) {
 		applyNewSelection(this.section.add(toAdd));
 	}
 
+	@Override
 	public void erase(Selection toErase) {
 		applyNewSelection(this.section.substract(toErase));
 	}
@@ -113,10 +120,12 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		queueRedraw();
 	}
 
+	@Override
 	public void setCenterOfRotation(Vec3 center) {
 		centerOfRotation = center;
 	}
 
+	@Override
 	public void stabilizeRotation(Vec3 anchor) {
 		stabilizationAnchor = anchor;
 	}
@@ -128,10 +137,12 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		resetSelectedBlock();
 	}
 
+	@Override
 	public void selectBlock(BlockPos pos) {
 		selectedBlock = pos;
 	}
 
+	@Override
 	public void resetSelectedBlock() {
 		selectedBlock = null;
 	}
@@ -143,34 +154,41 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		animatedRotation = Vec3.ZERO;
 	}
 
+	@Override
 	public void queueRedraw() {
 		redraw = true;
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return section == null;
 	}
 
+	@Override
 	public void setEmpty() {
 		section = null;
 	}
 
+	@Override
 	public void setAnimatedRotation(Vec3 eulerAngles, boolean force) {
 		this.animatedRotation = eulerAngles;
 		if (force)
 			prevAnimatedRotation = animatedRotation;
 	}
 
+	@Override
 	public Vec3 getAnimatedRotation() {
 		return animatedRotation;
 	}
 
+	@Override
 	public void setAnimatedOffset(Vec3 offset, boolean force) {
 		this.animatedOffset = offset;
 		if (force)
 			prevAnimatedOffset = animatedOffset;
 	}
 
+	@Override
 	public Vec3 getAnimatedOffset() {
 		return animatedOffset;
 	}
@@ -180,6 +198,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		return super.isVisible() && !isEmpty();
 	}
 
+	@Override
 	public Pair<Vec3, BlockHitResult> rayTrace(PonderLevel world, Vec3 source, Vec3 target) {
 		world.setMask(this.section);
 		Vec3 transformedTarget = reverseTransformVec(target);
@@ -200,9 +219,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		float pt = AnimationTickHolder.getPartialTicks();
 		in = in.subtract(VecHelper.lerp(pt, prevAnimatedOffset, animatedOffset));
 		if (!animatedRotation.equals(Vec3.ZERO) || !prevAnimatedRotation.equals(Vec3.ZERO)) {
-			if (centerOfRotation == null)
-				centerOfRotation = section.getCenter();
-			double rotX = Mth.lerp(pt, prevAnimatedRotation.x, animatedRotation.x);
+            double rotX = Mth.lerp(pt, prevAnimatedRotation.x, animatedRotation.x);
 			double rotZ = Mth.lerp(pt, prevAnimatedRotation.z, animatedRotation.z);
 			double rotY = Mth.lerp(pt, prevAnimatedRotation.y, animatedRotation.y);
 			in = in.subtract(centerOfRotation);
@@ -226,9 +243,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		Vec3 vec = VecHelper.lerp(pt, prevAnimatedOffset, animatedOffset);
 		ms.translate(vec.x, vec.y, vec.z);
 		if (!animatedRotation.equals(Vec3.ZERO) || !prevAnimatedRotation.equals(Vec3.ZERO)) {
-			if (centerOfRotation == null)
-				centerOfRotation = section.getCenter();
-			double rotX = Mth.lerp(pt, prevAnimatedRotation.x, animatedRotation.x);
+            double rotX = Mth.lerp(pt, prevAnimatedRotation.x, animatedRotation.x);
 			double rotZ = Mth.lerp(pt, prevAnimatedRotation.z, animatedRotation.z);
 			double rotY = Mth.lerp(pt, prevAnimatedRotation.y, animatedRotation.y);
 
@@ -249,6 +264,7 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		}
 	}
 
+	@Override
 	public void tick(PonderScene scene) {
 		prevAnimatedOffset = animatedOffset;
 		prevAnimatedRotation = animatedRotation;
@@ -479,45 +495,6 @@ public class WorldSectionElement extends AnimatedSceneElement {
 		bufferedData.release();
 		return sbb;
 	}
-
-	/*private SuperByteBuffer buildStructureBuffer(PonderWorld world, RenderType layer) {
-		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
-		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
-
-		PoseStack poseStack = objects.poseStack;
-		Random random = objects.random;
-		BufferBuilder builder = objects.unshadedBuilder;
-
-		builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
-
-		world.setMask(this.section);
-		//ForgeHooksClient.setRenderType(layer);
-		ModelBlockRenderer.enableCaching();
-		section.forEach(pos -> {
-			BlockState state = world.getBlockState(pos);
-			FluidState fluidState = world.getFluidState(pos);
-
-			poseStack.pushPose();
-			poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-
-			if (state.getRenderShape() == RenderShape.MODEL && CatnipClientServices.CLIENT_HOOKS.chunkRenderTypeMatches(state, layer)) {
-				BlockEntity blockEntity = world.getBlockEntity(pos);
-				CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, builder, state, pos, world, true, random, blockEntity);
-			}
-
-			if (!fluidState.isEmpty() && CatnipClientServices.CLIENT_HOOKS.fluidRenderTypeMatches(fluidState, layer))
-				dispatcher.renderLiquid(pos, world, builder, state, fluidState);
-
-			poseStack.popPose();
-		});
-		ModelBlockRenderer.clearCache();
-		//ForgeHooksClient.setRenderType(null);
-		world.clearMask();
-
-		builder.end();
-
-		return SuperBufferFactory.getInstance().create(builder);
-	}*/
 
 	private static class ThreadLocalObjects {
 		public final PoseStack poseStack = new PoseStack();

@@ -3,9 +3,9 @@ package net.createmod.ponder.foundation.instruction;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import net.createmod.ponder.foundation.ElementLink;
+import net.createmod.ponder.api.element.ElementLink;
+import net.createmod.ponder.api.element.PonderSceneElement;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.element.PonderSceneElement;
 import net.minecraft.world.phys.Vec3;
 
 public class AnimateElementInstruction<T extends PonderSceneElement> extends TickingInstruction {
