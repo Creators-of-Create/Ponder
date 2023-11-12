@@ -1,5 +1,14 @@
 package net.createmod.catnip.utility.levelWrappers;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
 import net.createmod.catnip.Catnip;
 import net.createmod.catnip.utility.BBHelper;
 import net.createmod.catnip.utility.NBTProcessors;
@@ -32,16 +41,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.ticks.BlackholeTickAccess;
 import net.minecraft.world.ticks.LevelTickAccess;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-
-public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor {
+public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor, SchematicLevelAccessor {
 
 	protected Map<BlockPos, BlockState> blocks;
 	protected Map<BlockPos, BlockEntity> blockEntities;
@@ -67,6 +67,7 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor 
 		this.renderedBlockEntities = new ArrayList<>();
 	}
 
+	@Override
 	public Set<BlockPos> getAllPositions() {
 		return blocks.keySet();
 	}
@@ -83,6 +84,7 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor 
 		return entities.add(entityIn);
 	}
 
+	@Override
 	public Stream<Entity> getEntityStream() {
 		return entities.stream();
 	}
@@ -128,6 +130,7 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor 
 		return Blocks.AIR.defaultBlockState();
 	}
 
+	@Override
 	public Map<BlockPos, BlockState> getBlockMap() {
 		return blocks;
 	}
@@ -223,18 +226,22 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor 
 	@Override
 	public void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags) {}
 
+	@Override
 	public BoundingBox getBounds() {
 		return bounds;
 	}
 
+	@Override
 	public void setBounds(BoundingBox bounds) {
 		this.bounds = bounds;
 	}
 
+	@Override
 	public Iterable<BlockEntity> getBlockEntities() {
 		return blockEntities.values();
 	}
 
+	@Override
 	public Iterable<BlockEntity> getRenderedBlockEntities() {
 		return renderedBlockEntities;
 	}
