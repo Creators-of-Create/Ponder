@@ -7,14 +7,14 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.content.BasePonderPlugin;
 import net.createmod.ponder.foundation.content.DebugPonderPlugin;
-import net.createmod.ponder.foundation.element.WorldSectionElement;
+import net.createmod.ponder.foundation.element.WorldSectionElementImpl;
 
 public class PonderClient {
 
 	public static final boolean ENABLE_DEBUG = true;
 
 	public static void init() {
-		SuperByteBufferCache.getInstance().registerCompartment(WorldSectionElement.PONDER_WORLD_SECTION);
+		SuperByteBufferCache.getInstance().registerCompartment(WorldSectionElementImpl.PONDER_WORLD_SECTION);
 
 		PonderTheme.loadClass();
 		ClientboundSimpleActionPacket.addAction("openPonder", () -> SimplePonderActions::openPonder);

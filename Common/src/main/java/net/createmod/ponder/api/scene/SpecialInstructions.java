@@ -2,18 +2,19 @@ package net.createmod.ponder.api.scene;
 
 import java.util.function.Supplier;
 
-import net.createmod.ponder.foundation.ElementLink;
-import net.createmod.ponder.foundation.element.AnimatedSceneElement;
-import net.createmod.ponder.foundation.element.MinecartElement;
-import net.createmod.ponder.foundation.element.ParrotElement;
+import net.createmod.ponder.api.element.AnimatedSceneElement;
+import net.createmod.ponder.api.element.ElementLink;
+import net.createmod.ponder.api.element.MinecartElement;
+import net.createmod.ponder.api.element.ParrotElement;
+import net.createmod.ponder.api.element.ParrotPose;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 
 public interface SpecialInstructions {
-	ElementLink<ParrotElement> createBirb(Vec3 location, Supplier<? extends ParrotElement.ParrotPose> pose);
+	ElementLink<ParrotElement> createBirb(Vec3 location, Supplier<? extends ParrotPose> pose);
 
-	void changeBirbPose(ElementLink<ParrotElement> birb, Supplier<? extends ParrotElement.ParrotPose> pose);
+	void changeBirbPose(ElementLink<ParrotElement> birb, Supplier<? extends ParrotPose> pose);
 
 	void movePointOfInterest(Vec3 location);
 

@@ -6,7 +6,7 @@ import net.createmod.catnip.utility.outliner.Outline.OutlineParams;
 import net.createmod.catnip.utility.outliner.Outliner;
 import net.createmod.ponder.foundation.PonderScene;
 
-public class OutlinerElement extends AnimatedSceneElement {
+public class OutlinerElement extends AnimatedSceneElementBase {
 
 	private final Function<Outliner, OutlineParams> outlinerCall;
 	private int overrideColor;

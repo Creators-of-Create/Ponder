@@ -1,31 +1,31 @@
 package net.createmod.ponder.foundation.element;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+
 import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.ponder.foundation.PonderLevel;
+import net.createmod.ponder.api.element.MinecartElement;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-public class MinecartElement extends AnimatedSceneElement {
+public class MinecartElementImpl extends AnimatedSceneElementBase implements MinecartElement {
 
-	private Vec3 location;
-	private LerpedFloat rotation;
-	private AbstractMinecart entity;
-	private MinecartConstructor constructor;
-	private float initialRotation;
+	private final Vec3 location;
+	private final LerpedFloat rotation;
+	@Nullable private AbstractMinecart entity;
+	private final MinecartConstructor constructor;
+	private final float initialRotation;
 
-	public interface MinecartConstructor {
-		AbstractMinecart create(Level w, double x, double y, double z);
-	}
-
-	public MinecartElement(Vec3 location, float rotation, MinecartConstructor constructor) {
+	public MinecartElementImpl(Vec3 location, float rotation, MinecartConstructor constructor) {
 		initialRotation = rotation;
 		this.location = location.add(0, 1 / 16f, 0);
 		this.constructor = constructor;
@@ -62,6 +62,7 @@ public class MinecartElement extends AnimatedSceneElement {
 		entity.zOld = entity.getZ();
 	}
 
+	@Override
 	public void setPositionOffset(Vec3 position, boolean immediate) {
 		if (entity == null)
 			return;
@@ -73,6 +74,7 @@ public class MinecartElement extends AnimatedSceneElement {
 		entity.zo = position.z;
 	}
 
+	@Override
 	public void setRotation(float angle, boolean immediate) {
 		if (entity == null)
 			return;
@@ -82,30 +84,33 @@ public class MinecartElement extends AnimatedSceneElement {
 		rotation.startWithValue(angle);
 	}
 
+	@Override
 	public Vec3 getPositionOffset() {
 		return entity != null ? entity.position() : Vec3.ZERO;
 	}
 
+	@Override
 	public Vec3 getRotation() {
 		return new Vec3(0, rotation.getValue(), 0);
 	}
 
 	@Override
-	protected void renderLast(PonderLevel world, MultiBufferSource buffer, PoseStack ms, float fade, float pt) {
+	public void renderLast(PonderLevel world, MultiBufferSource buffer, GuiGraphics graphics, float fade, float pt) {
+		PoseStack poseStack = graphics.pose();
 		EntityRenderDispatcher entityrenderermanager = Minecraft.getInstance()
 			.getEntityRenderDispatcher();
 		if (entity == null)
 			entity = constructor.create(world, 0, 0, 0);
 
-		ms.pushPose();
-		ms.translate(location.x, location.y, location.z);
-		ms.translate(Mth.lerp(pt, entity.xo, entity.getX()),
+		poseStack.pushPose();
+		poseStack.translate(location.x, location.y, location.z);
+		poseStack.translate(Mth.lerp(pt, entity.xo, entity.getX()),
 			Mth.lerp(pt, entity.yo, entity.getY()), Mth.lerp(pt, entity.zo, entity.getZ()));
 
-		ms.mulPose(Axis.YP.rotationDegrees(rotation.getValue(pt)));
+		poseStack.mulPose(Axis.YP.rotationDegrees(rotation.getValue(pt)));
 
-		entityrenderermanager.render(entity, 0, 0, 0, 0, pt, ms, buffer, lightCoordsFromFade(fade));
-		ms.popPose();
+		entityrenderermanager.render(entity, 0, 0, 0, 0, pt, poseStack, buffer, lightCoordsFromFade(fade));
+		poseStack.popPose();
 	}
 
 }

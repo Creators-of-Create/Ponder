@@ -12,6 +12,8 @@ import java.util.stream.IntStream;
 
 import javax.annotation.Nullable;
 
+import org.joml.Matrix4f;
+
 import com.google.common.graph.ElementOrder;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
@@ -21,6 +23,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
+
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -41,6 +44,9 @@ import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
+import net.createmod.ponder.api.registration.StoryBoardEntry;
+import net.createmod.ponder.api.registration.StoryBoardEntry.SceneOrderingEntry;
+import net.createmod.ponder.api.registration.StoryBoardEntry.SceneOrderingType;
 import net.createmod.ponder.enums.PonderConfig;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderChapter;
@@ -48,8 +54,6 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
-import net.createmod.ponder.foundation.PonderStoryBoardEntry.SceneOrderingEntry;
-import net.createmod.ponder.foundation.PonderStoryBoardEntry.SceneOrderingType;
 import net.createmod.ponder.foundation.PonderTag;
 import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.content.DebugScenes;
@@ -70,13 +74,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.IntStream;
 
 public class PonderUI extends AbstractPonderScreen {
 
@@ -153,7 +150,7 @@ public class PonderUI extends AbstractPonderScreen {
 		this.scenes = orderedScenes;
 
 		if (this.scenes.isEmpty()) {
-			List<PonderStoryBoardEntry> list = Collections.singletonList(
+			List<StoryBoardEntry> list = Collections.singletonList(
 					new PonderStoryBoardEntry(DebugScenes::empty, Ponder.MOD_ID, "debug/scene_1",
 											  new ResourceLocation("minecraft", "stick")));
 			this.scenes.addAll(PonderIndex.getSceneAccess().compile(list));

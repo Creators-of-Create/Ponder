@@ -1,22 +1,44 @@
 package net.createmod.ponder.foundation;
 
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+
+import org.joml.Vector3f;
+
+import net.createmod.catnip.utility.Pointing;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.theme.Color;
+import net.createmod.ponder.Ponder;
+import net.createmod.ponder.api.ParticleEmitter;
+import net.createmod.ponder.api.PonderPalette;
+import net.createmod.ponder.api.element.AnimatedSceneElement;
+import net.createmod.ponder.api.element.ElementLink;
+import net.createmod.ponder.api.element.EntityElement;
+import net.createmod.ponder.api.element.InputElementBuilder;
+import net.createmod.ponder.api.element.MinecartElement;
+import net.createmod.ponder.api.element.MinecartElement.MinecartConstructor;
+import net.createmod.ponder.api.element.ParrotElement;
+import net.createmod.ponder.api.element.ParrotPose;
+import net.createmod.ponder.api.element.TextElementBuilder;
+import net.createmod.ponder.api.element.WorldSectionElement;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.api.scene.DebugInstructions;
 import net.createmod.ponder.api.scene.EffectInstructions;
 import net.createmod.ponder.api.scene.OverlayInstructions;
 import net.createmod.ponder.api.scene.SceneBuilder;
+import net.createmod.ponder.api.scene.Selection;
 import net.createmod.ponder.api.scene.SpecialInstructions;
 import net.createmod.ponder.api.scene.WorldInstructions;
-import net.createmod.ponder.foundation.element.AnimatedSceneElement;
-import net.createmod.ponder.foundation.element.EntityElement;
+import net.createmod.ponder.foundation.element.ElementLinkImpl;
+import net.createmod.ponder.foundation.element.EntityElementImpl;
 import net.createmod.ponder.foundation.element.InputWindowElement;
-import net.createmod.ponder.foundation.element.MinecartElement;
-import net.createmod.ponder.foundation.element.MinecartElement.MinecartConstructor;
-import net.createmod.ponder.foundation.element.ParrotElement;
-import net.createmod.ponder.foundation.element.ParrotElement.ParrotPose;
+import net.createmod.ponder.foundation.element.MinecartElementImpl;
+import net.createmod.ponder.foundation.element.ParrotElementImpl;
 import net.createmod.ponder.foundation.element.TextWindowElement;
-import net.createmod.ponder.foundation.element.WorldSectionElement;
+import net.createmod.ponder.foundation.element.WorldSectionElementImpl;
 import net.createmod.ponder.foundation.instruction.AnimateMinecartInstruction;
 import net.createmod.ponder.foundation.instruction.AnimateParrotInstruction;
 import net.createmod.ponder.foundation.instruction.AnimateWorldSectionInstruction;
@@ -27,7 +49,6 @@ import net.createmod.ponder.foundation.instruction.CreateParrotInstruction;
 import net.createmod.ponder.foundation.instruction.DelayInstruction;
 import net.createmod.ponder.foundation.instruction.DisplayWorldSectionInstruction;
 import net.createmod.ponder.foundation.instruction.EmitParticlesInstruction;
-import net.createmod.ponder.foundation.instruction.EmitParticlesInstruction.Emitter;
 import net.createmod.ponder.foundation.instruction.FadeOutOfSceneInstruction;
 import net.createmod.ponder.foundation.instruction.HighlightValueBoxInstruction;
 import net.createmod.ponder.foundation.instruction.KeyframeInstruction;
@@ -45,6 +66,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -59,13 +81,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
-
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 /**
  * Enqueue instructions to the schedule via this object's methods.
@@ -204,8 +219,20 @@ public class PonderSceneBuilder implements SceneBuilder {
 	public class PonderEffectInstructions implements EffectInstructions {
 
 		@Override
-		public void emitParticles(Vec3 location, Emitter emitter, float amountPerCycle, int cycles) {
+		public void emitParticles(Vec3 location, ParticleEmitter emitter, float amountPerCycle, int cycles) {
 			addInstruction(new EmitParticlesInstruction(location, emitter, amountPerCycle, cycles));
+		}
+
+		@Override
+		public <T extends ParticleOptions> ParticleEmitter simpleParticleEmitter(T data, Vec3 motion) {
+			return (w, x, y, z) -> w.addParticle(data, x, y, z, motion.x, motion.y, motion.z);
+		}
+
+		@Override
+		public <T extends ParticleOptions> ParticleEmitter particleEmitterWithinBlockSpace(T data, Vec3 motion) {
+			return (w, x, y, z) -> w.addParticle(data, Math.floor(x) + Ponder.RANDOM.nextFloat(),
+					Math.floor(y) + Ponder.RANDOM.nextFloat(), Math.floor(z) + Ponder.RANDOM.nextFloat(), motion.x,
+					motion.y, motion.z);
 		}
 
 		@Override
@@ -222,7 +249,7 @@ public class PonderSceneBuilder implements SceneBuilder {
 		public void createRedstoneParticles(BlockPos pos, int color, int amount) {
 			Vector3f rgb = new Color(color).asVectorF();
 			addInstruction(new EmitParticlesInstruction(VecHelper.getCenterOf(pos),
-				Emitter.withinBlockSpace(new DustParticleOptions(rgb, 1), Vec3.ZERO), amount, 2));
+					effects().particleEmitterWithinBlockSpace(new DustParticleOptions(rgb, 1), Vec3.ZERO), amount, 2));
 		}
 
 	}
@@ -230,22 +257,24 @@ public class PonderSceneBuilder implements SceneBuilder {
 	public class PonderOverlayInstructions implements OverlayInstructions {
 
 		@Override
-		public TextWindowElement.Builder showText(int duration) {
+		public TextElementBuilder showText(int duration) {
 			TextWindowElement textWindowElement = new TextWindowElement();
 			addInstruction(new TextInstruction(textWindowElement, duration));
-			return textWindowElement.new Builder(scene);
+			return textWindowElement.builder(scene);
 		}
 
 		@Override
-		public TextWindowElement.Builder showSelectionWithText(Selection selection, int duration) {
+		public TextElementBuilder showOutlineWithText(Selection selection, int duration) {
 			TextWindowElement textWindowElement = new TextWindowElement();
 			addInstruction(new TextInstruction(textWindowElement, duration, selection));
-			return textWindowElement.new Builder(scene).pointAt(selection.getCenter());
+			return textWindowElement.builder(scene).pointAt(selection.getCenter());
 		}
 
 		@Override
-		public void showControls(InputWindowElement element, int duration) {
-			addInstruction(new ShowInputInstruction(element.clone(), duration));
+		public InputElementBuilder showControls(Vec3 sceneSpace, Pointing direction, int duration) {
+			InputWindowElement inputWindowElement = new InputWindowElement(sceneSpace, direction);
+			addInstruction(new ShowInputInstruction(inputWindowElement, duration));
+			return inputWindowElement.builder();
 		}
 
 		@Override
@@ -312,8 +341,8 @@ public class PonderSceneBuilder implements SceneBuilder {
 
 		@Override
 		public ElementLink<ParrotElement> createBirb(Vec3 location, Supplier<? extends ParrotPose> pose) {
-			ElementLink<ParrotElement> link = new ElementLink<>(ParrotElement.class);
-			ParrotElement parrot = ParrotElement.create(location, pose);
+			ElementLink<ParrotElement> link = new ElementLinkImpl<>(ParrotElement.class);
+			ParrotElement parrot = ParrotElementImpl.create(location, pose);
 			addInstruction(new CreateParrotInstruction(10, Direction.DOWN, parrot));
 			addInstruction(scene -> scene.linkElement(parrot, link));
 			return link;
@@ -348,8 +377,8 @@ public class PonderSceneBuilder implements SceneBuilder {
 
 		@Override
 		public ElementLink<MinecartElement> createCart(Vec3 location, float angle, MinecartConstructor type) {
-			ElementLink<MinecartElement> link = new ElementLink<>(MinecartElement.class);
-			MinecartElement cart = new MinecartElement(location, angle, type);
+			ElementLink<MinecartElement> link = new ElementLinkImpl<>(MinecartElement.class);
+			MinecartElement cart = new MinecartElementImpl(location, angle, type);
 			addInstruction(new CreateMinecartInstruction(10, Direction.DOWN, cart));
 			addInstruction(scene -> scene.linkElement(cart, link));
 			return link;
@@ -425,8 +454,8 @@ public class PonderSceneBuilder implements SceneBuilder {
 
 		@Override
 		public void hideSection(Selection selection, Direction fadeOutDirection) {
-			WorldSectionElement worldSectionElement = new WorldSectionElement(selection);
-			ElementLink<WorldSectionElement> elementLink = new ElementLink<>(WorldSectionElement.class);
+			WorldSectionElement worldSectionElement = new WorldSectionElementImpl(selection);
+			ElementLink<WorldSectionElement> elementLink = new ElementLinkImpl<>(WorldSectionElement.class);
 
 			addInstruction(scene -> {
 				scene.getBaseWorldSection()
@@ -452,8 +481,8 @@ public class PonderSceneBuilder implements SceneBuilder {
 
 		@Override
 		public ElementLink<WorldSectionElement> makeSectionIndependent(Selection selection) {
-			WorldSectionElement worldSectionElement = new WorldSectionElement(selection);
-			ElementLink<WorldSectionElement> elementLink = new ElementLink<>(WorldSectionElement.class);
+			WorldSectionElementImpl worldSectionElement = new WorldSectionElementImpl(selection);
+			ElementLink<WorldSectionElement> elementLink = new ElementLinkImpl<>(WorldSectionElement.class);
 
 			addInstruction(scene -> {
 				scene.getBaseWorldSection()
@@ -567,11 +596,11 @@ public class PonderSceneBuilder implements SceneBuilder {
 
 		@Override
 		public ElementLink<EntityElement> createEntity(Function<Level, Entity> factory) {
-			ElementLink<EntityElement> link = new ElementLink<>(EntityElement.class, UUID.randomUUID());
+			ElementLink<EntityElement> link = new ElementLinkImpl<>(EntityElement.class, UUID.randomUUID());
 			addInstruction(scene -> {
 				PonderLevel world = scene.getWorld();
 				Entity entity = factory.apply(world);
-				EntityElement handle = new EntityElement(entity);
+				EntityElement handle = new EntityElementImpl(entity);
 				scene.addElement(handle);
 				scene.linkElement(handle, link);
 				world.addFreshEntity(entity);
@@ -620,7 +649,7 @@ public class PonderSceneBuilder implements SceneBuilder {
 		@Override
 		public void debugSchematic() {
 			addInstruction(
-				scene -> scene.addElement(new WorldSectionElement(scene.getSceneBuildingUtil().select().everywhere())));
+				scene -> scene.addElement(new WorldSectionElementImpl(scene.getSceneBuildingUtil().select().everywhere())));
 		}
 
 		@Override

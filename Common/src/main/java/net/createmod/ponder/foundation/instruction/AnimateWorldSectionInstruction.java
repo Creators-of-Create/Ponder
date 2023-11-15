@@ -3,8 +3,8 @@ package net.createmod.ponder.foundation.instruction;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import net.createmod.ponder.foundation.ElementLink;
-import net.createmod.ponder.foundation.element.WorldSectionElement;
+import net.createmod.ponder.api.element.ElementLink;
+import net.createmod.ponder.api.element.WorldSectionElement;
 import net.minecraft.world.phys.Vec3;
 
 public class AnimateWorldSectionInstruction extends AnimateElementInstruction<WorldSectionElement> {

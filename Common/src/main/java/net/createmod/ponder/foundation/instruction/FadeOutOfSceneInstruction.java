@@ -1,8 +1,8 @@
 package net.createmod.ponder.foundation.instruction;
 
-import net.createmod.ponder.foundation.ElementLink;
+import net.createmod.ponder.api.element.AnimatedSceneElement;
+import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.element.AnimatedSceneElement;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 

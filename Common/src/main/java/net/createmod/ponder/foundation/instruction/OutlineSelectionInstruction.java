@@ -1,8 +1,8 @@
 package net.createmod.ponder.foundation.instruction;
 
-import net.createmod.ponder.foundation.PonderPalette;
+import net.createmod.ponder.api.PonderPalette;
+import net.createmod.ponder.api.scene.Selection;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.Selection;
 
 public class OutlineSelectionInstruction extends TickingInstruction {
 

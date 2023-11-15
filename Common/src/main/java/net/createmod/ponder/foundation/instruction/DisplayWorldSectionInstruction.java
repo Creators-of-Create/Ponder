@@ -5,9 +5,10 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import net.createmod.ponder.api.element.WorldSectionElement;
+import net.createmod.ponder.api.scene.Selection;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.Selection;
-import net.createmod.ponder.foundation.element.WorldSectionElement;
+import net.createmod.ponder.foundation.element.WorldSectionElementImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
@@ -24,7 +25,7 @@ public class DisplayWorldSectionInstruction extends FadeIntoSceneInstruction<Wor
 
 	public DisplayWorldSectionInstruction(int fadeInTicks, Direction fadeInFrom, Selection selection,
 		@Nullable Supplier<WorldSectionElement> mergeOnto, @Nullable BlockPos glue) {
-		super(fadeInTicks, fadeInFrom, new WorldSectionElement(selection));
+		super(fadeInTicks, fadeInFrom, new WorldSectionElementImpl(selection));
 		initialSelection = selection;
 		this.mergeOnto = mergeOnto;
 		this.glue = glue;

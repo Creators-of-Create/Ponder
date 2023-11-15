@@ -3,8 +3,8 @@ package net.createmod.ponder.foundation.instruction;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import net.createmod.ponder.foundation.ElementLink;
-import net.createmod.ponder.foundation.element.MinecartElement;
+import net.createmod.ponder.api.element.ElementLink;
+import net.createmod.ponder.api.element.MinecartElement;
 import net.minecraft.world.phys.Vec3;
 
 public class AnimateMinecartInstruction extends AnimateElementInstruction<MinecartElement> {

@@ -1,20 +1,20 @@
 package net.createmod.ponder.api.scene;
 
-import net.createmod.ponder.foundation.PonderPalette;
-import net.createmod.ponder.foundation.Selection;
-import net.createmod.ponder.foundation.element.InputWindowElement;
-import net.createmod.ponder.foundation.element.TextWindowElement;
+import net.createmod.catnip.utility.Pointing;
+import net.createmod.ponder.api.PonderPalette;
+import net.createmod.ponder.api.element.InputElementBuilder;
+import net.createmod.ponder.api.element.TextElementBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public interface OverlayInstructions {
-	TextWindowElement.Builder showText(int duration);
+	TextElementBuilder showText(int duration);
 
-	TextWindowElement.Builder showSelectionWithText(Selection selection, int duration);
+	TextElementBuilder showOutlineWithText(Selection selection, int duration);
 
-	void showControls(InputWindowElement element, int duration);
+	InputElementBuilder showControls(Vec3 sceneSpace, Pointing direction, int duration);
 
 	void chaseBoundingBoxOutline(PonderPalette color, Object slot, AABB boundingBox, int duration);
 

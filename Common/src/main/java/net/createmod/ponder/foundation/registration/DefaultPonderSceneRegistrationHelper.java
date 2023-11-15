@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import net.createmod.ponder.api.registration.MultiSceneBuilder;
 import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
+import net.createmod.ponder.api.registration.StoryBoardEntry;
 import net.createmod.ponder.api.scene.PonderStoryBoard;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
 import net.minecraft.resources.ResourceLocation;
@@ -25,17 +26,17 @@ public class DefaultPonderSceneRegistrationHelper implements PonderSceneRegistra
 	}
 
 	@Override
-	public PonderStoryBoardEntry addStoryBoard(ResourceLocation component, ResourceLocation schematicLocation,
-											   PonderStoryBoard storyBoard, ResourceLocation... tags) {
-		PonderStoryBoardEntry entry = this.createStoryBoardEntry(storyBoard, schematicLocation, component);
+	public StoryBoardEntry addStoryBoard(ResourceLocation component, ResourceLocation schematicLocation,
+										 PonderStoryBoard storyBoard, ResourceLocation... tags) {
+		StoryBoardEntry entry = this.createStoryBoardEntry(storyBoard, schematicLocation, component);
 		entry.highlightTags(tags);
 		sceneRegistry.addStoryBoard(entry);
 		return entry;
 	}
 
 	@Override
-	public PonderStoryBoardEntry addStoryBoard(ResourceLocation component, String schematicPath,
-											   PonderStoryBoard storyBoard, ResourceLocation... tags) {
+	public StoryBoardEntry addStoryBoard(ResourceLocation component, String schematicPath,
+										 PonderStoryBoard storyBoard, ResourceLocation... tags) {
 		return addStoryBoard(component, asLocation(schematicPath), storyBoard, tags);
 	}
 
@@ -45,7 +46,7 @@ public class DefaultPonderSceneRegistrationHelper implements PonderSceneRegistra
 	}
 
 	@Override
-	public MultiSceneBuilder forComponents(Iterable<ResourceLocation> components) {
+	public MultiSceneBuilder forComponents(Iterable<? extends ResourceLocation> components) {
 		return new GenericMultiSceneBuilder<>(this, components);
 	}
 
@@ -55,7 +56,7 @@ public class DefaultPonderSceneRegistrationHelper implements PonderSceneRegistra
 	}
 
 	private PonderStoryBoardEntry createStoryBoardEntry(PonderStoryBoard storyBoard, ResourceLocation schematicLocation,
-														ResourceLocation component) {
+												  ResourceLocation component) {
 		return new PonderStoryBoardEntry(storyBoard, namespace, schematicLocation, component);
 	}
 

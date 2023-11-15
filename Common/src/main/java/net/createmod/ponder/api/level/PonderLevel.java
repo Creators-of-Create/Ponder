@@ -1,13 +1,27 @@
-package net.createmod.ponder.foundation;
+package net.createmod.ponder.api.level;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.levelWrappers.SchematicLevel;
 import net.createmod.catnip.utility.levelWrappers.WrappedClientLevel;
 import net.createmod.ponder.api.VirtualBlockEntity;
-import net.createmod.ponder.foundation.element.WorldSectionElement;
+import net.createmod.ponder.api.element.WorldSectionElement;
+import net.createmod.ponder.api.scene.Selection;
+import net.createmod.ponder.foundation.PonderIndex;
+import net.createmod.ponder.foundation.PonderScene;
+import net.createmod.ponder.foundation.PonderWorldParticles;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -33,14 +47,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
 
 public class PonderLevel extends SchematicLevel {
 
@@ -100,7 +106,7 @@ public class PonderLevel extends SchematicLevel {
 		});
 		particles.clearEffects();
 
-		PonderIndex.forEachPlugin(plugin -> plugin.onPonderWorldRestore(this));
+		PonderIndex.forEachPlugin(plugin -> plugin.onPonderLevelRestore(this));
 	}
 
 	public void restoreBlocks(Selection selection) {
@@ -136,7 +142,7 @@ public class PonderLevel extends SchematicLevel {
 		return overrideLight == -1 ? 15 : overrideLight;
 	}
 
-	public void setMask(Selection mask) {
+	public void setMask(@Nullable Selection mask) {
 		this.mask = mask;
 	}
 

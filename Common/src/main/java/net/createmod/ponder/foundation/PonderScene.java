@@ -1,7 +1,31 @@
 package net.createmod.ponder.foundation;
 
+import static net.createmod.ponder.api.registration.StoryBoardEntry.SceneOrderingEntry;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.mutable.MutableDouble;
+import org.apache.commons.lang3.mutable.MutableObject;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
+
 import com.jozufozu.flywheel.util.DiffuseLightCalculator;
+import com.jozufozu.flywheel.util.NonNullSupplier;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -12,13 +36,16 @@ import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.ponder.api.element.ElementLink;
+import net.createmod.ponder.api.element.PonderElement;
+import net.createmod.ponder.api.element.PonderOverlayElement;
+import net.createmod.ponder.api.element.PonderSceneElement;
+import net.createmod.ponder.api.element.WorldSectionElement;
+import net.createmod.ponder.api.level.EmptyLevel;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
-import net.createmod.ponder.foundation.PonderStoryBoardEntry.SceneOrderingEntry;
-import net.createmod.ponder.foundation.element.PonderElement;
-import net.createmod.ponder.foundation.element.PonderOverlayElement;
-import net.createmod.ponder.foundation.element.PonderSceneElement;
-import net.createmod.ponder.foundation.element.WorldSectionElement;
+import net.createmod.ponder.foundation.element.WorldSectionElementImpl;
 import net.createmod.ponder.foundation.instruction.HideAllInstruction;
 import net.createmod.ponder.foundation.instruction.PonderInstruction;
 import net.createmod.ponder.foundation.registration.PonderLocalization;
@@ -41,25 +68,6 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.lang3.mutable.MutableDouble;
-import org.apache.commons.lang3.mutable.MutableObject;
-import org.joml.Matrix4f;
-import org.joml.Vector4f;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class PonderScene {
 
@@ -81,7 +89,7 @@ public class PonderScene {
 	private final List<PonderTag> tags;
 	private final List<SceneOrderingEntry> orderingEntries;
 
-	@Nullable private final PonderLevel world;
+	private final PonderLevel world;
 	private final String namespace;
 	private final ResourceLocation location;
 	private final SceneCamera camera;
@@ -109,8 +117,12 @@ public class PonderScene {
 	public PonderScene(@Nullable PonderLevel world, PonderLocalization localization, String namespace,
 					   ResourceLocation location, Collection<ResourceLocation> tags,
 					   Collection<SceneOrderingEntry> orderingEntries) {
-		if (world != null)
-			world.scene = this;
+		if (world != null) {
+            world.scene = this;
+			this.world = world;
+        } else {
+			this.world = new PonderLevel(BlockPos.ZERO, new EmptyLevel());
+		}
 
 		this.localization = localization;
 
@@ -118,7 +130,6 @@ public class PonderScene {
 		textIndex = 1;
 		hidePlatformShadow = false;
 
-		this.world = world;
 		this.namespace = namespace;
 		this.location = location;
 		this.sceneId = new ResourceLocation(namespace, "missing_title");
@@ -133,7 +144,7 @@ public class PonderScene {
 		transform = new SceneTransform();
 		basePlateSize = getBounds().getXSpan();
 		camera = new SceneCamera();
-		baseWorldSection = new WorldSectionElement();
+		baseWorldSection = new WorldSectionElementImpl();
 		renderViewEntity = new ArmorStand(world, 0, 0, 0);
 		keyframeTimes = new IntArrayList(4);
 		scaleFactor = 1;
@@ -254,13 +265,13 @@ public class PonderScene {
 		Entity prevRVE = mc.cameraEntity;
 
 		mc.cameraEntity = this.renderViewEntity;
-		forEachVisible(PonderSceneElement.class, e -> e.renderFirst(world, buffer, ms, pt));
+		forEachVisible(PonderSceneElement.class, e -> e.renderFirst(world, buffer, graphics, pt));
 		mc.cameraEntity = prevRVE;
 
 		for (RenderType type : RenderType.chunkBufferLayers())
-			forEachVisible(PonderSceneElement.class, e -> e.renderLayer(world, buffer, type, ms, pt));
+			forEachVisible(PonderSceneElement.class, e -> e.renderLayer(world, buffer, type, graphics, pt));
 
-		forEachVisible(PonderSceneElement.class, e -> e.renderLast(world, buffer, ms, pt));
+		forEachVisible(PonderSceneElement.class, e -> e.renderLast(world, buffer, graphics, pt));
 		camera.set(transform.xRotation.getValue(pt) + 90, transform.yRotation.getValue(pt) + 180);
 		world.renderEntities(ms, buffer, camera, pt);
 		world.renderParticles(ms, buffer, camera, pt);
@@ -394,10 +405,10 @@ public class PonderScene {
 		 */
 	}
 
-	public Supplier<String> registerText(String defaultText) {
+	public NonNullSupplier<String> registerText(String defaultText) {
 		final String key = "text_" + textIndex;
 		localization.registerSpecific(sceneId, key, defaultText);
-		Supplier<String> supplier = () -> localization.getSpecific(sceneId, key);
+		NonNullSupplier<String> supplier = () -> localization.getSpecific(sceneId, key);
 		textIndex++;
 		return supplier;
 	}
@@ -418,7 +429,7 @@ public class PonderScene {
 		return localization.getSpecific(sceneId, key);
 	}
 
-	@Nullable public PonderLevel getWorld() {
+	public PonderLevel getWorld() {
 		return world;
 	}
 
@@ -451,7 +462,7 @@ public class PonderScene {
 	}
 
 	public BoundingBox getBounds() {
-		return world == null ? new BoundingBox(BlockPos.ZERO) : world.getBounds();
+		return world.getBounds();
 	}
 
 	public ResourceLocation getId() {
