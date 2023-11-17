@@ -1,7 +1,16 @@
 package net.createmod.ponder.foundation.ui;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -20,13 +29,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 public class PonderIndexScreen extends AbstractPonderScreen {
 
@@ -79,8 +81,8 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 		maxScreenArea = new Rect2i(centerX - targetWidth / 2, centerY - targetHeight / 2, targetWidth, targetHeight);
 
 		// height/width = 28 per item + 8 spacing between
-		maxItemRows = (new Rect2i(centerX - targetWidth / 2, centerY - targetHeight / 2, targetWidth, targetHeight).getHeight() + 8) / 36;
-		maxItemsPerRow = (new Rect2i(centerX - targetWidth / 2, centerY - targetHeight / 2, targetWidth, targetHeight).getWidth() + 8) / 36;
+		maxItemRows = (maxScreenArea.getHeight() + 8) / 36;
+		maxItemsPerRow = (maxScreenArea.getWidth() + 8) / 36;
 		maxItemsPerPage = maxItemRows * maxItemsPerRow;
 
 		paginationState = new PaginationState(items.size() > maxItemsPerPage, maxItemsPerPage, items.size());
@@ -90,7 +92,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 		if (!paginationState.usesPagination())
 			return;
 
-		addRenderableWidget(prevPage = new PonderButton(centerX - 100, new Rect2i(centerX - targetWidth / 2, centerY - targetHeight / 2, targetWidth, targetHeight).getY() + new Rect2i(centerX - targetWidth / 2, centerY - targetHeight / 2, targetWidth, targetHeight).getHeight() + 10)
+		addRenderableWidget(prevPage = new PonderButton(centerX - 100, maxScreenArea.getY() + maxScreenArea.getHeight() + 10)
 				.showing(PonderGuiTextures.ICON_PONDER_LEFT)
 				.withCallback(() -> {
 					paginationState.previousPage();
@@ -99,7 +101,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 				.setActive(false)
 		);
 
-		addRenderableWidget(nextPage = new PonderButton(centerX + 80, new Rect2i(centerX - targetWidth / 2, centerY - targetHeight / 2, targetWidth, targetHeight).getY() + new Rect2i(centerX - targetWidth / 2, centerY - targetHeight / 2, targetWidth, targetHeight).getHeight() + 10)
+		addRenderableWidget(nextPage = new PonderButton(centerX + 80, maxScreenArea.getY() + maxScreenArea.getHeight() + 10)
 				.showing(PonderGuiTextures.ICON_PONDER_RIGHT)
 				.withCallback(() -> {
 					paginationState.nextPage();

@@ -1,8 +1,19 @@
 package net.createmod.ponder.foundation.ui;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
@@ -22,17 +33,8 @@ import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-
-import javax.annotation.Nullable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class PonderTagIndexScreen extends AbstractPonderScreen {
 
@@ -104,8 +106,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 		paginationState.iterateForCurrentPage((iPage, iOverall) -> {
 			Map.Entry<String, List<PonderTag>> entry = sortedModTags.get(iOverall);
-			String key = entry.getKey() + ".ponder.mod_name";
-			String modName = I18n.exists(key) ? I18n.get(key) : entry.getKey();
+			String modName = ConfigScreen.getModDisplayName(entry.getKey()).orElse(entry.getKey());
 			List<PonderTag> tags = entry.getValue();
 
 			LayoutHelper layout = LayoutHelper.centeredHorizontal(tags.size(), 1, 28, 28, 8);

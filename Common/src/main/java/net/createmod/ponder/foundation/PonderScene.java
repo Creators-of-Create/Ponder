@@ -41,7 +41,6 @@ import net.createmod.ponder.api.element.PonderElement;
 import net.createmod.ponder.api.element.PonderOverlayElement;
 import net.createmod.ponder.api.element.PonderSceneElement;
 import net.createmod.ponder.api.element.WorldSectionElement;
-import net.createmod.ponder.api.level.EmptyLevel;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
@@ -121,7 +120,8 @@ public class PonderScene {
             world.scene = this;
 			this.world = world;
         } else {
-			this.world = new PonderLevel(BlockPos.ZERO, new EmptyLevel());
+			this.world = null; //TODO
+			//this.world = new PonderLevel(BlockPos.ZERO, new EmptyLevel());
 		}
 
 		this.localization = localization;
@@ -462,7 +462,7 @@ public class PonderScene {
 	}
 
 	public BoundingBox getBounds() {
-		return world.getBounds();
+		return world == null ? new BoundingBox(BlockPos.ZERO) : world.getBounds();
 	}
 
 	public ResourceLocation getId() {

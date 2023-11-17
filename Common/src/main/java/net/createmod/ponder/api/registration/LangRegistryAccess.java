@@ -1,15 +1,17 @@
 package net.createmod.ponder.api.registration;
 
-import com.google.gson.JsonObject;
+import java.util.function.BiConsumer;
 
 import net.minecraft.resources.ResourceLocation;
 
 public interface LangRegistryAccess {
 
 	/**
-	 * Generate a JsonObject holding all Lang-entries and their enUS default that was declared in code
+	 * Generate all Lang-entries with their enUS defaults that were declared in code and have them consumed by the passed BiConsumer
+	 *
+	 * @param modId the ModId (or namespace) that you want to collect the lang entries for
 	 */
-	JsonObject provideLangEntries(String modID);
+	void provideLang(String modId, BiConsumer<String, String> consumer);
 
 	String getShared(ResourceLocation key);
 

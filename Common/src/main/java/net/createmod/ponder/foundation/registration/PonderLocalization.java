@@ -2,8 +2,7 @@ package net.createmod.ponder.foundation.registration;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gson.JsonObject;
+import java.util.function.BiConsumer;
 
 import net.createmod.catnip.utility.Couple;
 import net.createmod.ponder.Ponder;
@@ -15,6 +14,9 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 
 public class PonderLocalization implements LangRegistryAccess {
+
+	public static final String LANG_PREFIX = "ponder.";
+	public static final String UI_PREFIX = "ui.";
 
 	public final Map<ResourceLocation, String> shared = new HashMap<>();
 	public final Map<ResourceLocation, Couple<String>> tag = new HashMap<>();
@@ -43,6 +45,24 @@ public class PonderLocalization implements LangRegistryAccess {
 	public void registerSpecific(ResourceLocation sceneId, String key, String enUS) {
 		specific.computeIfAbsent(sceneId, $ -> new HashMap<>())
 				.put(key, enUS);
+	}
+
+	//
+
+	protected static String langKeyForShared(ResourceLocation k) {
+		return k.getNamespace() + "." + LANG_PREFIX + "shared." + k.getPath();
+	}
+
+	protected static String langKeyForTag(ResourceLocation k) {
+		return k.getNamespace() + "." + LANG_PREFIX + "tag." + k.getPath();
+	}
+
+	protected static String langKeyForTagDescription(ResourceLocation k) {
+		return k.getNamespace() + "." + LANG_PREFIX + "tag." + k.getPath() + ".description";
+	}
+
+	protected static String langKeyForSpecific(ResourceLocation sceneId, String k) {
+		return sceneId.getNamespace() + "." + LANG_PREFIX + sceneId.getPath() + "." + k;
 	}
 
 	//
@@ -83,63 +103,31 @@ public class PonderLocalization implements LangRegistryAccess {
 
 	//
 
-	public static final String LANG_PREFIX = "ponder.";
-	public static final String UI_PREFIX = "ui.";
+	private void recordGeneral(BiConsumer<String, String> consumer) {
+		addGeneral(consumer, PonderTooltipHandler.HOLD_TO_PONDER, "Hold [%1$s] to Ponder");
+		addGeneral(consumer, PonderTooltipHandler.SUBJECT, "Subject of this scene");
+		addGeneral(consumer, AbstractPonderScreen.PONDERING, "Pondering about...");
+		addGeneral(consumer, AbstractPonderScreen.IDENTIFY_MODE, "Identify mode active.\nUnpause with [%1$s]");
+		addGeneral(consumer, AbstractPonderScreen.ASSOCIATED, "Associated Entries");
 
-	public void record(String namespace, JsonObject object) {
-		shared.forEach((k, v) -> {
-			if (k.getNamespace().equals(namespace)) {
-				object.addProperty(langKeyForShared(k), v);
-			}
-		});
+		addGeneral(consumer, AbstractPonderScreen.CLOSE, "Close");
+		addGeneral(consumer, AbstractPonderScreen.IDENTIFY, "Identify");
+		addGeneral(consumer, AbstractPonderScreen.NEXT, "Next Scene");
+		addGeneral(consumer, AbstractPonderScreen.NEXT_UP, "Up Next:");
+		addGeneral(consumer, AbstractPonderScreen.PREVIOUS, "Previous Scene");
+		addGeneral(consumer, AbstractPonderScreen.REPLAY, "Replay");
+		addGeneral(consumer, AbstractPonderScreen.THINK_BACK, "Think Back");
+		addGeneral(consumer, AbstractPonderScreen.SLOW_TEXT, "Comfy Reading");
 
-		tag.forEach((k, v) -> {
-			if (k.getNamespace().equals(namespace)) {
-				object.addProperty(langKeyForTag(k), v.getFirst());
-				object.addProperty(langKeyForTagDescription(k), v.getSecond());
-			}
-		});
-
-		specific.entrySet()
-				.stream()
-				.filter(entry -> entry.getKey().getNamespace().equals(namespace))
-				.sorted(Map.Entry.comparingByKey())
-				.forEach(entry -> {
-					entry.getValue()
-							.entrySet()
-							.stream()
-							.sorted(Map.Entry.comparingByKey())
-							.forEach(subEntry -> object.addProperty(
-									langKeyForSpecific(entry.getKey(), subEntry.getKey()), subEntry.getValue()));
-				});
+		addGeneral(consumer, AbstractPonderScreen.EXIT, "Exit");
+		addGeneral(consumer, AbstractPonderScreen.WELCOME, "Welcome to Ponder");
+		addGeneral(consumer, AbstractPonderScreen.CATEGORIES, "Available Categories for %1$s");
+		addGeneral(consumer, AbstractPonderScreen.DESCRIPTION, "Click one of the icons below to learn about its associated Items and Blocks");
+		addGeneral(consumer, AbstractPonderScreen.INDEX_TITLE, "Ponder Index");
 	}
 
-	private void recordGeneral(JsonObject object) {
-		addGeneral(object, PonderTooltipHandler.HOLD_TO_PONDER, "Hold [%1$s] to Ponder");
-		addGeneral(object, PonderTooltipHandler.SUBJECT, "Subject of this scene");
-		addGeneral(object, AbstractPonderScreen.PONDERING, "Pondering about...");
-		addGeneral(object, AbstractPonderScreen.IDENTIFY_MODE, "Identify mode active.\nUnpause with [%1$s]");
-		addGeneral(object, AbstractPonderScreen.ASSOCIATED, "Associated Entries");
-
-		addGeneral(object, AbstractPonderScreen.CLOSE, "Close");
-		addGeneral(object, AbstractPonderScreen.IDENTIFY, "Identify");
-		addGeneral(object, AbstractPonderScreen.NEXT, "Next Scene");
-		addGeneral(object, AbstractPonderScreen.NEXT_UP, "Up Next:");
-		addGeneral(object, AbstractPonderScreen.PREVIOUS, "Previous Scene");
-		addGeneral(object, AbstractPonderScreen.REPLAY, "Replay");
-		addGeneral(object, AbstractPonderScreen.THINK_BACK, "Think Back");
-		addGeneral(object, AbstractPonderScreen.SLOW_TEXT, "Comfy Reading");
-
-		addGeneral(object, AbstractPonderScreen.EXIT, "Exit");
-		addGeneral(object, AbstractPonderScreen.WELCOME, "Welcome to Ponder");
-		addGeneral(object, AbstractPonderScreen.CATEGORIES, "Available Categories for %1$s");
-		addGeneral(object, AbstractPonderScreen.DESCRIPTION,
-				   "Click one of the icons below to learn about its associated Items and Blocks");
-		addGeneral(object, AbstractPonderScreen.INDEX_TITLE, "Ponder Index");
-	}
-
-	private void addGeneral(JsonObject json, String key, String enUS) {
-		json.addProperty(Ponder.MOD_ID + "." + key, enUS);
+	private void addGeneral(BiConsumer<String, String> consumer, String key, String enUS) {
+		consumer.accept(Ponder.MOD_ID + "." + key, enUS);
 	}
 
 	public void generateSceneLang() {
@@ -148,40 +136,40 @@ public class PonderLocalization implements LangRegistryAccess {
 				.forEach(entry -> PonderSceneRegistry.compileScene(this, entry.getValue(), null));
 	}
 
-	/**
-	 * Generate a JsonObject holding all Lang-entries and their enUS default that was declared in code
-	 */
 	@Override
-	public JsonObject provideLangEntries(String modID) {
+	public void provideLang(String modId, BiConsumer<String, String> consumer) {
 		PonderIndex.registerAll();
 		PonderIndex.gatherSharedText();
 
 		generateSceneLang();
 
-		JsonObject object = new JsonObject();
-		if (modID.equals(Ponder.MOD_ID))
-			recordGeneral(object);
+		if (modId.equals(Ponder.MOD_ID))
+			recordGeneral(consumer);
 
-		record(modID, object);
-		return object;
+		shared.forEach((k, v) -> {
+			if (k.getNamespace().equals(modId)) {
+				consumer.accept(langKeyForShared(k), v);
+			}
+		});
+
+		tag.forEach((k, v) -> {
+			if (k.getNamespace().equals(modId)) {
+				consumer.accept(langKeyForTag(k), v.getFirst());
+				consumer.accept(langKeyForTagDescription(k), v.getSecond());
+			}
+		});
+
+		specific.entrySet()
+				.stream()
+				.filter(entry -> entry.getKey().getNamespace().equals(modId))
+				.sorted(Map.Entry.comparingByKey())
+				.forEach(entry -> {
+					entry.getValue()
+							.entrySet()
+							.stream()
+							.sorted(Map.Entry.comparingByKey())
+							.forEach(subEntry -> consumer.accept(
+									langKeyForSpecific(entry.getKey(), subEntry.getKey()), subEntry.getValue()));
+				});
 	}
-
-	//
-
-	protected static String langKeyForShared(ResourceLocation k) {
-		return k.getNamespace() + "." + LANG_PREFIX + "shared." + k.getPath();
-	}
-
-	protected static String langKeyForTag(ResourceLocation k) {
-		return k.getNamespace() + "." + LANG_PREFIX + "tag." + k.getPath();
-	}
-
-	protected static String langKeyForTagDescription(ResourceLocation k) {
-		return k.getNamespace() + "." + LANG_PREFIX + "tag." + k.getPath() + ".description";
-	}
-
-	protected static String langKeyForSpecific(ResourceLocation sceneId, String k) {
-		return sceneId.getNamespace() + "." + LANG_PREFIX + sceneId.getPath() + "." + k;
-	}
-
 }

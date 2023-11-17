@@ -67,7 +67,9 @@ public class PonderIndex {
 	}
 
 	public static void gatherSharedText() {
+		Stopwatch stopwatch = Stopwatch.createStarted();
 		forEachPlugin(plugin -> plugin.registerSharedText(new DefaultSharedTextRegistrationHelper(plugin.getModId(), LOCALIZATION)));
+		LOGGER.info("Collecting Shared Ponder Text took {}", stopwatch.stop());
 	}
 
 	public static SceneRegistryAccess getSceneAccess() {

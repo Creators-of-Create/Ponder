@@ -1,6 +1,7 @@
 package net.createmod.ponder.foundation.ui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
@@ -85,7 +86,7 @@ public class PonderProgressBar extends AbstractSimiWidget {
 	}
 
 	@Override
-	public void renderButton(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+	public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		PoseStack poseStack = graphics.pose();
 
 		isHovered = clicked(mouseX, mouseY);

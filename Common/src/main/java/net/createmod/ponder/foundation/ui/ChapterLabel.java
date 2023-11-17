@@ -1,13 +1,13 @@
 package net.createmod.ponder.foundation.ui;
 
+import java.util.function.BiConsumer;
+
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.foundation.PonderChapter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-
-import java.util.function.BiConsumer;
 
 public class ChapterLabel extends AbstractSimiWidget {
 
@@ -30,7 +30,7 @@ public class ChapterLabel extends AbstractSimiWidget {
 		graphics.drawString(Minecraft.getInstance().font, chapter.getTitle(), getX() + 50,
 			getY() + 20, Theme.Key.TEXT_ACCENT_SLIGHT.i());
 
-		button.renderButton(graphics, mouseX, mouseY, partialTicks);
+		button.doRender(graphics, mouseX, mouseY, partialTicks);
 		super.render(graphics, mouseX, mouseY, partialTicks);
 	}
 
