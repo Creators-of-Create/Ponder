@@ -1,5 +1,10 @@
 package net.createmod.catnip.utility;
 
+import javax.annotation.Nullable;
+
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 import net.createmod.catnip.mixin.client.accessor.GameRendererAccessor;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -18,10 +23,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
-import javax.annotation.Nullable;
 
 public class VecHelper {
 
@@ -347,4 +348,8 @@ public class VecHelper {
 		return new double[] { t, u };
 	}
 
+	public static double alignedDistanceToFace(Vec3 pos, BlockPos blockPos, Direction face) {
+		Axis axis = face.getAxis();
+		return Math.abs(getCoordinate(pos, axis) - (blockPos.get(axis) + (face.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 0)));
+	}
 }

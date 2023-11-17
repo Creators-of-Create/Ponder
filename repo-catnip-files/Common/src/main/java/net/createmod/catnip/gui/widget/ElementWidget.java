@@ -1,14 +1,15 @@
 package net.createmod.catnip.gui.widget;
 
+import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
+
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.gui.element.AbstractRenderElement;
 import net.createmod.catnip.gui.element.RenderElement;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.minecraft.client.gui.GuiGraphics;
-
-import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
 public class ElementWidget extends AbstractSimiWidget {
 
@@ -128,7 +129,7 @@ public class ElementWidget extends AbstractSimiWidget {
 	}
 
 	@Override
-	public void renderButton(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+	public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		PoseStack poseStack = graphics.pose();
 		poseStack.pushPose();
 		poseStack.translate(getX() + paddingX, getY() + paddingY, z);

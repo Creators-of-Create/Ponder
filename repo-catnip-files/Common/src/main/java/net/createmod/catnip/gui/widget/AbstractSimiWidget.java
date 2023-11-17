@@ -1,5 +1,9 @@
 package net.createmod.catnip.gui.widget;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.BiConsumer;
+
 import net.createmod.catnip.gui.TickableGuiEventListener;
 import net.createmod.catnip.utility.lang.Components;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,10 +12,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.network.chat.Component;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.BiConsumer;
 
 public abstract class AbstractSimiWidget extends AbstractWidget implements TickableGuiEventListener {
 
@@ -83,7 +83,7 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 	@Override
 	protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		beforeRender(graphics, mouseX, mouseY, partialTicks);
-		renderButton(graphics, mouseX, mouseY, partialTicks);
+		doRender(graphics, mouseX, mouseY, partialTicks);
 		afterRender(graphics, mouseX, mouseY, partialTicks);
 	}
 
@@ -91,7 +91,7 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 		graphics.pose().pushPose();
 	}
 
-	protected void renderButton(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {}
+	protected void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {}
 
 	protected void afterRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		graphics.pose().popPose();

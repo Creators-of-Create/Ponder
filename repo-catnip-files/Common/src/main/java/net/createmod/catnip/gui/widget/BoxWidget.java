@@ -1,6 +1,11 @@
 package net.createmod.catnip.gui.widget;
 
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.FadableScreenElement;
@@ -10,9 +15,6 @@ import net.createmod.catnip.utility.theme.Color;
 import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.catnip.utility.theme.Theme.Key;
 import net.minecraft.client.gui.GuiGraphics;
-
-import javax.annotation.Nullable;
-import java.util.function.Function;
 
 public class BoxWidget extends ElementWidget {
 
@@ -152,7 +154,7 @@ public class BoxWidget extends ElementWidget {
 	}
 
 	@Override
-	public void renderButton(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+	public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		float fadeValue = fade.getValue(partialTicks);
 		if (fadeValue < .1f)
 			return;
@@ -164,7 +166,7 @@ public class BoxWidget extends ElementWidget {
 				.withBounds(width, height)
 				.render(graphics);
 
-		super.renderButton(graphics, mouseX, mouseY, partialTicks);
+		super.doRender(graphics, mouseX, mouseY, partialTicks);
 
 		wasHovered = isHovered;
 	}
