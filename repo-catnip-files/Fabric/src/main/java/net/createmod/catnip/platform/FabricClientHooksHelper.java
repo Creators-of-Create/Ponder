@@ -99,7 +99,7 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 
 	@Override
 	public void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
-										  PoseStack ms, BlockState state, BakedModel blockModel, int color) {
+										  PoseStack ms, BlockState state, BakedModel blockModel, int color, BlockEntity BEwithModelData) {
 		int blockColor = Minecraft.getInstance()
 				.getBlockColors()
 				.getColor(state, null, null, 0);
