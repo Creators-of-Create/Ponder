@@ -105,8 +105,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
 		poseStack.scale((width + 4) * progress.getValue(partialTicks), 1, 1);
 		Color c1 = PonderTheme.Key.PONDER_PROGRESSBAR.c(true);
 		Color c2 = PonderTheme.Key.PONDER_PROGRESSBAR.c(false);
-		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0, 3, 1, 4, c1, c1);
-		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0, 4, 1, 5, c2, c2);
+		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0f, 3f, 1f, 4f, c1, c1);
+		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0f, 4f, 1f, 5f, c2, c2);
 		poseStack.popPose();
 
 		renderKeyframes(graphics, mouseX, partialTicks);
@@ -155,7 +155,7 @@ public class PonderProgressBar extends AbstractSimiWidget {
 		PoseStack poseStack = graphics.pose();
 		if (selected) {
 			Font font = Minecraft.getInstance().font;
-			UIRenderHelper.drawGradientRect(poseStack.last().pose(), 600, keyframePos, 10, keyframePos + 1, 10 + height, endColor, startColor);
+			UIRenderHelper.drawGradientRect(poseStack.last().pose(), 600, ((float) keyframePos), 10f, keyframePos + 1f, 10f + height, endColor, startColor);
 			poseStack.pushPose();
 			poseStack.translate(0, 0, 200);
 			String text;
@@ -171,7 +171,7 @@ public class PonderProgressBar extends AbstractSimiWidget {
 			poseStack.popPose();
 		}
 
-		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 400, keyframePos, -1, keyframePos + 1, 2 + height, startColor, endColor);
+		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 400, ((float) keyframePos), -1f, keyframePos + 1f, 2f + height, startColor, endColor);
 	}
 
 	@Override
