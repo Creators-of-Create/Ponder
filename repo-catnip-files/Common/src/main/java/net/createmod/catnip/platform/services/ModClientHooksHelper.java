@@ -73,8 +73,14 @@ public interface ModClientHooksHelper {
 		return ItemBlockRenderTypes.getRenderLayer(state) == layer;
 	}
 
+	@Deprecated
+	default void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
+								   PoseStack ms, BlockState state, BakedModel blockModel, int color) {
+		renderGuiGameElementModel(blockRenderer, buffer, ms, state, blockModel, color, null);
+	}
+
 	void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
-								   PoseStack ms, BlockState state, BakedModel blockModel, int color);
+								   PoseStack ms, BlockState state, BakedModel blockModel, int color, @Nullable BlockEntity BEWithModelData);
 
 	<T extends ParticleOptions> Particle createParticleFromData(T data, ClientLevel level, double x, double y, double z,
 																double mx, double my, double mz);

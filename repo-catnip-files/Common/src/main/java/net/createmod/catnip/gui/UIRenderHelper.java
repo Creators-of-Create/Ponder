@@ -1,5 +1,16 @@
 package net.createmod.catnip.gui;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -13,6 +24,7 @@ import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
+
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
@@ -22,15 +34,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.util.Mth;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
-
-import javax.annotation.Nullable;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UIRenderHelper {
 
@@ -109,23 +112,23 @@ public class UIRenderHelper {
 	}
 
 	/**
-	 * @see #angledGradient(GuiGraphics, float, int, int, int, int, int, Color, Color)
+	 * @see #angledGradient(GuiGraphics, float, int, int, int, float, float, Color, Color)
 	 */
-	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int breadth, int length, Couple<Color> c) {
+	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, float breadth, float length, Couple<Color> c) {
 		angledGradient(graphics, angle, x, y, 0, breadth, length, c);
 	}
 
 	/**
-	 * @see #angledGradient(GuiGraphics, float, int, int, int, int, int, Color, Color)
+	 * @see #angledGradient(GuiGraphics, float, int, int, int, float, float, Color, Color)
 	 */
-	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int z, int breadth, int length, Couple<Color> c) {
+	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int z, float breadth, float length, Couple<Color> c) {
 		angledGradient(graphics, angle, x, y, z, breadth, length, c.getFirst(), c.getSecond());
 	}
 
 	/**
-	 * @see #angledGradient(GuiGraphics, float, int, int, int, int, int, Color, Color)
+	 * @see #angledGradient(GuiGraphics, float, int, int, int, float, float, Color, Color)
 	 */
-	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int breadth, int length, Color color1, Color color2) {
+	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, float breadth, float length, Color color1, Color color2) {
 		angledGradient(graphics, angle, x, y, 0, breadth, length, color1, color2);
 	}
 
@@ -137,19 +140,20 @@ public class UIRenderHelper {
 	 * @param endColor  the color at the ending edge
 	 * @param breadth the total width of the gradient
 	 */
-	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int z, int breadth, int length, Color startColor, Color endColor) {
+	public static void angledGradient(GuiGraphics graphics, float angle, int x, int y, int z, float breadth, float length, Color startColor, Color endColor) {
 		PoseStack poseStack = graphics.pose();
 		poseStack.pushPose();
 		poseStack.translate(x, y, z);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(angle - 90));
 
-		int w = breadth / 2;
-		graphics.fillGradient(-w, 0, w, length, startColor.getRGB(), endColor.getRGB());
+		float w = breadth / 2;
+		//graphics.fillGradient(-w, 0, w, length, startColor.getRGB(), endColor.getRGB());
+		drawGradientRect(poseStack.last().pose(), 0, -w, 0f, w, length, startColor, endColor);
 
 		poseStack.popPose();
 	}
 
-	public static void drawGradientRect(Matrix4f mat, int zLevel, int left, int top, int right, int bottom, Color startColor, Color endColor) {
+	public static void drawGradientRect(Matrix4f mat, int zLevel, float left, float top, float right, float bottom, Color startColor, Color endColor) {
 		RenderSystem.enableDepthTest();
 		//RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
@@ -258,11 +262,6 @@ public class UIRenderHelper {
 	 * @param arcAngle length of the sector arc
 	 */
 	public static void drawRadialSector(GuiGraphics graphics, float innerRadius, float outerRadius, float startAngle, float arcAngle, Color innerColor, Color outerColor) {
-
-		//todo params
-		//Color innerColor = Color.WHITE.setAlpha(0.05f);
-		//Color outerColor = Color.WHITE.setAlpha(0.3f);
-
 		List<Point2D> innerPoints = getPointsForCircleArc(innerRadius, startAngle, arcAngle);
 		List<Point2D> outerPoints = getPointsForCircleArc(outerRadius, startAngle, arcAngle);
 
@@ -273,8 +272,6 @@ public class UIRenderHelper {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
 		BufferBuilder builder = Tesselator.getInstance().getBuilder();
-		//RenderSystem.lineWidth(4.0f);
-		//builder.begin(VertexFormat.Mode.LINE_STRIP, DefaultVertexFormat.POSITION_COLOR_NORMAL);
 		builder.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
 
 		Matrix4f pose = graphics.pose().last().pose();
@@ -296,7 +293,7 @@ public class UIRenderHelper {
 	}
 
 	private static List<Point2D> getPointsForCircleArc(float radius, float startAngle, float arcAngle) {
-		int segmentCount = Math.abs(arcAngle) <= 45 ? 8 : 16;
+		int segmentCount = Math.abs(arcAngle) <= 90 ? 16 : 32;
 		List<Point2D> points = new ArrayList<>(segmentCount);
 
 

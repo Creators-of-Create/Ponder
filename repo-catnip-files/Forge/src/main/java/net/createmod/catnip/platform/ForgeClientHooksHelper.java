@@ -1,10 +1,16 @@
 package net.createmod.catnip.platform;
 
+import java.util.Locale;
+import java.util.Map;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.jozufozu.flywheel.core.model.ModelUtil;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.createmod.catnip.mixin.client.accessor.ParticleEngineAccessor;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
 import net.createmod.catnip.utility.BasicFluidRenderer;
@@ -34,10 +40,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.model.data.ModelData;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
-import java.util.Map;
 
 public class ForgeClientHooksHelper implements ModClientHooksHelper {
 
@@ -101,12 +103,14 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 
 	@Override
 	public void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
-										  PoseStack ms, BlockState blockState, BakedModel blockModel, int color) {
+										  PoseStack ms, BlockState blockState, BakedModel blockModel, int color, @Nullable BlockEntity BEWithModelData) {
+		ModelData modelData = BEWithModelData != null ? BEWithModelData.getModelData() : ModelUtil.VIRTUAL_DATA;
+
 		if (blockState.getBlock() == Blocks.AIR) {
 			RenderType renderType = Sheets.translucentCullBlockSheet();
 			blockRenderer.getModelRenderer().renderModel(ms.last(), buffer.getBuffer(renderType), blockState,
 														 blockModel, 1, 1, 1, LightTexture.FULL_BRIGHT,
-														 OverlayTexture.NO_OVERLAY, ModelUtil.VIRTUAL_DATA, null);
+														 OverlayTexture.NO_OVERLAY, modelData, null);
 		} else {
 			int blockColor = Minecraft.getInstance().getBlockColors().getColor(blockState, null, null, 0);
 			Color rgb = new Color(blockColor == -1 ? color : blockColor);
@@ -117,8 +121,7 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 				blockRenderer.getModelRenderer().renderModel(ms.last(), buffer.getBuffer(renderType), blockState,
 															 blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(),
 															 rgb.getBlueAsFloat(), LightTexture.FULL_BRIGHT,
-															 OverlayTexture.NO_OVERLAY, ModelUtil.VIRTUAL_DATA,
-															 chunkType);
+															 OverlayTexture.NO_OVERLAY, modelData, chunkType);
 			}
 		}
 	}

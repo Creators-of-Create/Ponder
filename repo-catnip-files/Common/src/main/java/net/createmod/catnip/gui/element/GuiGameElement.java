@@ -1,5 +1,7 @@
 package net.createmod.catnip.gui.element;
 
+import javax.annotation.Nullable;
+
 import com.jozufozu.flywheel.core.PartialModel;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
@@ -8,6 +10,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+
 import net.createmod.catnip.gui.ILightingSettings;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.platform.CatnipClientServices;
@@ -17,6 +20,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -28,11 +32,10 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
 
 public class GuiGameElement {
 
@@ -46,6 +49,14 @@ public class GuiGameElement {
 
 	public static GuiRenderBuilder of(BlockState state) {
 		return new GuiBlockStateRenderBuilder(state);
+	}
+
+	public static GuiRenderBuilder of(BlockState state, BlockEntity blockEntity) {
+		return new GuiBlockEntityRenderBuilder(state, blockEntity);
+	}
+
+	public static GuiRenderBuilder of(BlockEntity blockEntity) {
+		return of(blockEntity.getBlockState(), blockEntity);
 	}
 
 	public static GuiRenderBuilder of(Fluid fluid) {
@@ -150,10 +161,12 @@ public class GuiGameElement {
 
 		protected BakedModel blockModel;
 		protected BlockState blockState;
+		@Nullable protected BlockEntity blockEntity;
 
-		public GuiBlockModelRenderBuilder(BakedModel blockmodel, @Nullable BlockState blockState) {
+		public GuiBlockModelRenderBuilder(BakedModel blockmodel, @Nullable BlockState blockState, @Nullable BlockEntity blockEntity) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
 			this.blockModel = blockmodel;
+			this.blockEntity = blockEntity;
 		}
 
 		@Override
@@ -163,7 +176,7 @@ public class GuiGameElement {
 
 			Minecraft mc = Minecraft.getInstance();
 			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
-			MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
+			MultiBufferSource.BufferSource buffer = graphics.bufferSource();
 
 			transformMatrix(poseStack);
 
@@ -175,11 +188,43 @@ public class GuiGameElement {
 
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
 								   PoseStack ms) {
-			CatnipClientServices.CLIENT_HOOKS.renderGuiGameElementModel(blockRenderer, buffer, ms, blockState, blockModel, color);
+			CatnipClientServices.CLIENT_HOOKS.renderGuiGameElementModel(blockRenderer, buffer, ms, blockState, blockModel, color, blockEntity);
 
 			buffer.endBatch();
 		}
 
+	}
+
+	public static class GuiBlockEntityRenderBuilder extends GuiBlockModelRenderBuilder {
+
+		public GuiBlockEntityRenderBuilder(BlockState blockState, BlockEntity blockEntity) {
+			super(
+					Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState),
+					blockState,
+					blockEntity
+			);
+		}
+
+		@Override
+		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
+			renderBlockEntity(blockRenderer, buffer, ms);
+
+			super.renderModel(blockRenderer, buffer, ms);
+		}
+
+		private void renderBlockEntity(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
+            if (blockEntity == null)
+				return;
+
+            BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
+            if (renderer == null)
+				return;
+
+            BlockState stateBefore = blockEntity.getBlockState();
+            blockEntity.setBlockState(blockState);
+            renderer.render(blockEntity, /*partials*/0, ms, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            blockEntity.setBlockState(stateBefore);
+        }
 	}
 
 	public static class GuiBlockStateRenderBuilder extends GuiBlockModelRenderBuilder {
@@ -187,7 +232,7 @@ public class GuiGameElement {
 		public GuiBlockStateRenderBuilder(BlockState blockstate) {
 			super(Minecraft.getInstance()
 				.getBlockRenderer()
-				.getBlockModel(blockstate), blockstate);
+				.getBlockModel(blockstate), blockstate, null);
 		}
 
 		@Override
@@ -268,7 +313,7 @@ public class GuiGameElement {
 	public static class GuiBlockPartialRenderBuilder extends GuiBlockModelRenderBuilder {
 
 		public GuiBlockPartialRenderBuilder(PartialModel partial) {
-			super(partial.get(), null);
+			super(partial.get(), null, null);
 		}
 
 	}

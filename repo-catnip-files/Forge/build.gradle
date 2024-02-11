@@ -99,6 +99,8 @@ minecraft {
 dependencies {
 
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    //minecraft "net.neoforged:forge:${minecraft_version}-${neo_version}"
+
     compileOnly commonProject
 
     if (flywheelInWorkspace) {
