@@ -13,10 +13,9 @@ base {
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":ponder:Common")
 
 boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
-boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
 boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
 project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Flywheel: ${flywheelInWorkspace}], [Catnip: ${catnipInWorkspace}]")
+project.logger.lifecycle("Dependencies included in Workspace: [Catnip: ${catnipInWorkspace}]")
 
 // -- Mixin Support
 if (project.ext.mixin_enabled) {
@@ -87,15 +86,9 @@ minecraft {
         client {
             taskName 'Client'
 
-            arg '-mixin.config=flywheel.mixins.json'
-
-            mods {
-                if (flywheelInWorkspace) {
-                    flywheel {
-                        source project(":Flywheel").sourceSets.main
-                    }
-                }
-            }
+            arg '-mixin.config=flywheel.backend.mixins.json'
+            arg '-mixin.config=flywheel.impl.mixins.json'
+            arg '-mixin.config=flywheel.impl.sodium.mixins.json'
         }
 
         server {
@@ -119,11 +112,8 @@ dependencies {
         implementation fg.deobf("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}")
     }
 
-    if (flywheelInWorkspace) {
-        implementation project(':Flywheel')
-    } else {
-        implementation fg.deobf("com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
-    }
+    compileOnly fg.deobf("dev.engine_room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}")
+    runtimeOnly fg.deobf("dev.engine_room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}")
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
 }

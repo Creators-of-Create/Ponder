@@ -6,9 +6,11 @@ import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.enums.PonderConfig;
+import net.createmod.ponder.enums.PonderKeybinds;
 import net.createmod.ponder.foundation.PonderTooltipHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -73,6 +75,11 @@ public class ForgePonderClient {
 					.withButtonLabels("Client Settings", null, null)
 					.withSpecs(PonderConfig.Client().specification, null, null)
 			);
+		}
+
+		@SubscribeEvent
+		public static void register(RegisterKeyMappingsEvent event) {
+			PonderKeybinds.register(event::register);
 		}
 	}
 

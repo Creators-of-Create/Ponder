@@ -7,11 +7,13 @@ import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.enums.PonderConfig;
+import net.createmod.ponder.enums.PonderKeybinds;
 import net.createmod.ponder.foundation.PonderTooltipHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 
@@ -25,6 +27,7 @@ public class FabricPonderClient implements ClientModInitializer {
 
 		ItemTooltipCallback.EVENT.register((stack, context, lines) -> PonderTooltipHandler.addToTooltip(lines, stack));
 		RenderTooltipBorderColorCallback.EVENT.register(FabricPonderClient::getItemTooltipColor);
+		PonderKeybinds.register(KeyBindingHelper::registerKeyBinding);
 
 		ClientLifecycleEvents.CLIENT_STARTED.register(FabricPonderClient::onClientStarted);
 

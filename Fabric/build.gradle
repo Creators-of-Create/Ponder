@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.2.+'
+    id 'fabric-loom' version '1.6-SNAPSHOT'
 }
 
 base {
@@ -10,10 +10,9 @@ base {
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
 
 boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
-boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
 boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
 project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Flywheel: ${flywheelInWorkspace}], [Catnip: ${catnipInWorkspace}]")
+project.logger.lifecycle("Dependencies included in Workspace: [Catnip: ${catnipInWorkspace}]")
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
@@ -33,7 +32,8 @@ dependencies {
         modImplementation "net.createmod.catnip:Catnip-Fabric-${minecraft_version}:${catnip_version}"
     }
 
-    modApi "com.jozufozu.flywheel:flywheel-fabric-$minecraft_version:$flywheel_version"
+    modApi "dev.engine_room.flywheel:flywheel-fabric-api-${minecraft_version}:${flywheel_version}"
+    modImplementation "dev.engine_room.flywheel:flywheel-fabric-${minecraft_version}:${flywheel_version}"
 
     //implementation 'com.electronwill.night-config:core:3.6.3'
     //implementation 'com.electronwill.night-config:toml:3.6.3'

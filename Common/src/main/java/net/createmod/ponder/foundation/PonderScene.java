@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -22,15 +23,12 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
-import com.jozufozu.flywheel.util.DiffuseLightCalculator;
-import com.jozufozu.flywheel.util.NonNullSupplier;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.render.ForcedDiffuseState;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
@@ -259,7 +257,6 @@ public class PonderScene {
 
 	public void renderScene(SuperRenderTypeBuffer buffer, GuiGraphics graphics, float pt) {
 		PoseStack ms = graphics.pose();
-		ForcedDiffuseState.pushCalculator(DiffuseLightCalculator.DEFAULT);
 		ms.pushPose();
 		Minecraft mc = Minecraft.getInstance();
 		Entity prevRVE = mc.cameraEntity;
@@ -278,7 +275,6 @@ public class PonderScene {
 		outliner.renderOutlines(ms, buffer, Vec3.ZERO, pt);
 
 		ms.popPose();
-		ForcedDiffuseState.popCalculator();
 	}
 
 	public void renderOverlay(PonderUI screen, GuiGraphics graphics, float partialTicks) {
@@ -405,10 +401,10 @@ public class PonderScene {
 		 */
 	}
 
-	public NonNullSupplier<String> registerText(String defaultText) {
+	public Supplier<String> registerText(String defaultText) {
 		final String key = "text_" + textIndex;
 		localization.registerSpecific(sceneId, key, defaultText);
-		NonNullSupplier<String> supplier = () -> localization.getSpecific(sceneId, key);
+		Supplier<String> supplier = () -> localization.getSpecific(sceneId, key);
 		textIndex++;
 		return supplier;
 	}

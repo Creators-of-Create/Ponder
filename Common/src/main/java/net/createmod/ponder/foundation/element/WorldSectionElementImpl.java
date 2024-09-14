@@ -9,19 +9,15 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import com.jozufozu.flywheel.core.model.ModelUtil;
-import com.jozufozu.flywheel.core.model.ShadeSeparatedBufferedData;
-import com.jozufozu.flywheel.core.model.ShadeSeparatingVertexConsumer;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
 
+import dev.engine_room.flywheel.lib.model.ModelUtil;
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.render.ShadeSpearatingSuperByteBuffer;
+import net.createmod.catnip.render.ShadedBlockSbbBuilder;
 import net.createmod.catnip.render.SuperByteBuffer;
 import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.catnip.render.SuperByteBufferCache.Compartment;
@@ -45,6 +41,7 @@ import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
@@ -247,19 +244,20 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 			double rotZ = Mth.lerp(pt, prevAnimatedRotation.z, animatedRotation.z);
 			double rotY = Mth.lerp(pt, prevAnimatedRotation.y, animatedRotation.y);
 
-			ms.translate(centerOfRotation.x, centerOfRotation.y, centerOfRotation.z);
-			ms.mulPose(com.mojang.math.Axis.XP.rotationDegrees((float) rotX));
-			ms.mulPose(com.mojang.math.Axis.YP.rotationDegrees((float) rotY));
-			ms.mulPose(com.mojang.math.Axis.ZP.rotationDegrees((float) rotZ));
-			ms.translate(-centerOfRotation.x, -centerOfRotation.y, -centerOfRotation.z);
+			TransformStack.of(ms)
+				.translate(centerOfRotation)
+				.rotateX((float) rotX)
+				.rotateY((float) rotY)
+				.rotateZ((float) rotZ)
+				.translateBack(centerOfRotation);
 
 			if (stabilizationAnchor != null) {
-
-				ms.translate(stabilizationAnchor.x, stabilizationAnchor.y, stabilizationAnchor.z);
-				ms.mulPose(com.mojang.math.Axis.XP.rotationDegrees((float) -rotX));
-				ms.mulPose(com.mojang.math.Axis.YP.rotationDegrees((float) -rotY));
-				ms.mulPose(com.mojang.math.Axis.ZP.rotationDegrees((float) -rotZ));
-				ms.translate(-stabilizationAnchor.x, -stabilizationAnchor.y, -stabilizationAnchor.z);
+				TransformStack.of(ms)
+					.translate(stabilizationAnchor)
+					.rotateX((float) -rotX)
+					.rotateY((float) -rotY)
+					.rotateZ((float) -rotZ)
+					.translateBack(stabilizationAnchor);
 			}
 		}
 	}
@@ -321,7 +319,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 		PoseStack poseStack = graphics.pose();
 		int light = -1;
 		if (fade != 1)
-			light = (int) (Mth.lerp(fade, 5, 14));
+			light = (int) (Mth.lerp(fade, 5, 15));
 		if (redraw) {
 			renderedBlockEntities = null;
 			tickableBlockEntities = null;
@@ -377,17 +375,14 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 		if (redraw)
 			bufferCache.invalidate(PONDER_WORLD_SECTION, key);
 
-		SuperByteBuffer contraptionBuffer = bufferCache.get(PONDER_WORLD_SECTION, key, () -> buildStructureBuffer(world, type));
-		if (contraptionBuffer.isEmpty())
+		SuperByteBuffer structureBuffer = bufferCache.get(PONDER_WORLD_SECTION, key, () -> buildStructureBuffer(world, type));
+		if (structureBuffer.isEmpty())
 			return;
 
-		transformMS(contraptionBuffer.getTransforms(), pt);
-		//transformMS(ms, pt);
-
-		//renderStructureUnbuffered(world, type, ms, buffer.getBuffer(type));
+		transformMS(structureBuffer.getTransforms(), pt);
 
 		int light = lightCoordsFromFade(fade);
-		contraptionBuffer
+		structureBuffer
 			.light(light)
 			.renderInto(poseStack, buffer.getBuffer(type));
 	}
@@ -451,20 +446,17 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 	}
 
 	private SuperByteBuffer buildStructureBuffer(PonderLevel world, RenderType layer) {
-		BlockRenderDispatcher dispatcher = CatnipClientServices.CLIENT_HOOKS.getBlockRenderDispatcher();
+		BlockRenderDispatcher dispatcher = ModelUtil.VANILLA_RENDERER;
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
 		PoseStack poseStack = objects.poseStack;
 		RandomSource random = objects.random;
-		ShadeSeparatingVertexConsumer shadeSeparatingWrapper = objects.shadeSeparatingWrapper;
-		BufferBuilder shadedBuilder = objects.shadedBuilder;
-		BufferBuilder unshadedBuilder = objects.unshadedBuilder;
+		ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
 
-		shadedBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
-		unshadedBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
-		shadeSeparatingWrapper.prepare(shadedBuilder, unshadedBuilder);
+		sbbBuilder.begin();
 
 		world.setMask(this.section);
+		world.pushFakeLight(0);
 		ModelBlockRenderer.enableCaching();
 		section.forEach(pos -> {
 			BlockState state = world.getBlockState(pos);
@@ -475,35 +467,31 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
 			if (state.getRenderShape() == RenderShape.MODEL) {
 				BlockEntity blockEntity = world.getBlockEntity(pos);
-				state.getSeed(pos);
+				BakedModel model = dispatcher.getBlockModel(state);
+				long seed = state.getSeed(pos);
+				random.setSeed(seed);
 
-				if (CatnipClientServices.CLIENT_HOOKS.doesBlockModelContainRenderType(layer, state, random, blockEntity))
-					CatnipClientServices.CLIENT_HOOKS.renderBlockStateBatched(dispatcher, poseStack, shadeSeparatingWrapper, state, pos, world, true, random, layer, blockEntity);
-
+				if (CatnipClientServices.CLIENT_HOOKS.doesBlockModelContainRenderType(layer, state, random, blockEntity)) {
+					CatnipClientServices.CLIENT_HOOKS.tesselateBlockVirtual(dispatcher, model, state, pos, poseStack, sbbBuilder, true, random, seed, OverlayTexture.NO_OVERLAY, layer);
+				}
 			}
 
 			if (!fluidState.isEmpty() && ItemBlockRenderTypes.getRenderLayer(fluidState) == layer)
-				dispatcher.renderLiquid(pos, world, shadedBuilder, state, fluidState);
+				dispatcher.renderLiquid(pos, world, sbbBuilder.unwrap(true), state, fluidState);
 
 			poseStack.popPose();
 		});
 		ModelBlockRenderer.clearCache();
+		world.popLight();
 		world.clearMask();
 
-		shadeSeparatingWrapper.clear();
-		ShadeSeparatedBufferedData bufferedData = ModelUtil.endAndCombine(shadedBuilder, unshadedBuilder);
-
-		SuperByteBuffer sbb = new ShadeSpearatingSuperByteBuffer(bufferedData);
-		bufferedData.release();
-		return sbb;
+		return sbbBuilder.end();
 	}
 
 	private static class ThreadLocalObjects {
 		public final PoseStack poseStack = new PoseStack();
 		public final RandomSource random = RandomSource.createNewThreadLocalInstance();
-		public final ShadeSeparatingVertexConsumer shadeSeparatingWrapper = new ShadeSeparatingVertexConsumer();
-		public final BufferBuilder shadedBuilder = new BufferBuilder(512);
-		public final BufferBuilder unshadedBuilder = new BufferBuilder(512);
+		public final ShadedBlockSbbBuilder sbbBuilder = ShadedBlockSbbBuilder.create();
 	}
 
 }

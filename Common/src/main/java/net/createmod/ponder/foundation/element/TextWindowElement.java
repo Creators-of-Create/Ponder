@@ -1,10 +1,10 @@
 package net.createmod.ponder.foundation.element;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import com.jozufozu.flywheel.util.NonNullSupplier;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.gui.element.BoxElement;
@@ -26,7 +26,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class TextWindowElement extends AnimatedOverlayElementBase {
 
-	NonNullSupplier<String> textGetter = () -> "(?) No text was provided";
+	Supplier<String> textGetter = () -> "(?) No text was provided";
 	@Nullable String bakedText;
 
 	// from 0 to 200
