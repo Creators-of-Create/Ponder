@@ -5,15 +5,12 @@ import java.util.Locale;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.jozufozu.flywheel.core.model.ShadeSeparatingVertexConsumer;
-import com.jozufozu.flywheel.core.virtual.VirtualEmptyBlockGetter;
-import com.jozufozu.flywheel.fabric.model.DefaultLayerFilteringBakedModel;
-import com.jozufozu.flywheel.fabric.model.LayerFilteringBakedModel;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import dev.engine_room.flywheel.lib.model.baked.VirtualEmptyBlockGetter;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.ParticleEngineAccessor;
 import io.github.fabricators_of_create.porting_lib.models.virtual.FixedColorTintingBakedModel;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
@@ -39,7 +36,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -59,8 +55,13 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 	public void renderVirtualBlockStateModel(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
 											 BlockState state, BakedModel model, float red, float green, float blue,
 											 RenderType layer) {
-		BakedModel wrappedModel = DefaultLayerFilteringBakedModel.wrap(model);
-		dispatcher.getModelRenderer().renderModel(ms.last(), consumer, state, wrappedModel, red, green, blue, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+		//BakedModel wrappedModel = DefaultLayerFilteringBakedModel.wrap(model);
+		dispatcher.getModelRenderer().renderModel(ms.last(), consumer, state, model, red, green, blue, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+	}
+
+	@Override
+	public void tesselateBlockVirtual(BlockRenderDispatcher dispatcher, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource randomSource, long seed, int packedOverlay, RenderType renderType) {
+
 	}
 
 	@Override
@@ -86,18 +87,6 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 	}
 
 	@Override
-	public void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
-										BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides,
-										RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
-		BakedModel model = dispatcher.getBlockModel(state);
-		model = LayerFilteringBakedModel.wrap(model, layer);
-		if (consumer instanceof ShadeSeparatingVertexConsumer wrapper)
-			model = wrapper.wrapModel(model);
-
-		dispatcher.getModelRenderer().tesselateBlock(level, model, state, pos, ms, consumer, checkSides, random, state.getSeed(pos), OverlayTexture.NO_OVERLAY);
-	}
-
-	@Override
 	public void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
 										  PoseStack ms, BlockState state, BakedModel blockModel, int color, BlockEntity BEwithModelData) {
 		int blockColor = Minecraft.getInstance()
@@ -108,7 +97,7 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 //				.renderModel(ms.last(), vb, blockState, blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat(),
 //					LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 		BakedModel model = blockModel;
-		model = DefaultLayerFilteringBakedModel.wrap(model);
+		//model = DefaultLayerFilteringBakedModel.wrap(model);
 		if (blockColor == -1) {
 			blockColor = color;
 		}

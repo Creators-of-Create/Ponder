@@ -78,15 +78,6 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	}
 
 	@Override
-	public void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
-										BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides,
-										RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
-		ModelData modelData = BEWithModelData != null ? BEWithModelData.getModelData() : ModelData.EMPTY;
-		modelData = dispatcher.getBlockModel(state).getModelData(level, pos, state, modelData);
-		dispatcher.renderBatched(state, pos, level, ms, consumer, checkSides, random, modelData, layer);
-	}
-
-	@Override
 	public void renderFullFluidState(PoseStack ms, MultiBufferSource.BufferSource buffer, FluidState fluid) {
 		BasicFluidRenderer.renderFluidBox(fluid.getType(), 1000, 0, 0, 0, 1, 1, 1, buffer, ms, LightTexture.FULL_BRIGHT,
 										  false);
