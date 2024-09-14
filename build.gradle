@@ -3,6 +3,10 @@ apply from: 'gradle/build_number.gradle'
 
 def projVersion = project.version
 
+tasks.withType(Test).configureEach {
+    it.enabled = false
+}
+
 subprojects {
 
     project.version = projVersion

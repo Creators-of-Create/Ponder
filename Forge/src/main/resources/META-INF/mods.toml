@@ -32,13 +32,13 @@ ${mod_description}
 [[dependencies.ponder]]
     modId="flywheel"
     mandatory=true
-    versionRange="[0.6.10,0.6.11)"
+    versionRange="[1.0.0-alpha,2.0)"
     ordering="AFTER"
     side="CLIENT"
 
 [[dependencies.ponder]]
     modId="catnip"
     mandatory=true
-    versionRange="[0.6,)"
+    versionRange="[0.8,)"
     ordering="AFTER"
     side="BOTH"

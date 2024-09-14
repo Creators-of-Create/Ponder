@@ -8,6 +8,14 @@ archivesBaseName = "${mod_name}-Common-${minecraft_version}"
 
 boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
 
+repositories {
+    maven {
+        // location of the maven for Registrate and Flywheel
+        name = 'tterrag Maven'
+        url = 'https://maven.tterrag.com'
+    }
+}
+
 minecraft {
     version(minecraft_version)
     accessWideners 'src/main/resources/ponder.accesswidener'
