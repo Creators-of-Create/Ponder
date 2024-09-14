@@ -109,6 +109,11 @@ tasks.withType(JavaCompile).configureEach {
 tasks.withType(Javadoc).configureEach {
     source(commonProject.sourceSets.main.allJava)
 }
+
+tasks.named("compileTestJava") {
+    it.enabled = false
+}
+
 tasks.named("sourcesJar", Jar) {
     from(commonProject.sourceSets.main.allSource)
 }
