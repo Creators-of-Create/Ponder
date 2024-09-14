@@ -1,5 +1,11 @@
 package net.createmod.catnip.utility.levelWrappers;
 
+import java.util.List;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -14,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -39,11 +46,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.BlackholeTickAccess;
 import net.minecraft.world.ticks.LevelTickAccess;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class SchematicChunkSource extends ChunkSource {
 	private final Level fallbackWorld;
@@ -225,7 +227,7 @@ public class SchematicChunkSource extends ChunkSource {
 		}
 
 		public EmptierChunk(RegistryAccess registryAccess) {
-			super(new DummyLevel(registryAccess), null);
+			super(new DummyLevel(registryAccess), ChunkPos.ZERO);
 		}
 
 		public BlockState getBlockState(BlockPos p_180495_1_) {

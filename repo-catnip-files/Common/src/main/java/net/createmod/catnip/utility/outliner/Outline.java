@@ -1,8 +1,17 @@
 package net.createmod.catnip.utility.outliner;
 
-import com.jozufozu.flywheel.util.transform.TransformStack;
+import javax.annotation.Nullable;
+
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.render.BindableTexture;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.math.AngleHelper;
@@ -12,13 +21,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-import org.joml.Vector3d;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
-import javax.annotation.Nullable;
 
 public abstract class Outline {
 
@@ -54,7 +56,7 @@ public abstract class Outline {
 		float vAngle = AngleHelper.deg(Mth.atan2(hDistance, diff.y())) - 90;
 
 		poseStack.pushPose();
-		TransformStack.cast(poseStack)
+		TransformStack.of(poseStack)
 				.translate(start.x - camera.x, start.y - camera.y, start.z - camera.z)
 				.rotateY(hAngle)
 				.rotateX(vAngle);

@@ -6,20 +6,23 @@ apply from: '../gradle/property_helper.gradle'
 
 archivesBaseName = "${mod_name}-Common-${minecraft_version}"
 
-boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
-
 minecraft {
     version(minecraft_version)
     accessWideners 'src/main/resources/catnip.accesswidener'
 }
 
+repositories {
+    maven {
+        // location of the maven for Registrate and Flywheel
+        name = 'tterrag Maven'
+        url = 'https://maven.tterrag.com'
+    }
+}
+
 dependencies {
 
-    if (flywheelInWorkspace) {
-        //implementation project(':Flywheel')
-    } else {
-        compileOnly "com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"
-    }
+    //compileOnly "com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"
+    compileOnly "dev.engine_room.flywheel:flywheel-common-mojmap-api-${minecraft_version}:${flywheel_version}"
 
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.4'
 

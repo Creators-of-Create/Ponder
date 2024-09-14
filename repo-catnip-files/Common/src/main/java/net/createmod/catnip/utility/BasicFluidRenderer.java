@@ -3,6 +3,7 @@ package net.createmod.catnip.utility;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.CatnipRenderTypes;
 import net.minecraft.client.Minecraft;
@@ -18,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 public class BasicFluidRenderer {
 
 	public static VertexConsumer getFluidBuilder(MultiBufferSource buffer) {
-		return buffer.getBuffer(CatnipRenderTypes.getFluid());
+		return buffer.getBuffer(CatnipRenderTypes.fluid());
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,

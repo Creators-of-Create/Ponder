@@ -8,8 +8,10 @@
   ],
   "client": [
     "client.WindowResizeMixin",
+    "client.accessor.BufferBuilderAccessor",
     "client.accessor.GameRendererAccessor",
     "client.accessor.ParticleEngineAccessor",
+    "client.accessor.RenderSystemAccessor",
     "client.accessor.RenderTypeAccessor"
   ],
   "injectors": {

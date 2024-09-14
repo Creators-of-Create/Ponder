@@ -3,12 +3,14 @@ package net.createmod.catnip;
 
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.enums.CatnipConfig;
+import net.createmod.catnip.render.StitchedSprite;
 import net.createmod.catnip.utility.placement.PlacementClient;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -89,6 +91,11 @@ public class ForgeCatnipClient {
 		@SubscribeEvent
 		public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
 			event.registerReloadListener(CatnipClient.RESOURCE_RELOAD_LISTENER);
+		}
+
+		@SubscribeEvent
+		public static void onTextureStichPost(TextureStitchEvent.Post event) {
+			StitchedSprite.onTextureStitchPost(event.getAtlas());
 		}
 	}
 

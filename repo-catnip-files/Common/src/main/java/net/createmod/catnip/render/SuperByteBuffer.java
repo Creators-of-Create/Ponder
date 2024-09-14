@@ -1,16 +1,18 @@
 package net.createmod.catnip.render;
 
-import com.jozufozu.flywheel.util.transform.TStack;
-import com.jozufozu.flywheel.util.transform.Transform;
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.Direction;
-import org.joml.Matrix4f;
+import net.minecraft.world.level.BlockAndTintGetter;
 
 @SuppressWarnings({"UnusedReturnValue", "unused", "unchecked"})
-public interface SuperByteBuffer extends Transform<SuperByteBuffer>, TStack<SuperByteBuffer> {
+public interface SuperByteBuffer extends TransformStack<SuperByteBuffer> {
 
 	static int maxLight(int packedLight1, int packedLight2) {
 		int blockLight1 = LightTexture.block(packedLight1);
@@ -40,46 +42,27 @@ public interface SuperByteBuffer extends Transform<SuperByteBuffer>, TStack<Supe
 
 	<Self extends SuperByteBuffer> Self shiftUVtoSheet(SpriteShiftEntry entry, float uTarget, float vTarget, int sheetSize);
 
-	<Self extends SuperByteBuffer> Self overlay();
-
 	<Self extends SuperByteBuffer> Self overlay(int overlay);
-
-	/**
-	 * Indicate that this buffer should look up the light coordinates in the current level.
-	 */
-	<Self extends SuperByteBuffer> Self light();
-
-	/**
-	 * Indicate that this buffer should look up the light coordinates in the current level.
-	 * Light Positions will be transformed by the passed Matrix before the lookup.
-	 */
-	<Self extends SuperByteBuffer> Self light(Matrix4f lightTransform);
 
 	<Self extends SuperByteBuffer> Self light(int packedLight);
 
 	/**
-	 * Use max light from calculated light (world light or custom light) and vertex
-	 * light for the final light value. Ineffective if no other light method was called.
+	 * Indicate that this buffer should look up the light coordinates in the level.
 	 */
-	<Self extends SuperByteBuffer> Self hybridLight();
+	<Self extends SuperByteBuffer> Self useLevelLight(BlockAndTintGetter level);
 
 	/**
-	 * Transforms normals not only by the local matrix stack, but also by the passed
-	 * matrix stack.
+	 * Indicate that this buffer should look up the light coordinates in the level.
+	 * Light Positions will be transformed by the passed Matrix before the lookup.
 	 */
-	<Self extends SuperByteBuffer> Self fullNormalTransform();
+	<Self extends SuperByteBuffer> Self useLevelLight(BlockAndTintGetter level, Matrix4f lightTransform);
 
 	//
 
 	default void delete() {}
 
 	default <Self extends SuperByteBuffer> Self rotate(Direction.Axis axis, float radians) {
-		return (Self) rotate(Direction.get(Direction.AxisDirection.POSITIVE, axis), radians);
-	}
-	default <Self extends SuperByteBuffer> Self light(Matrix4f lightTransform, int packedLight) {
-		return this
-				.light(lightTransform)
-				.light(packedLight);
+		return (Self) rotate(radians, axis);
 	}
 
 	default <Self extends SuperByteBuffer> Self color(Color color) {
@@ -95,15 +78,23 @@ public interface SuperByteBuffer extends Transform<SuperByteBuffer>, TStack<Supe
 		return this.shiftUVScrolling(entry, 0, scrollV);
 	}
 
-	default <Self extends SuperByteBuffer> Self forEntityRender() {
-		return this
-				.disableDiffuse()
-				.overlay()
-				.fullNormalTransform();
-	}
-
 	@FunctionalInterface
 	interface SpriteShiftFunc {
-		void shift(VertexConsumer builder, float u, float v);
+		void shift(float u, float v, Output output);
+
+		interface Output {
+			void accept(float u, float v);
+		}
+	}
+
+	class ShiftOutput implements SpriteShiftFunc.Output {
+		public float u;
+		public float v;
+
+		@Override
+		public void accept(float u, float v) {
+			this.u = u;
+			this.v = v;
+		}
 	}
 }

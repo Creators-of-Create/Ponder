@@ -1,7 +1,16 @@
 package net.createmod.catnip.utility.outliner;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.createmod.catnip.render.BindableTexture;
 import net.createmod.catnip.render.CatnipRenderTypes;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
@@ -12,13 +21,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class BlockClusterOutline extends Outline {
 
@@ -59,7 +61,7 @@ public class BlockClusterOutline extends Outline {
 				cluster.anchor.getZ() - camera.z);
 
 		PoseStack.Pose pose = ms.last();
-		RenderType renderType = CatnipRenderTypes.getOutlineTranslucent(faceTexture.getLocation(), true);
+		RenderType renderType = CatnipRenderTypes.outlineTranslucent(faceTexture.getLocation(), true);
 		VertexConsumer consumer = buffer.getLateBuffer(renderType);
 
 		cluster.visibleFaces.forEach((face, axisDirection) -> {
@@ -85,7 +87,7 @@ public class BlockClusterOutline extends Outline {
 				cluster.anchor.getZ() - camera.z);
 
 		PoseStack.Pose pose = ms.last();
-		VertexConsumer consumer = buffer.getBuffer(CatnipRenderTypes.getOutlineSolid());
+		VertexConsumer consumer = buffer.getBuffer(CatnipRenderTypes.outlineSolid());
 
 		cluster.visibleEdges.forEach(edge -> {
 			BlockPos pos = edge.pos;

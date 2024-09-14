@@ -6,8 +6,11 @@ import javax.annotation.Nullable;
 
 import joptsimple.internal.Strings;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 public class LangBuilder {
@@ -32,7 +35,7 @@ public class LangBuilder {
 	 * Appends a localised component<br>
 	 * To add an independently formatted localised component, use add() and a nested
 	 * builder
-	 * 
+	 *
 	 * @param langKey
 	 * @param args
 	 * @return
@@ -43,7 +46,7 @@ public class LangBuilder {
 
 	/**
 	 * Appends a text component
-	 * 
+	 *
 	 * @param literalText
 	 * @return
 	 */
@@ -53,7 +56,7 @@ public class LangBuilder {
 
 	/**
 	 * Appends a colored text component
-	 * 
+	 *
 	 * @param format
 	 * @param literalText
 	 * @return
@@ -64,7 +67,7 @@ public class LangBuilder {
 
 	/**
 	 * Appends a colored text component
-	 * 
+	 *
 	 * @param color
 	 * @param literalText
 	 * @return
@@ -75,7 +78,7 @@ public class LangBuilder {
 
 	/**
 	 * Appends the contents of another builder
-	 * 
+	 *
 	 * @param otherBuilder
 	 * @return
 	 */
@@ -85,7 +88,7 @@ public class LangBuilder {
 
 	/**
 	 * Appends a component
-	 * 
+	 *
 	 * @param customComponent
 	 * @return
 	 */
@@ -95,8 +98,23 @@ public class LangBuilder {
 	}
 
 	/**
+	 * Appends a component
+	 *
+	 * @param component the component to append
+	 * @return this builder
+	 */
+	public LangBuilder add(Component component) {
+		if (component instanceof MutableComponent mutableComponent)
+			return add(mutableComponent);
+		else
+			return add(component.copy());
+	}
+
+	//
+
+	/**
 	 * Applies the format to all added components
-	 * 
+	 *
 	 * @param format
 	 * @return
 	 */
@@ -108,7 +126,7 @@ public class LangBuilder {
 
 	/**
 	 * Applies the color to all added components
-	 * 
+	 *
 	 * @param color
 	 * @return
 	 */
@@ -151,9 +169,18 @@ public class LangBuilder {
 
 	public void forGoggles(List<? super MutableComponent> tooltip, int indents) {
 		tooltip.add(new LangBuilder(namespace)
-			.text(Strings.repeat(' ', 4 + indents))
+			.text(Strings.repeat(' ', getIndents(Minecraft.getInstance().font, 4 + indents)))
 			.add(this)
 			.component());
+	}
+
+	public static final float DEFAULT_SPACE_WIDTH = 4.0F; // space width in vanilla's default font
+	static int getIndents(Font font, int defaultIndents) {
+		int spaceWidth = font.width(" ");
+		if (DEFAULT_SPACE_WIDTH == spaceWidth) {
+			return defaultIndents;
+		}
+		return Mth.ceil(DEFAULT_SPACE_WIDTH * defaultIndents / spaceWidth);
 	}
 
 	//

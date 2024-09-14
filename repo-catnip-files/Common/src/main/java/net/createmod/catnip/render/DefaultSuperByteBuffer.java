@@ -1,25 +1,31 @@
 package net.createmod.catnip.render;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
+import javax.annotation.Nullable;
+
+import org.joml.Matrix3f;
+import org.joml.Matrix3fc;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Quaternionfc;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
-import javax.annotation.Nullable;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 @SuppressWarnings("unchecked")
 public class DefaultSuperByteBuffer implements SuperByteBuffer {
@@ -54,6 +60,8 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 
 	// Temporary
 	protected static final Long2IntMap WORLD_LIGHT_CACHE = new Long2IntOpenHashMap();
+
+	private final ShiftOutput shiftOutput = new ShiftOutput();
 
 
 	public DefaultSuperByteBuffer(RenderedBuffer renderedBuffer) {
@@ -133,9 +141,12 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 			float v = getV(i);
 
 			if (spriteShiftFunc != null) {
-				spriteShiftFunc.shift(consumer, u, v);
-			} else
-				consumer.uv(u, v);
+				spriteShiftFunc.shift(u, v, shiftOutput);
+				u = shiftOutput.u;
+				v = shiftOutput.v;
+			}
+
+			consumer.uv(u, v);
 
 			int light;
 			if (useWorldLight) {
@@ -209,14 +220,14 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	@Override
-	public SuperByteBuffer translate(double x, double y, double z) {
+	public DefaultSuperByteBuffer translate(float x, float y, float z) {
 		transforms.translate(x, y, z);
 		return this;
 	}
 
 	@Override
-	public SuperByteBuffer multiply(Quaternionf quaternion) {
-		transforms.mulPose(quaternion);
+	public DefaultSuperByteBuffer translate(double x, double y, double z) {
+		transforms.translate(x, y, z);
 		return this;
 	}
 
@@ -240,14 +251,14 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	@Override
-	public DefaultSuperByteBuffer mulPose(Matrix4f pose) {
-		transforms.last().pose().mul(pose);
+	public DefaultSuperByteBuffer mulPose(Matrix4fc matrix4fc) {
+		transforms.last().pose().mul(matrix4fc);
 		return this;
 	}
 
 	@Override
-	public DefaultSuperByteBuffer mulNormal(Matrix3f normal) {
-		transforms.last().normal().mul(normal);
+	public DefaultSuperByteBuffer mulNormal(Matrix3fc matrix3fc) {
+		transforms.last().normal().mul(matrix3fc);
 		return this;
 	}
 
@@ -290,41 +301,35 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 
 	@Override
 	public DefaultSuperByteBuffer shiftUV(SpriteShiftEntry entry) {
-		this.spriteShiftFunc = (builder, u, v) -> builder.uv(entry.getTargetU(u), entry.getTargetV(v));
+		spriteShiftFunc = (u, v, output) -> output.accept(entry.getTargetU(u), entry.getTargetV(v));
 		return this;
 	}
 
 	@Override
 	public DefaultSuperByteBuffer shiftUVScrolling(SpriteShiftEntry entry, float scrollU, float scrollV) {
-		this.spriteShiftFunc = (builder, u, v) -> {
+		spriteShiftFunc = (u, v, output) -> {
 			float targetU = u - entry.getOriginal()
-					.getU0() + entry.getTarget()
-					.getU0()
-					+ scrollU;
+				.getU0() + entry.getTarget()
+				.getU0()
+				+ scrollU;
 			float targetV = v - entry.getOriginal()
-					.getV0() + entry.getTarget()
-					.getV0()
-					+ scrollV;
-			builder.uv(targetU, targetV);
+				.getV0() + entry.getTarget()
+				.getV0()
+				+ scrollV;
+			output.accept(targetU, targetV);
 		};
 		return this;
 	}
 
 	@Override
 	public DefaultSuperByteBuffer shiftUVtoSheet(SpriteShiftEntry entry, float uTarget, float vTarget, int sheetSize) {
-		this.spriteShiftFunc = (builder, u, v) -> {
+		spriteShiftFunc = (u, v, output) -> {
 			float targetU = entry.getTarget()
-					.getU((SpriteShiftEntry.getUnInterpolatedU(entry.getOriginal(), u) / sheetSize) + uTarget * 16);
+				.getU((SpriteShiftEntry.getUnInterpolatedU(entry.getOriginal(), u) / sheetSize) + uTarget * 16);
 			float targetV = entry.getTarget()
-					.getV((SpriteShiftEntry.getUnInterpolatedV(entry.getOriginal(), v) / sheetSize) + vTarget * 16);
-			builder.uv(targetU, targetV);
+				.getV((SpriteShiftEntry.getUnInterpolatedV(entry.getOriginal(), v) / sheetSize) + vTarget * 16);
+			output.accept(targetU, targetV);
 		};
-		return this;
-	}
-
-	@Override
-	public DefaultSuperByteBuffer overlay() {
-		hasOverlay = true;
 		return this;
 	}
 
@@ -336,15 +341,12 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	@Override
-	public DefaultSuperByteBuffer light() {
-		useWorldLight = true;
+	public DefaultSuperByteBuffer useLevelLight(BlockAndTintGetter level) {
 		return this;
 	}
 
 	@Override
-	public DefaultSuperByteBuffer light(Matrix4f lightTransform) {
-		useWorldLight = true;
-		this.lightTransform = lightTransform;
+	public DefaultSuperByteBuffer useLevelLight(BlockAndTintGetter level, Matrix4f lightTransform) {
 		return this;
 	}
 
@@ -352,18 +354,6 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	public DefaultSuperByteBuffer light(int packedLight) {
 		hasCustomLight = true;
 		this.packedLightCoordinates = packedLight;
-		return this;
-	}
-
-	@Override
-	public DefaultSuperByteBuffer hybridLight() {
-		hybridLight = true;
-		return this;
-	}
-
-	@Override
-	public DefaultSuperByteBuffer fullNormalTransform() {
-		fullNormalTransform = true;
 		return this;
 	}
 
@@ -432,5 +422,10 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	private static int getLight(Level world, Vector4f lightPos) {
 		BlockPos pos = BlockPos.containing(lightPos.x(), lightPos.y(), lightPos.z());
 		return WORLD_LIGHT_CACHE.computeIfAbsent(pos.asLong(), $ -> LevelRenderer.getLightColor(world, pos));
+	}
+
+	@Override
+	public SuperByteBuffer rotate(Quaternionfc quaternionfc) {
+		return null;
 	}
 }

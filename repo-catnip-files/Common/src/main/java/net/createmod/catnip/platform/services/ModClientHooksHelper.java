@@ -5,9 +5,11 @@ import java.util.Locale;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import net.createmod.catnip.render.ShadedBlockSbbBuilder;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -22,7 +24,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -37,11 +38,7 @@ public interface ModClientHooksHelper {
 									  BlockState state, BakedModel model, float red, float green, float blue,
 									  RenderType layer);
 
-	default void renderBlockStateBatched(BlockRenderDispatcher dispatcher, PoseStack ms, VertexConsumer consumer,
-										 BlockState state, BlockPos pos, BlockAndTintGetter level, boolean checkSides,
-										 RandomSource random, RenderType layer, @Nullable BlockEntity BEWithModelData) {
-		dispatcher.renderBatched(state, pos, level, ms, consumer, checkSides, random);
-	}
+	void tesselateBlockVirtual(BlockRenderDispatcher dispatcher, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource randomSource, long seed, int packedOverlay, RenderType renderType);
 
 	void renderFullFluidState(PoseStack ms, MultiBufferSource.BufferSource buffer, FluidState fluid);
 
@@ -93,5 +90,9 @@ public interface ModClientHooksHelper {
 
 	default BlockRenderDispatcher getBlockRenderDispatcher() {
 		return Minecraft.getInstance().getBlockRenderer();
+	}
+
+	default ShadedBlockSbbBuilder createSbbBuilder(BufferBuilder builder){
+		return new ShadedBlockSbbBuilder(builder);
 	}
 }

@@ -49,4 +49,8 @@ public class AngleHelper {
 		return diff;
 	}
 
+	public static float wrapAngle180(float angle) {
+		return (angle + 180) % 360 - 180;
+	}
+
 }

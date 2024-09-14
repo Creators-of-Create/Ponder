@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.2.+'
+    id 'fabric-loom' version '1.6-SNAPSHOT'
 }
 
 base {
@@ -10,9 +10,8 @@ base {
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
 
 boolean inMultiModWorkspace = rootProject.hasProperty('multiModWorkspace.enabled')
-boolean flywheelInWorkspace = rootProject.hasProperty('multiModWorkspace.flywheel')
 project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Flywheel: ${flywheelInWorkspace}]")
+project.logger.lifecycle("Dependencies included in Workspace: []")
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
@@ -25,7 +24,8 @@ dependencies {
     }
     //modImplementation include("io.github.fabricators_of_create:Porting-Lib:${project.port_lib_version}+${project.minecraft_version}-stable")
 
-    modApi "com.jozufozu.flywheel:flywheel-fabric-$minecraft_version:$flywheel_version"
+    modApi "dev.engine_room.flywheel:flywheel-fabric-api-${minecraft_version}:${flywheel_version}"
+    modImplementation "dev.engine_room.flywheel:flywheel-fabric-${minecraft_version}:${flywheel_version}"
 
     //implementation 'com.electronwill.night-config:core:3.6.3'
     //implementation 'com.electronwill.night-config:toml:3.6.3'

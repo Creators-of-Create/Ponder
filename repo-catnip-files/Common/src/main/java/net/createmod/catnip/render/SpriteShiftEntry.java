@@ -4,8 +4,6 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-import com.jozufozu.flywheel.core.StitchedSprite;
-
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 

@@ -5,14 +5,19 @@ import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.jozufozu.flywheel.core.model.ModelUtil;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import dev.engine_room.flywheel.lib.model.ModelUtil;
+import dev.engine_room.flywheel.lib.model.baked.VirtualEmptyBlockGetter;
 import net.createmod.catnip.mixin.client.accessor.ParticleEngineAccessor;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
+import net.createmod.catnip.render.ForgeShadedBlockSbbBuilder;
+import net.createmod.catnip.render.ShadedBlockSbbBuilder;
+import net.createmod.catnip.render.VirtualRenderHelper;
 import net.createmod.catnip.utility.BasicFluidRenderer;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.KeyMapping;
@@ -26,6 +31,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
@@ -61,7 +67,14 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 											 RenderType layer) {
 		dispatcher.getModelRenderer().renderModel(ms.last(), consumer, state, model, red, green, blue,
 												  LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
-												  ModelUtil.VIRTUAL_DATA, layer);
+												  VirtualRenderHelper.VIRTUAL_DATA, layer);
+	}
+
+	@Override
+	public void tesselateBlockVirtual(BlockRenderDispatcher dispatcher, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource randomSource, long seed, int packedOverlay, RenderType renderType) {
+		ModelBlockRenderer modelRenderer = dispatcher.getModelRenderer();
+		ModelData modelData = model.getModelData(VirtualEmptyBlockGetter.FULL_DARK, pos, state, VirtualRenderHelper.VIRTUAL_DATA);
+		modelRenderer.tesselateBlock(VirtualEmptyBlockGetter.FULL_DARK, model, state, pos, poseStack, consumer, checkSides, randomSource, seed, packedOverlay, modelData, renderType);
 	}
 
 	@Override
@@ -104,7 +117,7 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public void renderGuiGameElementModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
 										  PoseStack ms, BlockState blockState, BakedModel blockModel, int color, @Nullable BlockEntity BEWithModelData) {
-		ModelData modelData = BEWithModelData != null ? BEWithModelData.getModelData() : ModelUtil.VIRTUAL_DATA;
+		ModelData modelData = BEWithModelData != null ? BEWithModelData.getModelData() : VirtualRenderHelper.VIRTUAL_DATA;
 
 		if (blockState.getBlock() == Blocks.AIR) {
 			RenderType renderType = Sheets.translucentCullBlockSheet();
@@ -116,7 +129,7 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 			Color rgb = new Color(blockColor == -1 ? color : blockColor);
 
 			for (RenderType chunkType : blockModel.getRenderTypes(blockState, RandomSource.create(42L),
-																  ModelUtil.VIRTUAL_DATA)) {
+																  VirtualRenderHelper.VIRTUAL_DATA)) {
 				RenderType renderType = RenderTypeHelper.getEntityRenderType(chunkType, true);
 				blockRenderer.getModelRenderer().renderModel(ms.last(), buffer.getBuffer(renderType), blockState,
 															 blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(),
@@ -148,5 +161,10 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public BlockRenderDispatcher getBlockRenderDispatcher() {
 		return ModelUtil.VANILLA_RENDERER;
+	}
+
+	@Override
+	public ShadedBlockSbbBuilder createSbbBuilder(BufferBuilder builder) {
+		return new ForgeShadedBlockSbbBuilder(builder);
 	}
 }
