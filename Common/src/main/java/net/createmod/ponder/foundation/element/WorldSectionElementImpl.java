@@ -246,17 +246,17 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
 			TransformStack.of(ms)
 				.translate(centerOfRotation)
-				.rotateX((float) rotX)
-				.rotateY((float) rotY)
-				.rotateZ((float) rotZ)
+				.rotateXDegrees((float) rotX)
+				.rotateYDegrees((float) rotY)
+				.rotateZDegrees((float) rotZ)
 				.translateBack(centerOfRotation);
 
 			if (stabilizationAnchor != null) {
 				TransformStack.of(ms)
 					.translate(stabilizationAnchor)
-					.rotateX((float) -rotX)
-					.rotateY((float) -rotY)
-					.rotateZ((float) -rotZ)
+					.rotateXDegrees((float) -rotX)
+					.rotateYDegrees((float) -rotY)
+					.rotateZDegrees((float) -rotZ)
 					.translateBack(stabilizationAnchor);
 			}
 		}
