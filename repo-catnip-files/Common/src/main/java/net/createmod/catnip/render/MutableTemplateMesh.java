@@ -22,11 +22,10 @@ public class MutableTemplateMesh extends TemplateMesh {
 	public MutableTemplateMesh(BufferBuilder.RenderedBuffer data) {
 		this(data.drawState().vertexCount());
 		int vertexCount = data.drawState().vertexCount();
-		MutableTemplateMesh mutableMesh = new MutableTemplateMesh(vertexCount);
 		ByteBuffer vertexBuffer = data.vertexBuffer();
 		int stride = data.drawState().format().getVertexSize();
 
-		transferFromVertexData(0, 0, vertexCount, mutableMesh, vertexBuffer, stride);
+		transferFromVertexData(0, 0, vertexCount, this, vertexBuffer, stride);
 	}
 
 	public static void transferFromVertexData(int srcIndex, int dstIndex, int vertexCount, MutableTemplateMesh mutableMesh, ByteBuffer vertexBuffer, int stride) {
