@@ -45,6 +45,8 @@ public final class NBTProcessors {
 					if (textComponentHasClickEvent(stringTag.getAsString()))
 						return null;
 		}
+		if (data.contains("front_item") || data.contains("back_item"))
+			return null; // "Amendments" compat: sign data contains itemstacks
 		return data;
 	};
 
@@ -91,8 +93,15 @@ public final class NBTProcessors {
 	}
 
 	public static boolean textComponentHasClickEvent(String json) {
-		Component component = Component.Serializer.fromJson(json.isEmpty() ? "\"\"" : json);
-		return component != null && component.getStyle().getClickEvent() != null;
+		return textComponentHasClickEvent(Component.Serializer.fromJson(json.isEmpty() ? "\"\"" : json));
+	}
+
+	public static boolean textComponentHasClickEvent(Component component) {
+		for (Component sibling : component.getSiblings())
+			if (textComponentHasClickEvent(sibling))
+				return true;
+		return component != null && component.getStyle() != null && component.getStyle()
+			.getClickEvent() != null;
 	}
 
 	private NBTProcessors() {}
