@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
@@ -16,6 +17,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public abstract class AbstractSimiScreen extends Screen {
+
+    protected static final Color BACKGROUND_COLOR = new Color(0x50_101010, true);
 
 	protected int windowWidth, windowHeight;
 	protected int windowXOffset, windowYOffset;

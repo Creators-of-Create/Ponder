@@ -10,13 +10,14 @@ import org.lwjgl.glfw.GLFW;
 
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ScreenOpener;
+import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.utility.FontHelper;
 import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -98,16 +99,17 @@ public class ConfigModListScreen extends ConfigScreen {
 		assert this.search != null;
 
 		list.children().clear();
+		//todo include display names in search
 		allEntries
 				.stream()
 				.filter(modEntry -> modEntry.id.contains(search.toLowerCase(Locale.ROOT)))
 				.forEach(list.children()::add);
 
 		list.setScrollAmount(list.getScrollAmount());
-		if (list.children().size() > 0) {
-			this.search.setTextColor(Theme.Key.TEXT.i());
+		if (!list.children().isEmpty()) {
+			this.search.setTextColor(UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		} else {
-			this.search.setTextColor(Theme.Key.BUTTON_FAIL.i());
+			this.search.setTextColor(AbstractSimiWidget.COLOR_FAIL.getFirst().getRGB());
 		}
 	}
 
@@ -128,7 +130,7 @@ public class ConfigModListScreen extends ConfigScreen {
 				button.withCallback(() -> ScreenOpener.open(new BaseConfigScreen(parent, id)));
 			} else {
 				button.active = false;
-				button.updateColorsFromState();
+				button.updateGradientFromState();
 				button.modifyElement(e -> ((DelegatedStencilElement) e).withElementRenderer(BaseConfigScreen.DISABLED_RENDERER));
 				labelTooltip.add(Components.literal(modName(id)));
 				labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("This Mod does not have any configs registered or is not using Forge's config system"), Palette.ALL_GRAY));

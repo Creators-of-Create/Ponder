@@ -1,8 +1,24 @@
 package net.createmod.catnip.config.ui;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.lwjgl.glfw.GLFW;
+
 import com.electronwill.nightconfig.core.AbstractConfig;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.google.common.collect.Lists;
+
 import net.createmod.catnip.config.ui.ConfigScreenList.LabeledEntry;
 import net.createmod.catnip.config.ui.entries.BooleanEntry;
 import net.createmod.catnip.config.ui.entries.EnumEntry;
@@ -15,6 +31,7 @@ import net.createmod.catnip.gui.ConfirmationScreen.Response;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.net.ServerboundConfigPacket;
 import net.createmod.catnip.platform.CatnipServices;
@@ -24,7 +41,6 @@ import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,19 +49,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
-import org.lwjgl.glfw.GLFW;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 public class SubMenuConfigScreen extends ConfigScreen {
 
@@ -308,8 +311,8 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 		boolean canEdit = minecraft != null && minecraft.player != null && minecraft.player.hasPermissions(2);
 
-		Couple<Color> red = Theme.Key.BUTTON_FAIL.p();
-		Couple<Color> green = Theme.Key.BUTTON_SUCCESS.p();
+		Couple<Color> red = AbstractSimiWidget.COLOR_FAIL;
+		Couple<Color> green = AbstractSimiWidget.COLOR_SUCCESS;
 
 		DelegatedStencilElement stencil = new DelegatedStencilElement();
 
@@ -341,7 +344,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		super.renderWindow(graphics, mouseX, mouseY, partialTicks);
 
 		int x = width / 2;
-		graphics.drawCenteredString(minecraft.font, ConfigScreen.modID + " > " + type.toString().toLowerCase(Locale.ROOT) + " > " + title, x, 15, Theme.Key.TEXT.i());
+		graphics.drawCenteredString(minecraft.font, ConfigScreen.modID + " > " + type.toString().toLowerCase(Locale.ROOT) + " > " + title, x, 15, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 	}
 
 	@Override
@@ -385,9 +388,9 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 	private void updateFilter(String search) {
 		if (list.search(search)) {
-			this.search.setTextColor(Theme.Key.TEXT.i());
+			this.search.setTextColor(UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		} else {
-			this.search.setTextColor(Theme.Key.BUTTON_FAIL.i());
+			this.search.setTextColor(AbstractSimiWidget.COLOR_SUCCESS.getFirst().getRGB());
 		}
 	}
 

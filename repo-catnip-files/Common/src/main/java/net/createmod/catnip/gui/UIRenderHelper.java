@@ -28,7 +28,6 @@ import com.mojang.math.Axis;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -36,6 +35,25 @@ import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.util.Mth;
 
 public class UIRenderHelper {
+
+	public static final Couple<Color> COLOR_TEXT = Couple.create(
+		new Color(0xff_eeeeee),
+		new Color(0xff_a3a3a3)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_TEXT_DARKER = Couple.create(
+		new Color(0xff_a3a3a3),
+		new Color(0xff_808080)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_TEXT_ACCENT = Couple.create(
+		new Color(0xff_ddeeff),
+		new Color(0xff_a0b0c0)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_TEXT_STRONG_ACCENT = Couple.create(
+		new Color(0xff_8ab6d6),
+		new Color(0xff_6e92ab)
+	).map(Color::setImmutable);
+
+	public static final Color COLOR_STREAK = new Color(0x101010, false).setImmutable();
 
 	/**
 	 * An FBO that has a stencil buffer for use wherever stencil are necessary. Forcing the main FBO to have a stencil
@@ -80,7 +98,7 @@ public class UIRenderHelper {
 	 * @param length total length of the streak
 	 */
 	public static void streak(GuiGraphics graphics, float angle, int x, int y, int breadth, int length) {
-		streak(graphics, angle, x, y, breadth, length, Theme.Key.STREAK.c());
+		streak(graphics, angle, x, y, breadth, length, COLOR_STREAK);
 	}
 
 	public static void streak(GuiGraphics graphics, float angle, int x, int y, int breadth, int length, Color c) {

@@ -1,5 +1,7 @@
 package net.createmod.catnip.config.ui.entries;
 
+import java.util.Locale;
+
 import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -7,12 +9,9 @@ import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.element.TextStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
-import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.common.ForgeConfigSpec;
-
-import java.util.Locale;
 
 public class EnumEntry extends ValueEntry<Enum<?>> {
 
@@ -27,18 +26,18 @@ public class EnumEntry extends ValueEntry<Enum<?>> {
 
 		valueText = new TextStencilElement(Minecraft.getInstance().font, "YEP").centered(true, true);
 		valueText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2,
-			height, width, Theme.Key.TEXT.p()));
+			height, width, UIRenderHelper.COLOR_TEXT));
 
 		DelegatedStencilElement l = CatnipGuiTextures.ICON_CONFIG_PREV.asStencil();
 		cycleLeft = new BoxWidget(0, 0, cycleWidth + 8, 16)
-				.withCustomBackground(Theme.Key.BOX_BACKGROUND_FLAT.c())
+				.withCustomBackground(BoxElement.COLOR_BACKGROUND_FLAT)
 				.showingElement(l)
 				.withCallback(() -> cycleValue(-1));
 		l.withElementRenderer(BoxWidget.gradientFactory.apply(cycleLeft));
 
 		DelegatedStencilElement r = CatnipGuiTextures.ICON_CONFIG_NEXT.asStencil();
 		cycleRight = new BoxWidget(0, 0, cycleWidth + 8, 16)
-				.withCustomBackground(Theme.Key.BOX_BACKGROUND_FLAT.c())
+				.withCustomBackground(BoxElement.COLOR_BACKGROUND_FLAT)
 				.showingElement(r)
 				.withCallback(() -> cycleValue(1));
 		r.at(cycleWidth - 8, 0);
@@ -93,7 +92,7 @@ public class EnumEntry extends ValueEntry<Enum<?>> {
 		cycleRight.render(graphics, mouseX, mouseY, partialTicks);
 
 		new BoxElement()
-				.withBackground(Theme.Key.BOX_BACKGROUND_FLAT.c())
+				.withBackground(BoxElement.COLOR_BACKGROUND_FLAT)
 				.flatBorder(0x01_000000)
 				.withBounds(48, 6)
 				.at(cycleLeft.getX() + 22, cycleLeft.getY() + 5)

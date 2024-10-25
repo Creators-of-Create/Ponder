@@ -1,12 +1,13 @@
 package net.createmod.catnip.config.ui;
 
+import org.lwjgl.glfw.GLFW;
+
+import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import org.lwjgl.glfw.GLFW;
 
 public class HintableTextFieldWidget extends EditBox {
 
@@ -36,7 +37,7 @@ public class HintableTextFieldWidget extends EditBox {
 		if (!getValue().isEmpty())
 			return;
 
-		graphics.drawString(font, hint, getX() + 5, this.getY() + (this.height - 8) / 2, Theme.Key.TEXT.c().scaleAlpha(.75f).getRGB());
+		graphics.drawString(font, hint, getX() + 5, this.getY() + (this.height - 8) / 2, UIRenderHelper.COLOR_TEXT.getFirst().scaleAlpha(.75f).getRGB());
 	}
 
 	@Override

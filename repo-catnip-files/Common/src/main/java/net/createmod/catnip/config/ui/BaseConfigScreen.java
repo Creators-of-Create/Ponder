@@ -1,31 +1,38 @@
 package net.createmod.catnip.config.ui;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.UnaryOperator;
+
+import javax.annotation.Nullable;
+
+import org.lwjgl.glfw.GLFW;
+
 import net.createmod.catnip.Catnip;
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.FadableScreenElement;
 import net.createmod.catnip.gui.element.TextStencilElement;
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.FontHelper;
 import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.theme.Theme;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
-import org.lwjgl.glfw.GLFW;
-
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.UnaryOperator;
 
 public class BaseConfigScreen extends ConfigScreen {
 
-	public static final FadableScreenElement DISABLED_RENDERER = (ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2, height, width, Theme.Key.BUTTON_DISABLE.p());
+	public static final Color COLOR_TITLE_A = new Color(0xff_c69fbc).setImmutable();
+	public static final Color COLOR_TITLE_B = new Color(0xff_f6b8bb).setImmutable();
+	public static final Color COLOR_TITLE_C = new Color(0xff_fbf994).setImmutable();
+
+	public static final FadableScreenElement DISABLED_RENDERER = (ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2, height, width, AbstractSimiWidget.COLOR_DISABLED);
 	private static final Map<String, UnaryOperator<BaseConfigScreen>> DEFAULTS = new HashMap<>();
 
 	/**
@@ -129,7 +136,7 @@ public class BaseConfigScreen extends ConfigScreen {
 			clientText.withElementRenderer(BoxWidget.gradientFactory.apply(clientConfigWidget));
 		} else {
 			clientConfigWidget.active = false;
-			clientConfigWidget.updateColorsFromState();
+			clientConfigWidget.updateGradientFromState();
 			clientText.withElementRenderer(DISABLED_RENDERER);
 		}
 
@@ -141,7 +148,7 @@ public class BaseConfigScreen extends ConfigScreen {
 			commonText.withElementRenderer(BoxWidget.gradientFactory.apply(commonConfigWidget));
 		} else {
 			commonConfigWidget.active = false;
-			commonConfigWidget.updateColorsFromState();
+			commonConfigWidget.updateGradientFromState();
 			commonText.withElementRenderer(DISABLED_RENDERER);
 		}
 
@@ -150,7 +157,7 @@ public class BaseConfigScreen extends ConfigScreen {
 
 		if (serverSpec == null) {
 			serverConfigWidget.active = false;
-			serverConfigWidget.updateColorsFromState();
+			serverConfigWidget.updateGradientFromState();
 			serverText.withElementRenderer(DISABLED_RENDERER);
 		} else if (minecraft.level == null) {
 			serverText.withElementRenderer(DISABLED_RENDERER);
@@ -170,8 +177,8 @@ public class BaseConfigScreen extends ConfigScreen {
 				Locale.ROOT)))
 				.centered(true, true)
 				.withElementRenderer((ms, w, h, alpha) -> {
-					UIRenderHelper.angledGradient(ms, 0, 0, h / 2, h, w / 2, Theme.Key.CONFIG_TITLE_A.p());
-					UIRenderHelper.angledGradient(ms, 0, w / 2, h / 2, h, w / 2, Theme.Key.CONFIG_TITLE_B.p());
+					UIRenderHelper.angledGradient(ms, 0, 0, h / 2, h, w / 2, COLOR_TITLE_A, COLOR_TITLE_B);
+					UIRenderHelper.angledGradient(ms, 0, w / 2, h / 2, h, w / 2, COLOR_TITLE_B, COLOR_TITLE_C);
 				});
 		int boxWidth = width + 10;
 		int boxHeight = 39;
@@ -179,7 +186,7 @@ public class BaseConfigScreen extends ConfigScreen {
 		title = new BoxWidget(-5, height / 2 - 110, boxWidth, boxHeight)
 				//.withCustomBackground(new Color(0x20_000000, true))
 				.<BoxWidget>setActive(false)
-				.withBorderColors(Theme.Key.BUTTON_IDLE.p())
+				.withBorderColors(AbstractSimiWidget.COLOR_IDLE)
 				.withPadding(0, boxPadding)
 				.rescaleElement(boxWidth / 2f, (boxHeight - 2 * boxPadding) / 2f)//double the text size by telling it the element is only half as big as the available space
 				.showingElement(titleText.at(0, 7));
@@ -206,7 +213,7 @@ public class BaseConfigScreen extends ConfigScreen {
 
 	@Override
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		graphics.drawCenteredString(font, "Access Configs for Mod:", width / 2, height / 2 - 105, Theme.Key.TEXT_ACCENT_STRONG.i());
+		graphics.drawCenteredString(font, "Access Configs for Mod:", width / 2, height / 2 - 105, UIRenderHelper.COLOR_TEXT_STRONG_ACCENT.getFirst().getRGB());
 	}
 
 	private void linkTo(@Nullable Screen screen) {

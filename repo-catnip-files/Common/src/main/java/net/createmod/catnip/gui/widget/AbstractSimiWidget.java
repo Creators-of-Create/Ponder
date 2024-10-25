@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import net.createmod.catnip.gui.TickableGuiEventListener;
+import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -15,8 +17,33 @@ import net.minecraft.network.chat.Component;
 
 public abstract class AbstractSimiWidget extends AbstractWidget implements TickableGuiEventListener {
 
-	public static final int HEADER_RGB = 0x5391E1;
-	public static final int HINT_RGB = 0x96B7E0;
+	public static final Color HEADER_RGB = new Color(0x5391e1, false);
+	public static final Color HINT_RGB = new Color(0x96b7e0, false);
+
+	public static final Couple<Color> COLOR_IDLE = Couple.create(
+		new Color(0xdd_8ab6d6, true),
+		new Color(0x90_8ab6d6, true)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_HOVER = Couple.create(
+		new Color(0xff_9abbd3, true),
+		new Color(0xd0_9abbd3, true)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_CLICK = Couple.create(
+		new Color(0xff_ffffff, true),
+		new Color(0xee_ffffff, true)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_DISABLED = Couple.create(
+		new Color(0x80_909090, true),
+		new Color(0x60_909090, true)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_SUCCESS = Couple.create(
+		new Color(0xcc_88f788, true),
+		new Color(0xcc_20cc20, true)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_FAIL = Couple.create(
+		new Color(0xcc_f78888, true),
+		new Color(0xcc_cc2020, true)
+	).map(Color::setImmutable);
 
 	protected float z;
 	protected boolean wasHovered = false;

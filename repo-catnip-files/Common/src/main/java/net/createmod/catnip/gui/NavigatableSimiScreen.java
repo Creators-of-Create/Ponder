@@ -1,30 +1,38 @@
 package net.createmod.catnip.gui;
 
-import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.createmod.catnip.enums.CatnipGuiTextures;
-import net.createmod.catnip.gui.widget.BoxWidget;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.lang.Lang;
-import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.theme.Theme;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.createmod.catnip.enums.CatnipGuiTextures;
+import net.createmod.catnip.gui.element.BoxElement;
+import net.createmod.catnip.gui.widget.BoxWidget;
+import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.utility.lang.Lang;
+import net.createmod.catnip.utility.theme.Color;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
+
+	public static final Couple<Color> COLOR_NAV_ARROW = Couple.create(
+		new Color(0x80_aa9999, true),
+		new Color(0x30_aa9999)
+	).map(Color::setImmutable);
 
 	protected static boolean currentlyRenderingPreviousScreen = false;
 
@@ -67,7 +75,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 
 		addRenderableWidget(backTrack = new BoxWidget(31, height - 31 - 20)
 				.withBounds(20, 20)
-				.withCustomBackground(Theme.Key.BOX_BACKGROUND_FLAT.c())
+				.withCustomBackground(BoxElement.COLOR_BACKGROUND_FLAT)
 				.enableFade(0, 5)
 				.withPadding(2, 2)
 				.fade(1)
@@ -112,7 +120,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 
 		int x = (int) Mth.lerp(arrowAnimation.getValue(partialTicks), -9, 21);
 		int maxX = backTrack.getX() + backTrack.getWidth();
-		Couple<Color> colors = Theme.Key.NAV_BACK_ARROW.p();
+		Couple<Color> colors = COLOR_NAV_ARROW;
 
 		poseStack.pushPose();
 		poseStack.translate(0, 0, -300);
@@ -127,7 +135,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 		poseStack.translate(0, 0, 500);
 		if (backTrack.isHoveredOrFocused()) {
 			Component component = backTrackingComponent();
-			graphics.drawString(font, component, 41 - font.width(component) / 2, height - 16, Theme.Key.TEXT_DARKER.i(), false);
+			graphics.drawString(font, component, 41 - font.width(component) / 2, height - 16, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB(), false);
 			if (Mth.equal(arrowAnimation.getValue(), arrowAnimation.getChaseTarget())) {
 				arrowAnimation.setValue(1);
 				arrowAnimation.setValue(1);// called twice to also set the previous value to 1

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import joptsimple.internal.Strings;
+import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -126,14 +127,18 @@ public class LangBuilder {
 
 	/**
 	 * Applies the color to all added components
-	 *
-	 * @param color
-	 * @return
 	 */
 	public LangBuilder color(int color) {
 		assertComponent();
 		component = component.withStyle(s -> s.withColor(color));
 		return this;
+	}
+
+	/**
+	 * Applies the color to all added components
+	 */
+	public LangBuilder color(Color color) {
+		return this.color(color.getRGB());
 	}
 
 	//

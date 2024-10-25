@@ -1,22 +1,32 @@
 package net.createmod.catnip.gui.element;
 
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
+
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
-import org.joml.Matrix4f;
 
 public class BoxElement extends AbstractRenderElement {
 
-	protected Color background = new Color(0xff000000, true);
-	protected Color borderTop = new Color(0x40ffeedd, true);
-	protected Color borderBot = new Color(0x20ffeedd, true);
+	public static final Couple<Color> COLOR_VANILLA_BORDER = Couple.create(
+		new Color(0x50_5000ff, true),
+		new Color(0x50_28007f, true)
+	).map(Color::setImmutable);
+	public static final Color COLOR_VANILLA_BACKGROUND = new Color(0xf0_100010, true).setImmutable();
+	public static final Color COLOR_BACKGROUND_FLAT = new Color(0xff_000000, true).setImmutable();
+	public static final Color COLOR_BACKGROUND_TRANSPARENT = new Color(0xdd_000000, true).setImmutable();
+
+	protected Color background = COLOR_VANILLA_BACKGROUND;
+	protected Color borderTop = COLOR_VANILLA_BORDER.getFirst();
+	protected Color borderBot = COLOR_VANILLA_BORDER.getSecond();
 	protected int borderOffset = 2;
 
 	public <T extends BoxElement> T withBackground(Color color) {

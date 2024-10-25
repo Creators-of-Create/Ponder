@@ -3,8 +3,8 @@ package net.createmod.catnip.config.ui.entries;
 import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.RenderElement;
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.BoxWidget;
-import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -18,11 +18,11 @@ public class BooleanEntry extends ValueEntry<Boolean> {
 		super(label, value, spec);
 
 		enabled = CatnipGuiTextures.ICON_CONFIRM.asStencil()
-			.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2, height, width, Theme.Key.BUTTON_SUCCESS.p()))
+			.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2, height, width, AbstractSimiWidget.COLOR_SUCCESS))
 			.at(10, 0);
 
 		disabled = CatnipGuiTextures.ICON_DISABLE.asStencil()
-			.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2, height, width, Theme.Key.BUTTON_FAIL.p()))
+			.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2, height, width, AbstractSimiWidget.COLOR_FAIL))
 			.at(10, 0);
 
 		button = new BoxWidget().showingElement(enabled)

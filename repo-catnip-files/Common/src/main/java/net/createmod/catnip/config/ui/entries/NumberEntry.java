@@ -1,21 +1,22 @@
 package net.createmod.catnip.config.ui.entries;
 
+import java.lang.reflect.Field;
+import java.util.Locale;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import net.createmod.catnip.config.ui.ConfigTextField;
 import net.createmod.catnip.config.ui.HintableTextFieldWidget;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.TextStencilElement;
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
-
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.util.Locale;
-import java.util.function.Function;
 
 public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
@@ -52,7 +53,7 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 		} else {
 			textField.setValue(String.valueOf(getValue()));
 		}
-		textField.setTextColor(Theme.Key.TEXT.i());
+		textField.setTextColor(UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 
 		Object range = spec.getRange();
 		try {
@@ -67,13 +68,13 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 			if (min.doubleValue() > getTypeMin().doubleValue()) {
 				MutableComponent t = Components.literal(formatBound(min) + " < ");
 				minText = new TextStencilElement(font, t).centered(true, false);
-				minText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0 ,0, height/2, height, width, Theme.Key.TEXT_DARKER.p()));
+				minText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0 ,0, height/2, height, width, UIRenderHelper.COLOR_TEXT_DARKER));
 				minOffset = font.width(t);
 			}
 			if (max.doubleValue() < getTypeMax().doubleValue()) {
 				MutableComponent t = Components.literal(" < " + formatBound(max));
 				maxText = new TextStencilElement(font, t).centered(true, false);
-				maxText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0 ,0, height/2, height, width, Theme.Key.TEXT_DARKER.p()));
+				maxText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0 ,0, height/2, height, width, UIRenderHelper.COLOR_TEXT_DARKER));
 				maxOffset = font.width(t);
 			}
 		} catch (NoSuchFieldException | IllegalAccessException | ClassCastException | NullPointerException ignored) {
@@ -86,11 +87,11 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 				if (!spec.test(number))
 					throw new IllegalArgumentException();
 
-				textField.setTextColor(Theme.Key.TEXT.i());
+				textField.setTextColor(UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 				setValue(number);
 
 			} catch (IllegalArgumentException ignored) {
-				textField.setTextColor(Theme.Key.BUTTON_FAIL.i());
+				textField.setTextColor(AbstractSimiWidget.COLOR_FAIL.getFirst().getRGB());
 			}
 		});
 

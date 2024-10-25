@@ -1,15 +1,24 @@
 package net.createmod.catnip.config.ui;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.createmod.catnip.gui.TickableGuiEventListener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.TextStencilElement;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,14 +27,6 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
 public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry> implements TickableGuiEventListener {
 
@@ -178,7 +179,7 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 
 		public LabeledEntry(String label) {
 			this.label = new TextStencilElement(Minecraft.getInstance().font, label);
-			this.label.withElementRenderer((graphics, width, height, alpha) -> UIRenderHelper.angledGradient(graphics, 0, 0, height / 2, height, width, Theme.Key.TEXT_ACCENT_STRONG.p()));
+			this.label.withElementRenderer((graphics, width, height, alpha) -> UIRenderHelper.angledGradient(graphics, 0, 0, height / 2, height, width, UIRenderHelper.COLOR_TEXT_STRONG_ACCENT));
 			labelTooltip = new ArrayList<>();
 		}
 
@@ -226,7 +227,7 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 			}
 			if (unit != null) {
 				int unitWidth = font.width(unit);
-				graphics.drawString(font, unit, x + getLabelWidth(width) - unitWidth - 5, y + height / 2 + 2, Theme.Key.TEXT_DARKER.i());
+				graphics.drawString(font, unit, x + getLabelWidth(width) - unitWidth - 5, y + height / 2 + 2, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB());
 				label.at(x + 10, y + height / 2 - 10, 0).render(graphics);
 			} else {
 				label.at(x + 10, y + height / 2 - 4, 0).render(graphics);

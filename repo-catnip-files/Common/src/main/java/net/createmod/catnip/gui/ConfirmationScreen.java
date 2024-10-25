@@ -1,23 +1,26 @@
 package net.createmod.catnip.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
+
+import org.lwjgl.opengl.GL30;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.TextStencilElement;
+import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipClientServices;
-import net.createmod.catnip.utility.theme.Theme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
-import org.lwjgl.opengl.GL30;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class ConfirmationScreen extends AbstractSimiScreen {
 
@@ -156,7 +159,8 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 		addRenderableWidget(cancel);
 
 		textBackground = new BoxElement()
-				.gradientBorder(Theme.Key.BUTTON_DISABLE.p())
+				.withBackground(BoxElement.COLOR_BACKGROUND_FLAT)
+				.gradientBorder(AbstractSimiWidget.COLOR_DISABLED)
 				.withBounds(width + 10, textHeight + 35)
 				.at(-5, y - 5);
 
