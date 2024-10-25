@@ -9,13 +9,17 @@ import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.foundation.PonderScene;
-import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 
 public class PonderProgressBar extends AbstractSimiWidget {
+
+	public static final Couple<Color> BAR_COLORS = Couple.create(
+		new Color(0x80_ffeedd, true),
+		new Color(0x50_ffeedd, true)
+	).map(Color::setImmutable);
 
 	LerpedFloat progress;
 
@@ -40,6 +44,11 @@ public class PonderProgressBar extends AbstractSimiWidget {
 		return this.active && this.visible && ponder.getActiveScene().getKeyframeCount() > 0
 				&& mouseX >= (double) this.getX() && mouseX < (double) (this.getX() + this.width + 4) && mouseY >= (double) this.getY() - 3
 				&& mouseY < (double) (this.getY() + this.height + 20);
+	}
+
+	@Override
+	public void setFocused(boolean focused) {
+		super.setFocused(false);
 	}
 
 	@Override
@@ -92,8 +101,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
 		isHovered = clicked(mouseX, mouseY);
 
 		new BoxElement()
-				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+				.withBackground(PonderUI.BACKGROUND_FLAT)
+				.gradientBorder(PonderUI.COLOR_IDLE)
 				.at(getX(), getY(), 400)
 				.withBounds(width, height)
 				.render(graphics);
@@ -103,8 +112,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
 
 		poseStack.pushPose();
 		poseStack.scale((width + 4) * progress.getValue(partialTicks), 1, 1);
-		Color c1 = PonderTheme.Key.PONDER_PROGRESSBAR.c(true);
-		Color c2 = PonderTheme.Key.PONDER_PROGRESSBAR.c(false);
+		Color c1 = BAR_COLORS.getFirst();
+		Color c2 = BAR_COLORS.getSecond();
 		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0f, 3f, 1f, 4f, c1, c1);
 		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0f, 4f, 1f, 5f, c2, c2);
 		poseStack.popPose();
@@ -117,12 +126,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
 	private void renderKeyframes(GuiGraphics graphics, int mouseX, float partialTicks) {
 		PonderScene activeScene = ponder.getActiveScene();
 
-		Couple<Color> hover = PonderTheme.Key.PONDER_HOVER.p().map(c -> c.setAlpha(0xa0));
-		Couple<Color> idle = PonderTheme.Key.PONDER_HOVER.p().map(c -> c.setAlpha(0x40));
-		int hoverStartColor = PonderTheme.Key.PONDER_HOVER.i(true) | 0xa0_000000;
-		int hoverEndColor = PonderTheme.Key.PONDER_HOVER.i(false) | 0xa0_000000;
-		int idleStartColor = PonderTheme.Key.PONDER_IDLE.i(true) | 0x40_000000;
-		int idleEndColor = PonderTheme.Key.PONDER_IDLE.i(false) | 0x40_000000;
+		Couple<Color> hover = PonderUI.COLOR_HOVER.map(c -> c.setAlpha(0xa0));
+		Couple<Color> idle = PonderUI.COLOR_HOVER.map(c -> c.setAlpha(0x40));
 		int hoverIndex;
 
 		if (isHovered) {
@@ -142,8 +147,6 @@ public class PonderProgressBar extends AbstractSimiWidget {
 
 			boolean selected = i == hoverIndex;
 			Couple<Color> colors = selected ? hover : idle;
-			int startColor = selected ? hoverStartColor : idleStartColor;
-			int endColor = selected ? hoverEndColor : idleEndColor;
 			int height = selected ? 8 : 4;
 
 			drawKeyframe(graphics, activeScene, selected, keyframeTime, keyframePos, colors.getFirst(), colors.getSecond(), height);

@@ -24,12 +24,10 @@ import net.createmod.catnip.utility.FontHelper.Palette;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.catnip.utility.layout.PaginationState;
-import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderTag;
-import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
@@ -78,7 +76,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 				.setActive(false)
 		);
 
-		pagePrev.updateColorsFromState();
+		pagePrev.updateGradientFromState();
 
 		addRenderableWidget(pageNext = new PonderButton(xOffset + 100, height - 32)
 				.showing(PonderGuiTextures.ICON_PONDER_RIGHT)
@@ -185,8 +183,8 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 		String title = Ponder.lang().translate(AbstractPonderScreen.WELCOME).string();
 
-		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+		new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT)
+			.gradientBorder(PonderUI.COLOR_IDLE)
 			.at(0, 0, 100)
 			.withBounds(30, 30)
 			.render(graphics);
@@ -201,7 +199,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 		UIRenderHelper.streak(graphics, 0, 0, (streakHeight / 2), streakHeight, 280);
 
 		poseStack.scale(2f, 2f, 2f);
-		graphics.drawString(font, title, 3, 5, Theme.Key.TEXT.i(), false);
+		graphics.drawString(font, title, 3, 5, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
 
 		poseStack.popPose();
 		poseStack.translate(0, 50, 0);
@@ -219,13 +217,13 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 		poseStack.translate(-maxWidth / 2f, 0, 0);
 
-		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+		new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT)
+				.gradientBorder(PonderUI.COLOR_IDLE)
 				.at(-3, -3, 0)
 				.withBounds(maxWidth + 6, descHeight + 5)
 				.render(graphics);
 
-		ClientFontHelper.drawSplitString(poseStack, font, desc, 0, 0, maxWidth, Theme.Key.TEXT.i());
+		ClientFontHelper.drawSplitString(poseStack, font, desc, 0, 0, maxWidth, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		poseStack.popPose();
 
 		poseStack.translate(0, -80, 0);
@@ -254,13 +252,13 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 		poseStack.pushPose();
 		poseStack.translate(-stringWidth / 2f, -20, 0);
 
-		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+		new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT)
+				.gradientBorder(PonderUI.COLOR_IDLE)
 				.at(-3, -1, 0)
 				.withBounds(stringWidth + 6, 10)
 				.render(graphics);
 
-		graphics.drawString(font, categories, 0, 0, Theme.Key.TEXT.i(), false);
+		graphics.drawString(font, categories, 0, 0, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
 
 		poseStack.popPose();
 

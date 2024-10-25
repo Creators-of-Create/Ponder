@@ -1,8 +1,14 @@
 package net.createmod.ponder.foundation.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -11,12 +17,10 @@ import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.utility.ClientFontHelper;
 import net.createmod.catnip.utility.layout.LayoutHelper;
-import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.foundation.PonderChapter;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderTag;
-import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
@@ -24,10 +28,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PonderTagScreen extends AbstractPonderScreen {
 
@@ -83,13 +83,11 @@ public class PonderTagScreen extends AbstractPonderScreen {
 					ScreenOpener.transitionTo(PonderUI.of(new ItemStack(entry.item), tag));
 				});
 			} else {
-				if (entry.key.getNamespace()
-						.equals("minecraft"))
-					b.withBorderColors(PonderTheme.Key.PONDER_MISSING_VANILLA.p())
-							.animateColors(false);
-				else
-					b.withBorderColors(PonderTheme.Key.PONDER_MISSING_MODDED.p())
-							.animateColors(false);
+				b.withBorderColors(
+					entry.key.getNamespace().equals("minecraft") ?
+					PonderUI.MISSING_VANILLA_ENTRY :
+					PonderUI.MISSING_MODDED_ENTRY
+				).animateColors(false);
 			}
 
 			addRenderableWidget(b);
@@ -109,13 +107,11 @@ public class PonderTagScreen extends AbstractPonderScreen {
 					ScreenOpener.transitionTo(PonderUI.of(tag.getMainItem(), tag));
 				});
 			} else {
-				if (registryName.getNamespace()
-						.equals("minecraft"))
-					b.withBorderColors(PonderTheme.Key.PONDER_MISSING_VANILLA.p())
-							.animateColors(false);
-				else
-					b.withBorderColors(PonderTheme.Key.PONDER_MISSING_MODDED.p())
-							.animateColors(false);
+				b.withBorderColors(
+					registryName.getNamespace().equals("minecraft") ?
+						PonderUI.MISSING_VANILLA_ENTRY :
+						PonderUI.MISSING_MODDED_ENTRY
+				).animateColors(false);
 			}
 
 			addRenderableWidget(b);
@@ -169,18 +165,18 @@ public class PonderTagScreen extends AbstractPonderScreen {
 		UIRenderHelper.streak(graphics, 0, x - 4, y - 12 + streakHeight / 2, streakHeight, 240);
 		//PonderUI.renderBox(poseStack, 21, 21, 30, 30, false);
 		new BoxElement()
-				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+				.withBackground(PonderUI.BACKGROUND_FLAT)
+				.gradientBorder(PonderUI.COLOR_IDLE)
 				.at(21, 21, 100)
 				.withBounds(30, 30)
 				.render(graphics);
 
-		graphics.drawString(font, Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(), x, y - 6, Theme.Key.TEXT_DARKER.i(), false);
+		graphics.drawString(font, Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(), x, y - 6, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB(), false);
 		y += 8;
 		x += 0;
 		poseStack.translate(x, y, 0);
 		poseStack.translate(0, 0, 5);
-		graphics.drawString(font, title, 0, 0, Theme.Key.TEXT.i(), false);
+		graphics.drawString(font, title, 0, 0, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
 		poseStack.popPose();
 
 		poseStack.pushPose();
@@ -201,14 +197,14 @@ public class PonderTagScreen extends AbstractPonderScreen {
 
 		//PonderUI.renderBox(poseStack, x - 3, y - 3, w + 6, h + 6, false);
 		new BoxElement()
-				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+				.withBackground(PonderUI.BACKGROUND_FLAT)
+				.gradientBorder(PonderUI.COLOR_IDLE)
 				.at(x - 3, y - 3, 90)
 				.withBounds(w + 6, h + 6)
 				.render(graphics);
 
 		poseStack.translate(0, 0, 100);
-		ClientFontHelper.drawSplitString(poseStack, font, desc, x, y, w, Theme.Key.TEXT.i());
+		ClientFontHelper.drawSplitString(poseStack, font, desc, x, y, w, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		poseStack.popPose();
 	}
 
@@ -226,8 +222,8 @@ public class PonderTagScreen extends AbstractPonderScreen {
 		poseStack.pushPose();
 		poseStack.translate(x, y, 0);
 		new BoxElement()
-				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+				.withBackground(PonderUI.BACKGROUND_FLAT)
+				.gradientBorder(PonderUI.COLOR_IDLE)
 				.at((windowWidth - stringWidth) / 2f - 5, itemArea.getY() - 21, 100)
 				.withBounds(stringWidth + 10, 10)
 				.render(graphics);
@@ -235,7 +231,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 		poseStack.translate(0, 0, 200);
 
 //		UIRenderHelper.streak(0, itemArea.getX() - 10, itemArea.getY() - 20, 20, 180, 0x101010);
-		graphics.drawCenteredString(font, relatedTitle, windowWidth / 2, itemArea.getY() - 20, Theme.Key.TEXT.i());
+		graphics.drawCenteredString(font, relatedTitle, windowWidth / 2, itemArea.getY() - 20, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 
 		poseStack.translate(0,0, -200);
 
@@ -261,7 +257,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 		graphics.pose().translate(chapterX, chapterY, 0);
 
 		UIRenderHelper.streak(graphics, 0, chapterArea.getX() - 10, chapterArea.getY() - 20, 20, 220);
-		graphics.drawString(font, "More Topics to Ponder about", chapterArea.getX() - 5, chapterArea.getY() - 25, Theme.Key.TEXT_ACCENT_SLIGHT.i(), false);
+		graphics.drawString(font, "More Topics to Ponder about", chapterArea.getX() - 5, chapterArea.getY() - 25, UIRenderHelper.COLOR_TEXT_ACCENT.getFirst().getRGB(), false);
 
 		graphics.pose().popPose();
 	}

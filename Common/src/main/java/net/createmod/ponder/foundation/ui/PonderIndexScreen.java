@@ -18,7 +18,6 @@ import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.catnip.utility.layout.PaginationState;
-import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.registration.PonderIndexExclusionHelper;
@@ -110,8 +109,8 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 				.setActive(true)
 		);
 
-		prevPage.updateColorsFromState();
-		nextPage.updateColorsFromState();
+		prevPage.updateGradientFromState();
+		nextPage.updateGradientFromState();
 	}
 
 	protected void setupItemsForPage() {
@@ -192,7 +191,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 		poseStack.translate(centerX, centerY, 0);
 
 		UIRenderHelper.streak(graphics, 0, usedArea.getX() - 10, usedArea.getY() - 20, 20, 220);
-		graphics.drawString(font, "Items to inspect", usedArea.getX() - 5, usedArea.getY() - 25, Theme.Key.TEXT.i(), false);
+		graphics.drawString(font, "Items to inspect", usedArea.getX() - 5, usedArea.getY() - 25, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
 
 		poseStack.popPose();
 
@@ -208,7 +207,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 
 		UIRenderHelper.streak(graphics, 0, 0, 4, 14, 85);
 		UIRenderHelper.streak(graphics, 180, 0, 4, 14, 85);
-		graphics.drawString(font, pageString, (int) (-stringWidth / 2f), 0, Theme.Key.TEXT.i(), false);
+		graphics.drawString(font, pageString, (int) (-stringWidth / 2f), 0, UIRenderHelper.COLOR_TEXT.getFirst().getRGB(), false);
 
 		poseStack.popPose();
 	}

@@ -5,7 +5,6 @@ import static net.createmod.ponder.foundation.registration.PonderLocalization.UI
 import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.ponder.Ponder;
-import net.createmod.ponder.foundation.PonderTheme;
 import net.minecraft.network.chat.Component;
 
 public abstract class AbstractPonderScreen extends NavigatableSimiScreen {
@@ -35,11 +34,11 @@ public abstract class AbstractPonderScreen extends NavigatableSimiScreen {
 		super.init();
 
 		if (backTrack != null) {
-			backTrack.withThemeKeys(
-					PonderTheme.Key.PONDER_BUTTON_DISABLE,
-					PonderTheme.Key.PONDER_BUTTON_IDLE,
-					PonderTheme.Key.PONDER_BUTTON_HOVER,
-					PonderTheme.Key.PONDER_BUTTON_CLICK
+			backTrack.withCustomTheme(
+				PonderButton.COLOR_IDLE,
+				PonderButton.COLOR_HOVER,
+				PonderButton.COLOR_CLICK,
+				PonderButton.COLOR_DISABLED
 			);
 		}
 

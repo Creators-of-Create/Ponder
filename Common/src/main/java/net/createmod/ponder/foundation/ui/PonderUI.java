@@ -42,7 +42,6 @@ import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.animation.LerpedFloat.Chaser;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
-import net.createmod.catnip.utility.theme.Theme;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.api.registration.StoryBoardEntry;
 import net.createmod.ponder.api.registration.StoryBoardEntry.SceneOrderingEntry;
@@ -55,7 +54,6 @@ import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
 import net.createmod.ponder.foundation.PonderStoryBoardEntry;
 import net.createmod.ponder.foundation.PonderTag;
-import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.content.DebugScenes;
 import net.createmod.ponder.foundation.element.TextWindowElement;
 import net.minecraft.ChatFormatting;
@@ -79,6 +77,31 @@ public class PonderUI extends AbstractPonderScreen {
 
 	public static int ponderTicks;
 	public static float ponderPartialTicksPaused;
+
+	public static final Color BACKGROUND_TRANSPARENT = new Color(0xdd_000000, true);
+	public static final Color BACKGROUND_FLAT = new Color(0xff_000000, true);
+	public static final Color BACKGROUND_IMPORTANT = new Color(0xdd_0e0e20, true);
+
+	public static final Couple<Color> COLOR_IDLE = Couple.create(
+		new Color(0x40_ffeedd, true),
+		new Color(0x20_ffeedd, true)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_HOVER = Couple.create(
+		new Color(0x70_ffffff, true),
+		new Color(0x30_ffffff, true)
+	).map(Color::setImmutable);
+	public static final Couple<Color> COLOR_HIGHLIGHT = Couple.create(
+		new Color(0xf0_ffeedd, true),
+		new Color(0x60_ffeedd, true)
+	).map(Color::setImmutable);
+	public static final Couple<Color> MISSING_VANILLA_ENTRY = Couple.create(
+		new Color(0x50_5000ff, true),
+		new Color(0x50_28007f, true)
+	).map(Color::setImmutable);
+	public static final Couple<Color> MISSING_MODDED_ENTRY = Couple.create(
+		new Color(0x70_984500, true),
+		new Color(0x70_692400, true)
+	).map(Color::setImmutable);
 
 	private final List<PonderScene> scenes;
 	private final List<PonderTag> tags;
@@ -713,7 +736,7 @@ public class PonderUI extends AbstractPonderScreen {
 		for (GuiEventListener child : children())
 			noWidgetsHovered &= !child.isMouseOver(mouseX, mouseY);
 
-		int tooltipColor = Theme.Key.TEXT_DARKER.i();
+		int tooltipColor = UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB();
 		renderSceneInformation(graphics, fade, indexDiff, activeScene, tooltipColor);
 
 		PoseStack ms = graphics.pose();
@@ -797,9 +820,9 @@ public class PonderUI extends AbstractPonderScreen {
 		}
 
 		// Arrows behind the main widgets
-		Color c1 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x40);
-		Color c2 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x20);
-		Color c3 = Theme.Key.NAV_BACK_ARROW.c().setAlpha(0x10);
+		Color c1 = COLOR_NAV_ARROW.getFirst().setAlpha(0x40);
+		Color c2 = COLOR_NAV_ARROW.getFirst().setAlpha(0x20);
+		Color c3 = COLOR_NAV_ARROW.getFirst().setAlpha(0x10);
 		UIRenderHelper.breadcrumbArrow(graphics, width / 2 - 20, height - 51, 0, 20, 20, 5, c1, c2);
 		UIRenderHelper.breadcrumbArrow(graphics, width / 2 + 20, height - 51, 0, -20, 20, -5, c1, c2);
 		UIRenderHelper.breadcrumbArrow(graphics, width / 2 - 90, height - 51, 0, 70, 20, 5, c1, c3);
@@ -840,7 +863,7 @@ public class PonderUI extends AbstractPonderScreen {
 
 				String tagName = tag
 					.getTitle();
-				graphics.drawString(font, tagName, 3, 8, Theme.Key.TEXT_ACCENT_SLIGHT.i(), false);
+				graphics.drawString(font, tagName, 3, 8, UIRenderHelper.COLOR_TEXT_ACCENT.getFirst().getRGB(), false);
 
 					RenderSystem.disableScissor();
 
@@ -891,8 +914,8 @@ public class PonderUI extends AbstractPonderScreen {
 		int boxWidth = (Math.max(font.width(nextScene.getTitle()), font.width(nextUpComponent)) + 5);
 		renderSpeechBox(graphics, 0, 0, boxWidth, 20, right.isHoveredOrFocused(), Pointing.DOWN, false);
 		poseStack.translate(0, -29, 100);
-		graphics.drawCenteredString(font, nextUpComponent, 0, 0, Theme.Key.TEXT_DARKER.i());
-		graphics.drawCenteredString(font, nextScene.getTitle(), 0, 10, Theme.Key.TEXT.i());
+		graphics.drawCenteredString(font, nextUpComponent, 0, 0, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB());
+		graphics.drawCenteredString(font, nextScene.getTitle(), 0, 10, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		poseStack.popPose();
 	}
 
@@ -952,8 +975,8 @@ public class PonderUI extends AbstractPonderScreen {
 		UIRenderHelper.streak(graphics, 180, 0, streakHeight / 2, streakHeight, (int) (30 * fade));
 
 		// icon
-		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-			.gradientBorder(PonderTheme.Key.PONDER_IDLE.p())
+		new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT)
+			.gradientBorder(COLOR_IDLE)
 			.at(-34, 2, 100)
 			.withBounds(30, 30)
 			.render(graphics);
@@ -972,9 +995,10 @@ public class PonderUI extends AbstractPonderScreen {
 
 		// short version for single scene views
 		if (scenes.size() == 1 || absoluteIndexDiff < 0.01) {
-			ClientFontHelper.drawSplitString(poseStack, font, title, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
-					.scaleAlphaForText(fade)
-					.getRGB());
+			ClientFontHelper.drawSplitString(poseStack, font, title, 0, 0, maxTitleWidth, UIRenderHelper.COLOR_TEXT
+				.getFirst()
+				.scaleAlphaForText(fade)
+				.getRGB());
 
 			poseStack.popPose();
 			return;
@@ -985,18 +1009,20 @@ public class PonderUI extends AbstractPonderScreen {
 		poseStack.pushPose();
 		poseStack.mulPose(Axis.XN.rotationDegrees(indexDiff * -90 + Math.signum(indexDiff) * 90));
 		poseStack.translate(0, -6, 5);
-		ClientFontHelper.drawSplitString(poseStack, font, otherTitle, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
-				.scaleAlphaForText(absoluteIndexDiff)
-				.getRGB()
+		ClientFontHelper.drawSplitString(poseStack, font, otherTitle, 0, 0, maxTitleWidth, UIRenderHelper.COLOR_TEXT
+			.getFirst()
+			.scaleAlphaForText(absoluteIndexDiff)
+			.getRGB()
 		);
 		poseStack.popPose();
 
 
 		poseStack.mulPose(Axis.XN.rotationDegrees(indexDiff * -90));
 		poseStack.translate(0, -6, 5);
-		ClientFontHelper.drawSplitString(poseStack, font, title, 0, 0, maxTitleWidth, Theme.Key.TEXT.c()
-				.scaleAlphaForText(1 - absoluteIndexDiff)
-				.getRGB()
+		ClientFontHelper.drawSplitString(poseStack, font, title, 0, 0, maxTitleWidth, UIRenderHelper.COLOR_TEXT
+			.getFirst()
+			.scaleAlphaForText(1 - absoluteIndexDiff)
+			.getRGB()
 		);
 		poseStack.popPose();
 	}
@@ -1072,7 +1098,7 @@ public class PonderUI extends AbstractPonderScreen {
 		int divotSize = 8;
 		int distance = 1;
 		int divotRadius = divotSize / 2;
-		Couple<Color> borderColors = (highlighted ? PonderTheme.Key.PONDER_BUTTON_HOVER : PonderTheme.Key.PONDER_IDLE).p();
+		Couple<Color> borderColors = highlighted ? PonderButton.COLOR_HOVER : COLOR_IDLE;
 		Color c;
 
 		switch (pointing) {
@@ -1111,7 +1137,7 @@ public class PonderUI extends AbstractPonderScreen {
 				break;
 		}
 
-		new BoxElement().withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
+		new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT)
 			.gradientBorder(borderColors)
 			.at(boxX, boxY, 100)
 			.withBounds(w, h)

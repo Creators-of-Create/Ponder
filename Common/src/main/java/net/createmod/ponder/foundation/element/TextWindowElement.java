@@ -8,13 +8,13 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.gui.element.BoxElement;
+import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.TextElementBuilder;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.PonderScene;
 import net.createmod.ponder.foundation.PonderScene.SceneTransform;
-import net.createmod.ponder.foundation.PonderTheme;
 import net.createmod.ponder.foundation.ui.PonderUI;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.FormattedText;
@@ -25,6 +25,11 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
 public class TextWindowElement extends AnimatedOverlayElementBase {
+
+	public static final Couple<Color> COLOR_WINDOW_BORDER = Couple.create(
+		new Color(0x607a6000, true),
+		new Color(0x207a6000, true)
+	).map(Color::setImmutable);
 
 	Supplier<String> textGetter = () -> "(?) No text was provided";
 	@Nullable String bakedText;
@@ -140,8 +145,8 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
 		poseStack.translate(0, pY, 400);
 
 		new BoxElement()
-				.withBackground(PonderTheme.Key.PONDER_BACKGROUND_FLAT.c())
-				.gradientBorder(PonderTheme.Key.TEXT_WINDOW_BORDER.p())
+				.withBackground(PonderUI.BACKGROUND_FLAT)
+				.gradientBorder(COLOR_WINDOW_BORDER)
 				.at(targetX - 10, 3, 100)
 				.withBounds(boxWidth, boxHeight - 1)
 				.render(graphics);
