@@ -15,7 +15,7 @@ import org.joml.Vector4f;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import dev.engine_room.flywheel.lib.util.ShadersModHandler;
+import dev.engine_room.flywheel.lib.util.ShadersModHelper;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import net.createmod.catnip.mixin.client.accessor.RenderSystemAccessor;
@@ -107,7 +107,7 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 		Vector3f lightDir1 = this.lightDir1;
 		Vector4f lightPos = this.lightPos;
 
-		boolean applyDiffuse = !disableDiffuse && !ShadersModHandler.isShaderPackInUse();
+		boolean applyDiffuse = !disableDiffuse && !ShadersModHelper.isShaderPackInUse();
 		boolean shaded = true;
 		int shadeSwapIndex = 0;
 		int nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex] : -1;
