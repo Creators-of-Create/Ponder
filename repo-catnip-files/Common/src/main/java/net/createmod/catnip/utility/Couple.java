@@ -54,7 +54,7 @@ public class Couple<T> extends Pair<T, T> implements Iterable<T> {
 	public <S> Couple<S> map(Function<T, S> function) {
 		return Couple.create(function.apply(first), function.apply(second));
 	}
-	
+
 	public <S> Couple<S> mapNotNull(Function<T, S> function) {
 		return Couple.create(first != null ? function.apply(first) : null, second != null ? function.apply(second) : null);
 	}

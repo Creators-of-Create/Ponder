@@ -37,11 +37,11 @@ public abstract class CatnipRenderTypes extends RenderType {
 
 	private static final RenderType FLUID =
 		RenderTypeAccessor.catnip$create(createLayerName("fluid"), DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
-			.setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_CULL_SHADER)
+			.setShaderState(RENDERTYPE_TRANSLUCENT_SHADER)
 			.setTextureState(BLOCK_SHEET_MIPPED)
 			.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
 			.setLightmapState(LIGHTMAP)
-			.setOverlayState(OVERLAY)
+			//.setOverlayState(NO_OVERLAY)
 			.createCompositeState(true));
 
 	public static RenderType outlineSolid() {
