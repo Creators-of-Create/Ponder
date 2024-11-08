@@ -472,7 +472,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 				random.setSeed(seed);
 
 				if (CatnipClientServices.CLIENT_HOOKS.doesBlockModelContainRenderType(layer, state, random, blockEntity)) {
-					CatnipClientServices.CLIENT_HOOKS.tesselateBlockVirtual(dispatcher, model, state, pos, poseStack, sbbBuilder, true, random, seed, OverlayTexture.NO_OVERLAY, layer);
+					CatnipClientServices.CLIENT_HOOKS.tesselateBlockVirtual(world, dispatcher, model, state, pos, poseStack, sbbBuilder, true, random, seed, OverlayTexture.NO_OVERLAY, layer);
 				}
 			}
 
