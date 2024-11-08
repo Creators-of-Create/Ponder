@@ -39,7 +39,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -75,6 +75,13 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 		ModelBlockRenderer modelRenderer = dispatcher.getModelRenderer();
 		ModelData modelData = model.getModelData(VirtualEmptyBlockGetter.FULL_DARK, pos, state, VirtualRenderHelper.VIRTUAL_DATA);
 		modelRenderer.tesselateBlock(VirtualEmptyBlockGetter.FULL_DARK, model, state, pos, poseStack, consumer, checkSides, randomSource, seed, packedOverlay, modelData, renderType);
+	}
+	
+	@Override
+	public void tesselateBlockVirtual(Level level, BlockRenderDispatcher dispatcher, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource randomSource, long seed, int packedOverlay, RenderType renderType) {
+		ModelBlockRenderer modelRenderer = dispatcher.getModelRenderer();
+		ModelData modelData = model.getModelData(level, pos, state, VirtualRenderHelper.VIRTUAL_DATA);
+		modelRenderer.tesselateBlock(level, model, state, pos, poseStack, consumer, checkSides, randomSource, seed, packedOverlay, modelData, renderType);
 	}
 
 	@Override
