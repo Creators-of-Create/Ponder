@@ -27,16 +27,6 @@ dependencies {
     implementation "fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.0" //source: https://github.com/Fuzss/forgeconfigapiport-fabric
 }
 
-processResources {
-
-    def buildProps = project.properties.clone()
-
-    filesMatching(['pack.mcmeta']) {
-
-        expand buildProps
-    }
-}
-
 java {
 
     withJavadocJar()
