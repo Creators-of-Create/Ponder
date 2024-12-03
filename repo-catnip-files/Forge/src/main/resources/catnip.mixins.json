@@ -17,5 +17,5 @@
   "injectors": {
     "defaultRequire": 1
   },
-  "refmap": "catnip.refmap.json"
+  "refmap": "${mod_id}.refmap.json"
 }

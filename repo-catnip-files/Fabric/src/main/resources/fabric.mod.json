@@ -1,38 +1,35 @@
 {
-    "schemaVersion": 1,
-    "id": "${mod_id}",
-    "version": "${version}",
-
-    "name": "${mod_name}",
-    "description": "${mod_description}",
-    "authors": [
-      "${mod_author}",
-      "${mod_credit}"
-    ],
-    "contact": {
-      "homepage": "${mod_homepage}",
-      "sources": "${mod_source}"
-    },
-
-    "license": "${mod_license}",
-    "environment": "*",
-  "mixins": [ "catnip.mixins.json" ],
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_author}",
+    "${mod_credit}"
+  ],
+  "contact": {
+    "homepage": "${mod_homepage}",
+    "sources": "${mod_source}"
+  },
+  "license": "${mod_license}",
+  "environment": "*",
+  "mixins": [
+    "catnip.mixins.json"
+  ],
   "accessWidener": "fabric_catnip.accesswidener",
-    "entrypoints": {
-      "main": [
-        "net.createmod.catnip.FabricCatnip"
-      ],
-      "client": [
-        "net.createmod.catnip.FabricCatnipClient"
-      ]
-    },
-
-    "depends": {
-      "fabricloader": ">=0.13",
-      "fabric": "*",
-      "minecraft": "1.20.x",
-      "java": ">=17"
-    },
-    "suggests": {
-    }
+  "entrypoints": {
+    "main": [
+      "net.createmod.catnip.FabricCatnip"
+    ],
+    "client": [
+      "net.createmod.catnip.FabricCatnipClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric": ">=${fabric_version}",
+    "minecraft": "${minecraft_version}",
+    "java": ">=17"
   }
+}

@@ -4,8 +4,8 @@ license="${mod_license}"
 issueTrackerURL="${mod_issues}"
 
 [[mods]]
-modId="catnip"
-version="${file.jarVersion}"
+modId="${mod_id}"
+version="${version}"
 displayName="${mod_name}"
 displayURL="${mod_homepage}"
 logoFile="logo.png"
@@ -15,23 +15,23 @@ description='''
 ${mod_description}
 '''
 
-[[dependencies.catnip]]
+[[dependencies.${mod_id}]]
     modId="forge"
     mandatory=true
-    versionRange="[47.0.0,)"
+    versionRange="${forge_version_range}"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.catnip]]
+[[dependencies.${mod_id}]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20,1.21)"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.catnip]]
+[[dependencies.${mod_id}]]
     modId="flywheel"
     mandatory=true
-    versionRange="[1.0.0-alpha,2.0)"
+    versionRange="${flywheel_version_range}"
     ordering="AFTER"
     side="CLIENT"
