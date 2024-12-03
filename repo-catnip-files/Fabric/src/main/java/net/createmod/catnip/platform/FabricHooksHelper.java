@@ -2,6 +2,7 @@ package net.createmod.catnip.platform;
 
 import net.createmod.catnip.platform.services.ModHooksHelper;
 import net.fabricmc.fabric.api.block.BlockPickInteractionAware;
+import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -24,8 +25,8 @@ public class FabricHooksHelper implements ModHooksHelper {
 		return ModHooksHelper.super.getCloneItemFromBlockstate(state, target, level, pos, player);
 	}
 
-	@Override // TODO: fabric doesn't support fake players
+	@Override
 	public boolean isPlayerFake(ServerPlayer player) {
-		return false;
+		return player instanceof FakePlayer;
 	}
 }
