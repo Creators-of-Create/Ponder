@@ -100,10 +100,11 @@ public class ConfigModListScreen extends ConfigScreen {
 
 		list.children().clear();
 		//todo include display names in search
-		allEntries
-				.stream()
-				.filter(modEntry -> modEntry.id.contains(search.toLowerCase(Locale.ROOT)))
-				.forEach(list.children()::add);
+		for (ModEntry modEntry : allEntries) {
+			if (modEntry.id.contains(search.toLowerCase(Locale.ROOT))) {
+				list.children().add(modEntry);
+			}
+		}
 
 		list.setScrollAmount(list.getScrollAmount());
 		if (!list.children().isEmpty()) {

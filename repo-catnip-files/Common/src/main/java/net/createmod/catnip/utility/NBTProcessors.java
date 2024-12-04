@@ -70,11 +70,11 @@ public final class NBTProcessors {
 		if (stack.getTag() == null)
 			return stack;
 		ItemStack copy = stack.copy();
-		stack.getTag()
-			.getAllKeys()
-			.stream()
-			.filter(NBTProcessors::isUnsafeItemNBTKey)
-			.forEach(copy::removeTagKey);
+		for (String key : stack.getTag().getAllKeys()) {
+			if (isUnsafeItemNBTKey(key)) {
+				copy.removeTagKey(key);
+			}
+		}
 		return copy;
 	}
 

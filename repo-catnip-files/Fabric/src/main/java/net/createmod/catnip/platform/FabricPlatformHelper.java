@@ -1,17 +1,19 @@
 package net.createmod.catnip.platform;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import io.github.fabricators_of_create.porting_lib.util.EnvExecutor;
 import net.createmod.catnip.platform.services.PlatformHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 
 public class FabricPlatformHelper implements PlatformHelper {
 	@Override
-	public String getPlatformName() {
-		return "Fabric";
+	public Loader getPlatform() {
+		return Loader.FABRIC;
 	}
 
 	@Override
@@ -25,8 +27,11 @@ public class FabricPlatformHelper implements PlatformHelper {
 	}
 
 	@Override
-	public Stream<String> getLoadedMods() {
-		return FabricLoader.getInstance().getAllMods().stream().map(modContainer -> modContainer.getMetadata().getId());
+	public List<String> getLoadedMods() {
+		List<String> modIds = new ArrayList<>();
+		for (ModContainer mod : FabricLoader.getInstance().getAllMods())
+			modIds.add(mod.getMetadata().getId());
+		return modIds;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package net.createmod.catnip.utility.placement;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -85,6 +86,7 @@ public interface IPlacementHelper {
 	static void renderArrow(Vec3 center, Vec3 target, Direction arrowPlane) {
 		renderArrow(center, target, arrowPlane, 1D);
 	}
+
 	static void renderArrow(Vec3 center, Vec3 target, Direction arrowPlane, double distanceFromCenter) {
 		Vec3 direction = target.subtract(center).normalize();
 		Vec3 facing = Vec3.atLowerCornerOf(arrowPlane.getNormal());
@@ -136,22 +138,33 @@ public interface IPlacementHelper {
 	}
 
 	static List<Direction> orderedByDistance(BlockPos pos, Vec3 hit, Predicate<Direction> includeDirection) {
-		Vec3 centerToHit = hit.subtract(VecHelper.getCenterOf(pos));
-		return Arrays.stream(Iterate.directions)
-				.filter(includeDirection)
-				.map(dir -> Pair.of(dir, Vec3.atLowerCornerOf(dir.getNormal()).distanceTo(centerToHit)))
-				.sorted(Comparator.comparingDouble(Pair::getSecond))
-				.map(Pair::getFirst)
-				.collect(Collectors.toList());
+		List<Direction> directions = new ArrayList<>();
+
+		for (Direction dir : Iterate.directions) {
+			if (includeDirection.test(dir)) {
+				directions.add(dir);
+			}
+		}
+
+		return orderedByDistance(pos, hit, directions);
 	}
 
 	static List<Direction> orderedByDistance(BlockPos pos, Vec3 hit, Collection<Direction> directions) {
 		Vec3 centerToHit = hit.subtract(VecHelper.getCenterOf(pos));
-		return directions.stream()
-				.map(dir -> Pair.of(dir, Vec3.atLowerCornerOf(dir.getNormal()).distanceTo(centerToHit)))
-				.sorted(Comparator.comparingDouble(Pair::getSecond))
-				.map(Pair::getFirst)
-				.toList();
+
+		List<Pair<Direction, Double>> distances = new ArrayList<>();
+		for (Direction dir : directions) {
+			distances.add(Pair.of(dir, Vec3.atLowerCornerOf(dir.getNormal()).distanceTo(centerToHit)));
+		}
+
+		distances.sort(Comparator.comparingDouble(Pair::getSecond));
+
+		List<Direction> sortedDirections = new ArrayList<>();
+		for (Pair<Direction, Double> p : distances) {
+			sortedDirections.add(p.getFirst());
+		}
+
+		return sortedDirections;
 	}
 
 	default boolean matchesItem(ItemStack item) {

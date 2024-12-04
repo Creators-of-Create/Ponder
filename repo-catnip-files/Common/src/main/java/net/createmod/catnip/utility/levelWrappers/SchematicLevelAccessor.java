@@ -1,5 +1,6 @@
 package net.createmod.catnip.utility.levelWrappers;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -12,10 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 public interface SchematicLevelAccessor extends LevelAccessor {
-
 	Set<BlockPos> getAllPositions();
 
-	Stream<Entity> getEntityStream();
+	List<Entity> getEntityList();
 
 	Map<BlockPos, BlockState> getBlockMap();
 

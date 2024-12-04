@@ -1,7 +1,8 @@
 package net.createmod.catnip.platform;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import net.createmod.catnip.platform.services.PlatformHelper;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,8 +14,8 @@ import net.minecraftforge.forgespi.language.IModInfo;
 public class ForgePlatformHelper implements PlatformHelper {
 
 	@Override
-	public String getPlatformName() {
-		return "Forge";
+	public Loader getPlatform() {
+		return Loader.FORGE;
 	}
 
 	@Override
@@ -28,8 +29,11 @@ public class ForgePlatformHelper implements PlatformHelper {
 	}
 
 	@Override
-	public Stream<String> getLoadedMods() {
-		return ModList.get().getMods().stream().map(IModInfo::getModId);
+	public List<String> getLoadedMods() {
+		List<String> modIds = new ArrayList<>();
+		for (IModInfo mod : ModList.get().getMods())
+			modIds.add(mod.getModId());
+		return modIds;
 	}
 
 	@Override

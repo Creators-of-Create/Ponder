@@ -1,5 +1,6 @@
 package net.createmod.catnip.gui;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -253,13 +254,14 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 		history.add(0, minecraft.screen);
 		int spacing = 20;
 
-		List<String> names = history.stream()
-			.map(NavigatableSimiScreen::screenTitle)
-			.collect(Collectors.toList());
+		List<String> names = new ArrayList<>();
+		for (Screen screen : history)
+			names.add(NavigatableSimiScreen.screenTitle(screen));
 
-		int bWidth = names.stream()
-			.mapToInt(s -> font.width(s) + spacing)
-			.sum();
+		int bWidth = 0;
+		for (String name : names) {
+			bWidth += font.width(name) + spacing;
+		}
 
 		MutableInt x = new MutableInt(width - bWidth);
 		MutableInt y = new MutableInt(height - 18);

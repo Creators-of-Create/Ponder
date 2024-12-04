@@ -1,7 +1,7 @@
 package net.createmod.catnip.platform.services;
 
+import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public interface PlatformHelper {
 
@@ -10,7 +10,7 @@ public interface PlatformHelper {
 	 *
 	 * @return The name of the current platform.
 	 */
-	String getPlatformName();
+	Loader getPlatform();
 
 	/**
 	 * Checks if a mod with the given id is loaded.
@@ -28,10 +28,13 @@ public interface PlatformHelper {
 	 */
 	boolean isDevelopmentEnvironment();
 
-	Stream<String> getLoadedMods();
+	List<String> getLoadedMods();
 
 	void executeOnClientOnly(Supplier<Runnable> toRun);
 
 	void executeOnServerOnly(Supplier<Runnable> toRun);
 
+	enum Loader {
+		FABRIC, FORGE;
+	}
 }

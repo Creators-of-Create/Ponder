@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
@@ -48,13 +49,14 @@ public class ConfigHelper {
 	private static EnumMap<ModConfig.Type, ModConfig> findModConfigsUncached(String modID) {
 		EnumMap<ModConfig.Type, ModConfig> configMap = new EnumMap<>(ModConfig.Type.class);
 
-		ConfigTracker.INSTANCE
-				.configSets()
-				.forEach((type, modConfigs) -> modConfigs
-						.stream()
-						.filter(modConfig -> modConfig.getModId().equals(modID))
-						.findFirst()
-						.ifPresent(modConfig -> configMap.put(type, modConfig)));
+		for (Map.Entry<ModConfig.Type, Set<ModConfig>> entry : ConfigTracker.INSTANCE.configSets().entrySet()) {
+			for (ModConfig config : entry.getValue()) {
+				if (config.getModId().equals(modID)) {
+					configMap.put(entry.getKey(), config);
+					break;
+				}
+			}
+		}
 
 		return configMap;
 	}
@@ -66,10 +68,13 @@ public class ConfigHelper {
 	}
 
 	public static boolean hasAnyForgeConfig(String modID) {
-		return configCache.getUnchecked(modID)
-			.values()
-			.stream()
-			.anyMatch(isForgeConfig);
+		for (ModConfig config : configCache.getUnchecked(modID).values()) {
+			if (isForgeConfig.test(config)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	// Directly set a value

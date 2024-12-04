@@ -110,7 +110,7 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 			return key.contains(q);
 		}).findFirst();
 
-		if (!first.isPresent()) {
+		if (first.isEmpty()) {
 			setScrollAmount(0);
 			return false;
 		}
@@ -147,7 +147,13 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 
 		@Override
 		public boolean charTyped(char ch, int code) {
-			return getGuiListeners().stream().anyMatch(l -> l.charTyped(ch, code));
+			for (GuiEventListener l : getGuiListeners()) {
+				if (l.charTyped(ch, code)) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		@Override

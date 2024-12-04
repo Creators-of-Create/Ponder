@@ -1,27 +1,28 @@
 package net.createmod.catnip.utility.placement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class PlacementHelpers {
+	private static final List<IPlacementHelper> HELPERS = new ArrayList<>();
 
-	private static final List<IPlacementHelper> helpers = new ArrayList<>();
+	private static final List<IPlacementHelper> HELPERS_VIEW = Collections.unmodifiableList(HELPERS);
 
 	public static int register(IPlacementHelper helper) {
-		helpers.add(helper);
-		return helpers.size() - 1;
+		HELPERS.add(helper);
+		return HELPERS.size() - 1;
 	}
 
 	public static IPlacementHelper get(int id) {
-		if (id < 0 || id >= helpers.size())
+		if (id < 0 || id >= HELPERS.size())
 			throw new ArrayIndexOutOfBoundsException("id " + id + " for placement helper not known");
 
-		return helpers.get(id);
+		return HELPERS.get(id);
 	}
 
-	public static Stream<IPlacementHelper> streamHelpers() {
-		return helpers.stream();
+	public static List<IPlacementHelper> getHelpersView() {
+		return HELPERS_VIEW;
 	}
-
 }

@@ -118,10 +118,11 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 	protected void clearChanges() {
 		ConfigHelper.changes.clear();
-		list.children()
-				.stream()
-				.filter(e -> e instanceof ValueEntry)
-				.forEach(e -> ((ValueEntry<?>) e).onValueChange());
+		for (ConfigScreenList.Entry e : list.children()) {
+			if (e instanceof ValueEntry<?> valueEntry) {
+				valueEntry.onValueChange();
+			}
+		}
 	}
 
 	protected void saveChanges() {
@@ -162,10 +163,11 @@ public class SubMenuConfigScreen extends ConfigScreen {
 			}
 		});
 
-		list.children()
-				.stream()
-				.filter(e -> e instanceof ValueEntry)
-				.forEach(e -> ((ValueEntry<?>) e).onValueChange());
+		for (ConfigScreenList.Entry e : list.children()) {
+			if (e instanceof ValueEntry<?> valueEntry) {
+				valueEntry.onValueChange();
+			}
+		}
 	}
 
 	@Override

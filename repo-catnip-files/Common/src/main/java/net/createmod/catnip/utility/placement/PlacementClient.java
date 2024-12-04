@@ -28,6 +28,8 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 import javax.annotation.Nullable;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlacementClient {
@@ -74,18 +76,25 @@ public class PlacementClient {
 		for (InteractionHand hand : InteractionHand.values()) {
 
 			ItemStack heldItem = mc.player.getItemInHand(hand);
-			List<IPlacementHelper> filteredForHeldItem = PlacementHelpers.streamHelpers()
-					.filter(helper -> helper.matchesItem(heldItem))
-					.toList();
+
+			List<IPlacementHelper> filteredForHeldItem = new ArrayList<>();
+			for (IPlacementHelper helper : PlacementHelpers.getHelpersView()) {
+				if (helper.matchesItem(heldItem))
+					filteredForHeldItem.add(helper);
+			}
+
 			if (filteredForHeldItem.isEmpty())
 				continue;
 
 			BlockPos pos = ray.getBlockPos();
 			BlockState state = world.getBlockState(pos);
 
-			List<IPlacementHelper> filteredForState = filteredForHeldItem.stream()
-				.filter(helper -> helper.matchesState(state))
-				.toList();
+			List<IPlacementHelper> filteredForState = new ArrayList<>();
+			for (IPlacementHelper helper : PlacementHelpers.getHelpersView()) {
+				if (helper.matchesState(state))
+					filteredForState.add(helper);
+			}
+
 			if (filteredForState.isEmpty())
 				continue;
 

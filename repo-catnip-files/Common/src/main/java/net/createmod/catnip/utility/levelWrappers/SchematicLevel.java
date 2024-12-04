@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import net.createmod.catnip.Catnip;
 import net.createmod.catnip.utility.BBHelper;
@@ -42,7 +41,6 @@ import net.minecraft.world.ticks.BlackholeTickAccess;
 import net.minecraft.world.ticks.LevelTickAccess;
 
 public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor, SchematicLevelAccessor {
-
 	protected Map<BlockPos, BlockState> blocks;
 	protected Map<BlockPos, BlockEntity> blockEntities;
 	protected List<BlockEntity> renderedBlockEntities;
@@ -85,8 +83,8 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor,
 	}
 
 	@Override
-	public Stream<Entity> getEntityStream() {
-		return entities.stream();
+	public List<Entity> getEntityList() {
+		return entities;
 	}
 
 	@Override
@@ -259,5 +257,4 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor,
 		}
 		throw new IllegalStateException("Cannot use IServerWorld#getWorld in a client environment");
 	}
-
 }

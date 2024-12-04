@@ -1,5 +1,6 @@
 package net.createmod.catnip.net;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -40,19 +41,22 @@ public class ConfigPathArgument implements ArgumentType<ConfigHelper.ConfigPath>
 		String[] split = builder.getRemaining().split(":");
 
 		if (split.length > 1 || builder.getRemaining().endsWith(":")) {
-			return SharedSuggestionProvider.suggest(
-					BASE_SUGGESTIONS.stream().map(side -> (split[0] + ":" + side)).toList(),
-					builder
-			);
+			List<String> suggestions = new ArrayList<>();
+			for (String side : BASE_SUGGESTIONS) {
+				suggestions.add(split[0] + ":" + side);
+			}
+
+			return SharedSuggestionProvider.suggest(suggestions, builder);
 		}
 
-		List<String> matchingMods = CatnipServices.PLATFORM
-				.getLoadedMods()
-				.filter(mod -> mod.startsWith(split[0]))
-				.map(mod -> mod + ":")
-				.toList();
+		List<String> matchingMods = new ArrayList<>();
+		for (String mod : CatnipServices.PLATFORM.getLoadedMods()) {
+			if (mod.startsWith(split[0])) {
+				matchingMods.add(mod + ":");
+			}
+		}
 
-		if (matchingMods.size() == 0) {
+		if (matchingMods.isEmpty()) {
 			return SharedSuggestionProvider.suggest(BASE_SUGGESTIONS, builder);
 		}
 

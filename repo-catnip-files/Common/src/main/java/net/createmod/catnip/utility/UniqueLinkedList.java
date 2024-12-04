@@ -1,15 +1,13 @@
 package net.createmod.catnip.utility;
 
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 public class UniqueLinkedList<E> extends LinkedList<E> {
-	/**
-	 * 
-	 */
 	@Serial
 	private static final long serialVersionUID = 1L;
 	private final HashSet<E> contained = new HashSet<>();
@@ -54,17 +52,19 @@ public class UniqueLinkedList<E> extends LinkedList<E> {
 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
-		List<? extends E> filtered = c.stream()
-				.filter(it -> !contained.contains(it))
-				.toList();
+		List<E> filtered = new ArrayList<>();
+		for (E i : c)
+			if (!contained.contains(i))
+				filtered.add(i);
 		return super.addAll(filtered);
 	}
 
 	@Override
 	public boolean addAll(int index, Collection<? extends E> c) {
-		List<? extends E> filtered = c.stream()
-				.filter(it -> !contained.contains(it))
-				.toList();
+		List<E> filtered = new ArrayList<>();
+		for (E i : c)
+			if (!contained.contains(i))
+				filtered.add(i);
 		return super.addAll(index, filtered);
 	}
 
