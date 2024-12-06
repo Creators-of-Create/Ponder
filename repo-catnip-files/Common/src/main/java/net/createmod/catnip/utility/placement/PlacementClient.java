@@ -90,7 +90,7 @@ public class PlacementClient {
 			BlockState state = world.getBlockState(pos);
 
 			List<IPlacementHelper> filteredForState = new ArrayList<>();
-			for (IPlacementHelper helper : PlacementHelpers.getHelpersView()) {
+			for (IPlacementHelper helper : filteredForHeldItem) {
 				if (helper.matchesState(state))
 					filteredForState.add(helper);
 			}
