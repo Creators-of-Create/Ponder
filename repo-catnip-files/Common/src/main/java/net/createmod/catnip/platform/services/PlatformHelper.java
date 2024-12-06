@@ -6,11 +6,18 @@ import java.util.function.Supplier;
 public interface PlatformHelper {
 
 	/**
-	 * Gets the name of the current platform
+	 * Gets the current loader
 	 *
-	 * @return The name of the current platform.
+	 * @return The current loader.
 	 */
-	Loader getPlatform();
+	Loader getLoader();
+
+	/**
+	 * Gets the side that the mod currently being run on.
+	 *
+	 * @return The side the mod is running on, which will be {@link Env#CLIENT} or {@link Env#SERVER}.
+	 */
+	Env getEnv();
 
 	/**
 	 * Checks if a mod with the given id is loaded.
@@ -36,5 +43,9 @@ public interface PlatformHelper {
 
 	enum Loader {
 		FABRIC, FORGE;
+	}
+
+	enum Env {
+		CLIENT, SERVER;
 	}
 }

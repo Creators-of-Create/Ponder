@@ -14,8 +14,13 @@ import net.minecraftforge.forgespi.language.IModInfo;
 public class ForgePlatformHelper implements PlatformHelper {
 
 	@Override
-	public Loader getPlatform() {
+	public Loader getLoader() {
 		return Loader.FORGE;
+	}
+
+	@Override
+	public Env getEnv() {
+		return FMLLoader.getDist() == Dist.CLIENT ? Env.CLIENT : Env.SERVER;
 	}
 
 	@Override

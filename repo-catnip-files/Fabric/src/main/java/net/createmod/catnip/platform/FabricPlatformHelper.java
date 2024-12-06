@@ -12,8 +12,13 @@ import net.fabricmc.loader.api.ModContainer;
 
 public class FabricPlatformHelper implements PlatformHelper {
 	@Override
-	public Loader getPlatform() {
+	public Loader getLoader() {
 		return Loader.FABRIC;
+	}
+
+	@Override
+	public Env getEnv() {
+		return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? Env.CLIENT : Env.SERVER;
 	}
 
 	@Override
