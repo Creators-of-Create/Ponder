@@ -36,6 +36,11 @@ public class BasicFluidRenderer {
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
+									  float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom, @Nullable CompoundTag fluidData) {
+		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom, fluidData);
+	}
+
+	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
 			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom, @Nullable CompoundTag fluidData) {
 		TextureAtlasSprite fluidTexture = Minecraft.getInstance()
 				.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
