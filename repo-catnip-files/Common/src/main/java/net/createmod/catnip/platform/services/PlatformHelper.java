@@ -1,10 +1,12 @@
 package net.createmod.catnip.platform.services;
 
+import net.createmod.catnip.utility.Env;
+import net.createmod.catnip.utility.Loader;
+
 import java.util.List;
 import java.util.function.Supplier;
 
 public interface PlatformHelper {
-
 	/**
 	 * Gets the current loader
 	 *
@@ -40,12 +42,4 @@ public interface PlatformHelper {
 	void executeOnClientOnly(Supplier<Runnable> toRun);
 
 	void executeOnServerOnly(Supplier<Runnable> toRun);
-
-	enum Loader {
-		FABRIC, FORGE;
-	}
-
-	enum Env {
-		CLIENT, SERVER;
-	}
 }

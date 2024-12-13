@@ -6,6 +6,8 @@ import java.util.function.Supplier;
 
 import io.github.fabricators_of_create.porting_lib.util.EnvExecutor;
 import net.createmod.catnip.platform.services.PlatformHelper;
+import net.createmod.catnip.utility.Env;
+import net.createmod.catnip.utility.Loader;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;

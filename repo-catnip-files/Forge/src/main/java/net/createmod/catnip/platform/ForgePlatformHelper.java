@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.createmod.catnip.platform.services.PlatformHelper;
+import net.createmod.catnip.utility.Env;
+import net.createmod.catnip.utility.Loader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
