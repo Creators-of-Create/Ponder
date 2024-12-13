@@ -80,7 +80,8 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public void tesselateBlockVirtual(Level level, BlockRenderDispatcher dispatcher, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource randomSource, long seed, int packedOverlay, RenderType renderType) {
 		ModelBlockRenderer modelRenderer = dispatcher.getModelRenderer();
-		ModelData modelData = model.getModelData(level, pos, state, VirtualRenderHelper.VIRTUAL_DATA);
+		BlockEntity blockEntity = level.getBlockEntity(pos);
+		ModelData modelData = model.getModelData(level, pos, state, blockEntity == null ? ModelData.EMPTY : blockEntity.getModelData());
 		modelRenderer.tesselateBlock(level, model, state, pos, poseStack, consumer, checkSides, randomSource, seed, packedOverlay, modelData, renderType);
 	}
 

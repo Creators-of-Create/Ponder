@@ -116,8 +116,9 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 			lightDir0.set(RenderSystemAccessor.catnip$getShaderLightDirections()[0]).normalize();
 			lightDir1.set(RenderSystemAccessor.catnip$getShaderLightDirections()[1]).normalize();
 			if (shadeSwapVertices.length > 0) {
+				// Pretend unshaded faces always point up to get the correct max diffuse value for the current level.
 				normal.set(0, 1, 0);
-				normal.mul(normalMat);
+				// Don't apply the normal matrix since that would cause upside down objects to be dark.
 				unshadedDiffuse = calculateDiffuse(normal, lightDir0, lightDir1);
 			}
 		}

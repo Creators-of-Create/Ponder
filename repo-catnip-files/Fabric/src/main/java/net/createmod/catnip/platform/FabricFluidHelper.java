@@ -6,8 +6,11 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
+
+import org.jetbrains.annotations.Nullable;
 
 public class FabricFluidHelper implements ModFluidHelper<FluidStack> {
 	@Override
@@ -16,8 +19,8 @@ public class FabricFluidHelper implements ModFluidHelper<FluidStack> {
 	}
 
 	@Override
-	public int getColor(Fluid fluid, long amount) {
-		return getLuminosity(fluid);
+	public int getColor(Fluid fluid, long amount, @Nullable CompoundTag fluidData) {
+		return getColor(fluid);
 	}
 
 	@Override
@@ -26,7 +29,7 @@ public class FabricFluidHelper implements ModFluidHelper<FluidStack> {
 	}
 
 	@Override
-	public int getLuminosity(Fluid fluid, long amount) {
+	public int getLuminosity(Fluid fluid, long amount, @Nullable CompoundTag fluidData) {
 		return getLuminosity(fluid);
 	}
 
@@ -36,7 +39,7 @@ public class FabricFluidHelper implements ModFluidHelper<FluidStack> {
 	}
 
 	@Override
-	public ResourceLocation getStillTexture(Fluid fluid, long amount) {
+	public ResourceLocation getStillTexture(Fluid fluid, long amount, @Nullable CompoundTag fluidData) {
 		return getStillTexture(fluid);
 	}
 
@@ -46,7 +49,9 @@ public class FabricFluidHelper implements ModFluidHelper<FluidStack> {
 	}
 
 	@Override
-	public FluidStack toStack(Fluid fluid, long amount) {
-		return new FluidStack(fluid, amount);
+	public FluidStack toStack(Fluid fluid, long amount, @Nullable CompoundTag fluidData) {
+		FluidStack fluidStack = new FluidStack(fluid, amount);
+		fluidStack.setTag(fluidData);
+		return fluidStack;
 	}
 }

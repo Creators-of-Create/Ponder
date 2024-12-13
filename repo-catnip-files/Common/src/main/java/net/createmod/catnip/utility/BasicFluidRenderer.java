@@ -11,10 +11,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
+
+import org.jetbrains.annotations.Nullable;
 
 public class BasicFluidRenderer {
 
@@ -24,18 +27,28 @@ public class BasicFluidRenderer {
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
 			float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom) {
-		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom);
+		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom, null);
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
 			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom) {
+		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, builder, ms, light, renderBottom, null);
+	}
+
+	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
+			float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom, @Nullable CompoundTag fluidData) {
+		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom, fluidData);
+	}
+
+	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
+			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom, @Nullable CompoundTag fluidData) {
 		TextureAtlasSprite fluidTexture = Minecraft.getInstance()
 				.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-				.apply(CatnipServices.FLUID_HELPER.getStillTexture(fluid, amount));
+				.apply(CatnipServices.FLUID_HELPER.getStillTexture(fluid, amount, fluidData));
 
-		int color = CatnipServices.FLUID_HELPER.getColor(fluid, amount);
+		int color = CatnipServices.FLUID_HELPER.getColor(fluid, amount, fluidData);
 		int blockLightIn = (light >> 4) & 0xF;
-		int luminosity = Math.max(blockLightIn, CatnipServices.FLUID_HELPER.getLuminosity(fluid, amount));
+		int luminosity = Math.max(blockLightIn, CatnipServices.FLUID_HELPER.getLuminosity(fluid, amount, fluidData));
 		light = (light & 0xF00000) | luminosity << 4;
 
 		Vec3 center = new Vec3(xMin + (xMax - xMin) / 2, yMin + (yMax - yMin) / 2, zMin + (zMax - zMin) / 2);
