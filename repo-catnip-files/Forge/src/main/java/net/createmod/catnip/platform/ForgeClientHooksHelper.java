@@ -76,7 +76,7 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 		ModelData modelData = model.getModelData(VirtualEmptyBlockGetter.FULL_DARK, pos, state, VirtualRenderHelper.VIRTUAL_DATA);
 		modelRenderer.tesselateBlock(VirtualEmptyBlockGetter.FULL_DARK, model, state, pos, poseStack, consumer, checkSides, randomSource, seed, packedOverlay, modelData, renderType);
 	}
-	
+
 	@Override
 	public void tesselateBlockVirtual(Level level, BlockRenderDispatcher dispatcher, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource randomSource, long seed, int packedOverlay, RenderType renderType) {
 		ModelBlockRenderer modelRenderer = dispatcher.getModelRenderer();
@@ -100,7 +100,7 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 
 	public Iterable<RenderType> getRenderTypesForBlockModel(BlockState state, RandomSource random,
 															@Nullable BlockEntity BEWithModelData) {
-		BakedModel model = ModelUtil.VANILLA_RENDERER.getBlockModel(state);
+		BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
 		ModelData modelData = BEWithModelData != null ? BEWithModelData.getModelData() : ModelData.EMPTY;
 		return model.getRenderTypes(state, random, modelData);
 	}
@@ -108,7 +108,7 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public boolean doesBlockModelContainRenderType(RenderType layer, BlockState state, RandomSource random,
 												   @Nullable BlockEntity BEWithModelData) {
-		BakedModel model = ModelUtil.VANILLA_RENDERER.getBlockModel(state);
+		BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
 		ModelData modelData = BEWithModelData != null ? BEWithModelData.getModelData() : ModelData.EMPTY;
 		return model.getRenderTypes(state, random, modelData).contains(layer);
 	}
@@ -155,11 +155,6 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public boolean isKeyPressed(KeyMapping mapping) {
 		return InputConstants.isKeyDown(Minecraft.getInstance().getWindow().getWindow(), mapping.getKey().getValue());
-	}
-
-	@Override
-	public BlockRenderDispatcher getBlockRenderDispatcher() {
-		return ModelUtil.VANILLA_RENDERER;
 	}
 
 	@Override

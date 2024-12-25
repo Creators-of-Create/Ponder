@@ -41,7 +41,7 @@ public class SuperBufferFactory {
 	}
 
 	public SuperByteBuffer createForBlock(BakedModel model, BlockState state, @Nullable PoseStack poseStack) {
-		BlockRenderDispatcher dispatcher = dev.engine_room.flywheel.lib.model.ModelUtil.VANILLA_RENDERER;
+		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
 		if (poseStack == null) {
