@@ -78,7 +78,7 @@ public class PonderLevel extends SchematicLevel {
 		originalBlockEntities.clear();
 		originalBlocks.putAll(blocks);
 		blockEntities.forEach(
-			(k, v) -> originalBlockEntities.put(k, v.saveWithFullMetadata()));
+			(k, v) -> originalBlockEntities.put(k, v.saveWithFullMetadata(registryAccess())));
 		entities.forEach(e -> {
 			CompoundTag tag = new CompoundTag();
 			e.save(tag);//TODO Used to use Forge's #serializeNBT, which includes Passengers
@@ -94,7 +94,7 @@ public class PonderLevel extends SchematicLevel {
 		renderedBlockEntities.clear();
 		blocks.putAll(originalBlocks);
 		originalBlockEntities.forEach((k, v) -> {
-			BlockEntity blockEntity = BlockEntity.loadStatic(k, originalBlocks.get(k), v);
+			BlockEntity blockEntity = BlockEntity.loadStatic(k, originalBlocks.get(k), v, registryAccess());
 			onBEAdded(blockEntity, blockEntity.getBlockPos());
 			blockEntities.put(k, blockEntity);
 			renderedBlockEntities.add(blockEntity);
@@ -114,7 +114,7 @@ public class PonderLevel extends SchematicLevel {
 			if (originalBlocks.containsKey(p))
 				blocks.put(p, originalBlocks.get(p));
 			if (originalBlockEntities.containsKey(p)) {
-				BlockEntity blockEntity = BlockEntity.loadStatic(p, originalBlocks.get(p), originalBlockEntities.get(p));
+				BlockEntity blockEntity = BlockEntity.loadStatic(p, originalBlocks.get(p), originalBlockEntities.get(p), registryAccess());
 				if (blockEntity != null) {
 					onBEAdded(blockEntity, blockEntity.getBlockPos());
 					blockEntities.put(p, blockEntity);

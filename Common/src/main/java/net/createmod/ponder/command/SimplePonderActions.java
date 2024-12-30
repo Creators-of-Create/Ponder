@@ -21,7 +21,7 @@ public class SimplePonderActions {
 			return;
 		}
 
-		ResourceLocation id = new ResourceLocation(value);
+		ResourceLocation id = ResourceLocation.parse(value);
 		if (!PonderIndex.getSceneAccess().doScenesExistForId(id)) {
 			Ponder.LOGGER.error("Could not find ponder scenes for item: " + id);
 			return;

@@ -25,7 +25,7 @@ public class FabricPonderClient implements ClientModInitializer {
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> PonderTooltipHandler.tick());
 
-		ItemTooltipCallback.EVENT.register((stack, context, lines) -> PonderTooltipHandler.addToTooltip(lines, stack));
+		ItemTooltipCallback.EVENT.register((stack, context, flag, lines) -> PonderTooltipHandler.addToTooltip(lines, stack));
 		RenderTooltipBorderColorCallback.EVENT.register(FabricPonderClient::getItemTooltipColor);
 		PonderKeybinds.register(KeyBindingHelper::registerKeyBinding);
 

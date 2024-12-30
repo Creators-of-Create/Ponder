@@ -138,7 +138,7 @@ public class PonderSceneBuilder implements SceneBuilder {
 
 	@Override
 	public void title(String sceneId, String title) {
-		scene.sceneId = new ResourceLocation(scene.getNamespace(), sceneId);
+		scene.sceneId = ResourceLocation.fromNamespaceAndPath(scene.getNamespace(), sceneId);
 		scene.localization.registerSpecific(scene.sceneId, PonderScene.TITLE_KEY, title);
 	}
 

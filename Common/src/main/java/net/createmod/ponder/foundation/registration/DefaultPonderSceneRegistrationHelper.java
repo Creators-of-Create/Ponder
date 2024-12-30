@@ -52,7 +52,7 @@ public class DefaultPonderSceneRegistrationHelper implements PonderSceneRegistra
 
 	@Override
 	public ResourceLocation asLocation(String path) {
-		return new ResourceLocation(namespace, path);
+		return ResourceLocation.fromNamespaceAndPath(namespace, path);
 	}
 
 	private PonderStoryBoardEntry createStoryBoardEntry(PonderStoryBoard storyBoard, ResourceLocation schematicLocation,

@@ -10,6 +10,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 
@@ -21,6 +23,9 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4fStack;
 
 public class PonderWorldParticles {
 
@@ -67,9 +72,9 @@ public class PonderWorldParticles {
 
 		lightTexture.turnOnLightLayer();
 		RenderSystem.enableDepthTest();
-		PoseStack posestack = RenderSystem.getModelViewStack();
-		posestack.pushPose();
-		posestack.mulPoseMatrix(ms.last().pose());
+		Matrix4fStack stack = RenderSystem.getModelViewStack();
+		stack.pushMatrix();
+		stack.mul(ms.last().pose());
 		RenderSystem.applyModelViewMatrix();
 
 		for (ParticleRenderType iparticlerendertype : this.byType.keySet()) {
@@ -80,18 +85,21 @@ public class PonderWorldParticles {
 				RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 				RenderSystem.setShader(GameRenderer::getParticleShader);
 
-				Tesselator tessellator = Tesselator.getInstance();
-				BufferBuilder bufferbuilder = tessellator.getBuilder();
-				iparticlerendertype.begin(bufferbuilder, mc.getTextureManager());
+				Tesselator tesselator = Tesselator.getInstance();
+				BufferBuilder bufferBuilder = iparticlerendertype.begin(tesselator, mc.getTextureManager());
 
-				for (Particle particle : iterable)
-					particle.render(bufferbuilder, renderInfo, pt);
+				if (bufferBuilder != null) {
+					for (Particle particle : iterable)
+						particle.render(bufferBuilder, renderInfo, pt);
 
-				iparticlerendertype.end(tessellator);
+					MeshData meshData = bufferBuilder.build();
+					if (meshData != null)
+						BufferUploader.drawWithShader(meshData);
+				}
 			}
 		}
 
-		posestack.popPose();
+		stack.popMatrix();
 		RenderSystem.applyModelViewMatrix();
 		RenderSystem.depthMask(true);
 		RenderSystem.disableBlend();

@@ -15,7 +15,7 @@ public class PonderChapter implements ScreenElement {
 
 	private PonderChapter(ResourceLocation id) {
 		this.id = id;
-		icon = new ResourceLocation(id.getNamespace(), "textures/ponder/chapter/" + id.getPath() + ".png");
+		icon = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/ponder/chapter/" + id.getPath() + ".png");
 	}
 
 	public ResourceLocation getId() {

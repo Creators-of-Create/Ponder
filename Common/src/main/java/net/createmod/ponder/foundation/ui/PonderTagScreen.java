@@ -16,6 +16,7 @@ import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.utility.ClientFontHelper;
+import net.createmod.catnip.utility.RegisteredObjectsHelper;
 import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.foundation.PonderChapter;
@@ -60,7 +61,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 		PonderIndex.getTagAccess()
 				.getItems(tag)
 				.stream()
-				.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
+				.map(key -> new ItemEntry(RegisteredObjectsHelper.getItemOrBlock(key), key))
 				.filter(entry -> entry.item != null)
 				.forEach(items::add);
 
@@ -95,7 +96,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 		}
 
 		if (!tag.getMainItem().isEmpty()) {
-			ResourceLocation registryName = CatnipServices.REGISTRIES.getKeyOrThrow(tag.getMainItem().getItem());
+			ResourceLocation registryName = RegisteredObjectsHelper.getKeyOrThrow(tag.getMainItem().getItem());
 
 			PonderButton b = new PonderButton(itemCenterX - layout.getTotalWidth() / 2 - 48, itemCenterY - 10)
 					.showing(tag.getMainItem());
@@ -204,7 +205,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 				.render(graphics);
 
 		poseStack.translate(0, 0, 100);
-		ClientFontHelper.drawSplitString(poseStack, font, desc, x, y, w, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
+		ClientFontHelper.drawSplitString(graphics, poseStack, font, desc, x, y, w, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		poseStack.popPose();
 	}
 

@@ -1,3 +1,0 @@
-accessWidener v1 named
-# NOTE: These are access wideners needed by the Common Module.
-# They must be duplicated in the loader-specific projects' AT/AW as well if not already done so by the loader.

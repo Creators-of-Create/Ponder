@@ -16,6 +16,7 @@ import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.utility.RegisteredObjectsHelper;
 import net.createmod.catnip.utility.layout.LayoutHelper;
 import net.createmod.catnip.utility.layout.PaginationState;
 import net.createmod.ponder.enums.PonderGuiTextures;
@@ -65,7 +66,7 @@ public class PonderIndexScreen extends AbstractPonderScreen {
 				.stream()
 				.map(Map.Entry::getKey)
 				.distinct()
-				.map(key -> new ItemEntry(CatnipServices.REGISTRIES.getItemOrBlock(key), key))
+				.map(key -> new ItemEntry(RegisteredObjectsHelper.getItemOrBlock(key), key))
 				.filter(entry -> entry.item != null)
 				.filter(this::isItemIncluded)
 				.forEach(items::add);

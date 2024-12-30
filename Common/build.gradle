@@ -1,5 +1,5 @@
 plugins {
-    id "org.spongepowered.gradle.vanilla" version "0.2.1-SNAPSHOT"
+    id "net.neoforged.moddev" version "${mdg_version}"
 }
 
 apply from: "../gradle/property_helper.gradle"
@@ -8,31 +8,39 @@ archivesBaseName = "${mod_name}-Common-${minecraft_version}"
 
 boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
 
-minecraft {
-    version(minecraft_version)
-    accessWideners "src/main/resources/ponder.accesswidener"
+neoForge {
+    neoFormVersion = neo_form_version
+
+    accessTransformers.from(file('src/main/resources/META-INF/ponder.accesstransformer.cfg').absolutePath)
+
+    parchment {
+        minecraftVersion = parchment_minecraft_version
+        mappingsVersion = parchment_version
+    }
 }
 
 dependencies {
-    compileOnly group: "org.spongepowered", name: "mixin", version: "0.8.4"
+    compileOnly "dev.engine_room.flywheel:flywheel-common-mojmap-api-${minecraft_version}:${flywheel_version}"
 
-    implementation "com.electronwill.night-config:core:3.6.5"
-    implementation "com.electronwill.night-config:toml:3.6.5"
-    compileOnly "net.minecraftforge:forgeconfigapiport-fabric:3.2.3" //source: https://github.com/Fuzss/forgeconfigapiport-fabric
+    compileOnly "net.fabricmc:sponge-mixin:0.15.4+mixin.0.8.7"
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
+
+    implementation "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${forgeconfigapiport_version}" //source: https://github.com/Fuzss/forgeconfigapiport
 
     if (catnipInWorkspace) {
         compileOnly project(":catnip:Common")
     } else {
         compileOnly "net.createmod.catnip:Catnip-Common-${minecraft_version}:${catnip_version}"
     }
-
-    compileOnly "dev.engine_room.flywheel:flywheel-common-mojmap-api-${minecraft_version}:${flywheel_version}"
-
 }
 
 java {
     withJavadocJar()
     withSourcesJar()
+}
+
+jar {
+    exclude "net/neoforged/fml/config/**"
 }
 
 // -- MAVEN PUBLISHING --

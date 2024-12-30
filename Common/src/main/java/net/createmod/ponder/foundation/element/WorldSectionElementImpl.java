@@ -24,6 +24,7 @@ import net.createmod.catnip.render.SuperByteBufferCache.Compartment;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.utility.RegisteredObjectsHelper;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.outliner.AABBOutline;
 import net.createmod.ponder.Ponder;
@@ -200,7 +201,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 		world.setMask(this.section);
 		Vec3 transformedTarget = reverseTransformVec(target);
 		BlockHitResult rayTraceBlocks = world.clip(new ClipContext(reverseTransformVec(source), transformedTarget,
-			ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, null));
+			ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
 		world.clearMask();
 
 		double t = rayTraceBlocks.getLocation()
@@ -350,9 +351,8 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 			}
 
 			VertexConsumer builder = new SheetedDecalTextureGenerator(
-					buffer.getBuffer(ModelBakery.DESTROY_TYPES.get(entry.getValue())), overlayMS.last().pose(),
-					overlayMS.last().normal(),
-					1);
+				buffer.getBuffer(ModelBakery.DESTROY_TYPES.get(entry.getValue())), overlayMS.last(), 1
+			);
 
 			poseStack.pushPose();
 			poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
@@ -436,7 +436,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 
 			} catch (Exception e) {
 				iterator.remove();
-				String message = "BlockEntity " + CatnipServices.REGISTRIES.getKeyOrThrow(tile.getType())
+				String message = "BlockEntity " + RegisteredObjectsHelper.getKeyOrThrow(tile.getType())
 						.toString() + " could not be rendered virtually.";
 				Ponder.LOGGER.error(message, e);
 			}
@@ -446,7 +446,7 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 	}
 
 	private SuperByteBuffer buildStructureBuffer(PonderLevel world, RenderType layer) {
-		BlockRenderDispatcher dispatcher = ModelUtil.VANILLA_RENDERER;
+		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 
 		PoseStack poseStack = objects.poseStack;

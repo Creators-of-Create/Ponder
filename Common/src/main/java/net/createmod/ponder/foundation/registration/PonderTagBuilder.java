@@ -46,13 +46,13 @@ public class PonderTagBuilder implements TagBuilder {
 
 	@Override
 	public TagBuilder icon(ResourceLocation location) {
-		this.textureIconLocation = new ResourceLocation(location.getNamespace(), "textures/ponder/tag/" + location.getPath() + ".png");
+		this.textureIconLocation = ResourceLocation.fromNamespaceAndPath(location.getNamespace(), "textures/ponder/tag/" + location.getPath() + ".png");
 		return this;
 	}
 
 	@Override
 	public TagBuilder icon(String path) {
-		this.textureIconLocation = new ResourceLocation(id.getNamespace(), "textures/ponder/tag/" + path + ".png");
+		this.textureIconLocation = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "textures/ponder/tag/" + path + ".png");
 		return this;
 	}
 

@@ -21,6 +21,7 @@ subprojects {
     apply from: "../gradle/signing.gradle"
 
     // Enable Mixins
+    // Note if mixins are enabled you need to manually add the config in neoforge.mods.toml
     project.ext.mixin_enabled = project.file("src/main/resources/${mod_id}.mixins.json").exists()
     project.logger.lifecycle("Mixin ${project.ext.mixin_enabled ? "enabled" : "disabled"} for project ${mod_id}:${project.name}.")
 
@@ -33,6 +34,9 @@ subprojects {
         maven { url = "https://maven.tterrag.com" }
         maven { url = "https://maven.createmod.net" }
         maven { url = "https://jitpack.io" }
+
+        // FIXME - TEMP
+        maven { url = "https://maven.ithundxr.dev/hidden" } // Flywheel 1.21 PR
     }
 
     processResources {
@@ -40,9 +44,8 @@ subprojects {
             "version"                   : version,
             "group"                     : project.group, //Else we target the task's group.
             "minecraft_version"         : minecraft_version,
-            "forge_version"             : forge_version,
-            "forge_version_range"       : forge_version_range,
-            "minecraft_version_range"   : minecraft_version_range,
+            "neo_version"               : neo_version,
+            "neo_version_range"         : neo_version.split("/./")[0],
             "fabric_version"            : fabric_version,
             "fabric_loader_version"     : fabric_loader_version,
             "flywheel_version_range"    : flywheel_version_range,
@@ -58,7 +61,7 @@ subprojects {
             "mod_license"               : mod_license
         ]
 
-        filesMatching(["pack.mcmeta", "fabric.mod.json", "META-INF/mods.toml", "*.mixins.json"]) {
+        filesMatching(["pack.mcmeta", "fabric.mod.json", "META-INF/neoforge.mods.toml", "*.mixins.json"]) {
             expand expandProps
         }
         inputs.properties(expandProps)

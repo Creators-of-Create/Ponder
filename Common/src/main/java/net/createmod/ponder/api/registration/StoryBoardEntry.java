@@ -92,11 +92,11 @@ public interface StoryBoardEntry {
 	record SceneOrderingEntry(SceneOrderingType type, ResourceLocation sceneId) {
 
 		public static SceneOrderingEntry after(String namespace, String sceneId) {
-			return new SceneOrderingEntry(StoryBoardEntry.SceneOrderingType.AFTER, new ResourceLocation(namespace, sceneId));
+			return new SceneOrderingEntry(StoryBoardEntry.SceneOrderingType.AFTER, ResourceLocation.fromNamespaceAndPath(namespace, sceneId));
 		}
 
 		public static SceneOrderingEntry before(String namespace, String sceneId) {
-			return new SceneOrderingEntry(StoryBoardEntry.SceneOrderingType.BEFORE, new ResourceLocation(namespace, sceneId));
+			return new SceneOrderingEntry(StoryBoardEntry.SceneOrderingType.BEFORE, ResourceLocation.fromNamespaceAndPath(namespace, sceneId));
 		}
 	}
 }

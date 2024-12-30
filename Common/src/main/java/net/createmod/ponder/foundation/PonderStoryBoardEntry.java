@@ -27,7 +27,7 @@ public class PonderStoryBoardEntry implements net.createmod.ponder.api.registrat
 	}
 
 	public PonderStoryBoardEntry(PonderStoryBoard board, String namespace, String schematicPath, ResourceLocation component) {
-		this(board, namespace, new ResourceLocation(namespace, schematicPath), component);
+		this(board, namespace, ResourceLocation.fromNamespaceAndPath(namespace, schematicPath), component);
 	}
 
 	@Override

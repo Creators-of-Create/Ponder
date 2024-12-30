@@ -33,7 +33,7 @@ public class DefaultPonderTagRegistrationHelper implements PonderTagRegistration
 
 	@Override
 	public TagBuilder registerTag(String id) {
-		return new PonderTagBuilder(new ResourceLocation(namespace, id), this::finishTagRegister);
+		return new PonderTagBuilder(ResourceLocation.fromNamespaceAndPath(namespace, id), this::finishTagRegister);
 	}
 
 	private void finishTagRegister(PonderTagBuilder builder) {

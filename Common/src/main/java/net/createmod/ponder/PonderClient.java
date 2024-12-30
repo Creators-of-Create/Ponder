@@ -1,6 +1,6 @@
 package net.createmod.ponder;
 
-import net.createmod.catnip.net.ClientboundSimpleActionPacket;
+import net.createmod.catnip.net.packets.ClientboundSimpleActionPacket;
 import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.ponder.command.SimplePonderActions;
 import net.createmod.ponder.foundation.PonderIndex;

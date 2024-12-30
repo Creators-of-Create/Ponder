@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 
-import net.createmod.catnip.net.ClientboundSimpleActionPacket;
+import net.createmod.catnip.net.packets.ClientboundSimpleActionPacket;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -54,7 +54,7 @@ public class PonderCommand {
 			if (CatnipServices.HOOKS.isPlayerFake(player))
 				continue;
 
-			CatnipServices.NETWORK.sendToPlayer(
+			CatnipServices.NETWORK.sendToClient(
 					player,
 					new ClientboundSimpleActionPacket("openPonder", sceneId)
 			);

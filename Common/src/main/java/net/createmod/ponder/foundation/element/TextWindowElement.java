@@ -86,7 +86,7 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
 
 		@Override
 		public Builder sharedText(String key) {
-			return sharedText(new ResourceLocation(scene.getNamespace(), key));
+			return sharedText(ResourceLocation.fromNamespaceAndPath(scene.getNamespace(), key));
 		}
 
 		@Override

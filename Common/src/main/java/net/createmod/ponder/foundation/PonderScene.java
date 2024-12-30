@@ -130,7 +130,7 @@ public class PonderScene {
 
 		this.namespace = namespace;
 		this.location = location;
-		this.sceneId = new ResourceLocation(namespace, "missing_title");
+		this.sceneId = ResourceLocation.fromNamespaceAndPath(namespace, "missing_title");
 
 		outliner = new Outliner();
 		elements = new HashSet<>();
@@ -391,14 +391,11 @@ public class PonderScene {
 	}
 
 	public <T extends Entity> void forEachWorldEntity(Class<T> type, Consumer<T> function) {
-		world.getEntityStream()
-			.filter(type::isInstance)
-			.map(type::cast)
-			.forEach(function);
-		/*
-		 * for (Entity element : world.getEntities()) { if (type.isInstance(element))
-		 * function.accept(type.cast(element)); }
-		 */
+		for (Entity entity : world.getEntityList()) {
+			if (type.isInstance(entity)) {
+				function.accept(type.cast(entity));
+			}
+		}
 	}
 
 	public Supplier<String> registerText(String defaultText) {

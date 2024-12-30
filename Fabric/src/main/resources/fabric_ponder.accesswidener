@@ -1,1 +1,3 @@
 accessWidener v2 named
+# Catnip
+transitive-extendable method net/minecraft/client/gui/components/AbstractWidget render (Lnet/minecraft/client/gui/GuiGraphics;IIF)V

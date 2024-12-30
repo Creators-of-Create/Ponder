@@ -15,6 +15,6 @@ public class DefaultSharedTextRegistrationHelper implements SharedTextRegistrati
 
 	@Override
 	public void registerSharedText(String key, String en_us) {
-		localization.registerShared(new ResourceLocation(namespace, key), en_us);
+		localization.registerShared(ResourceLocation.fromNamespaceAndPath(namespace, key), en_us);
 	}
 }

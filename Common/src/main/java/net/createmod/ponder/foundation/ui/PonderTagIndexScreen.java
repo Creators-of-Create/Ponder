@@ -223,7 +223,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 				.withBounds(maxWidth + 6, descHeight + 5)
 				.render(graphics);
 
-		ClientFontHelper.drawSplitString(poseStack, font, desc, 0, 0, maxWidth, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
+		ClientFontHelper.drawSplitString(graphics, poseStack, font, desc, 0, 0, maxWidth, UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		poseStack.popPose();
 
 		poseStack.translate(0, -80, 0);

@@ -128,7 +128,7 @@ public class PonderSceneRegistry implements SceneRegistryAccess {
 	public static StructureTemplate loadSchematic(ResourceManager resourceManager, ResourceLocation location) {
 		String namespace = location.getNamespace();
 		String path = "ponder/" + location.getPath() + ".nbt";
-		ResourceLocation location1 = new ResourceLocation(namespace, path);
+		ResourceLocation location1 = ResourceLocation.fromNamespaceAndPath(namespace, path);
 
 		Optional<Resource> optionalResource = resourceManager.getResource(location1);
 		if (optionalResource.isEmpty()) {
@@ -150,7 +150,7 @@ public class PonderSceneRegistry implements SceneRegistryAccess {
 	public static StructureTemplate loadSchematic(InputStream resourceStream) throws IOException {
 		StructureTemplate t = new StructureTemplate();
 		DataInputStream stream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(resourceStream)));
-		CompoundTag nbt = NbtIo.read(stream, new NbtAccounter(0x20000000L));
+		CompoundTag nbt = NbtIo.read(stream, NbtAccounter.create(0x20000000L));
 		//t.load(Minecraft.getInstance().level.holderLookup(Registries.BLOCK), nbt);
 		t.load(BuiltInRegistries.BLOCK.asLookup(), nbt);
 		return t;

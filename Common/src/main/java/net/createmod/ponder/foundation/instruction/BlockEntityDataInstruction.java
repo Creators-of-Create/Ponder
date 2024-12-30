@@ -24,18 +24,18 @@ public class BlockEntityDataInstruction extends WorldModifyInstruction {
 
 	@Override
 	protected void runModification(Selection selection, PonderScene scene) {
-		PonderLevel world = scene.getWorld();
+		PonderLevel level = scene.getWorld();
 		selection.forEach(pos -> {
-			if (!world.getBounds()
+			if (!level.getBounds()
 					.isInside(pos))
 				return;
-			BlockEntity blockEntity = world.getBlockEntity(pos);
+			BlockEntity blockEntity = level.getBlockEntity(pos);
 			if (!type.isInstance(blockEntity))
 				return;
-			CompoundTag apply = data.apply(blockEntity.saveWithFullMetadata());
+			CompoundTag apply = data.apply(blockEntity.saveWithFullMetadata(level.registryAccess()));
 			//if (blockEntity instanceof SyncedBlockEntity) //TODO
 			//	((SyncedBlockEntity) blockEntity).readClient(apply);
-			blockEntity.load(apply);
+			blockEntity.loadWithComponents(apply, level.registryAccess());
 		});
 	}
 

@@ -2,6 +2,10 @@ package net.createmod.ponder.api.level;
 
 import java.util.List;
 
+import net.minecraft.world.TickRateManager;
+import net.minecraft.world.item.alchemy.PotionBrewing;
+import net.minecraft.world.level.saveddata.maps.MapId;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.createmod.catnip.utility.levelWrappers.DummyLevelEntityGetter;
@@ -67,18 +71,23 @@ public class EmptyLevel extends Level {
 		return null;
 	}
 
+	@Override
+	public TickRateManager tickRateManager() {
+		return null;
+	}
+
 	@Nullable
 	@Override
-	public MapItemSavedData getMapData(String s) {
+	public MapItemSavedData getMapData(MapId mapId) {
 		return null;
 	}
 
 	@Override
-	public void setMapData(String s, MapItemSavedData mapItemSavedData) {}
+	public void setMapData(MapId mapId, MapItemSavedData mapItemSavedData) {}
 
 	@Override
-	public int getFreeMapId() {
-		return 0;
+	public MapId getFreeMapId() {
+		return new MapId(0);
 	}
 
 	@Override
@@ -118,10 +127,15 @@ public class EmptyLevel extends Level {
 	public void levelEvent(@Nullable Player player, int i, BlockPos blockPos, int i1) {}
 
 	@Override
-	public void gameEvent(GameEvent gameEvent, Vec3 vec3, GameEvent.Context context) {}
+	public void gameEvent(Holder<GameEvent> holder, Vec3 vec3, GameEvent.Context context) {}
 
 	@Override
 	public RegistryAccess registryAccess() {
+		return null;
+	}
+
+	@Override
+	public PotionBrewing potionBrewing() {
 		return null;
 	}
 
@@ -144,4 +158,13 @@ public class EmptyLevel extends Level {
 	public Holder<Biome> getUncachedNoiseBiome(int i, int i1, int i2) {
 		return null;
 	}
+
+	// Neo's patched methods
+	public void setDayTimeFraction(float var1) {}
+
+	public float getDayTimeFraction() { return 0; }
+
+	public float getDayTimePerTick() { return 0; }
+
+	public void setDayTimePerTick(float var1) {}
 }

@@ -12,6 +12,9 @@ import java.util.stream.IntStream;
 
 import javax.annotation.Nullable;
 
+import net.createmod.catnip.utility.AnimationTickHolder;
+import net.createmod.catnip.utility.RegisteredObjectsHelper;
+
 import org.joml.Matrix4f;
 
 import com.google.common.graph.ElementOrder;
@@ -144,19 +147,19 @@ public class PonderUI extends AbstractPonderScreen {
 
 	public static PonderUI of(ItemStack item) {
 		return new PonderUI(
-				PonderIndex.getSceneAccess().compile(CatnipServices.REGISTRIES.getKeyOrThrow(item.getItem())));
+				PonderIndex.getSceneAccess().compile(RegisteredObjectsHelper.getKeyOrThrow(item.getItem())));
 	}
 
 	public static PonderUI of(ItemStack item, PonderTag tag) {
 		PonderUI ponderUI = new PonderUI(
-				PonderIndex.getSceneAccess().compile(CatnipServices.REGISTRIES.getKeyOrThrow(item.getItem())));
+				PonderIndex.getSceneAccess().compile(RegisteredObjectsHelper.getKeyOrThrow(item.getItem())));
 		ponderUI.referredToByTag = tag;
 		return ponderUI;
 	}
 
 	protected PonderUI(List<PonderScene> scenes) {
 		ResourceLocation location = scenes.get(0).getLocation();
-		stack = new ItemStack(CatnipServices.REGISTRIES.getItemOrBlock(location));
+		stack = new ItemStack(RegisteredObjectsHelper.getItemOrBlock(location));
 
 		tags = new ArrayList<>(PonderIndex.getTagAccess().getTags(location));
 
@@ -175,7 +178,7 @@ public class PonderUI extends AbstractPonderScreen {
 		if (this.scenes.isEmpty()) {
 			List<StoryBoardEntry> list = Collections.singletonList(
 					new PonderStoryBoardEntry(DebugScenes::empty, Ponder.MOD_ID, "debug/scene_1",
-											  new ResourceLocation("minecraft", "stick")));
+											  ResourceLocation.withDefaultNamespace("stick")));
 			this.scenes.addAll(PonderIndex.getSceneAccess().compile(list));
 		}
 		lazyIndex = LerpedFloat.linear()
@@ -377,7 +380,7 @@ public class PonderUI extends AbstractPonderScreen {
 						scenes.get(index)
 								.deselect();
 					else
-						ponderPartialTicksPaused = minecraft.getFrameTime();
+						ponderPartialTicksPaused = AnimationTickHolder.getPartialTicksUI();
 				}));
 		scan.atZLevel(600);
 
@@ -533,10 +536,10 @@ public class PonderUI extends AbstractPonderScreen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-		if (scroll(delta > 0))
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		if (scroll(scrollY > 0))
 			return true;
-		return super.mouseScrolled(mouseX, mouseY, delta);
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	protected void replay() {
@@ -593,11 +596,6 @@ public class PonderUI extends AbstractPonderScreen {
 		renderWidgets(graphics, mouseX, mouseY, identifyMode ? ponderPartialTicksPaused : partialTicks);
 	}
 
-	@Override
-	public void renderBackground(GuiGraphics graphics) {
-		super.renderBackground(graphics);
-	}
-
 	protected void renderVisibleScenes(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		renderScene(graphics, mouseX, mouseY, index, partialTicks);
 		float lazyIndexValue = lazyIndex.getValue(partialTicks);
@@ -608,7 +606,7 @@ public class PonderUI extends AbstractPonderScreen {
 	protected void renderScene(GuiGraphics graphics, int mouseX, int mouseY, int i, float partialTicks) {
 		SuperRenderTypeBuffer buffer = DefaultSuperRenderTypeBuffer.getInstance();
 		PonderScene scene = scenes.get(i);
-		double value = lazyIndex.getValue(minecraft.getFrameTime());
+		double value = lazyIndex.getValue(AnimationTickHolder.getPartialTicksUI()); // TODO - Checkover
 		double diff = i - value;
 		double slide = Mth.lerp(diff * diff, 200, 600) * diff;
 
@@ -995,7 +993,7 @@ public class PonderUI extends AbstractPonderScreen {
 
 		// short version for single scene views
 		if (scenes.size() == 1 || absoluteIndexDiff < 0.01) {
-			ClientFontHelper.drawSplitString(poseStack, font, title, 0, 0, maxTitleWidth, UIRenderHelper.COLOR_TEXT
+			ClientFontHelper.drawSplitString(graphics, poseStack, font, title, 0, 0, maxTitleWidth, UIRenderHelper.COLOR_TEXT
 				.getFirst()
 				.scaleAlphaForText(fade)
 				.getRGB());
@@ -1009,7 +1007,7 @@ public class PonderUI extends AbstractPonderScreen {
 		poseStack.pushPose();
 		poseStack.mulPose(Axis.XN.rotationDegrees(indexDiff * -90 + Math.signum(indexDiff) * 90));
 		poseStack.translate(0, -6, 5);
-		ClientFontHelper.drawSplitString(poseStack, font, otherTitle, 0, 0, maxTitleWidth, UIRenderHelper.COLOR_TEXT
+		ClientFontHelper.drawSplitString(graphics, poseStack, font, otherTitle, 0, 0, maxTitleWidth, UIRenderHelper.COLOR_TEXT
 			.getFirst()
 			.scaleAlphaForText(absoluteIndexDiff)
 			.getRGB()
@@ -1019,7 +1017,7 @@ public class PonderUI extends AbstractPonderScreen {
 
 		poseStack.mulPose(Axis.XN.rotationDegrees(indexDiff * -90));
 		poseStack.translate(0, -6, 5);
-		ClientFontHelper.drawSplitString(poseStack, font, title, 0, 0, maxTitleWidth, UIRenderHelper.COLOR_TEXT
+		ClientFontHelper.drawSplitString(graphics, poseStack, font, title, 0, 0, maxTitleWidth, UIRenderHelper.COLOR_TEXT
 			.getFirst()
 			.scaleAlphaForText(1 - absoluteIndexDiff)
 			.getRGB()
@@ -1183,8 +1181,7 @@ public class PonderUI extends AbstractPonderScreen {
 	}
 
 	public static float getPartialTicks() {
-		float renderPartialTicks = Minecraft.getInstance()
-				.getFrameTime();
+		float renderPartialTicks = AnimationTickHolder.getPartialTicksUI();
 
 		if (Minecraft.getInstance().screen instanceof PonderUI ui) {
 			if (ui.identifyMode)

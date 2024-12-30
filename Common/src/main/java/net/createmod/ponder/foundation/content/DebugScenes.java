@@ -40,7 +40,7 @@ public class DebugScenes {
 
 	private static void add(PonderSceneRegistrationHelper<ResourceLocation> helper, PonderStoryBoard sb) {
 		String schematicPath = "debug/scene_" + index;
-		helper.addStoryBoard(new ResourceLocation("spyglass"), schematicPath, sb).highlightAllTags();
+		helper.addStoryBoard(ResourceLocation.withDefaultNamespace("spyglass"), schematicPath, sb).highlightAllTags();
 		index++;
 	}
 

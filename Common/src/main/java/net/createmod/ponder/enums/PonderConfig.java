@@ -7,12 +7,14 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import net.neoforged.fml.config.ModConfig;
+
+import net.neoforged.neoforge.common.ModConfigSpec;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.createmod.catnip.config.ConfigBase;
 import net.createmod.ponder.config.CClient;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
 
 public class PonderConfig {
 
@@ -21,7 +23,7 @@ public class PonderConfig {
 	@Nullable private static CClient client;
 
 	private static <T extends ConfigBase> T register(Supplier<T> factory, ModConfig.Type side) {
-		Pair<T, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(builder -> {
+		Pair<T, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(builder -> {
 			T config = factory.get();
 			config.registerAll(builder);
 			return config;

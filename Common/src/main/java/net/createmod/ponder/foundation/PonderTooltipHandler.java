@@ -9,7 +9,9 @@ import net.createmod.catnip.gui.NavigatableSimiScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.utility.AnimationTickHolder;
 import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.utility.RegisteredObjectsHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.lang.Components;
 import net.createmod.catnip.utility.theme.Color;
@@ -90,8 +92,8 @@ public class PonderTooltipHandler {
 		if (trackingStack != stack)
 			return;
 
-		float renderPartialTicks = Minecraft.getInstance()
-			.getFrameTime();
+		// TODO - Checkover
+		float renderPartialTicks = AnimationTickHolder.getPartialTicksUI();
 		Component component = subject ? Ponder.lang().translate(SUBJECT).component()
 			.withStyle(ChatFormatting.GREEN)
 			: makeProgressBar(Math.min(1, holdKeyProgress.getValue(renderPartialTicks) * 8 / 7f));
@@ -119,7 +121,7 @@ public class PonderTooltipHandler {
 
 		if (stack.isEmpty())
 			return;
-		if (!PonderIndex.getSceneAccess().doScenesExistForId(CatnipServices.REGISTRIES.getKeyOrThrow(stack.getItem())))
+		if (!PonderIndex.getSceneAccess().doScenesExistForId(RegisteredObjectsHelper.getKeyOrThrow(stack.getItem())))
 			return;
 
 		if (prevStack.isEmpty() || !prevStack.is(stack.getItem()))
@@ -136,7 +138,8 @@ public class PonderTooltipHandler {
 		if (holdKeyProgress.getValue() == 0)
 			return Optional.empty();
 
-		float renderPartialTicks = Minecraft.getInstance().getFrameTime();
+		// TODO - Checkover
+		float renderPartialTicks = AnimationTickHolder.getPartialTicksUI();
 
 		Color startC;
 		Color endC;
