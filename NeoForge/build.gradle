@@ -5,7 +5,7 @@ plugins {
 }
 
 base {
-    archivesName = "Ponder-Forge-${minecraft_version}"
+    archivesName = "Ponder-NeoForge-${minecraft_version}"
 }
 
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":ponder:Common")
