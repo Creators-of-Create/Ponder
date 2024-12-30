@@ -4,8 +4,8 @@ license="${mod_license}"
 issueTrackerURL="${mod_issues}"
 
 [[mods]]
-modId="ponder"
-version="${file.jarVersion}"
+modId="${mod_id}"
+version="${version}"
 displayName="${mod_name}"
 displayURL="${mod_homepage}"
 logoFile="logo.png"
@@ -15,30 +15,29 @@ description='''
 ${mod_description}
 '''
 
-[[dependencies.ponder]]
-    modId="forge"
-    mandatory=true
-    versionRange="[47.0.0,)"
-    ordering="NONE"
-    side="BOTH"
+[[dependencies.${mod_id}]]
+modId="forge"
+mandatory=true
+versionRange="${forge_version_range}"
+ordering="NONE"
+side="BOTH"
 
-[[dependencies.ponder]]
-    modId="minecraft"
-    mandatory=true
-    versionRange="[1.20,1.21)"
-    ordering="NONE"
-    side="BOTH"
+[[dependencies.${mod_id}]]
+modId="minecraft"
+mandatory=true
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"
 
-[[dependencies.ponder]]
-    modId="flywheel"
-    mandatory=true
-    versionRange="[1.0.0-alpha,2.0)"
-    ordering="AFTER"
-    side="CLIENT"
+[[dependencies.${mod_id}]]
+modId="flywheel"
+mandatory=true
+versionRange="${flywheel_version_range}"
+ordering="AFTER"
 
-[[dependencies.ponder]]
-    modId="catnip"
-    mandatory=true
-    versionRange="[0.8,)"
-    ordering="AFTER"
-    side="BOTH"
+[[dependencies.${mod_id}]]
+modId="catnip"
+mandatory=true
+versionRange="${catnip_version_range}"
+ordering="AFTER"
+side="BOTH"

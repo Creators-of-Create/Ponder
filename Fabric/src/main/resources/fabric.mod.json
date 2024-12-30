@@ -1,37 +1,32 @@
 {
-    "schemaVersion": 1,
-    "id": "${mod_id}",
-    "version": "${version}",
-
-    "name": "${mod_name}",
-    "description": "${mod_description}",
-    "authors": [
-      "${mod_author}",
-      "${mod_credit}"
-    ],
-    "contact": {
-      "homepage": "${mod_homepage}",
-      "sources": "${mod_source}"
-    },
-
-    "license": "${mod_license}",
-    "environment": "*",
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_author}",
+    "${mod_credit}"
+  ],
+  "contact": {
+    "homepage": "${mod_homepage}",
+    "sources": "${mod_source}"
+  },
+  "license": "${mod_license}",
+  "environment": "*",
   "accessWidener": "fabric_ponder.accesswidener",
-    "entrypoints": {
-      "main": [
-        "net.createmod.ponder.FabricPonder"
-      ],
-      "client": [
-        "net.createmod.ponder.FabricPonderClient"
-      ]
-    },
-
-    "depends": {
-      "fabricloader": ">=0.13",
-      "fabric": "*",
-      "minecraft": "1.20.x",
-      "java": ">=17"
-    },
-    "suggests": {
-    }
+  "entrypoints": {
+    "main": [
+      "net.createmod.ponder.FabricPonder"
+    ],
+    "client": [
+      "net.createmod.ponder.FabricPonderClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric": ">=${fabric_version}",
+    "minecraft": "${minecraft_version}",
+    "java": ">=17"
   }
+}

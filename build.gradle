@@ -1,5 +1,5 @@
-apply from: 'gradle/property_loader.gradle'
-apply from: 'gradle/build_number.gradle'
+apply from: "gradle/property_loader.gradle"
+apply from: "gradle/build_number.gradle"
 
 def projVersion = project.version
 
@@ -8,55 +8,59 @@ tasks.withType(Test).configureEach {
 }
 
 subprojects {
-
     project.version = projVersion
 
-    apply plugin: 'maven-publish'
+    apply plugin: "maven-publish"
 
-    apply plugin: 'idea'
-    apply plugin: 'eclipse'
+    apply plugin: "idea"
+    apply plugin: "eclipse"
 
-    apply from: '../gradle/property_loader.gradle'
-    apply from: '../gradle/java.gradle'
-    apply from: '../gradle/minify_jsons.gradle'
-    apply from: '../gradle/signing.gradle'
+    apply from: "../gradle/property_loader.gradle"
+    apply from: "../gradle/java.gradle"
+    apply from: "../gradle/minify_jsons.gradle"
+    apply from: "../gradle/signing.gradle"
 
     // Enable Mixins
     project.ext.mixin_enabled = project.file("src/main/resources/${mod_id}.mixins.json").exists()
-    project.logger.lifecycle("Mixin ${project.ext.mixin_enabled ? 'enabled' : 'disabled'} for project ${mod_id}:${project.name}.")
+    project.logger.lifecycle("Mixin ${project.ext.mixin_enabled ? "enabled" : "disabled"} for project ${mod_id}:${project.name}.")
 
     repositories {
+        maven { url = "https://maven.terraformersmc.com/releases/" }
+        maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
+        maven { url = "https://maven.jamieswhiteshirt.com/libs-release" }
+        maven { url = "https://mvn.devos.one/snapshots/" }
+        maven { url = "https://mvn.devos.one/releases/" }
+        maven { url = "https://maven.tterrag.com" }
+        maven { url = "https://maven.createmod.net" }
+        maven { url = "https://jitpack.io" }
+    }
 
-        maven {
-            name = 'Mod Menu'
-            url = 'https://maven.terraformersmc.com/releases/'
+    processResources {
+        def expandProps = [
+            "version"                   : version,
+            "group"                     : project.group, //Else we target the task's group.
+            "minecraft_version"         : minecraft_version,
+            "forge_version"             : forge_version,
+            "forge_version_range"       : forge_version_range,
+            "minecraft_version_range"   : minecraft_version_range,
+            "fabric_version"            : fabric_version,
+            "fabric_loader_version"     : fabric_loader_version,
+            "flywheel_version_range"    : flywheel_version_range,
+            "catnip_version_range"      : catnip_version_range,
+            "mod_name"                  : mod_name,
+            "mod_author"                : mod_author,
+            "mod_credit"                : mod_credit,
+            "mod_id"                    : mod_id,
+            "mod_homepage"              : mod_homepage,
+            "mod_source"                : mod_source,
+            "mod_issues"                : mod_issues,
+            "mod_description"           : mod_description,
+            "mod_license"               : mod_license
+        ]
+
+        filesMatching(["pack.mcmeta", "fabric.mod.json", "META-INF/mods.toml", "*.mixins.json"]) {
+            expand expandProps
         }
-
-        maven {
-            name = "Fuzs Mod Resources"
-            url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
-        }
-
-        maven {
-            name = "JitPack"
-            url = "https://jitpack.io"
-        }
-
-        maven {
-            name = "Jay's Maven"
-            url = "https://mvn.devos.one/snapshots/"
-        }
-
-        maven {
-            // location of the maven for Registrate and Flywheel
-            name = 'tterrag Maven'
-            url = 'https://maven.tterrag.com'
-        }
-
-        maven {
-            name = "Createmod"
-            url = "https://maven.createmod.net"
-        }
-
+        inputs.properties(expandProps)
     }
 }
