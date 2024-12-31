@@ -9,6 +9,7 @@ import net.createmod.ponder.api.element.EntityElement;
 import net.createmod.ponder.api.element.WorldSectionElement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -19,6 +20,8 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.Vec3;
 
 public interface WorldInstructions {
+	HolderLookup.Provider getHolderLookupProvider();
+
 	void incrementBlockBreakingProgress(BlockPos pos);
 
 	void showSection(Selection selection, Direction fadeInDirection);

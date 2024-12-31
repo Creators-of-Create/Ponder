@@ -1,10 +1,13 @@
 package net.createmod.ponder.foundation;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+
+import net.minecraft.core.HolderLookup;
 
 import org.joml.Vector3f;
 
@@ -402,6 +405,10 @@ public class PonderSceneBuilder implements SceneBuilder {
 	}
 
 	public class PonderWorldInstructions implements WorldInstructions {
+		@Override
+		public HolderLookup.Provider getHolderLookupProvider() {
+			return scene.getWorld().registryAccess();
+		}
 
 		@Override
 		public void incrementBlockBreakingProgress(BlockPos pos) {
