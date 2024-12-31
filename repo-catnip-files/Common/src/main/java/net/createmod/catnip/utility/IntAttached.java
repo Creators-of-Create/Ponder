@@ -20,15 +20,15 @@ public class IntAttached<V> extends Pair<Integer, V> {
 	}
 
 	public boolean isZero() {
-		return first.intValue() == 0;
+		return first == 0;
 	}
 
 	public boolean exceeds(int value) {
-		return first.intValue() > value;
+		return first > value;
 	}
 
 	public boolean isOrBelowZero() {
-		return first.intValue() <= 0;
+		return first <= 0;
 	}
 
 	public void increment() {
