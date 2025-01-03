@@ -1,5 +1,6 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+# The loader version doesn't matter. Modify the NeoForge and/or Minecraft version ranges instead.
+loaderVersion="[0,)"
 license="${mod_license}"
 issueTrackerURL="${mod_issues}"
 
@@ -16,9 +17,9 @@ ${mod_description}
 '''
 
 [[dependencies.${mod_id}]]
-modId="forge"
+modId="neoforge"
 mandatory=true
-versionRange="${forge_version_range}"
+versionRange="${neo_version_range}"
 ordering="NONE"
 side="BOTH"
 
