@@ -3,7 +3,6 @@ package net.createmod.ponder;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import net.createmod.catnip.Catnip;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.utility.Couple;
 import net.createmod.catnip.utility.theme.Color;
@@ -25,7 +24,7 @@ import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-@Mod(value = Catnip.MOD_ID, dist = Dist.CLIENT)
+@Mod(value = Ponder.MOD_ID, dist = Dist.CLIENT)
 public class NeoForgePonderClient {
 	public NeoForgePonderClient(IEventBus modEventBus) {
 		modEventBus.addListener(NeoForgePonderClient::init);
