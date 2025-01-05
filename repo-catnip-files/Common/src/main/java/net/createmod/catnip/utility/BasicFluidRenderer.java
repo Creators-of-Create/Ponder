@@ -26,22 +26,22 @@ public class BasicFluidRenderer {
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
-			float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom) {
-		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom, null);
+			float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom, boolean invertGasses) {
+		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom, invertGasses, null);
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
-			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom) {
-		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, builder, ms, light, renderBottom, null);
+			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom, boolean invertGasses) {
+		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, builder, ms, light, renderBottom, invertGasses, null);
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
-			float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom, @Nullable CompoundTag fluidData) {
-		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom, fluidData);
+			float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom, boolean invertGasses, @Nullable CompoundTag fluidData) {
+		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom, invertGasses, fluidData);
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
-			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom, @Nullable CompoundTag fluidData) {
+			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom, boolean invertGasses, @Nullable CompoundTag fluidData) {
 		TextureAtlasSprite fluidTexture = Minecraft.getInstance()
 				.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
 				.apply(CatnipServices.FLUID_HELPER.getStillTexture(fluid, amount, fluidData));
@@ -53,7 +53,7 @@ public class BasicFluidRenderer {
 
 		Vec3 center = new Vec3(xMin + (xMax - xMin) / 2, yMin + (yMax - yMin) / 2, zMin + (zMax - zMin) / 2);
 		ms.pushPose();
-		if (CatnipServices.FLUID_HELPER.isLighterThanAir(fluid)) {
+		if (invertGasses && CatnipServices.FLUID_HELPER.isLighterThanAir(fluid)) {
 			ms.translate(center.x, center.y, center.z);
 			ms.mulPose(Axis.XP.rotationDegrees(180));
 			ms.translate(-center.x, -center.y, -center.z);
