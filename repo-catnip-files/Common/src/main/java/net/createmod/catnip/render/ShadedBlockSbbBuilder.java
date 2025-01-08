@@ -38,7 +38,7 @@ public class ShadedBlockSbbBuilder implements VertexConsumer {
 	public SuperByteBuffer end() {
 		BufferBuilder.RenderedBuffer data = bufferBuilder.end();
 		MutableTemplateMesh mesh = new MutableTemplateMesh(data);
-		return new ShadeSpearatingSuperByteBuffer(mesh.toImmutable(), shadeSwapVertices.toIntArray());
+		return new ShadeSeparatingSuperByteBuffer(mesh.toImmutable(), shadeSwapVertices.toIntArray());
 	}
 
 	public BufferBuilder unwrap(boolean shade) {

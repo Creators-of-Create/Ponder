@@ -29,7 +29,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 @SuppressWarnings("unchecked")
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
+public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 	private static final Long2IntMap WORLD_LIGHT_CACHE = new Long2IntOpenHashMap();
 
 	private final TemplateMesh template;
@@ -69,13 +69,13 @@ public class ShadeSpearatingSuperByteBuffer implements SuperByteBuffer {
 	private final ShiftOutput shiftOutput = new ShiftOutput();
 	private final Vector4f lightPos = new Vector4f();
 
-	public ShadeSpearatingSuperByteBuffer(TemplateMesh template, int[] shadeSwapVertices) {
+	public ShadeSeparatingSuperByteBuffer(TemplateMesh template, int[] shadeSwapVertices) {
 		this.template = template;
 		this.shadeSwapVertices = shadeSwapVertices;
 		reset();
 	}
 
-	public ShadeSpearatingSuperByteBuffer(TemplateMesh template) {
+	public ShadeSeparatingSuperByteBuffer(TemplateMesh template) {
 		this(template, new int[0]);
 	}
 
