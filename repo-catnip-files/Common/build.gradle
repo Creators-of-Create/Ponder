@@ -1,0 +1,80 @@
+plugins {
+    id "org.spongepowered.gradle.vanilla" version "0.2.1-SNAPSHOT"
+}
+
+apply from: "../gradle/property_helper.gradle"
+
+archivesBaseName = "${mod_name}-Common-${minecraft_version}"
+
+minecraft {
+    version(minecraft_version)
+    accessWideners "src/main/resources/catnip.accesswidener"
+}
+
+repositories {
+    maven { url = "https://maven.tterrag.com" }
+}
+
+dependencies {
+
+    //compileOnly "com.jozufozu.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"
+    compileOnly "dev.engine_room.flywheel:flywheel-common-mojmap-api-${minecraft_version}:${flywheel_version}"
+
+    compileOnly group: "org.spongepowered", name: "mixin", version: "0.8.4"
+
+    //implementation "com.electronwill.night-config:core:3.6.5"
+    //implementation "com.electronwill.night-config:toml:3.6.5"
+    implementation "fuzs.forgeconfigapiport:forgeconfigapiport-common:8.0.0" //source: https://github.com/Fuzss/forgeconfigapiport-fabric
+}
+
+java {
+
+    withJavadocJar()
+    withSourcesJar()
+
+}
+
+// -- MAVEN PUBLISHING --
+project.publishing {
+
+    publications {
+
+        mavenJava(MavenPublication) {
+
+            artifactId project.archivesBaseName
+
+            from components.java
+            /*// Base mod archive.
+            artifact jar
+
+            // Adds the sources as an artifact.
+            artifact project.sourcesJar {
+                 classifier "sources"
+            }
+
+            // Adds the javadocs as an artifact.
+            artifact project.javadocJar {
+                classifier 'javadoc'
+            }*/
+        }
+    }
+
+    repositories {
+
+        maven {
+
+            // Sets maven credentials if they are provided. This is generally
+            // only used for external/remote uploads.
+            if (project.hasProperty('mavenUsername') && project.hasProperty('mavenPassword')) {
+
+                credentials {
+
+                    username findProperty('mavenUsername')
+                    password findProperty('mavenPassword')
+                }
+            }
+
+            url getDefaultString('mavenURL', 'undefined', true)
+        }
+    }
+}
