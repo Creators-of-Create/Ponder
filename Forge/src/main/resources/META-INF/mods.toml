@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="${forge_version_range}"
 license="${mod_license}"
 issueTrackerURL="${mod_issues}"
 
@@ -16,28 +16,22 @@ ${mod_description}
 '''
 
 [[dependencies.${mod_id}]]
-modId="forge"
-mandatory=true
-versionRange="${forge_version_range}"
-ordering="NONE"
-side="BOTH"
+    modId="forge"
+    mandatory=true
+    versionRange="${forge_version_range}"
+    ordering="NONE"
+    side="BOTH"
 
 [[dependencies.${mod_id}]]
-modId="minecraft"
-mandatory=true
-versionRange="${minecraft_version_range}"
-ordering="NONE"
-side="BOTH"
+    modId="minecraft"
+    mandatory=true
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
 
 [[dependencies.${mod_id}]]
-modId="flywheel"
-mandatory=true
-versionRange="${flywheel_version_range}"
-ordering="AFTER"
-
-[[dependencies.${mod_id}]]
-modId="catnip"
-mandatory=true
-versionRange="${catnip_version_range}"
-ordering="AFTER"
-side="BOTH"
+    modId="flywheel"
+    mandatory=true
+    versionRange="${flywheel_version_range}"
+    ordering="AFTER"
+    side="CLIENT"

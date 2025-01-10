@@ -14,13 +14,16 @@
   },
   "license": "${mod_license}",
   "environment": "*",
-  "accessWidener": "fabric_ponder.accesswidener",
+  "mixins": [
+    "catnip.mixins.json"
+  ],
+  "accessWidener": "fabric_catnip.accesswidener",
   "entrypoints": {
     "main": [
-      "net.createmod.ponder.FabricPonder"
+      "net.createmod.catnip.FabricCatnip"
     ],
     "client": [
-      "net.createmod.ponder.FabricPonderClient"
+      "net.createmod.catnip.FabricCatnipClient"
     ]
   },
   "depends": {
