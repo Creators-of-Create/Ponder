@@ -41,5 +41,6 @@
 	"ponder.ponder.debug_sections.text_1": "This Section got merged to base.",
 	"ponder.ponder.debug_sections.text_2": "This Section renders independently.",
 	"ponder.ponder.debug_sections.text_3": "Seamless substitution of blocks",
-	"ponder.ponder.debug_sections.text_4": "Up, up and away."
+	"ponder.ponder.debug_sections.text_4": "Up, up and away.",
+  "ponder.keyinfo.ponder": "Ponder"
 }
