@@ -21,9 +21,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import net.createmod.catnip.Catnip;
 import net.createmod.catnip.net.ServerboundConfigPacket;
 import net.createmod.catnip.utility.Pair;
+import net.createmod.ponder.Ponder;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
@@ -144,7 +144,7 @@ public class ConfigHelper {
 	}
 
 	public static class ConfigPath {
-		private String modID = Catnip.MOD_ID;
+		private String modID = Ponder.MOD_ID;
 		private ModConfig.Type type = ModConfig.Type.CLIENT;
 		private String[] path = new String[0];
 

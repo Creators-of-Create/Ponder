@@ -7,10 +7,12 @@ import java.util.function.UnaryOperator;
 
 import javax.annotation.Nullable;
 
+import net.createmod.ponder.Ponder;
+
+import net.createmod.ponder.enums.PonderGuiTextures;
+
 import org.lwjgl.glfw.GLFW;
 
-import net.createmod.catnip.Catnip;
-import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.FadableScreenElement;
@@ -85,19 +87,19 @@ public class BaseConfigScreen extends ConfigScreen {
 		try {
 			clientSpec = ConfigHelper.findForgeConfigSpecFor(ModConfig.Type.CLIENT, this.modID);
 		} catch (ClassCastException | NullPointerException e) {
-			Catnip.LOGGER.debug("Unable to find ClientConfigSpec for mod: " + this.modID);
+			Ponder.LOGGER.debug("Unable to find ClientConfigSpec for mod: " + this.modID);
 		}
 
 		try {
 			commonSpec = ConfigHelper.findForgeConfigSpecFor(ModConfig.Type.COMMON, this.modID);
 		} catch (ClassCastException | NullPointerException e) {
-			Catnip.LOGGER.debug("Unable to find CommonConfigSpec for mod: " + this.modID);
+			Ponder.LOGGER.debug("Unable to find CommonConfigSpec for mod: " + this.modID);
 		}
 
 		try {
 			serverSpec = ConfigHelper.findForgeConfigSpecFor(ModConfig.Type.SERVER, this.modID);
 		} catch (ClassCastException | NullPointerException e) {
-			Catnip.LOGGER.debug("Unable to find ServerConfigSpec for mod: " + this.modID);
+			Ponder.LOGGER.debug("Unable to find ServerConfigSpec for mod: " + this.modID);
 		}
 
 		return this;
@@ -198,7 +200,7 @@ public class BaseConfigScreen extends ConfigScreen {
 
 		goBack = new BoxWidget(width / 2 - 134, height / 2, 20, 20).withPadding(2, 2)
 				.withCallback(() -> linkTo(parent));
-		goBack.showingElement(CatnipGuiTextures.ICON_CONFIG_BACK.asStencil()
+		goBack.showingElement(PonderGuiTextures.ICON_CONFIG_BACK.asStencil()
 				.withElementRenderer(BoxWidget.gradientFactory.apply(goBack)));
 		goBack.getToolTip()
 				.add(Components.literal("Go Back"));

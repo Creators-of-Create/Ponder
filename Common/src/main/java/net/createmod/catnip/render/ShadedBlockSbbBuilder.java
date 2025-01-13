@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.createmod.catnip.mixin.client.accessor.BufferBuilderAccessor;
+import net.createmod.ponder.mixin.client.accessor.BufferBuilderAccessor;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 

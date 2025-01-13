@@ -3,6 +3,8 @@ package net.createmod.catnip.platform;
 import java.util.Locale;
 import java.util.Map;
 
+import net.createmod.catnip.platform.CatnipServices;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
@@ -11,13 +13,12 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import dev.engine_room.flywheel.lib.model.ModelUtil;
 import dev.engine_room.flywheel.lib.model.baked.VirtualEmptyBlockGetter;
-import net.createmod.catnip.mixin.client.accessor.ParticleEngineAccessor;
+import net.createmod.ponder.mixin.client.accessor.ParticleEngineAccessor;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
-import net.createmod.catnip.render.ForgeShadedBlockSbbBuilder;
+import net.createmod.ponder.render.ForgeShadedBlockSbbBuilder;
 import net.createmod.catnip.render.ShadedBlockSbbBuilder;
-import net.createmod.catnip.render.VirtualRenderHelper;
+import net.createmod.ponder.render.VirtualRenderHelper;
 import net.createmod.catnip.utility.BasicFluidRenderer;
 import net.createmod.catnip.utility.theme.Color;
 import net.minecraft.client.KeyMapping;
@@ -49,7 +50,7 @@ import net.minecraftforge.client.model.data.ModelData;
 
 public class ForgeClientHooksHelper implements ModClientHooksHelper {
 
-	private final Map<ResourceLocation, ParticleProvider<?>> particleProviders = ((ParticleEngineAccessor) Minecraft.getInstance().particleEngine).create$getProviders();
+	private final Map<ResourceLocation, ParticleProvider<?>> particleProviders = ((ParticleEngineAccessor) Minecraft.getInstance().particleEngine).ponder$getProviders();
 
 	@Override
 	public Locale getCurrentLocale() {

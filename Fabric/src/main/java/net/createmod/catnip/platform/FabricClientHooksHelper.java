@@ -12,10 +12,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import dev.engine_room.flywheel.lib.model.baked.VirtualEmptyBlockGetter;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.ParticleEngineAccessor;
-import io.github.fabricators_of_create.porting_lib.models.virtual.FixedColorTintingBakedModel;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
 import net.createmod.catnip.utility.BasicFluidRenderer;
-import net.createmod.catnip.utility.VertexUtils;
+import net.createmod.ponder.utility.VertexUtils;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.KeyMapping;
@@ -102,7 +101,8 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 			blockColor = color;
 		}
 		if (blockColor != -1) {
-			model = FixedColorTintingBakedModel.wrap(model, blockColor);
+			//FIXME missing FixedColorTintingBakedModel in porting lib
+			//model = FixedColorTintingBakedModel.wrap(model, blockColor);
 		}
 
 		RenderType renderType = ItemBlockRenderTypes.getChunkRenderType(state);

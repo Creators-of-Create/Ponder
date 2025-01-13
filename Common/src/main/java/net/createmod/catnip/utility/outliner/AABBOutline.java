@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.createmod.catnip.render.BindableTexture;
-import net.createmod.catnip.render.CatnipRenderTypes;
+import net.createmod.catnip.render.PonderRenderTypes;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
@@ -68,7 +68,7 @@ public class AABBOutline extends Outline {
 		if (lineWidth == 0)
 			return;
 
-		VertexConsumer consumer = buffer.getBuffer(CatnipRenderTypes.outlineSolid());
+		VertexConsumer consumer = buffer.getBuffer(PonderRenderTypes.outlineSolid());
 		renderBoxEdges(ms, consumer, minPos, maxPos, lineWidth, color, lightmap, disableLineNormals);
 	}
 
@@ -91,7 +91,7 @@ public class AABBOutline extends Outline {
 		if (faceTexture == null)
 			return;
 
-		RenderType renderType = CatnipRenderTypes.outlineTranslucent(faceTexture.getLocation(), cull);
+		RenderType renderType = PonderRenderTypes.outlineTranslucent(faceTexture.getLocation(), cull);
 		VertexConsumer consumer = buffer.getLateBuffer(renderType);
 
 		float alphaMult = highlighted ? 1 : 0.5f;

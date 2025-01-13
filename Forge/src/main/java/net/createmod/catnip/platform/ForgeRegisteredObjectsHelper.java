@@ -24,7 +24,7 @@ public class ForgeRegisteredObjectsHelper implements RegisteredObjectsHelper<IFo
 		if (key == null) {
 			throw new IllegalArgumentException("Could not get key for value " + value + "!");
 		}
-		
+
 		return key;
 	}
 

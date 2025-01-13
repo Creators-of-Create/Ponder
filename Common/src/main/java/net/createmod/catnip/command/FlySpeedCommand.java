@@ -4,7 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import net.createmod.catnip.Catnip;
+import net.createmod.ponder.Ponder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -37,7 +37,7 @@ public class FlySpeedCommand {
 		abilities.setFlyingSpeed(speed);
 		player.connection.send(new ClientboundPlayerAbilitiesPacket(abilities));
 		ctx.getSource().sendSuccess(() ->
-				Catnip.lang()
+				Ponder.lang()
 						.text("Temporarily set ")
 						.add(player.getName().copy())
 						.text("'s Flying Speed to " + speed)

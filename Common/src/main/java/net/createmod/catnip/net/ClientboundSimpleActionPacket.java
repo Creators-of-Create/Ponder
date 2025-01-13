@@ -5,14 +5,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import net.createmod.catnip.Catnip;
+import net.createmod.ponder.Ponder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 public class ClientboundSimpleActionPacket implements ClientboundPacket {
 
-	public static final ResourceLocation ID = Catnip.asResource("simple_action_packet");
+	public static final ResourceLocation ID = Ponder.asResource("simple_action_packet");
 
 	private static final Map<String, Supplier<Consumer<String>>> actions = new HashMap<>();
 
@@ -52,7 +52,7 @@ public class ClientboundSimpleActionPacket implements ClientboundPacket {
 	public static class Handler {
 		public static void handle(ClientboundSimpleActionPacket packet) {
 			if (!actions.containsKey(packet.action)) {
-				Catnip.LOGGER.warn("Received ClientboundSimpleActionPacket with invalid Action {}, ignoring the packet", packet.action);
+				Ponder.LOGGER.warn("Received ClientboundSimpleActionPacket with invalid Action {}, ignoring the packet", packet.action);
 				return;
 			}
 

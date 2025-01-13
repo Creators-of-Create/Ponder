@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import net.createmod.catnip.mixin.client.accessor.GameRendererAccessor;
+import net.createmod.ponder.mixin.client.accessor.GameRendererAccessor;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

@@ -9,11 +9,12 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.createmod.catnip.CatnipClient;
 import net.createmod.catnip.utility.Iterate;
 import net.createmod.catnip.utility.Pair;
 import net.createmod.catnip.utility.VecHelper;
 
+import net.createmod.catnip.utility.ghostblock.GhostBlocks;
+import net.createmod.catnip.utility.outliner.Outliner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -96,15 +97,15 @@ public interface IPlacementHelper {
 		Vec3 offsetB = facing.cross(direction).normalize().scale(.25);
 		Vec3 endA = center.add(direction.scale(.75)).add(offsetA);
 		Vec3 endB = center.add(direction.scale(.75)).add(offsetB);
-		CatnipClient.OUTLINER.showLine("placementArrowA" + center + target, start.add(offset), endA.add(offset)).lineWidth(1 / 16f);
-		CatnipClient.OUTLINER.showLine("placementArrowB" + center + target, start.add(offset), endB.add(offset)).lineWidth(1 / 16f);
+		Outliner.getInstance().showLine("placementArrowA" + center + target, start.add(offset), endA.add(offset)).lineWidth(1 / 16f);
+		Outliner.getInstance().showLine("placementArrowB" + center + target, start.add(offset), endB.add(offset)).lineWidth(1 / 16f);
 	}
 
 	default void displayGhost(PlacementOffset offset) {
 		if (!offset.hasGhostState())
 			return;
 
-		CatnipClient.GHOST_BLOCKS.showGhostState(this, offset.getTransform().apply(offset.getGhostState()))
+		GhostBlocks.getInstance().showGhostState(this, offset.getTransform().apply(offset.getGhostState()))
 				.at(offset.getBlockPos())
 				.breathingAlpha();
 	}

@@ -1,6 +1,6 @@
 package net.createmod.catnip.utility.levelWrappers;
 
-import net.createmod.catnip.mixin.accessor.EntityAccessor;
+import net.createmod.ponder.mixin.accessor.EntityAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;

@@ -4,8 +4,8 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-import net.createmod.catnip.Catnip;
 import net.createmod.catnip.config.ui.ConfigHelper;
+import net.createmod.ponder.Ponder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -15,7 +15,7 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class ServerboundConfigPacket<T> implements ServerboundPacket {
 
-	public static final ResourceLocation ID = Catnip.asResource("config_packet");
+	public static final ResourceLocation ID = Ponder.asResource("config_packet");
 
 	private final String modID;
 	private final String path;
@@ -49,7 +49,7 @@ public class ServerboundConfigPacket<T> implements ServerboundPacket {
 	@Override
 	public void handle(@Nullable MinecraftServer server, @Nullable ServerPlayer player) {
 		if (server == null || player == null) {
-			Catnip.LOGGER.error("Unable to handle ConfigureConfig Packet. Player ({}) or Server ({}) was null!", player, server);
+			Ponder.LOGGER.error("Unable to handle ConfigureConfig Packet. Player ({}) or Server ({}) was null!", player, server);
 			return;
 		}
 		server.execute(() -> {
@@ -69,7 +69,7 @@ public class ServerboundConfigPacket<T> implements ServerboundPacket {
 
 				configValue.set(v);
 			} catch (Exception e) {
-				Catnip.LOGGER.warn("Unable to handle ConfigureConfig Packet. ", e);
+				Ponder.LOGGER.warn("Unable to handle ConfigureConfig Packet. ", e);
 			}
 		});
 	}

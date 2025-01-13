@@ -12,6 +12,14 @@ import net.minecraft.world.phys.Vec3;
 
 public class GhostBlocks {
 
+	private final static GhostBlocks instance = new GhostBlocks();
+
+	public static GhostBlocks getInstance() {
+		return instance;
+	}
+
+	//
+
 	public static double getBreathingAlpha() {
 		double period = 2500;
 		double timer = System.currentTimeMillis() % period;
@@ -46,7 +54,7 @@ public class GhostBlocks {
 		return e;
 	}
 
-	public GhostBlocks() {
+	private GhostBlocks() {
 		ghosts = new HashMap<>();
 	}
 

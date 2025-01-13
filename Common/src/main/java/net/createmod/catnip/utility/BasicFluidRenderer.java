@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.render.CatnipRenderTypes;
+import net.createmod.catnip.render.PonderRenderTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 public class BasicFluidRenderer {
 
 	public static VertexConsumer getFluidBuilder(MultiBufferSource buffer) {
-		return buffer.getBuffer(CatnipRenderTypes.fluid());
+		return buffer.getBuffer(PonderRenderTypes.fluid());
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,

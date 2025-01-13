@@ -13,6 +13,8 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.createmod.ponder.enums.PonderGuiTextures;
+
 import org.lwjgl.glfw.GLFW;
 
 import com.electronwill.nightconfig.core.AbstractConfig;
@@ -25,7 +27,6 @@ import net.createmod.catnip.config.ui.entries.EnumEntry;
 import net.createmod.catnip.config.ui.entries.NumberEntry;
 import net.createmod.catnip.config.ui.entries.SubMenuEntry;
 import net.createmod.catnip.config.ui.entries.ValueEntry;
-import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ConfirmationScreen;
 import net.createmod.catnip.gui.ConfirmationScreen.Response;
 import net.createmod.catnip.gui.ScreenOpener;
@@ -193,7 +194,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 								.open(this)
 				);
 
-		resetAll.showingElement(CatnipGuiTextures.ICON_CONFIG_RESET.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(resetAll)));
+		resetAll.showingElement(PonderGuiTextures.ICON_CONFIG_RESET.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(resetAll)));
 		resetAll.getToolTip().add(Components.literal("Reset All"));
 		resetAll.getToolTip().addAll(FontHelper.cutStringTextComponent("Click here to reset all settings to their default value.", Palette.ALL_GRAY));
 
@@ -213,7 +214,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 					addAnnotationsToConfirm(confirm).open(this);
 				});
-		saveChanges.showingElement(CatnipGuiTextures.ICON_CONFIG_SAVE.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(saveChanges)));
+		saveChanges.showingElement(PonderGuiTextures.ICON_CONFIG_SAVE.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(saveChanges)));
 		saveChanges.getToolTip().add(Components.literal("Save Changes"));
 		saveChanges.getToolTip().addAll(FontHelper.cutStringTextComponent("Click here to save your current changes.", Palette.ALL_GRAY));
 
@@ -232,14 +233,14 @@ public class SubMenuConfigScreen extends ConfigScreen {
 							})
 							.open(this);
 				});
-		discardChanges.showingElement(CatnipGuiTextures.ICON_CONFIG_DISCARD.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(discardChanges)));
+		discardChanges.showingElement(PonderGuiTextures.ICON_CONFIG_DISCARD.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(discardChanges)));
 		discardChanges.getToolTip().add(Components.literal("Discard Changes"));
 		discardChanges.getToolTip().addAll(FontHelper.cutStringTextComponent("Click here to discard all the changes you made.", Palette.ALL_GRAY));
 
 		goBack = new BoxWidget(listL - 30, yCenter + 65, 20, 20)
 				.withPadding(2, 2)
 				.withCallback(this::attemptBackstep);
-		goBack.showingElement(CatnipGuiTextures.ICON_CONFIG_BACK.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(goBack)));
+		goBack.showingElement(PonderGuiTextures.ICON_CONFIG_BACK.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(goBack)));
 		goBack.getToolTip().add(Components.literal("Go Back"));
 
 		addRenderableWidget(resetAll);
@@ -325,13 +326,13 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		if (!canEdit) {
 			list.children().forEach(e -> e.setEditable(false));
 			resetAll.active = false;
-			stencil.withStencilRenderer((ms, w, h, alpha) -> CatnipGuiTextures.ICON_CONFIG_LOCKED.render(ms, 0, 0));
+			stencil.withStencilRenderer((ms, w, h, alpha) -> PonderGuiTextures.ICON_CONFIG_LOCKED.render(ms, 0, 0));
 			stencil.withElementRenderer((ms, w, h, alpha) -> UIRenderHelper.angledGradient(ms, 90, 8, 0, 16, 16, red));
 			serverLocked.withBorderColors(red);
 			serverLocked.getToolTip().add(Components.literal("Locked").withStyle(ChatFormatting.BOLD));
 			serverLocked.getToolTip().addAll(FontHelper.cutStringTextComponent("You do not have enough permissions to edit the server config. You can still look at the current values here though.", Palette.ALL_GRAY));
 		} else {
-			stencil.withStencilRenderer((ms, w, h, alpha) -> CatnipGuiTextures.ICON_CONFIG_UNLOCKED.render(ms, 0, 0));
+			stencil.withStencilRenderer((ms, w, h, alpha) -> PonderGuiTextures.ICON_CONFIG_UNLOCKED.render(ms, 0, 0));
 			stencil.withElementRenderer((ms, w, h, alpha) -> UIRenderHelper.angledGradient(ms, 90, 8, 0, 16, 16, green));
 			serverLocked.withBorderColors(green);
 			serverLocked.getToolTip().add(Components.literal("Unlocked").withStyle(ChatFormatting.BOLD));

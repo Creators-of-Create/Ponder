@@ -1,7 +1,7 @@
 package net.createmod.catnip.platform;
 
 import net.createmod.catnip.net.BasePacket;
-import net.createmod.catnip.net.ForgeCatnipNetwork;
+import net.createmod.ponder.net.ForgePonderNetwork;
 import net.createmod.catnip.platform.services.NetworkHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,12 +17,12 @@ public class ForgeNetworkHelper implements NetworkHelper {
 		if (!(player instanceof ServerPlayer serverPlayer))
 			return;
 
-		ForgeCatnipNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), packet);
+		ForgePonderNetwork.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), packet);
 	}
 
 	@Override
 	public void sendToNear(Level level, BlockPos pos, int range, BasePacket packet) {
-		ForgeCatnipNetwork.CHANNEL.send(PacketDistributor.NEAR.with(
+		ForgePonderNetwork.CHANNEL.send(PacketDistributor.NEAR.with(
 				PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), range, level.dimension())),
 				packet
 		);
@@ -30,11 +30,11 @@ public class ForgeNetworkHelper implements NetworkHelper {
 
 	@Override
 	public void sendToEntity(Entity entity, BasePacket packet) {
-		ForgeCatnipNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), packet);
+		ForgePonderNetwork.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), packet);
 	}
 
 	@Override
 	public void sendToServer(BasePacket packet) {
-		ForgeCatnipNetwork.CHANNEL.sendToServer(packet);
+		ForgePonderNetwork.CHANNEL.sendToServer(packet);
 	}
 }

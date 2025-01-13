@@ -13,9 +13,7 @@ base {
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":ponder:Common")
 
 boolean inMultiModWorkspace = rootProject.hasProperty("multiModWorkspace.enabled")
-boolean catnipInWorkspace = rootProject.hasProperty("multiModWorkspace.catnip")
 project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? "enabled" : "disabled"} for project ${mod_id}:${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Catnip: ${catnipInWorkspace}]")
 
 // -- Mixin Support
 if (project.ext.mixin_enabled) {
@@ -64,19 +62,10 @@ minecraft {
                 arg "-mixin.config=${mod_id}.mixins.json"
             }
 
-            arg "-mixin.config=catnip.mixins.json"
-
             mods {
                 ponder {
                     source sourceSets.main
                     source commonProject.sourceSets.main
-                }
-
-                if (catnipInWorkspace) {
-                    catnip {
-                        source project(":catnip:Common").sourceSets.main
-                        source project(":catnip:Forge").sourceSets.main
-                    }
                 }
             }
         }
@@ -87,7 +76,7 @@ minecraft {
 
             arg "-mixin.config=flywheel.backend.mixins.json"
             arg "-mixin.config=flywheel.impl.mixins.json"
-            arg "-mixin.config=flywheel.impl.sodium.mixins.json"
+            //arg "-mixin.config=flywheel.impl.sodium.mixins.json"
         }
 
         server {
@@ -102,13 +91,6 @@ minecraft {
 dependencies {
     minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
     compileOnly(commonProject)
-
-    if (catnipInWorkspace) {
-        implementation(project(":catnip:Common"))
-        implementation(project(":catnip:Forge"))
-    } else {
-        implementation(fg.deobf("net.createmod.catnip:Catnip-Forge-${minecraft_version}:${catnip_version}"))
-    }
 
     compileOnly(fg.deobf("dev.engine_room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"))
     runtimeOnly(fg.deobf("dev.engine_room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"))

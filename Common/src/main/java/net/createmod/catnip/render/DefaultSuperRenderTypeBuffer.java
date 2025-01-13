@@ -87,7 +87,7 @@ public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
 			});
 
 			//extras
-			put(map, CatnipRenderTypes.outlineSolid());
+			put(map, PonderRenderTypes.outlineSolid());
 		});
 		private final MultiBufferSource.BufferSource bufferSource = MultiBufferSource.immediateWithBuffers(fixedBuffers, new BufferBuilder(256));
 

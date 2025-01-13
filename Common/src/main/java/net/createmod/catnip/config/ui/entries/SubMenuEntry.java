@@ -3,10 +3,10 @@ package net.createmod.catnip.config.ui.entries;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.createmod.catnip.config.ui.ConfigScreenList;
 import net.createmod.catnip.config.ui.SubMenuConfigScreen;
-import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
+import net.createmod.ponder.enums.PonderGuiTextures;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -18,7 +18,7 @@ public class SubMenuEntry extends ConfigScreenList.LabeledEntry {
 		super(label);
 
 		button = new BoxWidget(0, 0, 35, 16)
-				.showingElement(CatnipGuiTextures.ICON_CONFIG_OPEN.asStencil().at(10, 0))
+				.showingElement(PonderGuiTextures.ICON_CONFIG_OPEN.asStencil().at(10, 0))
 				.withCallback(() -> ScreenOpener.open(new SubMenuConfigScreen(parent, label, parent.type, spec, config)));
 		button.modifyElement(e -> ((DelegatedStencilElement) e).withElementRenderer(BoxWidget.gradientFactory.apply(button)));
 

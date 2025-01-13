@@ -19,6 +19,18 @@ import net.minecraft.world.phys.Vec3;
 
 public class Outliner {
 
+	// Singleton
+
+	private static final Outliner instance = new Outliner();
+
+	public static Outliner getInstance() {
+		return instance;
+	}
+
+	//
+
+	public Outliner() {}
+
 	private final Map<Object, OutlineEntry> outlines = Collections.synchronizedMap(new HashMap<>());
 	private final Map<Object, OutlineEntry> outlinesView = Collections.unmodifiableMap(outlines);
 

@@ -2,12 +2,12 @@ package net.createmod.catnip.platform;
 
 import java.util.ServiceLoader;
 
-import net.createmod.catnip.Catnip;
 import net.createmod.catnip.platform.services.ModFluidHelper;
 import net.createmod.catnip.platform.services.ModHooksHelper;
 import net.createmod.catnip.platform.services.NetworkHelper;
 import net.createmod.catnip.platform.services.PlatformHelper;
 import net.createmod.catnip.platform.services.RegisteredObjectsHelper;
+import net.createmod.ponder.Ponder;
 
 public class CatnipServices {
 
@@ -21,7 +21,7 @@ public class CatnipServices {
 		final T loadedService = ServiceLoader.load(clazz)
 				.findFirst()
 				.orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
-		Catnip.LOGGER.debug("Loaded {} for service {}", loadedService, clazz);
+		Ponder.LOGGER.debug("Loaded {} for service {}", loadedService, clazz);
 		return loadedService;
 	}
 

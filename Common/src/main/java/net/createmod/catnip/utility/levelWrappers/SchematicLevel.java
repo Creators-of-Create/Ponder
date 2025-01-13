@@ -8,9 +8,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import net.createmod.catnip.Catnip;
 import net.createmod.catnip.utility.BBHelper;
 import net.createmod.catnip.utility.NBTProcessors;
+import net.createmod.ponder.Ponder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -107,7 +107,7 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor,
 				}
 				return blockEntity;
 			} catch (Exception e) {
-				Catnip.LOGGER.debug("Could not create BlockEntity of block " + blockState, e);
+				Ponder.LOGGER.debug("Could not create BlockEntity of block " + blockState, e);
 			}
 		}
 		return null;

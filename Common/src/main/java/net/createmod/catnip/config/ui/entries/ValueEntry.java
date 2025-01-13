@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import net.createmod.ponder.enums.PonderGuiTextures;
+
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.ClipboardManager;
@@ -17,7 +19,6 @@ import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.config.ui.ConfigScreenList;
 import net.createmod.catnip.config.ui.SubMenuConfigScreen;
-import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.FontHelper;
@@ -49,7 +50,7 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 		this.path = String.join(".", value.getPath());
 
 		resetButton = new BoxWidget(0, 0, resetWidth - 12, 16)
-				.showingElement(CatnipGuiTextures.ICON_CONFIG_RESET.asStencil())
+				.showingElement(PonderGuiTextures.ICON_CONFIG_RESET.asStencil())
 				.withCallback(() -> {
 					setValue((T) spec.getDefault());
 					this.onReset();

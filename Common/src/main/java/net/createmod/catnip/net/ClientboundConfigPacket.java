@@ -1,8 +1,8 @@
 package net.createmod.catnip.net;
 
-import net.createmod.catnip.Catnip;
 import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.utility.lang.Components;
+import net.createmod.ponder.Ponder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,7 +11,7 @@ import net.minecraftforge.fml.config.ModConfig;
 
 public class ClientboundConfigPacket implements ClientboundPacket {
 
-	public static final ResourceLocation ID = Catnip.asResource("config_packet");
+	public static final ResourceLocation ID = Ponder.asResource("config_packet");
 
 	private final String path;
 	private final String value;
@@ -50,12 +50,12 @@ public class ClientboundConfigPacket implements ClientboundPacket {
 				try {
 					path = ConfigHelper.ConfigPath.parse(packet.path);
 				} catch (IllegalArgumentException e) {
-					player.displayClientMessage(Catnip.lang().text(e.getMessage()).component(), false);
+					player.displayClientMessage(Ponder.lang().text(e.getMessage()).component(), false);
 					return;
 				}
 
 				if (path.getType() != ModConfig.Type.CLIENT) {
-					Catnip.LOGGER.warn("Received type-mismatched config packet on client");
+					Ponder.LOGGER.warn("Received type-mismatched config packet on client");
 					return;
 				}
 
@@ -66,7 +66,7 @@ public class ClientboundConfigPacket implements ClientboundPacket {
 					player.displayClientMessage(Components.literal("Config could not be set the the specified value!"), false);
 				} catch (Exception e) {
 					player.displayClientMessage(Components.literal("Something went wrong while trying to set config value. Check the client logs for more information"), false);
-					Catnip.LOGGER.warn("Exception during client-side config value set:", e);
+					Ponder.LOGGER.warn("Exception during client-side config value set:", e);
 				}
 			});
 		}

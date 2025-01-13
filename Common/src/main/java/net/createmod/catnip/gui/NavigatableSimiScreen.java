@@ -2,9 +2,10 @@ package net.createmod.catnip.gui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
+
+import net.createmod.ponder.enums.PonderGuiTextures;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -15,7 +16,6 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.utility.Couple;
@@ -86,7 +86,7 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 		if (previousScreen instanceof NavigatableSimiScreen screen) {
 			screen.initBackTrackIcon(backTrack);
 		} else {
-			backTrack.showing(CatnipGuiTextures.ICON_DISABLE);
+			backTrack.showing(PonderGuiTextures.ICON_DISABLE);
 		}
 
 	}

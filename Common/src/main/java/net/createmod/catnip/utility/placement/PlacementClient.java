@@ -8,12 +8,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
-import net.createmod.catnip.config.CClient;
-import net.createmod.catnip.enums.CatnipConfig;
-import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.utility.VecHelper;
 import net.createmod.catnip.utility.animation.LerpedFloat;
 import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.ponder.config.CClient;
+import net.createmod.ponder.enums.PonderConfig;
+import net.createmod.ponder.enums.PonderGuiTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -182,7 +182,7 @@ public class PlacementClient {
 
 		float length = 10;
 
-		CClient.PlacementIndicatorSetting mode = CatnipConfig.Client().placementIndicator.get();
+		CClient.PlacementIndicatorSetting mode = PonderConfig.Client().placementIndicator.get();
 		PoseStack poseStack = graphics.pose();
 		if (mode == CClient.PlacementIndicatorSetting.TRIANGLE)
 			fadedArrow(poseStack, centerX, centerY, r, g, b, a, length, snappedAngle);
@@ -201,7 +201,7 @@ public class PlacementClient {
 		ms.translate(centerX, centerY, 5);
 		ms.mulPose(Axis.ZP.rotationDegrees(angle.getValue(0)));
 		// RenderSystem.rotatef(snappedAngle, 0, 0, 1);
-		double scale = CatnipConfig.Client().indicatorScale.get();
+		double scale = PonderConfig.Client().indicatorScale.get();
 		ms.scale((float) scale, (float) scale, 1);
 
 		Tesselator tesselator = Tesselator.getInstance();
@@ -228,7 +228,7 @@ public class PlacementClient {
 
 	public static void textured(PoseStack ms, float centerX, float centerY, float alpha, float snappedAngle) {
 		//RenderSystem.enableTexture();
-		CatnipGuiTextures.PLACEMENT_INDICATOR_SHEET.bind();
+		PonderGuiTextures.PLACEMENT_INDICATOR_SHEET.bind();
 		RenderSystem.enableDepthTest();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
@@ -236,7 +236,7 @@ public class PlacementClient {
 
 		ms.pushPose();
 		ms.translate(centerX, centerY, 50);
-		float scale = CatnipConfig.Client().indicatorScale.get()
+		float scale = PonderConfig.Client().indicatorScale.get()
 			.floatValue() * .75f;
 		ms.scale(scale, scale, 1);
 		ms.scale(12, 12, 1);

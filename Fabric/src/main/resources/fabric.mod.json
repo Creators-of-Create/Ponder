@@ -15,15 +15,15 @@
   "license": "${mod_license}",
   "environment": "*",
   "mixins": [
-    "catnip.mixins.json"
+      "ponder.mixins.json"
   ],
-  "accessWidener": "fabric_catnip.accesswidener",
+  "accessWidener": "fabric_ponder.accesswidener",
   "entrypoints": {
     "main": [
-      "net.createmod.catnip.FabricCatnip"
+      "net.createmod.ponder.FabricPonder"
     ],
     "client": [
-      "net.createmod.catnip.FabricCatnipClient"
+      "net.createmod.ponder.FabricPonderClient"
     ]
   },
   "depends": {

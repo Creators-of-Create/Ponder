@@ -6,8 +6,6 @@ apply from: "../gradle/property_helper.gradle"
 
 archivesBaseName = "${mod_name}-Common-${minecraft_version}"
 
-boolean catnipInWorkspace = rootProject.hasProperty('multiModWorkspace.catnip')
-
 minecraft {
     version(minecraft_version)
     accessWideners "src/main/resources/ponder.accesswidener"
@@ -19,12 +17,6 @@ dependencies {
     implementation "com.electronwill.night-config:core:3.6.5"
     implementation "com.electronwill.night-config:toml:3.6.5"
     compileOnly "net.minecraftforge:forgeconfigapiport-fabric:3.2.3" //source: https://github.com/Fuzss/forgeconfigapiport-fabric
-
-    if (catnipInWorkspace) {
-        compileOnly project(":catnip:Common")
-    } else {
-        compileOnly "net.createmod.catnip:Catnip-Common-${minecraft_version}:${catnip_version}"
-    }
 
     compileOnly "dev.engine_room.flywheel:flywheel-common-mojmap-api-${minecraft_version}:${flywheel_version}"
 

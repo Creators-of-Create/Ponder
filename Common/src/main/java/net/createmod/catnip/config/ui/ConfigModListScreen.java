@@ -6,9 +6,10 @@ import java.util.Locale;
 
 import javax.annotation.Nullable;
 
+import net.createmod.ponder.enums.PonderGuiTextures;
+
 import org.lwjgl.glfw.GLFW;
 
-import net.createmod.catnip.enums.CatnipGuiTextures;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
@@ -56,7 +57,7 @@ public class ConfigModListScreen extends ConfigScreen {
 
 		goBack = new BoxWidget(width / 2 - listWidth / 2 - 30, height / 2 + 65, 20, 20).withPadding(2, 2)
 				.withCallback(() -> ScreenOpener.open(parent));
-		goBack.showingElement(CatnipGuiTextures.ICON_CONFIG_BACK.asStencil()
+		goBack.showingElement(PonderGuiTextures.ICON_CONFIG_BACK.asStencil()
 				.withElementRenderer(BoxWidget.gradientFactory.apply(goBack)));
 		goBack.getToolTip()
 				.add(Components.literal("Go Back"));
@@ -124,7 +125,7 @@ public class ConfigModListScreen extends ConfigScreen {
 			this.id = id;
 
 			button = new BoxWidget(0, 0, 35, 16)
-					.showingElement(CatnipGuiTextures.ICON_CONFIG_OPEN.asStencil().at(10, 0));
+					.showingElement(PonderGuiTextures.ICON_CONFIG_OPEN.asStencil().at(10, 0));
 			button.modifyElement(e -> ((DelegatedStencilElement) e).withElementRenderer(BoxWidget.gradientFactory.apply(button)));
 
 			if (ConfigHelper.hasAnyForgeConfig(id)) {
