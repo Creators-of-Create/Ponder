@@ -1,6 +1,6 @@
 package net.createmod.ponder.api.scene;
 
-import net.createmod.catnip.utility.Pointing;
+import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.InputElementBuilder;
 import net.createmod.ponder.api.element.TextElementBuilder;

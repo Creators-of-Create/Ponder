@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.createmod.catnip.gui.element.AbstractRenderElement;
 import net.createmod.catnip.gui.element.RenderElement;
 import net.createmod.catnip.gui.element.ScreenElement;
-import net.createmod.catnip.utility.animation.LerpedFloat;
+import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class ElementWidget extends AbstractSimiWidget {

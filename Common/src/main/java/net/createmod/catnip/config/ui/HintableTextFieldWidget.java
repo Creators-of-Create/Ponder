@@ -3,7 +3,7 @@ package net.createmod.catnip.config.ui;
 import org.lwjgl.glfw.GLFW;
 
 import net.createmod.catnip.gui.UIRenderHelper;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

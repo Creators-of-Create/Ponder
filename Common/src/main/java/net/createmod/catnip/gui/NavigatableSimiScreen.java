@@ -18,10 +18,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.lang.Lang;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.lang.Lang;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;

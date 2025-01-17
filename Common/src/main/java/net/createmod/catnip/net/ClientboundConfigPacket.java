@@ -1,7 +1,7 @@
 package net.createmod.catnip.net;
 
 import net.createmod.catnip.config.ui.ConfigHelper;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.createmod.ponder.Ponder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;

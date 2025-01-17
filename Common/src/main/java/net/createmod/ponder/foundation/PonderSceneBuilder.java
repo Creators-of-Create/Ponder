@@ -8,9 +8,9 @@ import java.util.function.UnaryOperator;
 
 import org.joml.Vector3f;
 
-import net.createmod.catnip.utility.Pointing;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.math.Pointing;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.api.ParticleEmitter;
 import net.createmod.ponder.api.PonderPalette;

@@ -1,7 +1,7 @@
 package net.createmod.catnip.platform;
 
 import net.createmod.catnip.platform.services.ModHooksHelper;
-import net.createmod.catnip.utility.placement.IPlacementHelper;
+import net.createmod.catnip.placement.IPlacementHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

@@ -15,7 +15,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.resources.ResourceLocation;

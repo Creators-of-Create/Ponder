@@ -1,8 +1,8 @@
 package net.createmod.catnip.gui.element;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;

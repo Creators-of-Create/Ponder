@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import net.createmod.catnip.animation.AnimationTickHolder;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.joml.Matrix4f;
@@ -30,10 +31,10 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
-import net.createmod.catnip.utility.Pair;
-import net.createmod.catnip.utility.VecHelper;
-import net.createmod.catnip.utility.animation.LerpedFloat;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.outliner.Outliner;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.PonderElement;
 import net.createmod.ponder.api.element.PonderOverlayElement;
@@ -47,7 +48,6 @@ import net.createmod.ponder.foundation.instruction.HideAllInstruction;
 import net.createmod.ponder.foundation.instruction.PonderInstruction;
 import net.createmod.ponder.foundation.registration.PonderLocalization;
 import net.createmod.ponder.foundation.ui.PonderUI;
-import net.createmod.ponder.utility.LevelTickHolder;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -549,7 +549,7 @@ public class PonderScene {
 		}
 
 		public PoseStack apply(PoseStack ms) {
-			return apply(ms, LevelTickHolder.getPartialTicks(world));
+			return apply(ms, AnimationTickHolder.getPartialTicks(world));
 		}
 
 		public PoseStack apply(PoseStack ms, float pt) {

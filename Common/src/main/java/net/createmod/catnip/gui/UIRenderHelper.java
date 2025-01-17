@@ -26,8 +26,8 @@ import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
 
 import net.createmod.catnip.platform.CatnipClientServices;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;

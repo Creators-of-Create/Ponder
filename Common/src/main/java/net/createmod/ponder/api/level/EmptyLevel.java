@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.createmod.catnip.utility.levelWrappers.DummyLevelEntityGetter;
+import net.createmod.catnip.levelWrappers.DummyLevelEntityGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;

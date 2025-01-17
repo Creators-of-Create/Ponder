@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.data.Couple;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.api.registration.LangRegistryAccess;
 import net.createmod.ponder.foundation.PonderIndex;

@@ -13,7 +13,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.engine_room.flywheel.lib.model.baked.VirtualEmptyBlockGetter;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.ParticleEngineAccessor;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
-import net.createmod.catnip.utility.BasicFluidRenderer;
+import net.createmod.catnip.render.BasicFluidRenderer;
 import net.createmod.ponder.utility.VertexUtils;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;

@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import net.createmod.catnip.gui.TickableGuiEventListener;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.lang.Components;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;

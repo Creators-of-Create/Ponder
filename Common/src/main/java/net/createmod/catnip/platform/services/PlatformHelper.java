@@ -1,7 +1,7 @@
 package net.createmod.catnip.platform.services;
 
-import net.createmod.catnip.utility.Env;
-import net.createmod.catnip.utility.Loader;
+import net.createmod.catnip.platform.Env;
+import net.createmod.catnip.platform.Loader;
 
 import java.util.List;
 import java.util.function.Supplier;

@@ -3,8 +3,6 @@ package net.createmod.catnip.platform;
 import java.util.Locale;
 import java.util.Map;
 
-import net.createmod.catnip.platform.CatnipServices;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
@@ -19,8 +17,8 @@ import net.createmod.catnip.platform.services.ModClientHooksHelper;
 import net.createmod.ponder.render.ForgeShadedBlockSbbBuilder;
 import net.createmod.catnip.render.ShadedBlockSbbBuilder;
 import net.createmod.ponder.render.VirtualRenderHelper;
-import net.createmod.catnip.utility.BasicFluidRenderer;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.render.BasicFluidRenderer;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

@@ -9,7 +9,7 @@ import net.createmod.catnip.net.ClientboundConfigPacket;
 import net.createmod.catnip.net.ClientboundSimpleActionPacket;
 import net.createmod.catnip.net.ConfigPathArgument;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.utility.lang.Components;
+import net.createmod.catnip.lang.Components;
 import net.createmod.ponder.Ponder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

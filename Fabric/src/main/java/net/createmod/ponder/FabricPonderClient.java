@@ -6,10 +6,10 @@ import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvent
 import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.RenderTooltipBorderColorCallback;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
-import net.createmod.catnip.utility.Couple;
+import net.createmod.catnip.data.Couple;
 import net.createmod.ponder.utility.FabricClientResourceReloadListener;
-import net.createmod.catnip.utility.placement.PlacementClient;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.placement.PlacementClient;
+import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.enums.PonderConfig;
 import net.createmod.ponder.enums.PonderKeybinds;
 import net.createmod.ponder.foundation.PonderTooltipHandler;

@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import net.createmod.catnip.utility.outliner.Outline.OutlineParams;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.outliner.Outline.OutlineParams;
+import net.createmod.catnip.outliner.Outliner;
 import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;

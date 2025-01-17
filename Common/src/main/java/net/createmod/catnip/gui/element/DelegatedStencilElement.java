@@ -1,7 +1,7 @@
 package net.createmod.catnip.gui.element;
 
 import net.createmod.catnip.gui.UIRenderHelper;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class DelegatedStencilElement extends AbstractRenderElement implements StencilElement {

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.data.Pair;
 import net.createmod.ponder.api.registration.StoryBoardEntry;
 import net.minecraft.resources.ResourceLocation;
 

@@ -1,6 +1,6 @@
 package net.createmod.ponder.api;
 
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.theme.Color;
 
 public enum PonderPalette {
 
