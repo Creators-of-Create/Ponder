@@ -106,9 +106,13 @@ public abstract class AbstractSimiScreen extends Screen {
 
 		prepareFrame();
 
+		renderMenuBackground(graphics);
 		renderWindowBackground(graphics, mouseX, mouseY, partialTicks);
 		renderWindow(graphics, mouseX, mouseY, partialTicks);
-		super.render(graphics, mouseX, mouseY, partialTicks);
+
+		for (Renderable renderable : getRenderables())
+			renderable.render(graphics, mouseX, mouseY, partialTicks);
+
 		renderWindowForeground(graphics, mouseX, mouseY, partialTicks);
 
 		endFrame();
