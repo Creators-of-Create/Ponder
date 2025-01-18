@@ -1,35 +1,39 @@
 package net.createmod.ponder;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
-import net.createmod.catnip.render.StitchedSprite;
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.placement.PlacementClient;
+import net.createmod.catnip.render.StitchedSprite;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.enums.PonderConfig;
 import net.createmod.ponder.enums.PonderKeybinds;
 import net.createmod.ponder.foundation.PonderTooltipHandler;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.level.LevelEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraft.client.Minecraft;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber.Bus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
+
+import java.util.Optional;
+import java.util.function.Supplier;
 
 @Mod(value = Ponder.MOD_ID, dist = Dist.CLIENT)
 public class NeoForgePonderClient {
@@ -43,17 +47,8 @@ public class NeoForgePonderClient {
 
 	@EventBusSubscriber(Dist.CLIENT)
 	public static class ClientEvents {
-		// TODO - Check if this is correct, not sure if it should be pre or post
 		@SubscribeEvent
 		public static void onTickPre(ClientTickEvent.Pre event) {
-			PonderTooltipHandler.tick();
-		}
-
-		@SubscribeEvent
-		public static void onTickPost(ClientTickEvent.Post event) {
-			if (event.phase != TickEvent.Phase.END)
-				return;
-
 			PonderClient.onTick();
 			PonderTooltipHandler.tick();
 		}
@@ -77,11 +72,11 @@ public class NeoForgePonderClient {
 		}
 
 		@SubscribeEvent
-		public static void afterRenderOverlayLayer(RenderGuiOverlayEvent.Post event) {
-			if (event.getOverlay() != VanillaGuiOverlay.CROSSHAIR.type())
+		public static void afterRenderOverlayLayer(RenderGuiLayerEvent.Post event) {
+			if (event.getName() != VanillaGuiLayers.CROSSHAIR)
 				return;
 
-			PlacementClient.onRenderCrosshairOverlay(event.getWindow(), event.getGuiGraphics(), event.getPartialTick());
+			PlacementClient.onRenderCrosshairOverlay(Minecraft.getInstance().getWindow(), event.getGuiGraphics(), AnimationTickHolder.getPartialTicksUI());
 		}
 
 		@SubscribeEvent
@@ -100,7 +95,7 @@ public class NeoForgePonderClient {
 		}
 	}
 
-	@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+	@EventBusSubscriber(value = Dist.CLIENT, bus = Bus.MOD)
 	public static class ModBusClientEvents {
 		@SubscribeEvent
 		public static void loadCompleted(FMLLoadCompleteEvent event) {
@@ -110,12 +105,13 @@ public class NeoForgePonderClient {
 					.getModContainerById(Ponder.MOD_ID)
 					.orElseThrow(() -> new IllegalStateException("Ponder Mod Container missing after loadCompleted"));
 
-			Supplier<IConfigScreenFactory> configScreen = () ->(mc, previousScreen) -> new BaseConfigScreen(previousScreen, Ponder.MOD_ID);
+			Supplier<IConfigScreenFactory> configScreen = () ->
+				(mc, previousScreen) -> new BaseConfigScreen(previousScreen, Ponder.MOD_ID);
 			modContainer.registerExtensionPoint(IConfigScreenFactory.class, configScreen);
 
 			BaseConfigScreen.setDefaultActionFor(Ponder.MOD_ID, base -> base
 					.withButtonLabels("Client Settings", null, null)
-					.withSpecs(PonderConfig.Client().specification, null, null)
+					.withSpecs(PonderConfig.client().specification, null, null)
 			);
 		}
 
@@ -125,7 +121,7 @@ public class NeoForgePonderClient {
 		}
 
 		@SubscribeEvent
-		public static void onTextureStichPost(TextureStitchEvent.Post event) {
+		public static void onTextureStitchPost(TextureAtlasStitchedEvent event) {
 			StitchedSprite.onTextureStitchPost(event.getAtlas());
 		}
 
@@ -134,4 +130,5 @@ public class NeoForgePonderClient {
 			PonderKeybinds.register(event::register);
 		}
 	}
+
 }

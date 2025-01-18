@@ -85,6 +85,6 @@ public class PonderIndex {
 	}
 
 	public static boolean editingModeActive() {
-		return PonderConfig.Client().editingMode.get();
+		return PonderConfig.client().editingMode.get();
 	}
 }

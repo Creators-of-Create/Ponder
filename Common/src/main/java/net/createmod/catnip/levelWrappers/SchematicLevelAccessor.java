@@ -3,7 +3,6 @@ package net.createmod.catnip.levelWrappers;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;

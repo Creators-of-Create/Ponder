@@ -16,7 +16,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
@@ -25,19 +25,19 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 	protected HintableTextFieldWidget textField;
 
 	@Nullable
-	public static NumberEntry<? extends Number> create(Object type, String label, ForgeConfigSpec.ConfigValue<?> value, ForgeConfigSpec.ValueSpec spec) {
+	public static NumberEntry<? extends Number> create(Object type, String label, ModConfigSpec.ConfigValue<?> value, ModConfigSpec.ValueSpec spec) {
 		if (type instanceof Integer) {
-			return new IntegerEntry(label, (ForgeConfigSpec.ConfigValue<Integer>) value, spec);
+			return new IntegerEntry(label, (ModConfigSpec.ConfigValue<Integer>) value, spec);
 		} else if (type instanceof Float) {
-			return new FloatEntry(label, (ForgeConfigSpec.ConfigValue<Float>) value, spec);
+			return new FloatEntry(label, (ModConfigSpec.ConfigValue<Float>) value, spec);
 		} else if (type instanceof Double) {
-			return new DoubleEntry(label, (ForgeConfigSpec.ConfigValue<Double>) value, spec);
+			return new DoubleEntry(label, (ModConfigSpec.ConfigValue<Double>) value, spec);
 		}
 
 		return null;
 	}
 
-	public NumberEntry(String label, ForgeConfigSpec.ConfigValue<T> value, ForgeConfigSpec.ValueSpec spec) {
+	public NumberEntry(String label, ModConfigSpec.ConfigValue<T> value, ModConfigSpec.ValueSpec spec) {
 		super(label, value, spec);
 		textField = new ConfigTextField(Minecraft.getInstance().font, 0, 0, 200, 20);
 		if (this instanceof IntegerEntry && annotations.containsKey("IntDisplay")) {
@@ -95,7 +95,7 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 			}
 		});
 
-		textField.moveCursorToStart();
+		textField.moveCursorToStart(false);
 		listeners.add(textField);
 		onReset();
 	}
@@ -133,7 +133,6 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 	@Override
 	public void tick() {
 		super.tick();
-		textField.tick();
 	}
 
 	@Override
@@ -161,7 +160,7 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
 	public static class IntegerEntry extends NumberEntry<Integer> {
 
-		public IntegerEntry(String label, ForgeConfigSpec.ConfigValue<Integer> value, ForgeConfigSpec.ValueSpec spec) {
+		public IntegerEntry(String label, ModConfigSpec.ConfigValue<Integer> value, ModConfigSpec.ValueSpec spec) {
 			super(label, value, spec);
 		}
 
@@ -193,7 +192,7 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
 	public static class FloatEntry extends NumberEntry<Float> {
 
-		public FloatEntry(String label, ForgeConfigSpec.ConfigValue<Float> value, ForgeConfigSpec.ValueSpec spec) {
+		public FloatEntry(String label, ModConfigSpec.ConfigValue<Float> value, ModConfigSpec.ValueSpec spec) {
 			super(label, value, spec);
 		}
 
@@ -215,7 +214,7 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
 	public static class DoubleEntry extends NumberEntry<Double> {
 
-		public DoubleEntry(String label, ForgeConfigSpec.ConfigValue<Double> value, ForgeConfigSpec.ValueSpec spec) {
+		public DoubleEntry(String label, ModConfigSpec.ConfigValue<Double> value, ModConfigSpec.ValueSpec spec) {
 			super(label, value, spec);
 		}
 

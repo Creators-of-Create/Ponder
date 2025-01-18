@@ -11,7 +11,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.material.Fluid;
@@ -26,25 +27,25 @@ public class BasicFluidRenderer {
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
-			float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom, boolean invertGasses) {
+									  float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom, boolean invertGasses) {
 		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom, invertGasses, null);
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
-			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom, boolean invertGasses) {
+									  float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom, boolean invertGasses) {
 		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, builder, ms, light, renderBottom, invertGasses, null);
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
-			float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom, boolean invertGasses, @Nullable CompoundTag fluidData) {
+									  float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom, boolean invertGasses, @Nullable DataComponentPatch fluidData) {
 		renderFluidBox(fluid, amount, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom, invertGasses, fluidData);
 	}
 
 	public static void renderFluidBox(Fluid fluid, long amount, float xMin, float yMin, float zMin, float xMax,
-			float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom, boolean invertGasses, @Nullable CompoundTag fluidData) {
+									  float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom, boolean invertGasses, @Nullable DataComponentPatch fluidData) {
 		TextureAtlasSprite fluidTexture = Minecraft.getInstance()
-				.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-				.apply(CatnipServices.FLUID_HELPER.getStillTexture(fluid, amount, fluidData));
+			.getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+			.apply(CatnipServices.FLUID_HELPER.getStillTexture(fluid, amount, fluidData));
 
 		int color = CatnipServices.FLUID_HELPER.getColor(fluid, amount, fluidData);
 		int blockLightIn = (light >> 4) & 0xF;
@@ -65,17 +66,17 @@ public class BasicFluidRenderer {
 
 			boolean positive = side.getAxisDirection() == Direction.AxisDirection.POSITIVE;
 			if (side.getAxis()
-					.isHorizontal()) {
+				.isHorizontal()) {
 				if (side.getAxis() == Direction.Axis.X) {
 					renderStillTiledFace(side, zMin, yMin, zMax, yMax, positive ? xMax : xMin,
-							builder, ms, light, color, fluidTexture);
+						builder, ms, light, color, fluidTexture);
 				} else {
 					renderStillTiledFace(side, xMin, yMin, xMax, yMax, positive ? zMax : zMin,
-							builder, ms, light, color, fluidTexture);
+						builder, ms, light, color, fluidTexture);
 				}
 			} else {
 				renderStillTiledFace(side, xMin, zMin, xMax, zMax, positive ? yMax : yMin,
-						builder, ms, light, color, fluidTexture);
+					builder, ms, light, color, fluidTexture);
 			}
 		}
 
@@ -83,13 +84,13 @@ public class BasicFluidRenderer {
 	}
 
 	public static void renderStillTiledFace(Direction dir, float left, float down, float right, float up,
-			float depth, VertexConsumer builder, PoseStack ms, int light, int color, TextureAtlasSprite texture) {
+											float depth, VertexConsumer builder, PoseStack ms, int light, int color, TextureAtlasSprite texture) {
 		renderTiledFace(dir, left, down, right, up, depth, builder, ms, light, color, texture, 1);
 	}
 
 	public static void renderTiledFace(Direction dir, float left, float down, float right, float up,
-			float depth, VertexConsumer builder, PoseStack ms, int light, int color, TextureAtlasSprite texture,
-			float textureScale) {
+									   float depth, VertexConsumer builder, PoseStack ms, int light, int color, TextureAtlasSprite texture,
+									   float textureScale) {
 		boolean positive = dir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
 		boolean horizontal = dir.getAxis().isHorizontal();
 		boolean x = dir.getAxis() == Direction.Axis.X;
@@ -108,11 +109,11 @@ public class BasicFluidRenderer {
 			x2 = Math.min(f + 1, right);
 			if (dir == Direction.NORTH || dir == Direction.EAST) {
 				f = Mth.ceil(x2);
-				u1 = texture.getU((f - x2) * 16 * textureScale);
-				u2 = texture.getU((f - x1) * 16 * textureScale);
+				u1 = texture.getU((f - x2) * textureScale);
+				u2 = texture.getU((f - x1) * textureScale);
 			} else {
-				u1 = texture.getU((x1 - f) * 16 * textureScale);
-				u2 = texture.getU((x2 - f) * 16 * textureScale);
+				u1 = texture.getU((x1 - f) * textureScale);
+				u2 = texture.getU((x2 - f) * textureScale);
 			}
 			u1 = Mth.lerp(shrink, u1, centerU);
 			u2 = Mth.lerp(shrink, u2, centerU);
@@ -120,12 +121,12 @@ public class BasicFluidRenderer {
 				f = Mth.floor(y1);
 				y2 = Math.min(f + 1, up);
 				if (dir == Direction.UP) {
-					v1 = texture.getV((y1 - f) * 16 * textureScale);
-					v2 = texture.getV((y2 - f) * 16 * textureScale);
+					v1 = texture.getV((y1 - f) * textureScale);
+					v2 = texture.getV((y2 - f) * textureScale);
 				} else {
 					f = Mth.ceil(y2);
-					v1 = texture.getV((f - y2) * 16 * textureScale);
-					v2 = texture.getV((f - y1) * 16 * textureScale);
+					v1 = texture.getV((f - y2) * textureScale);
+					v2 = texture.getV((f - y1) * textureScale);
 				}
 				v1 = Mth.lerp(shrink, v1, centerV);
 				v2 = Mth.lerp(shrink, v2, centerV);
@@ -153,7 +154,7 @@ public class BasicFluidRenderer {
 	}
 
 	protected static void putVertex(VertexConsumer builder, PoseStack ms, float x, float y, float z, int color, float u,
-			float v, Direction face, int light) {
+									float v, Direction face, int light) {
 
 		Vec3i normal = face.getNormal();
 		PoseStack.Pose peek = ms.last();
@@ -162,13 +163,14 @@ public class BasicFluidRenderer {
 		int g = color >> 8 & 0xff;
 		int b = color & 0xff;
 
-		builder.vertex(peek.pose(), x, y, z)
-				.color(r, g, b, a)
-				.uv(u, v)
-				//.overlayCoords(OverlayTexture.NO_OVERLAY)
-				.uv2(light)
-				.normal(peek.normal(), normal.getX(), normal.getY(), normal.getZ())
-				.endVertex();
+		builder.addVertex(peek.pose(), x, y, z)
+			.setColor(r, g, b, a)
+			.setUv(u, v)
+			//.overlayCoords(OverlayTexture.NO_OVERLAY)
+			.setLight(light)
+			.setNormal(peek.copy(), normal.getX(), normal.getY(), normal.getZ())
+		;
 	}
 
-	}
+}
+

@@ -1,12 +1,13 @@
 package net.createmod.catnip.render;
 
+import net.createmod.catnip.theme.Color;
+
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
-import net.createmod.catnip.theme.Color;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;

@@ -14,12 +14,10 @@ import net.minecraft.client.Minecraft;
 
 @Mixin(Minecraft.class)
 public class WindowResizeMixin {
-
 	@Shadow @Final private Window window;
 
 	@Inject(at = @At("TAIL"), method = "resizeDisplay")
 	private void catnip$updateWindowSize(CallbackInfo ci) {
 		UIRenderHelper.updateWindowSize(window);
 	}
-
 }

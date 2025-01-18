@@ -65,11 +65,6 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 		super(x, y, width, height, message);
 	}
 
-	@Override
-	protected ClientTooltipPositioner createTooltipPositioner() {
-		return DefaultTooltipPositioner.INSTANCE;
-	}
-
 	public <T extends AbstractSimiWidget> T withCallback(BiConsumer<Integer, Integer> cb) {
 		this.onClick = cb;
 		//noinspection unchecked

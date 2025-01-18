@@ -11,6 +11,9 @@ import net.createmod.ponder.Ponder;
 
 import net.createmod.ponder.enums.PonderGuiTextures;
 
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
+
 import org.lwjgl.glfw.GLFW;
 
 import net.createmod.catnip.gui.ScreenOpener;
@@ -25,8 +28,6 @@ import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
 
 public class BaseConfigScreen extends ConfigScreen {
 
@@ -55,9 +56,9 @@ public class BaseConfigScreen extends ConfigScreen {
 	@Nullable BoxWidget others;
 	@Nullable BoxWidget title;
 
-	@Nullable ForgeConfigSpec clientSpec;
-	@Nullable ForgeConfigSpec commonSpec;
-	@Nullable ForgeConfigSpec serverSpec;
+	@Nullable ModConfigSpec clientSpec;
+	@Nullable ModConfigSpec commonSpec;
+	@Nullable ModConfigSpec serverSpec;
 	String clientButtonLabel = "Client Config";
 	String commonButtonLabel = "Common Config";
 	String serverButtonLabel = "Server Config";
@@ -77,7 +78,7 @@ public class BaseConfigScreen extends ConfigScreen {
 
 	/**
 	 * If you have static references to your Configs or ConfigSpecs (like Create does in AllConfigs),
-	 * please use {@link #withSpecs(ForgeConfigSpec, ForgeConfigSpec, ForgeConfigSpec)} instead
+	 * please use {@link #withSpecs(ModConfigSpec, ModConfigSpec, ModConfigSpec)} instead
 	 */
 	public BaseConfigScreen searchForConfigSpecs() {
 		if (!ConfigHelper.hasAnyForgeConfig(this.modID)){
@@ -85,19 +86,19 @@ public class BaseConfigScreen extends ConfigScreen {
 		}
 
 		try {
-			clientSpec = ConfigHelper.findForgeConfigSpecFor(ModConfig.Type.CLIENT, this.modID);
+			clientSpec = ConfigHelper.findModConfigSpecFor(ModConfig.Type.CLIENT, this.modID);
 		} catch (ClassCastException | NullPointerException e) {
 			Ponder.LOGGER.debug("Unable to find ClientConfigSpec for mod: " + this.modID);
 		}
 
 		try {
-			commonSpec = ConfigHelper.findForgeConfigSpecFor(ModConfig.Type.COMMON, this.modID);
+			commonSpec = ConfigHelper.findModConfigSpecFor(ModConfig.Type.COMMON, this.modID);
 		} catch (ClassCastException | NullPointerException e) {
 			Ponder.LOGGER.debug("Unable to find CommonConfigSpec for mod: " + this.modID);
 		}
 
 		try {
-			serverSpec = ConfigHelper.findForgeConfigSpecFor(ModConfig.Type.SERVER, this.modID);
+			serverSpec = ConfigHelper.findModConfigSpecFor(ModConfig.Type.SERVER, this.modID);
 		} catch (ClassCastException | NullPointerException e) {
 			Ponder.LOGGER.debug("Unable to find ServerConfigSpec for mod: " + this.modID);
 		}
@@ -105,7 +106,7 @@ public class BaseConfigScreen extends ConfigScreen {
 		return this;
 	}
 
-	public BaseConfigScreen withSpecs(@Nullable ForgeConfigSpec client, @Nullable ForgeConfigSpec common, @Nullable ForgeConfigSpec server) {
+	public BaseConfigScreen withSpecs(@Nullable ModConfigSpec client, @Nullable ModConfigSpec common, @Nullable ModConfigSpec server) {
 		clientSpec = client;
 		commonSpec = common;
 		serverSpec = server;

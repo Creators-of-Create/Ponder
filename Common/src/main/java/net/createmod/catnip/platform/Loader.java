@@ -1,14 +1,14 @@
 package net.createmod.catnip.platform;
 
 public enum Loader {
-	FABRIC, FORGE;
+	FABRIC, NEOFORGE;
 
 	public boolean isFabric() {
 			return this == FABRIC;
 	}
 
-	public boolean isForge() {
-			return this == FORGE;
+	public boolean isNeoForge() {
+			return this == NEOFORGE;
 	}
 
 	public boolean isCurrent() {

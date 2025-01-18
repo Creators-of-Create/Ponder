@@ -1,5 +1,7 @@
 package net.createmod.catnip.platform.services;
 
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
@@ -13,7 +15,7 @@ public interface ModFluidHelper<R> {
 		return getColor(fluid, amount, null);
 	}
 
-	int getColor(Fluid fluid, long amount, @Nullable CompoundTag fluidData);
+	int getColor(Fluid fluid, long amount, @Nullable DataComponentPatch fluidData);
 
 	int getLuminosity(Fluid fluid);
 
@@ -21,7 +23,7 @@ public interface ModFluidHelper<R> {
 		return getLuminosity(fluid, amount, null);
 	}
 
-	int getLuminosity(Fluid fluid, long amount, @Nullable CompoundTag fluidData);
+	int getLuminosity(Fluid fluid, long amount, @Nullable DataComponentPatch fluidData);
 
 	ResourceLocation getStillTexture(Fluid fluid);
 
@@ -29,7 +31,7 @@ public interface ModFluidHelper<R> {
 		return getStillTexture(fluid, amount, null);
 	}
 
-	ResourceLocation getStillTexture(Fluid fluid, long amount, @Nullable CompoundTag fluidData);
+	ResourceLocation getStillTexture(Fluid fluid, long amount, @Nullable DataComponentPatch fluidData);
 
 	boolean isLighterThanAir(Fluid fluid);
 
@@ -37,5 +39,5 @@ public interface ModFluidHelper<R> {
 		return toStack(fluid, amount, null);
 	}
 
-	R toStack(Fluid fluid, long amount, @Nullable CompoundTag fluidData);
+	R toStack(Fluid fluid, long amount, @Nullable DataComponentPatch fluidData);
 }

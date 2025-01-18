@@ -42,7 +42,7 @@ import net.minecraft.world.level.material.FluidState;
 public class FabricClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public Locale getCurrentLocale() {
-		return Minecraft.getInstance().getLanguageManager().getSelectedJavaLocale();
+		return Minecraft.getInstance().getLanguageManager().getJavaLocale();
 	}
 
 	@Override

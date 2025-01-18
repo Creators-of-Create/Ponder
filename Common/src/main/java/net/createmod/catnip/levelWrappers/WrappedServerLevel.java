@@ -1,6 +1,13 @@
 package net.createmod.catnip.levelWrappers;
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import net.createmod.ponder.mixin.accessor.BiomeManagerAccessor;
 import net.createmod.ponder.mixin.accessor.EntityAccessor;
+import net.createmod.ponder.mixin.accessor.MinecraftServerAccessor;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -16,23 +23,20 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.ticks.LevelTicks;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
 
 public class WrappedServerLevel extends ServerLevel {
 
 	protected ServerLevel level;
 
 	public WrappedServerLevel(ServerLevel level) {
-		super(level.getServer(), Util.backgroundExecutor(), level.getServer().storageSource,
+		super(level.getServer(), Util.backgroundExecutor(), ((MinecraftServerAccessor) level.getServer()).catnip$getStorageSource(),
 			  (ServerLevelData) level.getLevelData(), level.dimension(),
 			  new LevelStem(level.dimensionTypeRegistration(), level.getChunkSource().getGenerator()),
-			  new DummyStatusListener(), level.isDebug(), level.getBiomeManager().biomeZoomSeed,
+			  new DummyStatusListener(), level.isDebug(), ((BiomeManagerAccessor) level.getBiomeManager()).catnip$getBiomeZoomSeed(),
 			  Collections.emptyList(), false, level.getRandomSequences());
 		this.level = level;
 	}
@@ -84,7 +88,7 @@ public class WrappedServerLevel extends ServerLevel {
 	}
 
 	@Override
-	public MapItemSavedData getMapData(String mapName) {
+	public @Nullable MapItemSavedData getMapData(MapId mapId) {
 		return null;
 	}
 
@@ -95,11 +99,11 @@ public class WrappedServerLevel extends ServerLevel {
 	}
 
 	@Override
-	public void setMapData(String mapId, MapItemSavedData mapDataIn) {}
+	public void setMapData(MapId mapId, MapItemSavedData mapData) {}
 
 	@Override
-	public int getFreeMapId() {
-		return 0;
+	public MapId getFreeMapId() {
+		return new MapId(0);
 	}
 
 	@Override

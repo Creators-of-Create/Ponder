@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.createmod.ponder.mixin.accessor.BiomeManagerAccessor;
+import net.createmod.ponder.mixin.client.accessor.ClientPacketListenerAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -26,8 +28,8 @@ public class WrappedClientLevel extends ClientLevel {
 
 	private WrappedClientLevel(Level level) {
 		super(mc.getConnection(), mc.level.getLevelData(), level.dimension(), level.dimensionTypeRegistration(),
-			mc.getConnection().serverChunkRadius, mc.level.getServerSimulationDistance(), level.getProfilerSupplier(),
-			mc.levelRenderer, level.isDebug(), level.getBiomeManager().biomeZoomSeed);
+			((ClientPacketListenerAccessor) mc.getConnection()).catnip$getServerChunkRadius(), mc.level.getServerSimulationDistance(), level.getProfilerSupplier(),
+			mc.levelRenderer, level.isDebug(), ((BiomeManagerAccessor) level.getBiomeManager()).catnip$getBiomeZoomSeed());
 		this.level = level;
 	}
 

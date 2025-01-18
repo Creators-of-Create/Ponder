@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.theme.Color;
+
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL20;
@@ -26,8 +29,6 @@ import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
 
 import net.createmod.catnip.platform.CatnipClientServices;
-import net.createmod.catnip.data.Couple;
-import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -179,13 +180,12 @@ public class UIRenderHelper {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-		buffer.vertex(mat, right,    top, zLevel).color(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha()).endVertex();
-		buffer.vertex(mat,  left,    top, zLevel).color(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha()).endVertex();
-		buffer.vertex(mat,  left, bottom, zLevel).color(  endColor.getRed(),   endColor.getGreen(),   endColor.getBlue(),   endColor.getAlpha()).endVertex();
-		buffer.vertex(mat, right, bottom, zLevel).color(  endColor.getRed(),   endColor.getGreen(),   endColor.getBlue(),   endColor.getAlpha()).endVertex();
-		tesselator.end();
+		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		buffer.addVertex(mat, right,    top, zLevel).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
+		buffer.addVertex(mat,  left,    top, zLevel).setColor(startColor.getRed(), startColor.getGreen(), startColor.getBlue(), startColor.getAlpha());
+		buffer.addVertex(mat,  left, bottom, zLevel).setColor(  endColor.getRed(),   endColor.getGreen(),   endColor.getBlue(),   endColor.getAlpha());
+		buffer.addVertex(mat, right, bottom, zLevel).setColor(  endColor.getRed(),   endColor.getGreen(),   endColor.getBlue(),   endColor.getAlpha());
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 
 		RenderSystem.disableBlend();
 		//RenderSystem.enableTexture();
@@ -240,35 +240,34 @@ public class UIRenderHelper {
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
 		Tesselator tessellator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuilder();
+		BufferBuilder bufferbuilder = tessellator.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
 		Matrix4f model = graphics.pose().last().pose();
-		bufferbuilder.begin(VertexFormat.Mode.TRIANGLES, DefaultVertexFormat.POSITION_COLOR);
 
-		bufferbuilder.vertex(model, x0, y1, 0).color(fc1.getRed(), fc1.getGreen(), fc1.getBlue(), fc1.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x1, y0, 0).color(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x1, y1, 0).color(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha()).endVertex();
+		bufferbuilder.addVertex(model, x0, y1, 0).setColor(fc1.getRed(), fc1.getGreen(), fc1.getBlue(), fc1.getAlpha());
+		bufferbuilder.addVertex(model, x1, y0, 0).setColor(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha());
+		bufferbuilder.addVertex(model, x1, y1, 0).setColor(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha());
 
-		bufferbuilder.vertex(model, x0, y1, 0).color(fc1.getRed(), fc1.getGreen(), fc1.getBlue(), fc1.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x1, y1, 0).color(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x1, y2, 0).color(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha()).endVertex();
+		bufferbuilder.addVertex(model, x0, y1, 0).setColor(fc1.getRed(), fc1.getGreen(), fc1.getBlue(), fc1.getAlpha());
+		bufferbuilder.addVertex(model, x1, y1, 0).setColor(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha());
+		bufferbuilder.addVertex(model, x1, y2, 0).setColor(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha());
 
-		bufferbuilder.vertex(model, x1, y2, 0).color(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x1, y0, 0).color(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x2, y0, 0).color(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha()).endVertex();
+		bufferbuilder.addVertex(model, x1, y2, 0).setColor(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha());
+		bufferbuilder.addVertex(model, x1, y0, 0).setColor(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha());
+		bufferbuilder.addVertex(model, x2, y0, 0).setColor(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha());
 
-		bufferbuilder.vertex(model, x1, y2, 0).color(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x2, y0, 0).color(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x2, y2, 0).color(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha()).endVertex();
+		bufferbuilder.addVertex(model, x1, y2, 0).setColor(fc2.getRed(), fc2.getGreen(), fc2.getBlue(), fc2.getAlpha());
+		bufferbuilder.addVertex(model, x2, y0, 0).setColor(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha());
+		bufferbuilder.addVertex(model, x2, y2, 0).setColor(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha());
 
-		bufferbuilder.vertex(model, x2, y1, 0).color(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x2, y0, 0).color(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x3, y0, 0).color(fc4.getRed(), fc4.getGreen(), fc4.getBlue(), fc4.getAlpha()).endVertex();
+		bufferbuilder.addVertex(model, x2, y1, 0).setColor(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha());
+		bufferbuilder.addVertex(model, x2, y0, 0).setColor(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha());
+		bufferbuilder.addVertex(model, x3, y0, 0).setColor(fc4.getRed(), fc4.getGreen(), fc4.getBlue(), fc4.getAlpha());
 
-		bufferbuilder.vertex(model, x2, y2, 0).color(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x2, y1, 0).color(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha()).endVertex();
-		bufferbuilder.vertex(model, x3, y2, 0).color(fc4.getRed(), fc4.getGreen(), fc4.getBlue(), fc4.getAlpha()).endVertex();
+		bufferbuilder.addVertex(model, x2, y2, 0).setColor(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha());
+		bufferbuilder.addVertex(model, x2, y1, 0).setColor(fc3.getRed(), fc3.getGreen(), fc3.getBlue(), fc3.getAlpha());
+		bufferbuilder.addVertex(model, x3, y2, 0).setColor(fc4.getRed(), fc4.getGreen(), fc4.getBlue(), fc4.getAlpha());
 
-		tessellator.end();
+		BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
 		RenderSystem.enableCull();
 		RenderSystem.disableBlend();
 		//RenderSystem.enableTexture();
@@ -289,22 +288,21 @@ public class UIRenderHelper {
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-		BufferBuilder builder = Tesselator.getInstance().getBuilder();
-		builder.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
+		BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
 
 		Matrix4f pose = graphics.pose().last().pose();
 		Matrix3f n = graphics.pose().last().normal();
 
 		for (int i = 0; i < innerPoints.size(); i++) {
 			Point2D point = outerPoints.get(i);
-			//builder.vertex(pose, (float) point.getX(), (float) point.getY(), 0).color(innerColor.getRGB()).normal(n, 1, 1, 0).endVertex();
-			builder.vertex(pose, (float) point.getX(), (float) point.getY(), 0).color(outerColor.getRGB()).endVertex();
+			//builder.addVertex(pose, (float) point.getX(), (float) point.getY(), 0).setColor(innerColor.getRGB()).normal(n, 1, 1, 0);
+			builder.addVertex(pose, (float) point.getX(), (float) point.getY(), 0).setColor(outerColor.getRGB());
 
 			point = innerPoints.get(i);
-			builder.vertex(pose, (float) point.getX(), (float) point.getY(), 0).color(innerColor.getRGB()).endVertex();
+			builder.addVertex(pose, (float) point.getX(), (float) point.getY(), 0).setColor(innerColor.getRGB());
 		}
 
-		Tesselator.getInstance().end();
+		BufferUploader.drawWithShader(builder.buildOrThrow());
 
 		RenderSystem.disableBlend();
 
@@ -360,21 +358,20 @@ public class UIRenderHelper {
 
 	private static void drawTexturedQuad(Matrix4f m, Color c, int left, int right, int top, int bot, int z, float u1, float u2, float v1, float v2) {
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tesselator.getBuilder();
+		BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
-		bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-		bufferbuilder.vertex(m, (float) left , (float) bot, (float) z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).uv(u1, v2).endVertex();
-		bufferbuilder.vertex(m, (float) right, (float) bot, (float) z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).uv(u2, v2).endVertex();
-		bufferbuilder.vertex(m, (float) right, (float) top, (float) z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).uv(u2, v1).endVertex();
-		bufferbuilder.vertex(m, (float) left , (float) top, (float) z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).uv(u1, v1).endVertex();
-		tesselator.end();
+		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+		bufferbuilder.addVertex(m, (float) left , (float) bot, (float) z).setColor(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).setUv(u1, v2);
+		bufferbuilder.addVertex(m, (float) right, (float) bot, (float) z).setColor(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).setUv(u2, v2);
+		bufferbuilder.addVertex(m, (float) right, (float) top, (float) z).setColor(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).setUv(u2, v1);
+		bufferbuilder.addVertex(m, (float) left , (float) top, (float) z).setColor(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).setUv(u1, v1);
+		BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
 		RenderSystem.disableBlend();
 	}
 
 	public static void flipForGuiRender(PoseStack poseStack) {
-		poseStack.mulPoseMatrix(new Matrix4f().scaling(1, -1, 1));
+		poseStack.mulPose(new Matrix4f().scaling(1, -1, 1));
 	}
 
 	public static class CustomRenderTarget extends RenderTarget {
@@ -424,15 +421,14 @@ public class UIRenderHelper {
 			//bindRead();
 
 			Tesselator tesselator = RenderSystem.renderThreadTesselator();
-			BufferBuilder bufferbuilder = tesselator.getBuilder();
-			bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+			BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
-			bufferbuilder.vertex(0 , vy, 0).uv(0 , 0 ).color(1, 1, 1, alpha).endVertex();
-			bufferbuilder.vertex(vx, vy, 0).uv(tx, 0 ).color(1, 1, 1, alpha).endVertex();
-			bufferbuilder.vertex(vx, 0 , 0).uv(tx, ty).color(1, 1, 1, alpha).endVertex();
-			bufferbuilder.vertex(0 , 0 , 0).uv(0 , ty).color(1, 1, 1, alpha).endVertex();
+			bufferbuilder.addVertex(0 , vy, 0).setUv(0 , 0 ).setColor(1, 1, 1, alpha);
+			bufferbuilder.addVertex(vx, vy, 0).setUv(tx, 0 ).setColor(1, 1, 1, alpha);
+			bufferbuilder.addVertex(vx, 0 , 0).setUv(tx, ty).setColor(1, 1, 1, alpha);
+			bufferbuilder.addVertex(0 , 0 , 0).setUv(0 , ty).setColor(1, 1, 1, alpha);
 
-			BufferUploader.draw(bufferbuilder.end());
+			BufferUploader.draw(bufferbuilder.buildOrThrow());
 
 			shaderinstance.clear();
 			RenderSystem.setProjectionMatrix(projectionMatrix, VertexSorting.ORTHOGRAPHIC_Z);

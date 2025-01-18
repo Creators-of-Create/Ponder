@@ -146,19 +146,19 @@ public abstract class NavigatableSimiScreen extends AbstractSimiScreen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics graphics) {
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		if (!isCurrentlyRenderingPreviousScreen())
-			super.renderBackground(graphics);
+			super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 	}
 
 	@Override
 	protected void renderWindowBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		if (transition.getChaseTarget() == 0 || transition.settled()) {
-			renderBackground(graphics);
+			renderBackground(graphics, mouseX, mouseY, partialTicks);
 			return;
 		}
 
-		renderBackground(graphics);
+		renderBackground(graphics, mouseX, mouseY, partialTicks);
 
 		PoseStack ms = graphics.pose();
 

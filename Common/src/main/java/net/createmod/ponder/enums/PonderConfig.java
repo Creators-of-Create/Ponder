@@ -55,7 +55,7 @@ public class PonderConfig {
 				configBase.onReload();
 	}
 
-	public static CClient Client() {
+	public static CClient client() {
 		if (client == null)
 			throw new AssertionError("Ponder Client Config was accessed, but not registered yet!");
 

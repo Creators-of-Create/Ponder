@@ -9,6 +9,9 @@ import javax.annotation.Nonnull;
 
 import net.createmod.ponder.enums.PonderGuiTextures;
 
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
+
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.ClipboardManager;
@@ -29,8 +32,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
 
 public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 
@@ -38,12 +39,12 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 
 	public static final ClipboardManager clipboardHelper = new ClipboardManager();
 
-	protected ForgeConfigSpec.ConfigValue<T> value;
-	protected ForgeConfigSpec.ValueSpec spec;
+	protected ModConfigSpec.ConfigValue<T> value;
+	protected ModConfigSpec.ValueSpec spec;
 	protected BoxWidget resetButton;
 	protected boolean editable = true;
 
-	public ValueEntry(String label, ForgeConfigSpec.ConfigValue<T> value, ForgeConfigSpec.ValueSpec spec) {
+	public ValueEntry(String label, ModConfigSpec.ConfigValue<T> value, ModConfigSpec.ValueSpec spec) {
 		super(label);
 		this.value = value;
 		this.spec = spec;

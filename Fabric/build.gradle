@@ -25,13 +25,15 @@ dependencies {
     modApi "dev.engine_room.flywheel:flywheel-fabric-api-${minecraft_version}:${flywheel_version}"
     modImplementation "dev.engine_room.flywheel:flywheel-fabric-${minecraft_version}:${flywheel_version}"
 
-    //implementation "com.electronwill.night-config:core:3.6.3"
-    //implementation "com.electronwill.night-config:toml:3.6.3"
-    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0" //source: https://github.com/Fuzss/forgeconfigapiport-fabric
+    //implementation("com.electronwill.night-config:core:3.6.3")
+    //implementation("com.electronwill.night-config:toml:3.6.3")
+    modApi("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeconfigapiport_version}") //source: https://github.com/Fuzss/forgeconfigapiport-fabric
+
+    //source: https://github.com/Fuzss/forgeconfigapiport-fabric
     implementation(include("javax.annotation:javax.annotation-api:1.3.2"))
     implementation(include("com.google.code.findbugs:jsr305:3.0.2"))
-    //modImplementation "com.terraformersmc:modmenu:4.1.2"
-    implementation commonProject
+
+    implementation(commonProject)
 }
 
 loom {

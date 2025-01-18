@@ -13,8 +13,7 @@ import org.joml.Quaternionfc;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -64,9 +63,9 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	private final ShiftOutput shiftOutput = new ShiftOutput();
 
 
-	public DefaultSuperByteBuffer(RenderedBuffer renderedBuffer) {
-		ByteBuffer rendered = renderedBuffer.vertexBuffer();
-		BufferBuilder.DrawState drawState = renderedBuffer.drawState();
+	public DefaultSuperByteBuffer(MeshData data) {
+		ByteBuffer rendered = data.vertexBuffer();
+		MeshData.DrawState drawState = data.drawState();
 
 		// Vanilla issue, endianness does not carry over into sliced buffers - fixed by forge only
 		rendered.order(ByteOrder.nativeOrder());
@@ -117,7 +116,7 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 			normal.mul(normalMatrix);
 			lightPos.mul(localTransforms);
 
-			consumer.vertex(pos.x(), pos.y(), pos.z());
+			consumer.addVertex(pos.x(), pos.y(), pos.z());
 
 			byte r, g, b, a;
 			if (shouldColor) {
@@ -132,10 +131,10 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 				a = getA(i);
 			}
 			if (disableDiffuse) {
-				consumer.color(r, g, b, a);
+				consumer.setColor(r, g, b, a);
 			} else {
 				// missing flywheel's diffuse calc stuff
-				consumer.color(r, g, b, a);
+				consumer.setColor(r, g, b, a);
 			}
 			float u = getU(i);
 			float v = getV(i);
@@ -146,7 +145,7 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 				v = shiftOutput.v;
 			}
 
-			consumer.uv(u, v);
+			consumer.setUv(u, v);
 
 			int light;
 			if (useWorldLight) {
@@ -167,14 +166,12 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 			}
 
 			if (hybridLight) {
-				consumer.uv2(SuperByteBuffer.maxLight(light, getLight(i)));
+				consumer.setLight(SuperByteBuffer.maxLight(light, getLight(i)));
 			} else {
-				consumer.uv2(light);
+				consumer.setLight(light);
 			}
 
-			consumer.normal(normal.x(), normal.y(), normal.z());
-
-			consumer.endVertex();
+			consumer.setNormal(normal.x(), normal.y(), normal.z());
 		}
 
 		reset();
@@ -325,9 +322,9 @@ public class DefaultSuperByteBuffer implements SuperByteBuffer {
 	public DefaultSuperByteBuffer shiftUVtoSheet(SpriteShiftEntry entry, float uTarget, float vTarget, int sheetSize) {
 		spriteShiftFunc = (u, v, output) -> {
 			float targetU = entry.getTarget()
-				.getU((SpriteShiftEntry.getUnInterpolatedU(entry.getOriginal(), u) / sheetSize) + uTarget * 16);
+				.getU((SpriteShiftEntry.getUnInterpolatedU(entry.getOriginal(), u) / sheetSize) + uTarget);
 			float targetV = entry.getTarget()
-				.getV((SpriteShiftEntry.getUnInterpolatedV(entry.getOriginal(), v) / sheetSize) + vTarget * 16);
+				.getV((SpriteShiftEntry.getUnInterpolatedV(entry.getOriginal(), v) / sheetSize) + vTarget);
 			output.accept(targetU, targetV);
 		};
 		return this;

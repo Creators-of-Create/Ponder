@@ -15,7 +15,8 @@
   "license": "${mod_license}",
   "environment": "*",
   "mixins": [
-      "ponder.mixins.json"
+      "${mod_id}.mixins.json",
+      "${mod_id}-common.mixins.json"
   ],
   "accessWidener": "fabric_ponder.accesswidener",
   "entrypoints": {

@@ -41,8 +41,8 @@ public class VertexUtils {
 		Vector3f normal = new Vector3f((float)faceNormal.getX(), (float)faceNormal.getY(), (float)faceNormal.getZ());
 		Matrix4f matrix4f = pose.pose();
 		normal.mul(pose.normal());
-		int intSize = DefaultVertexFormat.BLOCK.getIntegerSize();
-		int vertexCount = aint.length / intSize;
+		int vertexSize = DefaultVertexFormat.BLOCK.getVertexSize();
+		int vertexCount = aint.length / vertexSize;
 
 		try (MemoryStack memorystack = MemoryStack.stackPush()) {
 			ByteBuffer bytebuffer = memorystack.malloc(DefaultVertexFormat.BLOCK.getVertexSize());
@@ -80,7 +80,12 @@ public class VertexUtils {
 				Vector4f pos = new Vector4f(f, f1, f2, 1.0F);
 				pos.mul(matrix4f);
 				applyBakedNormals(normal, bytebuffer, pose.normal());
-				builder.vertex(pos.x(), pos.y(), pos.z(), cr, cg, cb, ca, f9, f10, packedOverlay, lightmapCoord, normal.x(), normal.y(), normal.z());
+				builder.addVertex(pos.x(), pos.y(), pos.z())
+					.setColor(cr, cg, cb, ca)
+					.setUv(f9, f10)
+					.setOverlay(packedOverlay)
+					.setLight(lightmapCoord)
+					.setNormal(normal.x(), normal.y(), normal.z());
 			}
 		}
 	}

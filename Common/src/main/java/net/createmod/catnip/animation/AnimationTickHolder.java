@@ -3,6 +3,8 @@ package net.createmod.catnip.animation;
 import net.createmod.catnip.levelWrappers.WrappedClientLevel;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.foundation.ui.PonderUI;
+import net.createmod.ponder.mixin.accessor.TimerAccessor;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.LevelAccessor;
 
@@ -39,11 +41,6 @@ public class AnimationTickHolder {
 		return level instanceof PonderLevel ? PonderUI.ponderTicks : getTicks();
 	}
 
-	public static float getPartialTicks() {
-		Minecraft mc = Minecraft.getInstance();
-		return (mc.isPaused() ? mc.pausePartialTick : mc.getFrameTime());
-	}
-
 	public static float getPartialTicks(LevelAccessor level) {
 		return level instanceof PonderLevel ? PonderUI.getPartialTicks() : getPartialTicks();
 	}
@@ -54,5 +51,28 @@ public class AnimationTickHolder {
 
 	public static float getRenderTime(LevelAccessor level) {
 		return getTicks(level) + getPartialTicks(level);
+	}
+
+	/**
+	 * @return the fraction between the current tick to the next tick, frozen during game pause [0-1]
+	 */
+	public static float getPartialTicks() {
+		Minecraft mc = Minecraft.getInstance();
+		return mc.getTimer().getGameTimeDeltaPartialTick(false);
+	}
+
+	/**
+	 * @return the fraction between the current tick to the next tick, not frozen during game pause [0-1]
+	 */
+	// TODO - Check if one of the getGameTimeDeltaPartialTick methods can be used here instead
+	public static float getPartialTicksUI() {
+		Minecraft mc = Minecraft.getInstance();
+		DeltaTracker timer = mc.getTimer();
+
+		if (timer instanceof TimerAccessor timerAccessor) {
+			return timerAccessor.catnip$getDeltaTickResidual();
+		} else {
+			return getPartialTicks();
+		}
 	}
 }

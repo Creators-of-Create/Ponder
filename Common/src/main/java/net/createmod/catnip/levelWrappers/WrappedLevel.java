@@ -1,6 +1,13 @@
 package net.createmod.catnip.levelWrappers;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+
 import net.createmod.ponder.mixin.accessor.EntityAccessor;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -8,9 +15,11 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.SectionPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -22,16 +31,12 @@ import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.LevelTickAccess;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
 
 public class WrappedLevel extends Level {
 
@@ -135,7 +140,13 @@ public class WrappedLevel extends Level {
 	}
 
 	@Override
-	public MapItemSavedData getMapData(String mapName) {
+	public TickRateManager tickRateManager() {
+		return level.tickRateManager();
+	}
+
+	@Nullable
+	@Override
+	public MapItemSavedData getMapData(MapId mapId) {
 		return null;
 	}
 
@@ -146,10 +157,10 @@ public class WrappedLevel extends Level {
 	}
 
 	@Override
-	public void setMapData(String pMapId, MapItemSavedData pData) {}
+	public void setMapData(MapId mapId, MapItemSavedData mapItemSavedData) {}
 
 	@Override
-	public int getFreeMapId() {
+	public MapId getFreeMapId() {
 		return level.getFreeMapId();
 	}
 
@@ -177,6 +188,11 @@ public class WrappedLevel extends Level {
 	}
 
 	@Override
+	public PotionBrewing potionBrewing() {
+		return level.potionBrewing();
+	}
+
+	@Override
 	public float getShade(Direction p_230487_1_, boolean p_230487_2_) {
 		return level.getShade(p_230487_1_, p_230487_2_);
 	}
@@ -185,10 +201,10 @@ public class WrappedLevel extends Level {
 	public void updateNeighbourForOutputSignal(BlockPos p_175666_1_, Block p_175666_2_) {}
 
 	@Override
-	public void gameEvent(Entity pEntity, GameEvent pEvent, BlockPos pPos) {}
+	public void gameEvent(@Nullable Entity entity, Holder<GameEvent> gameEvent, Vec3 pos) {}
 
 	@Override
-	public void gameEvent(GameEvent p_220404_, Vec3 p_220405_, GameEvent.Context p_220406_) {}
+	public void gameEvent(Holder<GameEvent> holder, Vec3 vec3, GameEvent.Context context) {}
 
 	@Override
 	public String gatherChunkSourceStats() {
@@ -257,4 +273,13 @@ public class WrappedLevel extends Level {
 	public FeatureFlagSet enabledFeatures() {
 		return level.enabledFeatures();
 	}
+
+	// Neo's patched methods
+	public void setDayTimeFraction(float var1) {}
+
+	public float getDayTimeFraction() { return 0; }
+
+	public float getDayTimePerTick() { return 0; }
+
+	public void setDayTimePerTick(float var1) {}
 }

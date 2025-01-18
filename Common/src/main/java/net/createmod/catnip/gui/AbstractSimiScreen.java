@@ -5,9 +5,11 @@ import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.theme.Color;
+import net.createmod.ponder.mixin.client.accessor.ScreenAccessor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
@@ -97,7 +99,7 @@ public abstract class AbstractSimiScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		partialTicks = NavigatableSimiScreen.currentlyRenderingPreviousScreen ? 0 : minecraft.getFrameTime();
+		partialTicks = NavigatableSimiScreen.currentlyRenderingPreviousScreen ? 0 : AnimationTickHolder.getPartialTicksUI();
 		PoseStack poseStack = graphics.pose();
 
 		poseStack.pushPose();
@@ -140,13 +142,13 @@ public abstract class AbstractSimiScreen extends Screen {
 	protected void prepareFrame() {}
 
 	protected void renderWindowBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(graphics);
+		renderBackground(graphics, mouseX, mouseY, partialTicks);
 	}
 
 	protected abstract void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
 
 	protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		for (Renderable widget : renderables) {
+		for (Renderable widget : getRenderables()) {
 			if (widget instanceof AbstractSimiWidget simiWidget && simiWidget.isHovered()
 				&& simiWidget.visible) {
 				List<Component> tooltip = simiWidget.getToolTip();
@@ -167,7 +169,7 @@ public abstract class AbstractSimiScreen extends Screen {
 	}
 
 	protected List<Renderable> getRenderables() {
-		return renderables;
+		return ((ScreenAccessor) this).catnip$getRenderables();
 	}
 
 	@Override

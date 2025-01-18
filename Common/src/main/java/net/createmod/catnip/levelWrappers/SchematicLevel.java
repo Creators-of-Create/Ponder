@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import net.createmod.catnip.components.ComponentProcessors;
 import net.createmod.catnip.math.BBHelper;
-import net.createmod.catnip.nbt.NBTProcessors;
 import net.createmod.ponder.Ponder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,11 +73,11 @@ public class SchematicLevel extends WrappedLevel implements ServerLevelAccessor,
 	@Override
 	public boolean addFreshEntity(Entity entityIn) {
 		if (entityIn instanceof ItemFrame itemFrame)
-			itemFrame.setItem(NBTProcessors.withUnsafeNBTDiscarded(itemFrame.getItem()));
+			itemFrame.setItem(ComponentProcessors.withUnsafeComponentsDiscarded(itemFrame.getItem()));
 		if (entityIn instanceof ArmorStand armorStand)
 			for (EquipmentSlot equipmentSlot : EquipmentSlot.values())
 				armorStand.setItemSlot(equipmentSlot,
-						NBTProcessors.withUnsafeNBTDiscarded(armorStand.getItemBySlot(equipmentSlot)));
+						ComponentProcessors.withUnsafeComponentsDiscarded(armorStand.getItemBySlot(equipmentSlot)));
 
 		return entities.add(entityIn);
 	}

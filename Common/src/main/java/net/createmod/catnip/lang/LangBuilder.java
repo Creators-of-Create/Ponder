@@ -9,6 +9,7 @@ import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
@@ -153,7 +154,7 @@ public class LangBuilder {
 	}
 
 	public String json() {
-		return Component.Serializer.toJson(component());
+		return Component.Serializer.toJson(component(), RegistryAccess.EMPTY);
 	}
 
 	public void sendStatus(Player player) {

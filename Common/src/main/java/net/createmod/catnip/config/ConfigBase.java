@@ -1,5 +1,13 @@
 package net.createmod.catnip.config;
 
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.Builder;
+import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
+import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
+import net.neoforged.neoforge.common.ModConfigSpec.EnumValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -7,24 +15,16 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-
 public abstract class ConfigBase {
 
 	@Nullable
-	public ForgeConfigSpec specification;
+	public ModConfigSpec specification;
 
 	protected int depth;
 	protected List<CValue<?, ?>> allValues = new ArrayList<>();
 	protected List<ConfigBase> children = new ArrayList<>();
 
-	public void registerAll(final ForgeConfigSpec.Builder builder) {
+	public void registerAll(final ModConfigSpec.Builder builder) {
 		for (CValue<?, ?> cValue : allValues)
 			cValue.register(builder);
 	}
@@ -43,7 +43,7 @@ public abstract class ConfigBase {
 
 	@FunctionalInterface
 	protected interface IValueProvider<V, T extends ConfigValue<V>>
-		extends Function<ForgeConfigSpec.Builder, T> {
+		extends Function<ModConfigSpec.Builder, T> {
 	}
 
 	protected ConfigBool b(boolean current, String name, String... comment) {
@@ -81,7 +81,7 @@ public abstract class ConfigBase {
 	protected <T extends ConfigBase> T nested(int depth, Supplier<T> constructor, String... comment) {
 		T config = constructor.get();
 		new ConfigGroup(config.getName(), depth, comment);
-		new CValue<Boolean, ForgeConfigSpec.BooleanValue>(config.getName(), builder -> {
+		new CValue<Boolean, ModConfigSpec.BooleanValue>(config.getName(), builder -> {
 			config.depth = depth;
 			config.registerAll(builder);
 			if (config.depth > depth)
@@ -116,7 +116,7 @@ public abstract class ConfigBase {
 				builder.comment(".");
 		}
 
-		public void register(ForgeConfigSpec.Builder builder) {
+		public void register(Builder builder) {
 			value = provider.apply(builder);
 		}
 

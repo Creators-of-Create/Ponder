@@ -7,8 +7,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
@@ -19,7 +19,7 @@ public class FabricHooksHelper implements ModHooksHelper {
 	}
 
 	@Override
-	public ItemStack getCloneItemFromBlockstate(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+	public ItemStack getCloneItemFromBlockstate(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
 		if (state.getBlock() instanceof BlockPickInteractionAware blockPickInteractionAware)
 			return blockPickInteractionAware.getPickedStack(state, level, pos, player, target);
 		return ModHooksHelper.super.getCloneItemFromBlockstate(state, target, level, pos, player);

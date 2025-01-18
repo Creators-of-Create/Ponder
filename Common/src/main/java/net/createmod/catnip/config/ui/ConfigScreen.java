@@ -76,7 +76,7 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics graphics) {}
+	public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
 	@Override
 	protected void renderWindowBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
@@ -111,10 +111,10 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-		cogSpin.bump(3, -delta * 5);
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		cogSpin.bump(3, -scrollY * 5);
 
-		return super.mouseScrolled(mouseX, mouseY, delta);
+		return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
 	}
 
 	@Override
@@ -160,21 +160,21 @@ public abstract class ConfigScreen extends AbstractSimiScreen {
 			return;
 		}
 
-		vanillaPanorama.render(minecraft.getDeltaFrameTime(), 1);
+		vanillaPanorama.render(graphics, this.width, this.height, 1, partialTicks); // TODO - Checkover if the partialticks are correct
 
 		graphics.fill(0, 0, this.width, this.height, 0x90_282c34);
 	}
 
 	protected static void renderCog(GuiGraphics graphics) {
-		float partialTicks = Minecraft.getInstance().getFrameTime();
+		float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
 		PoseStack poseStack = graphics.pose();
 		poseStack.pushPose();
 
 		poseStack.translate(-100, 100, -100);
 		poseStack.scale(200, 200, 1);
 		GuiGameElement.of(shadowState)
-				.rotateBlock(22.5, cogSpin.getValue(partialTicks), 22.5)
-				.render(graphics);
+			.rotateBlock(22.5, cogSpin.getValue(partialTicks), 22.5)
+			.render(graphics);
 
 		poseStack.popPose();
 	}

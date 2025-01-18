@@ -11,9 +11,7 @@ base {
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":ponder:Common")
 
 boolean inMultiModWorkspace = rootProject.hasProperty("multiModWorkspace.enabled")
-boolean catnipInWorkspace = rootProject.hasProperty("multiModWorkspace.catnip")
 project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? "enabled" : "disabled"} for project ${mod_id}:${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Catnip: ${catnipInWorkspace}]")
 
 println "Java: ${System.getProperty "java.version"}, JVM: ${System.getProperty "java.vm.version"} (${System.getProperty "java.vendor"}), Arch: ${System.getProperty "os.arch"}"
 
@@ -65,13 +63,6 @@ neoForge {
 
 dependencies {
     compileOnly(commonProject)
-
-    if (catnipInWorkspace) {
-        implementation(project(":catnip:Common"))
-        implementation(project(":catnip:Forge"))
-    } else {
-        implementation("net.createmod.catnip:Catnip-NeoForge-${minecraft_version}:${catnip_version}")
-    }
 
     compileOnly("dev.engine_room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine_room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")

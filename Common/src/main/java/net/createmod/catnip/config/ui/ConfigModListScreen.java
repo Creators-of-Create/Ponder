@@ -39,8 +39,8 @@ public class ConfigModListScreen extends ConfigScreen {
 
 		int listWidth = Math.min(width - 80, 300);
 
-		list = new ConfigScreenList(minecraft, listWidth, height - 60, 15, height - 45, 40);
-		list.setLeftPos(this.width / 2 - list.getWidth() / 2);
+		list = new ConfigScreenList(minecraft, listWidth, height - 60, 15, 40);
+		list.setX(this.width / 2 - list.getWidth() / 2);
 		addRenderableWidget(list);
 
 		allEntries = new ArrayList<>();
@@ -66,7 +66,7 @@ public class ConfigModListScreen extends ConfigScreen {
 		search = new HintableTextFieldWidget(font, width / 2 - listWidth / 2, height - 35, listWidth, 20);
 		search.setResponder(this::updateFilter);
 		search.setHint("Ctrl + F to Search...");
-		search.moveCursorToStart();
+		search.moveCursorToStart(false);
 		addRenderableWidget(search);
 	}
 

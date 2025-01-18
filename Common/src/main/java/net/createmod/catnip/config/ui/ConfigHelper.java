@@ -21,19 +21,19 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import net.createmod.catnip.net.ServerboundConfigPacket;
 import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.net.packets.ServerboundConfigPacket;
 import net.createmod.ponder.Ponder;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ConfigTracker;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfigs;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ConfigHelper {
 
 	public static final Pattern unitPattern = Pattern.compile("\\[(in .*)]");
 	public static final Pattern annotationPattern = Pattern.compile("\\[@cui:([^:]*)(?::(.*))?]");
 
-	public static final Predicate<ModConfig> isForgeConfig = c -> c != null && c.getSpec() instanceof ForgeConfigSpec;
+	public static final Predicate<ModConfig> isForgeConfig = c -> c != null && c.getSpec() instanceof ModConfigSpec;
 
 	public static final Map<String, ConfigChange> changes = new HashMap<>();
 	private static final LoadingCache<String, EnumMap<ModConfig.Type, ModConfig>> configCache =
@@ -49,20 +49,15 @@ public class ConfigHelper {
 	private static EnumMap<ModConfig.Type, ModConfig> findModConfigsUncached(String modID) {
 		EnumMap<ModConfig.Type, ModConfig> configMap = new EnumMap<>(ModConfig.Type.class);
 
-		for (Map.Entry<ModConfig.Type, Set<ModConfig>> entry : ConfigTracker.INSTANCE.configSets().entrySet()) {
-			for (ModConfig config : entry.getValue()) {
-				if (config.getModId().equals(modID)) {
-					configMap.put(entry.getKey(), config);
-					break;
-				}
-			}
+		for (ModConfig config : ModConfigs.getModConfigs(modID)) {
+			configMap.put(config.getType(), config);
 		}
 
 		return configMap;
 	}
 
-	public static ForgeConfigSpec findForgeConfigSpecFor(ModConfig.Type type, String modID) throws NullPointerException, ClassCastException {
-		return (ForgeConfigSpec) configCache.getUnchecked(modID)
+	public static ModConfigSpec findModConfigSpecFor(ModConfig.Type type, String modID) throws NullPointerException, ClassCastException {
+		return (ModConfigSpec) configCache.getUnchecked(modID)
 				.get(type)
 				.getSpec();
 	}
@@ -79,11 +74,11 @@ public class ConfigHelper {
 
 	// Directly set a value
 	public static <T> void setConfigValue(ConfigPath path, String value) throws InvalidValueException, ClassCastException, NullPointerException {
-		ForgeConfigSpec spec = findForgeConfigSpecFor(path.getType(), path.getModID());
+		ModConfigSpec spec = findModConfigSpecFor(path.getType(), path.getModID());
 
 		List<String> pathList = Arrays.asList(path.getPath());
-		ForgeConfigSpec.ValueSpec valueSpec = spec.getRaw(pathList);
-		ForgeConfigSpec.ConfigValue<T> configValue = spec.getValues().get(pathList);
+		ModConfigSpec.ValueSpec valueSpec = spec.getSpec().getRaw(pathList);
+		ModConfigSpec.ConfigValue<T> configValue = spec.getValues().get(pathList);
 		T v = (T) ServerboundConfigPacket.deserialize(configValue.get(), value);
 
 		if (!valueSpec.test(v))
@@ -93,7 +88,7 @@ public class ConfigHelper {
 	}
 
 	// Add a value to the current UI's changes list
-	public static <T> void setValue(String path, ForgeConfigSpec.ConfigValue<T> configValue, T value,
+	public static <T> void setValue(String path, ModConfigSpec.ConfigValue<T> configValue, T value,
 		@Nullable Map<String, String> annotations) {
 		if (value.equals(configValue.get())) {
 			changes.remove(path);
@@ -104,7 +99,7 @@ public class ConfigHelper {
 
 	// Get a value from the current UI's changes list or the config value, if its
 	// unchanged
-	public static <T> T getValue(String path, ForgeConfigSpec.ConfigValue<T> configValue) {
+	public static <T> T getValue(String path, ModConfigSpec.ConfigValue<T> configValue) {
 		ConfigChange configChange = changes.get(path);
 		if (configChange != null)
 			// noinspection unchecked

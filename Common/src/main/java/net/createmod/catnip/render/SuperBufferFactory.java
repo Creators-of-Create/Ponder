@@ -2,7 +2,7 @@ package net.createmod.catnip.render;
 
 import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.platform.CatnipClientServices;
@@ -28,8 +28,8 @@ public class SuperBufferFactory {
 		instance = factory;
 	}
 
-	public SuperByteBuffer create(RenderedBuffer builder) {
-		return new DefaultSuperByteBuffer(builder);
+	public SuperByteBuffer create(MeshData data) {
+		return new DefaultSuperByteBuffer(data);
 	}
 
 	public SuperByteBuffer createForBlock(BlockState renderedState) {

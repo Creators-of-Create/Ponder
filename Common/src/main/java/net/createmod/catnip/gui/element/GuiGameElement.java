@@ -15,6 +15,7 @@ import net.createmod.catnip.gui.ILightingSettings;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.math.VecHelper;
+import net.createmod.ponder.mixin.client.accessor.ItemRendererAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
@@ -280,7 +281,7 @@ public class GuiGameElement {
 			ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
 			BakedModel bakedModel = renderer.getModel(stack, null, null, 0);
 
-			renderer.textureManager.getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
+			((ItemRendererAccessor) renderer).catnip$getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
 			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
 			RenderSystem.enableBlend();
 			RenderSystem.enableCull();

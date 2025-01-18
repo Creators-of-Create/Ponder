@@ -2,6 +2,8 @@ package net.createmod.ponder;
 
 import java.util.Random;
 
+import net.createmod.catnip.net.CatnipPackets;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,7 +26,7 @@ public class Ponder {
 	}
 
 	public static void init() {
-
+		CatnipPackets.register();
 	}
 
 }

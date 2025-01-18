@@ -4,6 +4,8 @@ import java.nio.ByteBuffer;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
+import com.mojang.blaze3d.vertex.MeshData;
+
 import net.minecraft.client.renderer.texture.OverlayTexture;
 
 public class MutableTemplateMesh extends TemplateMesh {
@@ -19,7 +21,7 @@ public class MutableTemplateMesh extends TemplateMesh {
 		System.arraycopy(template.data, 0, data, index * INT_STRIDE, template.data.length);
 	}
 
-	public MutableTemplateMesh(BufferBuilder.RenderedBuffer data) {
+	public MutableTemplateMesh(MeshData data) {
 		this(data.drawState().vertexCount());
 		int vertexCount = data.drawState().vertexCount();
 		ByteBuffer vertexBuffer = data.vertexBuffer();

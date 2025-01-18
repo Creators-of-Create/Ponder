@@ -8,13 +8,13 @@ import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class SubMenuEntry extends ConfigScreenList.LabeledEntry {
 
 	protected BoxWidget button;
 
-	public SubMenuEntry(SubMenuConfigScreen parent, String label, ForgeConfigSpec spec, UnmodifiableConfig config) {
+	public SubMenuEntry(SubMenuConfigScreen parent, String label, ModConfigSpec spec, UnmodifiableConfig config) {
 		super(label);
 
 		button = new BoxWidget(0, 0, 35, 16)

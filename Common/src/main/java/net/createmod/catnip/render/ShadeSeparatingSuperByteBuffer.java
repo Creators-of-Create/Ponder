@@ -2,6 +2,9 @@ package net.createmod.catnip.render;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.createmod.catnip.theme.Color;
+import net.createmod.ponder.mixin.client.accessor.RenderSystemAccessor;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix3fc;
@@ -18,8 +21,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.engine_room.flywheel.lib.util.ShadersModHelper;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import net.createmod.ponder.mixin.client.accessor.RenderSystemAccessor;
-import net.createmod.catnip.theme.Color;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -184,7 +185,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 				light = SuperByteBuffer.maxLight(light, getLight(levelWithLight, lightPos));
 			}
 
-			builder.vertex(pos.x(), pos.y(), pos.z(), r, g, b, a, u, v, overlay, light, normal.x(), normal.y(), normal.z());
+			builder.addVertex(pos.x(), pos.y(), pos.z()).setColor(r, g, b, a).setUv(u, v).setOverlay(overlay).setLight(light).setNormal(normal.x(), normal.y(), normal.z());
 		}
 
 		reset();
@@ -323,9 +324,9 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 	public SuperByteBuffer shiftUVtoSheet(SpriteShiftEntry entry, float uTarget, float vTarget, int sheetSize) {
 		spriteShiftFunc = (u, v, output) -> {
 			float targetU = entry.getTarget()
-				.getU((SpriteShiftEntry.getUnInterpolatedU(entry.getOriginal(), u) / sheetSize) + uTarget * 16);
+				.getU((SpriteShiftEntry.getUnInterpolatedU(entry.getOriginal(), u) / sheetSize) + uTarget);
 			float targetV = entry.getTarget()
-				.getV((SpriteShiftEntry.getUnInterpolatedV(entry.getOriginal(), v) / sheetSize) + vTarget * 16);
+				.getV((SpriteShiftEntry.getUnInterpolatedV(entry.getOriginal(), v) / sheetSize) + vTarget);
 			output.accept(targetU, targetV);
 		};
 		return this;

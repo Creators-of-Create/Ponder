@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,9 +16,11 @@ import net.minecraft.server.level.FullChunkStatus;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -29,9 +31,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkSource;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LightChunk;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.entity.LevelEntityGetter;
@@ -40,6 +42,7 @@ import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.phys.Vec3;
@@ -121,14 +124,19 @@ public class SchematicChunkSource extends ChunkSource {
 			public void levelEvent(Player pPlayer, int pType, BlockPos pPos, int pData) {}
 
 			@Override
-			public void gameEvent(Entity pEntity, GameEvent pEvent, BlockPos pPos) {}
+			public void gameEvent(@Nullable Entity entity, Holder<GameEvent> gameEvent, Vec3 pos) {}
 
 			@Override
-			public void gameEvent(GameEvent p_220404_, Vec3 p_220405_, GameEvent.Context p_220406_) {}
+			public void gameEvent(Holder<GameEvent> holder, Vec3 vec3, GameEvent.Context context) {}
 
 			@Override
 			public RegistryAccess registryAccess() {
 				return access;
+			}
+
+			@Override
+			public PotionBrewing potionBrewing() {
+				return null;
 			}
 
 			@Override
@@ -179,17 +187,18 @@ public class SchematicChunkSource extends ChunkSource {
 				return null;
 			}
 
+			@Nullable
 			@Override
-			public MapItemSavedData getMapData(String pMapName) {
+			public MapItemSavedData getMapData(MapId mapId) {
 				return null;
 			}
 
 			@Override
-			public void setMapData(String pMapId, MapItemSavedData pData) {}
+			public void setMapData(MapId mapId, MapItemSavedData mapItemSavedData) {}
 
 			@Override
-			public int getFreeMapId() {
-				return 0;
+			public MapId getFreeMapId() {
+				return new MapId(0);
 			}
 
 			@Override
@@ -224,6 +233,20 @@ public class SchematicChunkSource extends ChunkSource {
 			public FeatureFlagSet enabledFeatures() {
 				return FeatureFlagSet.of();
 			}
+
+			@Override
+			public TickRateManager tickRateManager() {
+				return null;
+			}
+
+			// Neo's patched methods
+			public void setDayTimeFraction(float var1) {}
+
+			public float getDayTimeFraction() { return 0; }
+
+			public float getDayTimePerTick() { return 0; }
+
+			public void setDayTimePerTick(float var1) {}
 		}
 
 		public EmptierChunk(RegistryAccess registryAccess) {

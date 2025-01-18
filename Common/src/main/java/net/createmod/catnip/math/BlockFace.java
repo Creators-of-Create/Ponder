@@ -47,7 +47,7 @@ public class BlockFace extends Pair<BlockPos, Direction> {
 	}
 
 	public static BlockFace fromNBT(CompoundTag compound) {
-		return new BlockFace(NbtUtils.readBlockPos(compound.getCompound("Pos")),
+		return new BlockFace(NbtUtils.readBlockPos(compound, "Pos").orElseThrow(),
 			NBTHelper.readEnum(compound, "Face", Direction.class));
 	}
 

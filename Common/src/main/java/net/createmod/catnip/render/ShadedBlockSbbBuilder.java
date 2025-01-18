@@ -1,7 +1,9 @@
 package net.createmod.catnip.render;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
@@ -13,32 +15,33 @@ import net.createmod.catnip.platform.CatnipClientServices;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
 public class ShadedBlockSbbBuilder implements VertexConsumer {
-	protected final BufferBuilder bufferBuilder;
+	protected static final ByteBufferBuilder BYTE_BUFFER_BUILDER = new ByteBufferBuilder(512);
+	protected BufferBuilder bufferBuilder;
 	protected final IntList shadeSwapVertices = new IntArrayList();
 	protected boolean currentShade;
 
 	public static ShadedBlockSbbBuilder create() {
-		return CatnipClientServices.CLIENT_HOOKS.createSbbBuilder(new BufferBuilder(512));
-	}
-
-	public static ShadedBlockSbbBuilder create(BufferBuilder builder) {
-		return CatnipClientServices.CLIENT_HOOKS.createSbbBuilder(builder);
-	}
-
-	public ShadedBlockSbbBuilder(BufferBuilder bufferBuilder) {
-		this.bufferBuilder = bufferBuilder;
+		return new ShadedBlockSbbBuilder();
 	}
 
 	public void begin() {
-		bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+		bufferBuilder = new BufferBuilder(BYTE_BUFFER_BUILDER, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
 		shadeSwapVertices.clear();
 		currentShade = true;
 	}
 
 	public SuperByteBuffer end() {
-		BufferBuilder.RenderedBuffer data = bufferBuilder.end();
-		MutableTemplateMesh mesh = new MutableTemplateMesh(data);
-		return new ShadeSeparatingSuperByteBuffer(mesh.toImmutable(), shadeSwapVertices.toIntArray());
+		MeshData data = bufferBuilder.build();
+		TemplateMesh mesh;
+
+		if (data != null) {
+			mesh = new MutableTemplateMesh(data).toImmutable();
+			data.close();
+		} else {
+			mesh = new TemplateMesh(0);
+		}
+
+		return new ShadeSeparatingSuperByteBuffer(mesh, shadeSwapVertices.toIntArray());
 	}
 
 	public BufferBuilder unwrap(boolean shade) {
@@ -58,71 +61,44 @@ public class ShadedBlockSbbBuilder implements VertexConsumer {
 	}
 
 	@Override
-	public void putBulkData(PoseStack.Pose pose, BakedQuad quad, float red, float green, float blue, int light, int overlay) {
+	public void putBulkData(PoseStack.Pose pose, BakedQuad quad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay) {
 		prepareForGeometry(quad);
-		bufferBuilder.putBulkData(pose, quad, red, green, blue, light, overlay);
+		bufferBuilder.putBulkData(pose, quad, red, green, blue, alpha, packedLight, packedOverlay);
 	}
-
-	/*@Override
-	public void putBulkData(PoseStack.Pose pose, BakedQuad quad, float red, float green, float blue, float alpha, int light, int overlay, boolean readExistingColor) {
-		prepareForGeometry(quad);
-		bufferBuilder.putBulkData(pose, quad, red, green, blue, alpha, light, overlay, readExistingColor);
-	}*/
 
 	@Override
-	public void putBulkData(PoseStack.Pose pose, BakedQuad quad, float[] brightnesses, float red, float green, float blue, int[] lights, int overlay, boolean readExistingColor) {
-		prepareForGeometry(quad);
-		bufferBuilder.putBulkData(pose, quad, brightnesses, red, green, blue, lights, overlay, readExistingColor);
-	}
-
-	/*@Override
 	public void putBulkData(PoseStack.Pose pose, BakedQuad quad, float[] brightnesses, float red, float green, float blue, float alpha, int[] lights, int overlay, boolean readExistingColor) {
 		prepareForGeometry(quad);
 		bufferBuilder.putBulkData(pose, quad, brightnesses, red, green, blue, alpha, lights, overlay, readExistingColor);
-	}*/
+	}
 
 	@Override
-	public VertexConsumer vertex(double x, double y, double z) {
+	public VertexConsumer addVertex(float x, float y, float z) {
 		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
 	}
 
 	@Override
-	public VertexConsumer color(int red, int green, int blue, int alpha) {
+	public VertexConsumer setColor(int red, int green, int blue, int alpha) {
 		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
 	}
 
 	@Override
-	public VertexConsumer uv(float u, float v) {
+	public VertexConsumer setUv(float u, float v) {
 		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
 	}
 
 	@Override
-	public VertexConsumer overlayCoords(int u, int v) {
+	public VertexConsumer setUv1(int u, int v) {
 		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
 	}
 
 	@Override
-	public VertexConsumer uv2(int u, int v) {
+	public VertexConsumer setUv2(int u, int v) {
 		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
 	}
 
 	@Override
-	public VertexConsumer normal(float x, float y, float z) {
-		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
-	}
-
-	@Override
-	public void endVertex() {
-		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
-	}
-
-	@Override
-	public void defaultColor(int red, int green, int blue, int alpha) {
-		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
-	}
-
-	@Override
-	public void unsetDefaultColor() {
+	public VertexConsumer setNormal(float x, float y, float z) {
 		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
 	}
 }

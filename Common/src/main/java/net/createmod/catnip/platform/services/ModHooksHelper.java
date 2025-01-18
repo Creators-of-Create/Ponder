@@ -6,6 +6,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 
@@ -18,7 +19,7 @@ public interface ModHooksHelper {
 	 */
 	boolean playerPlaceSingleBlock(Player player, Level level, BlockPos pos, BlockState newState);
 
-	default ItemStack getCloneItemFromBlockstate(BlockState state, HitResult target, BlockGetter level, BlockPos pos, Player player) {
+	default ItemStack getCloneItemFromBlockstate(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
 		return state.getBlock().getCloneItemStack(level, pos, state);
 	}
 

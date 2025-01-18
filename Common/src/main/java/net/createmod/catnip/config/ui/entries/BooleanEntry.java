@@ -6,7 +6,7 @@ import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class BooleanEntry extends ValueEntry<Boolean> {
 
@@ -14,7 +14,7 @@ public class BooleanEntry extends ValueEntry<Boolean> {
 	RenderElement disabled;
 	BoxWidget button;
 
-	public BooleanEntry(String label, ForgeConfigSpec.ConfigValue<Boolean> value, ForgeConfigSpec.ValueSpec spec) {
+	public BooleanEntry(String label, ModConfigSpec.ConfigValue<Boolean> value, ModConfigSpec.ValueSpec spec) {
 		super(label, value, spec);
 
 		enabled = PonderGuiTextures.ICON_CONFIRM.asStencil()

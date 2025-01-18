@@ -8,13 +8,16 @@ import java.util.function.UnaryOperator;
 
 import javax.annotation.Nullable;
 
+import net.createmod.catnip.components.ComponentProcessors;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
@@ -50,50 +53,27 @@ public final class NBTProcessors {
 		return data;
 	};
 
+	// TODO - Checkover and test
 	public static UnaryOperator<CompoundTag> itemProcessor(String tagKey) {
 		return data -> {
 			CompoundTag compound = data.getCompound(tagKey);
-			if (!compound.contains("tag", 10))
+			if (!compound.contains("components", 10))
 				return data;
-			CompoundTag itemTag = compound.getCompound("tag");
-			HashSet<String> keys = new HashSet<>(itemTag.getAllKeys());
-			for (String key : keys)
-				if (isUnsafeItemNBTKey(key))
-					itemTag.remove(key);
-			if (itemTag.isEmpty())
-				compound.remove("tag");
+			CompoundTag itemComponents = compound.getCompound("components");
+			HashSet<String> keys = new HashSet<>(itemComponents.getAllKeys());
+			for (String key : keys) {
+				DataComponentType<?> type = BuiltInRegistries.DATA_COMPONENT_TYPE.get(ResourceLocation.parse(key));
+				if (type != null && ComponentProcessors.isUnsafeItemComponent(type))
+					itemComponents.remove(key);
+			}
+			if (itemComponents.isEmpty())
+				compound.remove("components");
 			return data;
 		};
 	}
 
-	public static ItemStack withUnsafeNBTDiscarded(ItemStack stack) {
-		if (stack.getTag() == null)
-			return stack;
-		ItemStack copy = stack.copy();
-		for (String key : stack.getTag().getAllKeys()) {
-			if (isUnsafeItemNBTKey(key)) {
-				copy.removeTagKey(key);
-			}
-		}
-		return copy;
-	}
-
-	public static boolean isUnsafeItemNBTKey(String name) {
-		if (name.equals(EnchantedBookItem.TAG_STORED_ENCHANTMENTS))
-			return false;
-		if (name.equals("Enchantments"))
-			return false;
-		if (name.contains("Potion"))
-			return false;
-		if (name.contains("Damage"))
-			return false;
-		if (name.equals("display"))
-			return false;
-		return true;
-	}
-
 	public static boolean textComponentHasClickEvent(String json) {
-		return textComponentHasClickEvent(Component.Serializer.fromJson(json.isEmpty() ? "\"\"" : json));
+		return textComponentHasClickEvent(Component.Serializer.fromJson(json.isEmpty() ? "\"\"" : json, RegistryAccess.EMPTY));
 	}
 
 	public static boolean textComponentHasClickEvent(Component component) {

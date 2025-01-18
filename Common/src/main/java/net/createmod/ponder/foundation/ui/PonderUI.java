@@ -12,8 +12,8 @@ import java.util.stream.IntStream;
 
 import javax.annotation.Nullable;
 
-import net.createmod.catnip.utility.AnimationTickHolder;
-import net.createmod.catnip.utility.RegisteredObjectsHelper;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.registry.RegisteredObjectsHelper;
 
 import org.joml.Matrix4f;
 
@@ -33,7 +33,6 @@ import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
-import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.lang.ClientFontHelper;
@@ -1209,11 +1208,11 @@ public class PonderUI extends AbstractPonderScreen {
 	}
 
 	public boolean isComfyReadingEnabled() {
-		return PonderConfig.Client().comfyReading.get();
+		return PonderConfig.client().comfyReading.get();
 	}
 
 	public void setComfyReadingEnabled(boolean slowTextMode) {
-		PonderConfig.Client().comfyReading.set(slowTextMode);
+		PonderConfig.client().comfyReading.set(slowTextMode);
 	}
 
 }

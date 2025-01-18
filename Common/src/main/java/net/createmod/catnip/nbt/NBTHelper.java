@@ -8,6 +8,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.FloatTag;
@@ -64,16 +65,18 @@ public class NBTHelper {
 		listNBT.forEach(inbt -> consumer.accept((CompoundTag) inbt));
 	}
 
-	public static ListTag writeItemList(Iterable<ItemStack> stacks) {
-		return writeCompoundList(stacks, itemStack -> {
-			CompoundTag tag = new CompoundTag();
-			itemStack.save(tag);
-			return tag;
-		});
+	public static ListTag writeItemList(Iterable<ItemStack> stacks, HolderLookup.Provider registries) {
+		ListTag listNBT = new ListTag();
+		for (ItemStack stack : stacks)
+			listNBT.add(stack.saveOptional(registries));
+		return listNBT;
 	}
 
-	public static List<ItemStack> readItemList(ListTag stacks) {
-		return readCompoundList(stacks, ItemStack::of);
+	public static List<ItemStack> readItemList(ListTag stacks, HolderLookup.Provider registries) {
+		List<ItemStack> list = new ArrayList<>();
+		for (int i = 0; i < stacks.size(); i++)
+			list.add(i, ItemStack.parseOptional(registries, stacks.getCompound(i)));
+		return list;
 	}
 
 	public static ListTag writeAABB(AABB bb) {
@@ -130,7 +133,7 @@ public class NBTHelper {
 	}
 
 	public static ResourceLocation readResourceLocation(CompoundTag nbt, String key) {
-		return new ResourceLocation(nbt.getString(key));
+		return ResourceLocation.parse(nbt.getString(key));
 	}
 
 }

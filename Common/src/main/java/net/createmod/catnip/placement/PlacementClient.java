@@ -1,19 +1,33 @@
 package net.createmod.catnip.placement;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import net.createmod.catnip.animation.LerpedFloat;
+
+import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
+
+import net.createmod.ponder.config.CClient;
+
+import net.createmod.ponder.enums.PonderConfig;
+
+import net.createmod.ponder.enums.PonderGuiTextures;
+
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
-import net.createmod.catnip.math.VecHelper;
-import net.createmod.catnip.animation.LerpedFloat;
-import net.createmod.catnip.math.AngleHelper;
-import net.createmod.ponder.config.CClient;
-import net.createmod.ponder.enums.PonderConfig;
-import net.createmod.ponder.enums.PonderGuiTextures;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -25,12 +39,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
-
-import javax.annotation.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlacementClient {
 
@@ -166,7 +174,7 @@ public class PlacementClient {
 
 		Vec3 norm = target.normalize();
 		Vec3 ref = new Vec3(0, 1, 0);
-		float targetAngle = AngleHelper.deg(Math.acos(norm.dot(ref)));
+		float targetAngle = AngleHelper.deg(-Math.acos(norm.dot(ref)));
 
 		if (norm.x < 0)
 			targetAngle = 360 - targetAngle;
@@ -182,7 +190,7 @@ public class PlacementClient {
 
 		float length = 10;
 
-		CClient.PlacementIndicatorSetting mode = PonderConfig.Client().placementIndicator.get();
+		CClient.PlacementIndicatorSetting mode = PonderConfig.client().placementIndicator.get();
 		PoseStack poseStack = graphics.pose();
 		if (mode == CClient.PlacementIndicatorSetting.TRIANGLE)
 			fadedArrow(poseStack, centerX, centerY, r, g, b, a, length, snappedAngle);
@@ -201,26 +209,25 @@ public class PlacementClient {
 		ms.translate(centerX, centerY, 5);
 		ms.mulPose(Axis.ZP.rotationDegrees(angle.getValue(0)));
 		// RenderSystem.rotatef(snappedAngle, 0, 0, 1);
-		double scale = PonderConfig.Client().indicatorScale.get();
+		double scale = PonderConfig.client().indicatorScale.get();
 		ms.scale((float) scale, (float) scale, 1);
 
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tesselator.getBuilder();
-		bufferbuilder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+		BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
 
 		Matrix4f mat = ms.last().pose();
 
-		bufferbuilder.vertex(mat, 0, -(10 + length), 0).color(r, g, b, a).endVertex();
+		bufferbuilder.addVertex(mat, 0, -(10 + length), 0).setColor(r, g, b, a);
 
-		bufferbuilder.vertex(mat, -9, -3, 0).color(r, g, b, 0f).endVertex();
-		bufferbuilder.vertex(mat, -6, -6, 0).color(r, g, b, 0f).endVertex();
-		bufferbuilder.vertex(mat, -3, -8, 0).color(r, g, b, 0f).endVertex();
-		bufferbuilder.vertex(mat, 0, -8.5f, 0).color(r, g, b, 0f).endVertex();
-		bufferbuilder.vertex(mat, 3, -8, 0).color(r, g, b, 0f).endVertex();
-		bufferbuilder.vertex(mat, 6, -6, 0).color(r, g, b, 0f).endVertex();
-		bufferbuilder.vertex(mat, 9, -3, 0).color(r, g, b, 0f).endVertex();
+		bufferbuilder.addVertex(mat, -9, -3, 0).setColor(r, g, b, 0f);
+		bufferbuilder.addVertex(mat, -6, -6, 0).setColor(r, g, b, 0f);
+		bufferbuilder.addVertex(mat, -3, -8, 0).setColor(r, g, b, 0f);
+		bufferbuilder.addVertex(mat, 0, -8.5f, 0).setColor(r, g, b, 0f);
+		bufferbuilder.addVertex(mat, 3, -8, 0).setColor(r, g, b, 0f);
+		bufferbuilder.addVertex(mat, 6, -6, 0).setColor(r, g, b, 0f);
+		bufferbuilder.addVertex(mat, 9, -3, 0).setColor(r, g, b, 0f);
 
-		tesselator.end();
+		BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
 		RenderSystem.disableBlend();
 		//RenderSystem.enableTexture();
 		ms.popPose();
@@ -232,11 +239,11 @@ public class PlacementClient {
 		RenderSystem.enableDepthTest();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 
 		ms.pushPose();
 		ms.translate(centerX, centerY, 50);
-		float scale = PonderConfig.Client().indicatorScale.get()
+		float scale = PonderConfig.client().indicatorScale.get()
 			.floatValue() * .75f;
 		ms.scale(scale, scale, 1);
 		ms.scale(12, 12, 1);
@@ -250,16 +257,15 @@ public class PlacementClient {
 		float th = tex_size;
 
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+		BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
 		Matrix4f mat = ms.last().pose();
-		buffer.vertex(mat, -1, -1, 0).color(1f, 1f, 1f, alpha).uv(tx, ty).endVertex();
-		buffer.vertex(mat, -1,  1, 0).color(1f, 1f, 1f, alpha).uv(tx, ty + th).endVertex();
-		buffer.vertex(mat,  1,  1, 0).color(1f, 1f, 1f, alpha).uv(tx + tw, ty + th).endVertex();
-		buffer.vertex(mat,  1, -1, 0).color(1f, 1f, 1f, alpha).uv(tx + tw, ty).endVertex();
+		buffer.addVertex(mat, -1, -1, 0).setColor(1f, 1f, 1f, alpha).setUv(tx, ty);
+		buffer.addVertex(mat, -1,  1, 0).setColor(1f, 1f, 1f, alpha).setUv(tx, ty + th);
+		buffer.addVertex(mat,  1,  1, 0).setColor(1f, 1f, 1f, alpha).setUv(tx + tw, ty + th);
+		buffer.addVertex(mat,  1, -1, 0).setColor(1f, 1f, 1f, alpha).setUv(tx + tw, ty);
 
-		tesselator.end();
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 
 		RenderSystem.disableBlend();
 		ms.popPose();

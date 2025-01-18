@@ -1,5 +1,7 @@
 package net.createmod.catnip.gui.element;
 
+import com.mojang.blaze3d.vertex.BufferUploader;
+
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -84,20 +86,20 @@ public class BoxElement extends AbstractRenderElement {
 	//batch everything together to save a bunch of gl calls over ScreenUtils
 	protected void renderBox(GuiGraphics graphics) {
 		/*
-		*          _____________
-		*        _|_____________|_
-		*       | | ___________ | |
-		*       | | |  |      | | |
-		*       | | |  |      | | |
-		*       | | |--*   |  | | |
-		*       | | |      h  | | |
-		*       | | |  --w-+  | | |
-		*       | | |         | | |
-		*       | | |_________| | |
-		*       |_|_____________|_|
-		*         |_____________|
-		*
-		* */
+		 *          _____________
+		 *        _|_____________|_
+		 *       | | ___________ | |
+		 *       | | |  |      | | |
+		 *       | | |  |      | | |
+		 *       | | |--*   |  | | |
+		 *       | | |      h  | | |
+		 *       | | |  --w-+  | | |
+		 *       | | |         | | |
+		 *       | | |_________| | |
+		 *       |_|_____________|_|
+		 *         |_____________|
+		 *
+		 * */
 		//RenderSystem.disableTexture();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
@@ -110,58 +112,57 @@ public class BoxElement extends AbstractRenderElement {
 		Color c2 = borderTop.copy().scaleAlpha(alpha);
 		Color c3 = borderBot.copy().scaleAlpha(alpha);
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder b = tesselator.getBuilder();
+		BufferBuilder b = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
-		b.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		//outer top
-		b.vertex(model, x - f - 1        , y - f - 2         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x - f - 1        , y - f - 1         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y - f - 1         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y - f - 2         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+		b.addVertex(model, x - f - 1        , y - f - 2         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x - f - 1        , y - f - 1         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y - f - 1         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y - f - 2         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
 		//outer left
-		b.vertex(model, x - f - 2        , y - f - 1         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x - f - 2        , y + f + 1 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x - f - 1        , y + f + 1 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x - f - 1        , y - f - 1         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+		b.addVertex(model, x - f - 2        , y - f - 1         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x - f - 2        , y + f + 1 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x - f - 1        , y + f + 1 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x - f - 1        , y - f - 1         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
 		//outer bottom
-		b.vertex(model, x - f - 1        , y + f + 1 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x - f - 1        , y + f + 2 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y + f + 2 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y + f + 1 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+		b.addVertex(model, x - f - 1        , y + f + 1 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x - f - 1        , y + f + 2 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y + f + 2 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y + f + 1 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
 		//outer right
-		b.vertex(model, x + f + 1 + width, y - f - 1         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y + f + 1 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x + f + 2 + width, y + f + 1 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x + f + 2 + width, y - f - 1         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
+		b.addVertex(model, x + f + 1 + width, y - f - 1         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y + f + 1 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x + f + 2 + width, y + f + 1 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x + f + 2 + width, y - f - 1         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
 		//inner background - also render behind the inner edges
-		b.vertex(model, x - f - 1        , y - f - 1         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x - f - 1        , y + f + 1 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y + f + 1 + height, z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y - f - 1         , z).color(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha()).endVertex();
-		tesselator.end();
-		b.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		b.addVertex(model, x - f - 1        , y - f - 1         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x - f - 1        , y + f + 1 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y + f + 1 + height, z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y - f - 1         , z).setColor(c1.getRed(), c1.getGreen(), c1.getBlue(), c1.getAlpha());
+		BufferUploader.drawWithShader(b.buildOrThrow());
+		b = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 		//inner top - includes corners
-		b.vertex(model, x - f - 1        , y - f - 1         , z).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
-		b.vertex(model, x - f - 1        , y - f             , z).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y - f             , z).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y - f - 1         , z).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+		b.addVertex(model, x - f - 1        , y - f - 1         , z).setColor(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha());
+		b.addVertex(model, x - f - 1        , y - f             , z).setColor(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y - f             , z).setColor(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y - f - 1         , z).setColor(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha());
 		//inner left - excludes corners
-		b.vertex(model, x - f - 1        , y - f             , z).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
-		b.vertex(model, x - f - 1        , y + f     + height, z).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
-		b.vertex(model, x - f            , y + f     + height, z).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
-		b.vertex(model, x - f            , y - f             , z).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+		b.addVertex(model, x - f - 1        , y - f             , z).setColor(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha());
+		b.addVertex(model, x - f - 1        , y + f     + height, z).setColor(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha());
+		b.addVertex(model, x - f            , y + f     + height, z).setColor(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha());
+		b.addVertex(model, x - f            , y - f             , z).setColor(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha());
 		//inner bottom - includes corners
-		b.vertex(model, x - f - 1        , y + f     + height, z).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
-		b.vertex(model, x - f - 1        , y + f + 1 + height, z).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y + f + 1 + height, z).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y + f     + height, z).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
+		b.addVertex(model, x - f - 1        , y + f     + height, z).setColor(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha());
+		b.addVertex(model, x - f - 1        , y + f + 1 + height, z).setColor(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y + f + 1 + height, z).setColor(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y + f     + height, z).setColor(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha());
 		//inner right - excludes corners
-		b.vertex(model, x + f     + width, y - f             , z).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
-		b.vertex(model, x + f     + width, y + f     + height, z).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y + f     + height, z).color(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha()).endVertex();
-		b.vertex(model, x + f + 1 + width, y - f             , z).color(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha()).endVertex();
+		b.addVertex(model, x + f     + width, y - f             , z).setColor(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha());
+		b.addVertex(model, x + f     + width, y + f     + height, z).setColor(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y + f     + height, z).setColor(c3.getRed(), c3.getGreen(), c3.getBlue(), c3.getAlpha());
+		b.addVertex(model, x + f + 1 + width, y - f             , z).setColor(c2.getRed(), c2.getGreen(), c2.getBlue(), c2.getAlpha());
 
-		tesselator.end();
+		BufferUploader.drawWithShader(b.buildOrThrow());
 
 		RenderSystem.disableBlend();
 		//RenderSystem.enableTexture();

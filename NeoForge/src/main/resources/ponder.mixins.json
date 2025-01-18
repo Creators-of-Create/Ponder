@@ -4,15 +4,9 @@
   "package": "net.createmod.ponder.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "accessor.EntityAccessor"
   ],
   "client": [
-    "client.WindowResizeMixin",
-    "client.accessor.BufferBuilderAccessor",
-    "client.accessor.GameRendererAccessor",
-    "client.accessor.ParticleEngineAccessor",
-    "client.accessor.RenderSystemAccessor",
-    "client.accessor.RenderTypeAccessor"
+    "client.accessor.ParticleEngineAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

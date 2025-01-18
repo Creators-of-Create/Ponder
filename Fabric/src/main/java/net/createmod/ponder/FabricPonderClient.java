@@ -2,9 +2,10 @@ package net.createmod.ponder;
 
 import java.util.Optional;
 
-import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.RenderTooltipBorderColorCallback;
+import io.github.fabricators_of_create.porting_lib.level.events.LevelEvent.Load;
+import io.github.fabricators_of_create.porting_lib.level.events.LevelEvent.Unload;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
 import net.createmod.catnip.data.Couple;
 import net.createmod.ponder.utility.FabricClientResourceReloadListener;
@@ -37,8 +38,8 @@ public class FabricPonderClient implements ClientModInitializer {
 			PonderTooltipHandler.tick();
 		});
 
-		ClientWorldEvents.LOAD.register((client, world) -> PonderClient.onLoadWorld(world));
-		ClientWorldEvents.UNLOAD.register((client, world) -> PonderClient.onUnloadWorld(world));
+		Load.EVENT.register(e -> PonderClient.onLoadWorld(e.getLevel()));
+		Unload.EVENT.register(e -> PonderClient.onUnloadWorld(e.getLevel()));
 
 		WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> PonderClient.onRenderWorld(context.matrixStack()));
 
@@ -64,7 +65,7 @@ public class FabricPonderClient implements ClientModInitializer {
 	private void prepareConfigUI() {
 		BaseConfigScreen.setDefaultActionFor(Ponder.MOD_ID, base -> base
 				.withButtonLabels("Client Settings", null, null)
-				.withSpecs(PonderConfig.Client().specification, null, null)
+				.withSpecs(PonderConfig.client().specification, null, null)
 		);
 	}
 

@@ -40,7 +40,7 @@ public interface ModClientHooksHelper {
 									  RenderType layer);
 
 	void tesselateBlockVirtual(BlockRenderDispatcher dispatcher, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource randomSource, long seed, int packedOverlay, RenderType renderType);
-	
+
 	default void tesselateBlockVirtual(Level level, BlockRenderDispatcher dispatcher, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource randomSource, long seed, int packedOverlay, RenderType renderType) {
 		tesselateBlockVirtual(dispatcher, model, state, pos, poseStack, consumer, checkSides, randomSource, seed, packedOverlay, renderType);
 	}
@@ -97,7 +97,7 @@ public interface ModClientHooksHelper {
 		return Minecraft.getInstance().getBlockRenderer();
 	}
 
-	default ShadedBlockSbbBuilder createSbbBuilder(BufferBuilder builder){
-		return new ShadedBlockSbbBuilder(builder);
+	default ShadedBlockSbbBuilder createSbbBuilder() {
+		return new ShadedBlockSbbBuilder();
 	}
 }

@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 
 public class DummyStatusListener implements ChunkProgressListener {
 

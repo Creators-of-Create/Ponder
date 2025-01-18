@@ -5,16 +5,16 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 
 import net.createmod.catnip.config.ui.ConfigHelper;
-import net.createmod.catnip.net.ClientboundConfigPacket;
-import net.createmod.catnip.net.ClientboundSimpleActionPacket;
 import net.createmod.catnip.net.ConfigPathArgument;
+import net.createmod.catnip.net.packets.ClientboundConfigPacket;
+import net.createmod.catnip.net.packets.ClientboundSimpleActionPacket;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.lang.Components;
 import net.createmod.ponder.Ponder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.config.ModConfig;
 
 /**
  * Examples:
@@ -28,7 +28,7 @@ public class ConfigCommand {
 		return Commands.literal("config")
 				.executes(ctx -> {
 					ServerPlayer player = ctx.getSource().getPlayerOrException();
-					CatnipServices.NETWORK.sendToPlayer(player,
+					CatnipServices.NETWORK.sendToClient(player,
 							new ClientboundSimpleActionPacket("configScreen", ""));
 
 					return Command.SINGLE_SUCCESS;
@@ -37,7 +37,7 @@ public class ConfigCommand {
 						.executes(ctx -> {
 							ServerPlayer player = ctx.getSource().getPlayerOrException();
 
-							CatnipServices.NETWORK.sendToPlayer(player,
+							CatnipServices.NETWORK.sendToClient(player,
 									new ClientboundSimpleActionPacket("configScreen", ConfigPathArgument.getPath(ctx, "path").toString()));
 
 							return Command.SINGLE_SUCCESS;
@@ -52,7 +52,7 @@ public class ConfigCommand {
 											if (path.getType() == ModConfig.Type.CLIENT) {
 												ServerPlayer player = ctx.getSource().getPlayerOrException();
 
-												CatnipServices.NETWORK.sendToPlayer(player,
+												CatnipServices.NETWORK.sendToClient(player,
 														new ClientboundConfigPacket(path.toString(), value));
 
 												return Command.SINGLE_SUCCESS;
