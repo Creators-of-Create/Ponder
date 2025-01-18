@@ -1,13 +1,28 @@
 package net.createmod.catnip.math;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import io.netty.buffer.ByteBuf;
 import net.createmod.catnip.nbt.NBTHelper;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.codec.StreamCodec;
 
 public class BlockFace extends Pair<BlockPos, Direction> {
+	public static Codec<BlockFace> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+		BlockPos.CODEC.fieldOf("pos").forGetter(BlockFace::getPos),
+		Direction.CODEC.fieldOf("direction").forGetter(BlockFace::getFace)
+	).apply(instance, BlockFace::new));
+
+	public static StreamCodec<ByteBuf, BlockFace> STREAM_CODEC = StreamCodec.composite(
+	    BlockPos.STREAM_CODEC, BlockFace::getPos,
+	    Direction.STREAM_CODEC, BlockFace::getFace,
+	    BlockFace::new
+	);
 
 	public BlockFace(BlockPos first, Direction second) {
 		super(first, second);

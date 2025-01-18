@@ -1,6 +1,12 @@
 package net.createmod.catnip.data;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 import java.util.Comparator;
 import java.util.function.Function;
@@ -55,5 +61,20 @@ public class LongAttached<V> extends Pair<Long, V> {
 
 	public static <T> LongAttached<T> read(CompoundTag nbt, Function<CompoundTag, T> deserializer) {
 		return LongAttached.with(nbt.getLong("Location"), deserializer.apply(nbt.getCompound("Item")));
+	}
+
+	public static <T> Codec<LongAttached<T>> codec(Codec<T> codec) {
+		return RecordCodecBuilder.create(instance -> instance.group(
+			Codec.LONG.fieldOf("first").forGetter(LongAttached::getFirst),
+			codec.fieldOf("second").forGetter(LongAttached::getSecond)
+		).apply(instance, LongAttached::new));
+	}
+
+	public static <B extends ByteBuf, T> StreamCodec<B, LongAttached<T>> streamCodec(StreamCodec<? super B, T> codec) {
+		return StreamCodec.composite(
+			ByteBufCodecs.VAR_LONG, Pair::getFirst,
+			codec, Pair::getSecond,
+			LongAttached::new
+		);
 	}
 }

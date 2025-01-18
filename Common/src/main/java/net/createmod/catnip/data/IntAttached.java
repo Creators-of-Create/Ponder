@@ -3,7 +3,13 @@ package net.createmod.catnip.data;
 import java.util.Comparator;
 import java.util.function.Function;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 public class IntAttached<V> extends Pair<Integer, V> {
 
@@ -58,4 +64,18 @@ public class IntAttached<V> extends Pair<Integer, V> {
 		return IntAttached.with(nbt.getInt("Location"), deserializer.apply(nbt.getCompound("Item")));
 	}
 
+	public static <T> Codec<IntAttached<T>> codec(Codec<T> codec) {
+		return RecordCodecBuilder.create(instance -> instance.group(
+			Codec.INT.fieldOf("first").forGetter(IntAttached::getFirst),
+			codec.fieldOf("second").forGetter(IntAttached::getSecond)
+		).apply(instance, IntAttached::new));
+	}
+
+	public static <B extends ByteBuf, T> StreamCodec<B, IntAttached<T>> streamCodec(StreamCodec<? super B, T> codec) {
+		return StreamCodec.composite(
+			ByteBufCodecs.INT, Pair::getFirst,
+			codec, Pair::getSecond,
+			IntAttached::new
+		);
+	}
 }

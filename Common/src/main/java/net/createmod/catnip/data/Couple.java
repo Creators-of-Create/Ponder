@@ -12,9 +12,13 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.createmod.catnip.nbt.NBTHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.network.codec.StreamCodec;
 
 public class Couple<T> extends Pair<T, T> implements Iterable<T> {
 
@@ -121,6 +125,21 @@ public class Couple<T> extends Pair<T, T> implements Iterable<T> {
 	public static <S> Couple<S> deserializeEach(ListTag list, Function<CompoundTag, S> deserializer) {
 		List<S> readCompoundList = NBTHelper.readCompoundList(list, deserializer);
 		return new Couple<>(readCompoundList.get(0), readCompoundList.get(1));
+	}
+
+	public static <T> Codec<Couple<T>> codec(Codec<T> codec) {
+		return RecordCodecBuilder.create(instance -> instance.group(
+			codec.fieldOf("first").forGetter(Couple::getFirst),
+			codec.fieldOf("second").forGetter(Couple::getSecond)
+		).apply(instance, Couple::new));
+	}
+
+	public static <B, T> StreamCodec<B, Couple<T>> streamCodec(StreamCodec<? super B, T> codec) {
+		return StreamCodec.composite(
+			codec, Couple::getFirst,
+			codec, Couple::getSecond,
+			Couple::new
+		);
 	}
 
 	@Override
