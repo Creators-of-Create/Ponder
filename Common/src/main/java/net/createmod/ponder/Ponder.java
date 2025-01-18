@@ -5,7 +5,7 @@ import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.createmod.catnip.utility.lang.LangBuilder;
+import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.resources.ResourceLocation;
 
 public class Ponder {

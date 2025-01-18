@@ -8,8 +8,8 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.gui.element.BoxElement;
-import net.createmod.catnip.utility.Couple;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.TextElementBuilder;
 import net.createmod.ponder.foundation.PonderIndex;

@@ -2,9 +2,10 @@ package net.createmod.ponder.enums;
 
 import net.createmod.catnip.gui.TextureSheetSegment;
 import net.createmod.catnip.gui.UIRenderHelper;
+import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.element.ScreenElement;
 import net.createmod.catnip.render.ColoredRenderable;
-import net.createmod.catnip.utility.theme.Color;
+import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.Ponder;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
@@ -24,9 +25,24 @@ public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, Col
 	ICON_PONDER_USER_MODE("widgets", 5, 2),
 	ICON_PONDER_SLOW_MODE("widgets", 6, 2),
 
+	ICON_CONFIG_UNLOCKED("widgets", 0, 3),
+	ICON_CONFIG_LOCKED("widgets", 1, 3),
+	ICON_CONFIG_DISCARD("widgets", 2, 3),
+	ICON_CONFIG_SAVE("widgets", 3, 3),
+	ICON_CONFIG_RESET("widgets", 4, 3),
+	ICON_CONFIG_BACK("widgets", 5, 3),
+	ICON_CONFIG_PREV("widgets", 6, 3),
+	ICON_CONFIG_NEXT("widgets", 7, 3),
+	ICON_DISABLE("widgets", 8, 3),
+	ICON_CONFIG_OPEN("widgets", 9, 3),
+	ICON_CONFIRM("widgets", 10, 3),
+
 	ICON_LMB("widgets", 0, 4),
 	ICON_SCROLL("widgets", 1, 4),
 	ICON_RMB("widgets", 2, 4),
+
+	// PlacementIndicator
+	PLACEMENT_INDICATOR_SHEET("placement_indicator", 0, 0, 16, 256),
 
 	;
 
@@ -54,7 +70,6 @@ public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, Col
 
 	@Override
 	public void render(GuiGraphics graphics, int x, int y) {
-		//bind();
 		graphics.blit(getLocation(), x, y, 0, startX, startY, width, height, 256, 256);
 	}
 
@@ -89,4 +104,7 @@ public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, Col
 		return height;
 	}
 
+	public DelegatedStencilElement asStencil() {
+		return new DelegatedStencilElement().withStencilRenderer((ms, w, h, alpha) -> this.render(ms, 0, 0)).withBounds(16, 16);
+	}
 }

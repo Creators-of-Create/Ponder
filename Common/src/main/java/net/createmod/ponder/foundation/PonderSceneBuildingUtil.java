@@ -1,6 +1,6 @@
 package net.createmod.ponder.foundation;
 
-import net.createmod.catnip.utility.VecHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.createmod.ponder.api.scene.PositionUtil;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;

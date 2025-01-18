@@ -1,3 +1,11 @@
 accessWidener v2 named
-# Catnip
-transitive-extendable method net/minecraft/client/gui/components/AbstractWidget render (Lnet/minecraft/client/gui/GuiGraphics;IIF)V
+# Fabric
+accessible field com/mojang/blaze3d/vertex/BufferBuilder format Lcom/mojang/blaze3d/vertex/VertexFormat;
+# Common
+accessible field net/minecraft/client/renderer/entity/ItemRenderer textureManager Lnet/minecraft/client/renderer/texture/TextureManager;
+accessible field net/minecraft/client/multiplayer/ClientPacketListener serverChunkRadius I
+accessible field net/minecraft/client/Minecraft pausePartialTick F
+
+accessible field net/minecraft/server/MinecraftServer storageSource Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;
+
+accessible field net/minecraft/world/level/biome/BiomeManager biomeZoomSeed J

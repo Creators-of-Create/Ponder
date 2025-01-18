@@ -1,6 +1,6 @@
 package net.createmod.ponder.api.element;
 
-import net.createmod.catnip.utility.Pair;
+import net.createmod.catnip.data.Pair;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;

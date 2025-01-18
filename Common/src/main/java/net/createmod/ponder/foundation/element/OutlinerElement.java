@@ -2,8 +2,8 @@ package net.createmod.ponder.foundation.element;
 
 import java.util.function.Function;
 
-import net.createmod.catnip.utility.outliner.Outline.OutlineParams;
-import net.createmod.catnip.utility.outliner.Outliner;
+import net.createmod.catnip.outliner.Outline.OutlineParams;
+import net.createmod.catnip.outliner.Outliner;
 import net.createmod.ponder.foundation.PonderScene;
 
 public class OutlinerElement extends AnimatedSceneElementBase {

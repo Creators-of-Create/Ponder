@@ -2,7 +2,7 @@ package net.createmod.ponder.api.element;
 
 import com.mojang.blaze3d.platform.Window;
 
-import net.createmod.catnip.utility.math.AngleHelper;
+import net.createmod.catnip.math.AngleHelper;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.createmod.ponder.foundation.PonderScene;

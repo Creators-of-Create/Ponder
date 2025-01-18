@@ -10,9 +10,7 @@ base {
 def commonProject = findProject(":Common") != null ? project(":Common") : project(":${project_id}:Common")
 
 boolean inMultiModWorkspace = rootProject.hasProperty("multiModWorkspace.enabled")
-boolean catnipInWorkspace = rootProject.hasProperty("multiModWorkspace.catnip")
 project.logger.lifecycle("MultiModWorkspace ${inMultiModWorkspace ? "enabled" : "disabled"} for project ${mod_id}:${project.name}.")
-project.logger.lifecycle("Dependencies included in Workspace: [Catnip: ${catnipInWorkspace}]")
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
@@ -22,13 +20,6 @@ dependencies {
 
     for (String module in port_lib_modules.split(",")) {
         modApi "io.github.fabricators_of_create.Porting-Lib:$module:$port_lib_version"
-    }
-
-    if (catnipInWorkspace) {
-        implementation project(path: ":catnip:Common")
-        implementation project(path: ":catnip:Fabric", configuration: "dev")
-    } else {
-        modImplementation "net.createmod.catnip:Catnip-Fabric-${minecraft_version}:${catnip_version}"
     }
 
     modApi "dev.engine_room.flywheel:flywheel-fabric-api-${minecraft_version}:${flywheel_version}"

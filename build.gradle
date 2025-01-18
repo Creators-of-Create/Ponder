@@ -52,7 +52,6 @@ subprojects {
             "fabric_version"            : fabric_version,
             "fabric_loader_version"     : fabric_loader_version,
             "flywheel_version_range"    : flywheel_version_range,
-            "catnip_version_range"      : catnip_version_range,
             "mod_name"                  : mod_name,
             "mod_author"                : mod_author,
             "mod_credit"                : mod_credit,
