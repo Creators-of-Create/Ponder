@@ -36,11 +36,9 @@ public class NeoForgeNetworkHelper implements NetworkHelper {
 					throw new IllegalStateException("Packet class is both clientbound and serverbound: " + type.clazz());
 				} else if (clientbound) {
 					CatnipPacketRegistry.PacketType<ClientboundPacketPayload> casted = (CatnipPacketRegistry.PacketType<ClientboundPacketPayload>) type;
-					// GameTestServer somehow manages to call this on the server
-					if (CatnipServices.PLATFORM.getEnv().isClient())
 						registrar.playToClient(casted.type(), casted.codec(), (payload, ctx) -> {
 							ctx.enqueueWork(() -> {
-								payload.handle((LocalPlayer) ctx.player());
+								payload.handleInternal(ctx.player());
 							});
 						});
 				} else if (serverbound) {
