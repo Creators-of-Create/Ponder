@@ -342,10 +342,6 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 				overlayMS = new PoseStack();
 				overlayMS.last().pose().set(poseStack.last().pose());
 				overlayMS.last().normal().set(poseStack.last().normal());
-
-				float scaleFactor = world.scene.getScaleFactor();
-				float f = (float) Math.pow(30 * scaleFactor, -1.2);
-				overlayMS.scale(f, f, f);
 			}
 
 			VertexConsumer builder = new SheetedDecalTextureGenerator(

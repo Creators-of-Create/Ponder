@@ -9,16 +9,18 @@ import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.foundation.PonderScene;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
 
 public class PonderProgressBar extends AbstractSimiWidget {
 
 	public static final Couple<Color> BAR_COLORS = Couple.create(
-		new Color(0x80_ffeedd, true),
-		new Color(0x50_ffeedd, true)
+		new Color(0x80_aaaadd, true),
+		new Color(0x50_aaaadd, true)
 	).map(Color::setImmutable);
 
 	LerpedFloat progress;
@@ -114,8 +116,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
 		poseStack.scale((width + 4) * progress.getValue(partialTicks), 1, 1);
 		Color c1 = BAR_COLORS.getFirst();
 		Color c2 = BAR_COLORS.getSecond();
-		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0f, 3f, 1f, 4f, c1, c1);
-		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0f, 4f, 1f, 5f, c2, c2);
+		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0f, 1f, 1f, 3f, c1, c1);
+		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 310, 0f, 3f, 1f, 4f, c2, c2);
 		poseStack.popPose();
 
 		renderKeyframes(graphics, mouseX, partialTicks);
@@ -126,8 +128,8 @@ public class PonderProgressBar extends AbstractSimiWidget {
 	private void renderKeyframes(GuiGraphics graphics, int mouseX, float partialTicks) {
 		PonderScene activeScene = ponder.getActiveScene();
 
-		Couple<Color> hover = PonderUI.COLOR_HOVER.map(c -> c.setAlpha(0xa0));
-		Couple<Color> idle = PonderUI.COLOR_HOVER.map(c -> c.setAlpha(0x40));
+		Couple<Color> hover = PonderUI.COLOR_HOVER.map(c -> c.setAlpha(0xe0));
+		Couple<Color> idle = PonderUI.COLOR_HOVER.map(c -> c.setAlpha(0x70));
 		int hoverIndex;
 
 		if (isHovered) {
@@ -143,7 +145,7 @@ public class PonderProgressBar extends AbstractSimiWidget {
 
 		for (int i = 0; i < activeScene.getKeyframeCount(); i++) {
 			int keyframeTime = activeScene.getKeyframeTime(i);
-			int keyframePos = (int) (((float) keyframeTime) / ((float) activeScene.getTotalTime()) * (width + 4));
+			int keyframePos = (int) (((float) keyframeTime) / ((float) activeScene.getTotalTime()) * (width + 2));
 
 			boolean selected = i == hoverIndex;
 			Couple<Color> colors = selected ? hover : idle;
@@ -158,23 +160,24 @@ public class PonderProgressBar extends AbstractSimiWidget {
 		PoseStack poseStack = graphics.pose();
 		if (selected) {
 			Font font = Minecraft.getInstance().font;
-			UIRenderHelper.drawGradientRect(poseStack.last().pose(), 600, ((float) keyframePos), 10f, keyframePos + 1f, 10f + height, endColor, startColor);
+			UIRenderHelper.drawGradientRect(poseStack.last().pose(), 320, ((float) keyframePos), 9f, keyframePos + 2f, 9f + height, endColor, startColor);
 			poseStack.pushPose();
-			poseStack.translate(0, 0, 200);
+			poseStack.translate(0, 0, 320);
 			String text;
 			int offset;
 			if (activeScene.getCurrentTime() < keyframeTime) {
 				text = ">";
-				offset = -1 - font.width(text);
+				offset = -2 - font.width(text);
 			} else {
 				text = "<";
-				offset = 3;
+				offset = 4;
 			}
-			graphics.drawString(font, text, keyframePos + offset, 10, endColor.getRGB(), false);
+			graphics.drawString(font, Component.literal(text)
+				.withStyle(ChatFormatting.BOLD), keyframePos + offset, 10, endColor.getRGB(), false);
 			poseStack.popPose();
 		}
 
-		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 400, ((float) keyframePos), -1f, keyframePos + 1f, 2f + height, startColor, endColor);
+		UIRenderHelper.drawGradientRect(poseStack.last().pose(), 320, ((float) keyframePos), 0f, keyframePos + 2f, 1f + height, startColor, endColor);
 	}
 
 	@Override

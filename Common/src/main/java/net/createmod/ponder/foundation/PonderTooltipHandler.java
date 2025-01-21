@@ -60,7 +60,7 @@ public class PonderTooltipHandler {
 
 		float value = holdKeyProgress.getValue();
 
-		if (!subject && CatnipClientServices.CLIENT_HOOKS.isKeyPressed(ponderKeybind())) {
+		if (!subject && CatnipClientServices.CLIENT_HOOKS.isKeyPressed(ponderKeybind()) && currentScreen != null) {
 			if (value >= 1) {
 				if (currentScreen instanceof NavigatableSimiScreen)
 					((NavigatableSimiScreen) currentScreen).centerScalingOnMouse();

@@ -147,7 +147,7 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
 		new BoxElement()
 				.withBackground(PonderUI.BACKGROUND_FLAT)
 				.gradientBorder(COLOR_WINDOW_BORDER)
-				.at(targetX - 10, 3, 100)
+				.at(targetX - 10, 3, -101)
 				.withBounds(boxWidth, boxHeight - 1)
 				.render(graphics);
 
