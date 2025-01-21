@@ -71,6 +71,8 @@ public class ServerboundConfigPacket<T> implements ServerboundPacketPayload {
 			return Float.toString((Float) value);
 		if (value instanceof Double)
 			return Double.toString((Double) value);
+		if (value instanceof String)
+			return String.valueOf(value);
 
 		throw new IllegalArgumentException("unknown type " + value + ": " + value.getClass().getSimpleName());
 	}
@@ -86,6 +88,8 @@ public class ServerboundConfigPacket<T> implements ServerboundPacketPayload {
 			return Float.parseFloat(sValue);
 		if (type instanceof Double)
 			return Double.parseDouble(sValue);
+		if (type instanceof String)
+			return sValue;
 
 		throw new IllegalArgumentException("unknown type " + type + ": " + type.getClass().getSimpleName());
 	}
