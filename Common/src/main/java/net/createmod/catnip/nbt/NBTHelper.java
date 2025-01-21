@@ -2,18 +2,21 @@ package net.createmod.catnip.nbt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -23,6 +26,15 @@ public class NBTHelper {
 
 	public static void putMarker(CompoundTag nbt, String marker) {
 		nbt.putBoolean(marker, true);
+	}
+	
+	// Backwards compatible with 1.20
+	public static BlockPos readBlockPos(CompoundTag nbt, String key) {
+		Optional<BlockPos> pos = NbtUtils.readBlockPos(nbt, key);
+		if (pos.isPresent())
+			return pos.get();
+		CompoundTag oldTag = nbt.getCompound(key);
+		return new BlockPos(oldTag.getInt("X"), oldTag.getInt("Y"), oldTag.getInt("Z"));
 	}
 
 	public static <T extends Enum<?>> T readEnum(CompoundTag nbt, String key, Class<T> enumClass) {

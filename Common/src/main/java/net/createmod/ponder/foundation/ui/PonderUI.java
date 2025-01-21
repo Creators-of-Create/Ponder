@@ -618,8 +618,7 @@ public class PonderUI extends AbstractPonderScreen {
 		RenderSystem.backupProjectionMatrix();
 		
 		PoseStack poseStack = graphics.pose();
-		RenderSystem.setupLevelDiffuseLighting(DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1, poseStack.last()
-			.pose());
+		RenderSystem.setupLevelDiffuseLighting(DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1);
 
 		// has to be outside of MS transforms, important for vertex sorting
 		Matrix4f matrix4f = new Matrix4f(RenderSystem.getProjectionMatrix());

@@ -62,7 +62,7 @@ neoForge {
 //sourceSets.main.resources { srcDir "src/generated/resources" }
 
 dependencies {
-    compileOnly(commonProject)
+    implementation(commonProject)
 
     compileOnly("dev.engine_room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine_room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
