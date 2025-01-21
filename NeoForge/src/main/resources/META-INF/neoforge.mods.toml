@@ -19,9 +19,6 @@ ${mod_description}
 [[mixins]]
 config="${mod_id}.mixins.json"
 
-[[mixins]]
-config="${mod_id}-common.mixins.json"
-
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"

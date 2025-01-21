@@ -4,9 +4,21 @@
   "package": "net.createmod.ponder.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "accessor.BiomeManagerAccessor",
+    "accessor.EntityAccessor",
+    "accessor.MinecraftServerAccessor"
   ],
   "client": [
-    "client.TextureAtlasMixin"
+    "accessor.TimerAccessor",
+    "client.TextureAtlasMixin",
+    "client.WindowResizeMixin",
+    "client.accessor.BufferBuilderAccessor",
+    "client.accessor.ClientPacketListenerAccessor",
+    "client.accessor.GameRendererAccessor",
+    "client.accessor.ItemRendererAccessor",
+    "client.accessor.RenderSystemAccessor",
+    "client.accessor.RenderTypeAccessor",
+    "client.accessor.ScreenAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
