@@ -15,6 +15,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -50,6 +51,11 @@ public class WrappedClientLevel extends ClientLevel {
 	@Override
 	public BlockState getBlockState(BlockPos pos) {
 		return level.getBlockState(pos);
+	}
+	
+	@Override
+	public BlockGetter getChunkForCollisions(int x, int z) {
+		return level.getChunkForCollisions(x, z);
 	}
 
 	// FIXME: blockstate#getCollisionShape with WrappedClientWorld gives unreliable

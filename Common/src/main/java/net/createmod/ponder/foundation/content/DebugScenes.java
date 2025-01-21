@@ -77,6 +77,7 @@ public class DebugScenes {
 	public static void blocksScene(SceneBuilder scene, SceneBuildingUtil util) {
 		scene.title("debug_blocks", "Changing Blocks");
 		scene.showBasePlate();
+		scene.scaleSceneView(0.75f);
 		scene.idle(10);
 		scene.world().showSection(util.select().layersFrom(1), Direction.DOWN);
 		scene.idle(10);
@@ -87,8 +88,15 @@ public class DebugScenes {
 		scene.world().replaceBlocks(util.select().fromTo(1, 1, 3, 2, 2, 4),
 									Blocks.WHITE_CONCRETE.defaultBlockState(), true);
 		scene.idle(10);
+		scene.addKeyframe();
 		scene.world().replaceBlocks(util.select().position(3, 1, 1), Blocks.GOLD_BLOCK.defaultBlockState(), true);
 		scene.rotateCameraY(180);
+		
+		for (int i = 0; i < 20; i++) {
+			scene.world().incrementBlockBreakingProgress(util.grid().at(3, 1, 1));
+			scene.idle(10);
+		}
+		
 		scene.markAsFinished();
 	}
 
@@ -143,9 +151,15 @@ public class DebugScenes {
 			.add(out1)
 			.add(out2);
 
+		scene.addKeyframe();
 		scene.idle(10);
 		scene.world().showSection(blocksExceptBasePlate, Direction.DOWN);
 		scene.idle(10);
+		scene.addKeyframe();
+		scene.idle(20);
+		scene.addKeyframe();
+		scene.idle(20);
+		scene.addKeyframe();
 
 		scene.overlay().showOutlineWithText(out1, 100)
 			.colored(PonderPalette.BLACK)

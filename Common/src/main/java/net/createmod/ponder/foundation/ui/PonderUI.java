@@ -16,6 +16,7 @@ import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.google.common.graph.ElementOrder;
 import com.google.common.graph.GraphBuilder;
@@ -104,6 +105,9 @@ public class PonderUI extends AbstractPonderScreen {
 		new Color(0x70_984500, true),
 		new Color(0x70_692400, true)
 	).map(Color::setImmutable);
+	
+	private static final Vector3f DIFFUSE_LIGHT_0 = new Vector3f(-0.2F, 1.0F, 0.7F).normalize();
+	private static final Vector3f DIFFUSE_LIGHT_1 = new Vector3f(0.2F, 1.0F, -0.7F).normalize();
 
 	private final List<PonderScene> scenes;
 	private final List<PonderTag> tags;
@@ -612,13 +616,16 @@ public class PonderUI extends AbstractPonderScreen {
 		RenderSystem.enableBlend();
 		RenderSystem.enableDepthTest();
 		RenderSystem.backupProjectionMatrix();
+		
+		PoseStack poseStack = graphics.pose();
+		RenderSystem.setupLevelDiffuseLighting(DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1, poseStack.last()
+			.pose());
 
 		// has to be outside of MS transforms, important for vertex sorting
 		Matrix4f matrix4f = new Matrix4f(RenderSystem.getProjectionMatrix());
 		matrix4f.translate(0, 0, 800);
 		RenderSystem.setProjectionMatrix(matrix4f, VertexSorting.DISTANCE_TO_ORIGIN);
 
-		PoseStack poseStack = graphics.pose();
 		poseStack.pushPose();
 		poseStack.translate(0, 0, -800);
 		scene.getTransform()
@@ -1141,7 +1148,7 @@ public class PonderUI extends AbstractPonderScreen {
 			.render(graphics);
 
 		poseStack.pushPose();
-		poseStack.translate(divotX + divotRadius, divotY + divotRadius, 10);
+		poseStack.translate(divotX + divotRadius, divotY + divotRadius, 110);
 		poseStack.mulPose(Axis.ZP.rotationDegrees(divotRotation));
 		poseStack.translate(-divotRadius, -divotRadius, 0);
 		PonderGuiTextures.SPEECH_TOOLTIP_BACKGROUND.render(graphics, 0, 0);

@@ -71,6 +71,7 @@ public class PonderLevel extends SchematicLevel {
 		blockBreakingProgressions = new HashMap<>();
 		originalEntities = new ArrayList<>();
 		particles = new PonderWorldParticles(this);
+		renderMode = true;
 	}
 
 	public void createBackup() {
