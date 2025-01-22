@@ -106,8 +106,8 @@ public class PonderUI extends AbstractPonderScreen {
 		new Color(0x70_692400, true)
 	).map(Color::setImmutable);
 	
-	private static final Vector3f DIFFUSE_LIGHT_0 = new Vector3f(-0.2F, 1.0F, 0.7F).normalize();
-	private static final Vector3f DIFFUSE_LIGHT_1 = new Vector3f(0.2F, 1.0F, -0.7F).normalize();
+	private static final Vector3f DIFFUSE_LIGHT_0 = new Vector3f(0.4F, -1.0F, 0.7F).normalize();
+	private static final Vector3f DIFFUSE_LIGHT_1 = new Vector3f(-0.4F, -0.5F, 0.7F).normalize();
 
 	private final List<PonderScene> scenes;
 	private final List<PonderTag> tags;
