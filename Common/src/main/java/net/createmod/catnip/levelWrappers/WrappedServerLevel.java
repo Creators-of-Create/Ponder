@@ -27,6 +27,7 @@ import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.ticks.LevelTicks;
+import net.minecraft.world.ticks.TickPriority;
 
 public class WrappedServerLevel extends ServerLevel {
 
@@ -65,6 +66,18 @@ public class WrappedServerLevel extends ServerLevel {
 	public LevelTicks<Fluid> getFluidTicks() {
 		return super.getFluidTicks();
 	}
+
+	@Override
+	public void scheduleTick(BlockPos pos, Block block, int delay) {}
+
+	@Override
+	public void scheduleTick(BlockPos pos, Fluid fluid, int delay) {}
+
+	@Override
+	public void scheduleTick(BlockPos pos, Block block, int delay, TickPriority priority) {}
+
+	@Override
+	public void scheduleTick(BlockPos pos, Fluid fluid, int delay, TickPriority priority) {}
 
 	@Override
 	public void levelEvent(@Nullable Player player, int type, BlockPos pos, int data) {}

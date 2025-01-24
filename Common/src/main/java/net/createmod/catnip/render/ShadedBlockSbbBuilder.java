@@ -19,10 +19,16 @@ public class ShadedBlockSbbBuilder implements VertexConsumer {
 	protected BufferBuilder bufferBuilder;
 	protected final IntList shadeSwapVertices = new IntArrayList();
 	protected boolean currentShade;
+	protected boolean invertFakeNormal;
 
 	public static ShadedBlockSbbBuilder create() {
 		return new ShadedBlockSbbBuilder();
 	}
+
+	public static ShadedBlockSbbBuilder createForPonder() {
+		ShadedBlockSbbBuilder builder = new ShadedBlockSbbBuilder();
+		builder.invertFakeNormal = true;
+		return builder; }
 
 	public void begin() {
 		bufferBuilder = new BufferBuilder(BYTE_BUFFER_BUILDER, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
@@ -41,7 +47,7 @@ public class ShadedBlockSbbBuilder implements VertexConsumer {
 			mesh = new TemplateMesh(0);
 		}
 
-		return new ShadeSeparatingSuperByteBuffer(mesh, shadeSwapVertices.toIntArray());
+		return new ShadeSeparatingSuperByteBuffer(mesh, shadeSwapVertices.toIntArray(), invertFakeNormal);
 	}
 
 	public BufferBuilder unwrap(boolean shade) {

@@ -18,6 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -89,7 +90,7 @@ public class DebugScenes {
 									Blocks.WHITE_CONCRETE.defaultBlockState(), true);
 		scene.idle(10);
 		scene.addKeyframe();
-		scene.world().replaceBlocks(util.select().position(3, 1, 1), Blocks.GOLD_BLOCK.defaultBlockState(), true);
+		scene.world().replaceBlocks(util.select().position(3, 1, 1), Blocks.REDSTONE_WIRE.defaultBlockState().setValue(RedStoneWireBlock.POWER, 15), true);
 		scene.rotateCameraY(180);
 		
 		for (int i = 0; i < 20; i++) {

@@ -59,6 +59,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 	private BlockAndTintGetter levelWithLight;
 	@Nullable
 	private Matrix4f lightTransform;
+	private boolean invertFakeDiffuseNormal;
 
 	// Reused objects
 	private final Matrix4f modelMat = new Matrix4f();
@@ -70,10 +71,15 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 	private final ShiftOutput shiftOutput = new ShiftOutput();
 	private final Vector4f lightPos = new Vector4f();
 
-	public ShadeSeparatingSuperByteBuffer(TemplateMesh template, int[] shadeSwapVertices) {
+	public ShadeSeparatingSuperByteBuffer(TemplateMesh template, int[] shadeSwapVertices, boolean invertFakeDiffuseNormal) {
 		this.template = template;
 		this.shadeSwapVertices = shadeSwapVertices;
+		this.invertFakeDiffuseNormal = invertFakeDiffuseNormal;
 		reset();
+	}
+
+	public ShadeSeparatingSuperByteBuffer(TemplateMesh template, int[] shadeSwapVertices) {
+		this(template, shadeSwapVertices, false);
 	}
 
 	public ShadeSeparatingSuperByteBuffer(TemplateMesh template) {
@@ -118,7 +124,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 			lightDir1.set(RenderSystemAccessor.catnip$getShaderLightDirections()[1]).normalize();
 			if (shadeSwapVertices.length > 0) {
 				// Pretend unshaded faces always point up to get the correct max diffuse value for the current level.
-				normal.set(0, 1, 0);
+				normal.set(0, invertFakeDiffuseNormal ? -1 : 1, 0);
 				// Don't apply the normal matrix since that would cause upside down objects to be dark.
 				unshadedDiffuse = calculateDiffuse(normal, lightDir0, lightDir1);
 			}
