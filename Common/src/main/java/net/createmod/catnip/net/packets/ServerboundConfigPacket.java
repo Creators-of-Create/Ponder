@@ -27,10 +27,15 @@ public class ServerboundConfigPacket<T> implements ServerboundPacketPayload {
 	private final String value;
 
 	public ServerboundConfigPacket(String modID, String path, T value) {
-		super();
 		this.modID = Objects.requireNonNull(modID);
 		this.path = path;
 		this.value = serialize(value);
+	}
+
+	public ServerboundConfigPacket(String modID, String path, String serialized) {
+		this.modID = Objects.requireNonNull(modID);
+		this.path = path;
+		this.value = serialized;
 	}
 
 	@Override
