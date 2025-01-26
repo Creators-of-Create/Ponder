@@ -11,10 +11,10 @@ import net.createmod.catnip.config.ui.HintableTextFieldWidget;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.TextStencilElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -66,13 +66,13 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
 			Font font = Minecraft.getInstance().font;
 			if (min.doubleValue() > getTypeMin().doubleValue()) {
-				MutableComponent t = Components.literal(formatBound(min) + " < ");
+				MutableComponent t = Component.literal(formatBound(min) + " < ");
 				minText = new TextStencilElement(font, t).centered(true, false);
 				minText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0 ,0, height/2, height, width, UIRenderHelper.COLOR_TEXT_DARKER));
 				minOffset = font.width(t);
 			}
 			if (max.doubleValue() < getTypeMax().doubleValue()) {
-				MutableComponent t = Components.literal(" < " + formatBound(max));
+				MutableComponent t = Component.literal(" < " + formatBound(max));
 				maxText = new TextStencilElement(font, t).centered(true, false);
 				maxText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0 ,0, height/2, height, width, UIRenderHelper.COLOR_TEXT_DARKER));
 				maxOffset = font.width(t);

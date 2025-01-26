@@ -41,7 +41,6 @@ import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.animation.LerpedFloat.Chaser;
-import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.api.registration.StoryBoardEntry;
@@ -103,7 +102,7 @@ public class PonderUI extends AbstractPonderScreen {
 		new Color(0x70_984500, true),
 		new Color(0x70_692400, true)
 	).map(Color::setImmutable);
-	
+
 	private static final Vector3f DIFFUSE_LIGHT_0 = new Vector3f(-0.2F, 1.0F, 0.7F).normalize();
 	private static final Vector3f DIFFUSE_LIGHT_1 = new Vector3f(0.2F, 1.0F, -0.7F).normalize();
 
@@ -619,7 +618,7 @@ public class PonderUI extends AbstractPonderScreen {
 		RenderSystem.enableBlend();
 		RenderSystem.enableDepthTest();
 		RenderSystem.backupProjectionMatrix();
-		
+
 		PoseStack poseStack = graphics.pose();
 		RenderSystem.setupLevelDiffuseLighting(DIFFUSE_LIGHT_0, DIFFUSE_LIGHT_1, poseStack.last()
 			.pose());
@@ -766,7 +765,7 @@ public class PonderUI extends AbstractPonderScreen {
 							font.getSplitter()
 									.splitLines(text, width / 3, Style.EMPTY)
 									.stream()
-									.map(t -> (Component) Components.literal(t.getString()))
+									.map(t -> (Component) Component.literal(t.getString()))
 									.toList(),
 							0,
 							0
@@ -776,8 +775,7 @@ public class PonderUI extends AbstractPonderScreen {
 				if (hoveredBlockPos != null && PonderIndex.editingModeActive() && !userViewMode) {
 					ms.translate(0, -15, 0);
 					boolean copied = hoveredBlockPos.equals(copiedBlockPos);
-					MutableComponent coords = Components.literal(
-									hoveredBlockPos.getX() + ", " + hoveredBlockPos.getY() + ", " + hoveredBlockPos.getZ())
+					MutableComponent coords = Component.literal(hoveredBlockPos.getX() + ", " + hoveredBlockPos.getY() + ", " + hoveredBlockPos.getZ())
 							.withStyle(copied ? ChatFormatting.GREEN : ChatFormatting.GOLD);
 					graphics.renderTooltip(font, coords, 0, 0);
 				}

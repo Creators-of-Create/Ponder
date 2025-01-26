@@ -1,11 +1,11 @@
 package net.createmod.catnip.net;
 
 import net.createmod.catnip.config.ui.ConfigHelper;
-import net.createmod.catnip.lang.Components;
 import net.createmod.ponder.Ponder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.config.ModConfig;
 
@@ -61,11 +61,11 @@ public class ClientboundConfigPacket implements ClientboundPacket {
 
 				try {
 					ConfigHelper.setConfigValue(path, packet.value);
-					player.displayClientMessage(Components.literal("Great Success!"), false);
+                    player.displayClientMessage(Component.literal("Great Success!"), false);
 				} catch (ConfigHelper.InvalidValueException e) {
-					player.displayClientMessage(Components.literal("Config could not be set the the specified value!"), false);
+                    player.displayClientMessage(Component.literal("Config could not be set the the specified value!"), false);
 				} catch (Exception e) {
-					player.displayClientMessage(Components.literal("Something went wrong while trying to set config value. Check the client logs for more information"), false);
+                    player.displayClientMessage(Component.literal("Something went wrong while trying to set config value. Check the client logs for more information"), false);
 					Ponder.LOGGER.warn("Exception during client-side config value set:", e);
 				}
 			});

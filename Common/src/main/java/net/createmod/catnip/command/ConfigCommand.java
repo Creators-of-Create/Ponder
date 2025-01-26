@@ -9,10 +9,10 @@ import net.createmod.catnip.net.ClientboundConfigPacket;
 import net.createmod.catnip.net.ClientboundSimpleActionPacket;
 import net.createmod.catnip.net.ConfigPathArgument;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.lang.Components;
 import net.createmod.ponder.Ponder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.config.ModConfig;
 
@@ -60,13 +60,13 @@ public class ConfigCommand {
 
 											try {
 												ConfigHelper.setConfigValue(path, value);
-												ctx.getSource().sendSuccess(() -> Components.literal("Great Success!"), false);
+												ctx.getSource().sendSuccess(() -> Component.literal("Great Success!"), false);
 												return Command.SINGLE_SUCCESS;
 											} catch (ConfigHelper.InvalidValueException e) {
-												ctx.getSource().sendFailure(Components.literal("Config could not be set the the specified value!"));
+												ctx.getSource().sendFailure(Component.literal("Config could not be set the the specified value!"));
 												return 0;
 											} catch (Exception e) {
-												ctx.getSource().sendFailure(Components.literal("Something went wrong while trying to set config value. Check the server logs for more information"));
+												ctx.getSource().sendFailure(Component.literal("Something went wrong while trying to set config value. Check the server logs for more information"));
 												Ponder.LOGGER.warn("Exception during server-side config value set:", e);
 												return 0;
 											}

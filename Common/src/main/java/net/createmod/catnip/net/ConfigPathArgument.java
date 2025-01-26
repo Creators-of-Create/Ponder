@@ -15,15 +15,15 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ConfigPathArgument implements ArgumentType<ConfigHelper.ConfigPath> {
 
-	public static final SimpleCommandExceptionType PARSE_ERROR =
-			new SimpleCommandExceptionType(Components.literal("Unable to parse ConfigPath"));
+	public static final SimpleCommandExceptionType PARSE_ERROR
+		= new SimpleCommandExceptionType(Component.literal("Unable to parse ConfigPath"));
 
 	public static final List<String> EXAMPLES = List.of("client", "botania:common", "create:client.client.rainbowDebug");
 	public static final List<String> BASE_SUGGESTIONS = List.of("client", "common", "server");

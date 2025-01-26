@@ -21,7 +21,6 @@ import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.lang.ClientFontHelper;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.FontHelper.Palette;
-import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.layout.LayoutHelper;
 import net.createmod.catnip.layout.PaginationState;
 import net.createmod.ponder.Ponder;
@@ -278,7 +277,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 		if (hoveredItem != null) {
 			List<Component> list = FontHelper.cutStringTextComponent(hoveredItem.getDescription(), Palette.ALL_GRAY);
-			list.add(0, Components.literal(hoveredItem.getTitle()));
+			list.add(0, Component.literal(hoveredItem.getTitle()));
 			graphics.renderComponentTooltip(font, list, mouseX, mouseY);
 		}
 

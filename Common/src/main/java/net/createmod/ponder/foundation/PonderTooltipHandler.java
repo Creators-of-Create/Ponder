@@ -11,7 +11,6 @@ import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.animation.LerpedFloat;
-import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderKeybinds;
@@ -174,7 +173,7 @@ public class PonderTooltipHandler {
 			bars += ChatFormatting.GRAY + Strings.repeat("|", current);
 			if (progress < 1)
 				bars += ChatFormatting.DARK_GRAY + Strings.repeat("|", total - current);
-			return Components.literal(bars);
+			return Component.literal(bars);
 		}
 
 		return holdW;

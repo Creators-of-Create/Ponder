@@ -42,7 +42,8 @@ public class LangBuilder {
 	 * @return
 	 */
 	public LangBuilder translate(String langKey, Object... args) {
-		return add(Components.translatable(namespace + "." + langKey, resolveBuilders(args)));
+		Object[] args1 = resolveBuilders(args);
+		return add(Component.translatable(namespace + "." + langKey, args1));
 	}
 
 	/**
@@ -52,7 +53,7 @@ public class LangBuilder {
 	 * @return
 	 */
 	public LangBuilder text(String literalText) {
-		return add(Components.literal(literalText));
+		return add(Component.literal(literalText));
 	}
 
 	/**
@@ -63,7 +64,7 @@ public class LangBuilder {
 	 * @return
 	 */
 	public LangBuilder text(ChatFormatting format, String literalText) {
-		return add(Components.literal(literalText).withStyle(format));
+		return add(Component.literal(literalText).withStyle(format));
 	}
 
 	/**
@@ -74,7 +75,7 @@ public class LangBuilder {
 	 * @return
 	 */
 	public LangBuilder text(int color, String literalText) {
-		return add(Components.literal(literalText).withStyle(s -> s.withColor(color)));
+		return add(Component.literal(literalText).withStyle(s -> s.withColor(color)));
 	}
 
 	/**
