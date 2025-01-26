@@ -184,12 +184,11 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 		new BoxElement().withBackground(PonderUI.BACKGROUND_FLAT)
 			.gradientBorder(PonderUI.COLOR_IDLE)
-			.at(0, 0, 100)
+			.at(0, 0, 0)
 			.withBounds(30, 30)
 			.render(graphics);
 
-		// FIXME this doesnt show anything
-		PonderGuiTextures.LOGO.render(graphics, 0, 0);
+		PonderGuiTextures.LOGO.render(graphics, -1, -1, 32, 32);
 
 		//34 = 30 bounds + 2 padding + 2 box width
 		//-3 = 2 padding + 1 pixel of the box
