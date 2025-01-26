@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, ColoredRenderable {
 
 	//logo
-	LOGO("logo", 0, 0, 256, 256),
+	LOGO("logo", 0, 0, 32, 32, 32, 32),
 
 	//widgets
 	SPEECH_TOOLTIP_BACKGROUND("widgets", 0, 24, 8, 8),
@@ -54,30 +54,34 @@ public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, Col
 	private final int height;
 	private final int startX;
 	private final int startY;
+	private final int sheetWidth;
+	private final int sheetHeight;
 
 	PonderGuiTextures(String location, int iconColumn, int iconRow) {
 		this(location, iconColumn * 16, iconRow * 16, 16, 16);
 	}
 
 	PonderGuiTextures(String location, int startX, int startY, int width, int height) {
-		this(Ponder.MOD_ID, location, startX, startY, width, height);
+		this(Ponder.MOD_ID, location, startX, startY, width, height, 256, 256);
 	}
 
-	PonderGuiTextures(String namespace, String location, int startX, int startY, int width, int height) {
+	PonderGuiTextures(String location, int startX, int startY, int width, int height, int sheetWidth, int sheetHeight) {
+		this(Ponder.MOD_ID, location, startX, startY, width, height, sheetWidth, sheetHeight);
+	}
+
+	PonderGuiTextures(String namespace, String location, int startX, int startY, int width, int height, int sheetWidth, int sheetHeight) {
 		this.location = ResourceLocation.fromNamespaceAndPath(namespace, "textures/gui/" + location + ".png");
 		this.width = width;
 		this.height = height;
 		this.startX = startX;
 		this.startY = startY;
+		this.sheetWidth = sheetWidth;
+		this.sheetHeight = sheetHeight;
 	}
 
 	@Override
 	public void render(GuiGraphics graphics, int x, int y) {
-		render(graphics, x, y, width, height);
-	}
-
-	public void render(GuiGraphics graphics, int x, int y, int renderWidth, int renderHeight) {
-		graphics.blit(getLocation(), x, y, renderWidth, renderHeight, startX, startY, width, height, 256, 256);
+		graphics.blit(getLocation(), x, y, 0, startX, startY, width, height, sheetWidth, sheetHeight);
 	}
 
 	@Override

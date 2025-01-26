@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.createmod.catnip.event.ClientResourceReloadListener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.net.packets.ClientboundSimpleActionPacket;
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperByteBufferCache;
@@ -28,7 +29,6 @@ public class PonderClient {
 
 	public static final ClientResourceReloadListener RESOURCE_RELOAD_LISTENER = new ClientResourceReloadListener();
 	public static final GhostBlocks GHOST_BLOCKS = GhostBlocks.getInstance();
-	public static final boolean ENABLE_DEBUG = true;
 
 	public static void init() {
 		SuperByteBufferCache.getInstance().registerCompartment(CachedBuffers.GENERIC_BLOCK);
@@ -41,7 +41,7 @@ public class PonderClient {
 
 		PonderIndex.addPlugin(new BasePonderPlugin());
 
-		if (ENABLE_DEBUG) {
+		if (CatnipServices.PLATFORM.isDevelopmentEnvironment()) {
 			PonderIndex.addPlugin(new DebugPonderPlugin());
 		}
 
