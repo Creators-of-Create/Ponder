@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, ColoredRenderable {
 
 	//logo
-	LOGO("logo", 0, 0, 32, 32),
+	LOGO("logo", 0, 0, 256, 256),
 
 	//widgets
 	SPEECH_TOOLTIP_BACKGROUND("widgets", 0, 24, 8, 8),
@@ -73,7 +73,11 @@ public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, Col
 
 	@Override
 	public void render(GuiGraphics graphics, int x, int y) {
-		graphics.blit(getLocation(), x, y, 0, startX, startY, width, height, 256, 256);
+		render(graphics, x, y, width, height);
+	}
+
+	public void render(GuiGraphics graphics, int x, int y, int renderWidth, int renderHeight) {
+		graphics.blit(getLocation(), x, y, renderWidth, renderHeight, startX, startY, width, height, 256, 256);
 	}
 
 	@Override
