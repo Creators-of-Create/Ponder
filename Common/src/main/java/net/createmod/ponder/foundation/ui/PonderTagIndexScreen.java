@@ -21,7 +21,6 @@ import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.lang.ClientFontHelper;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.FontHelper.Palette;
-import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.layout.LayoutHelper;
 import net.createmod.catnip.layout.PaginationState;
 import net.createmod.ponder.Ponder;
@@ -189,7 +188,8 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 			.withBounds(30, 30)
 			.render(graphics);
 
-		//todo add icon inside the box
+		// FIXME this doesnt show anything
+		PonderGuiTextures.LOGO.render(graphics, 0, 0);
 
 		//34 = 30 bounds + 2 padding + 2 box width
 		//-3 = 2 padding + 1 pixel of the box
@@ -278,7 +278,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 		if (hoveredItem != null) {
 			List<Component> list = FontHelper.cutStringTextComponent(hoveredItem.getDescription(), Palette.ALL_GRAY);
-			list.add(0, Components.literal(hoveredItem.getTitle()));
+			list.add(0, Component.literal(hoveredItem.getTitle()));
 			graphics.renderComponentTooltip(font, list, mouseX, mouseY);
 		}
 

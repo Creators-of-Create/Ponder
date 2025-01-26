@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
-import net.createmod.catnip.lang.Components;
+import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.mixin.client.accessor.ScreenAccessor;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,7 +31,7 @@ public abstract class AbstractSimiScreen extends Screen {
 	}
 
 	protected AbstractSimiScreen() {
-		this(Components.immutableEmpty());
+		this(Lang.IMMUTABLE_EMPTY);
 	}
 
 	/**

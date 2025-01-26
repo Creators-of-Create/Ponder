@@ -8,6 +8,8 @@ import javax.annotation.Nullable;
 
 import net.createmod.ponder.enums.PonderGuiTextures;
 
+import net.minecraft.network.chat.Component;
+
 import org.lwjgl.glfw.GLFW;
 
 import net.createmod.catnip.gui.ScreenOpener;
@@ -18,7 +20,6 @@ import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.FontHelper.Palette;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -60,7 +61,7 @@ public class ConfigModListScreen extends ConfigScreen {
 		goBack.showingElement(PonderGuiTextures.ICON_CONFIG_BACK.asStencil()
 				.withElementRenderer(BoxWidget.gradientFactory.apply(goBack)));
 		goBack.getToolTip()
-				.add(Components.literal("Go Back"));
+				.add(Component.literal("Go Back"));
 		addRenderableWidget(goBack);
 
 		search = new HintableTextFieldWidget(font, width / 2 - listWidth / 2, height - 35, listWidth, 20);
@@ -134,8 +135,8 @@ public class ConfigModListScreen extends ConfigScreen {
 				button.active = false;
 				button.updateGradientFromState();
 				button.modifyElement(e -> ((DelegatedStencilElement) e).withElementRenderer(BaseConfigScreen.DISABLED_RENDERER));
-				labelTooltip.add(Components.literal(modName(id)));
-				labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("This Mod does not have any configs registered or is not using Forge's config system"), Palette.ALL_GRAY));
+				labelTooltip.add(Component.literal(modName(id)));
+				labelTooltip.addAll(FontHelper.cutTextComponent(Component.literal("This Mod does not have any configs registered or is not using Forge's config system"), Palette.ALL_GRAY));
 			}
 
 			listeners.add(button);

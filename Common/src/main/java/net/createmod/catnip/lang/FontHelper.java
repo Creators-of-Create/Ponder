@@ -31,7 +31,7 @@ public final class FontHelper {
 	}
 
 	public static List<Component> cutStringTextComponent(String s, Palette palette) {
-		return cutTextComponent(Components.literal(s), palette);
+		return cutTextComponent(Component.literal(s), palette);
 	}
 
 	public static List<Component> cutTextComponent(Component c, Palette palette) {
@@ -40,7 +40,7 @@ public final class FontHelper {
 
 	public static List<Component> cutStringTextComponent(String s, Style primaryStyle,
 														 Style highlightStyle) {
-		return cutTextComponent(Components.literal(s), primaryStyle, highlightStyle);
+		return cutTextComponent(Component.literal(s), primaryStyle, highlightStyle);
 	}
 
 	public static List<Component> cutTextComponent(Component c, Style primaryStyle,
@@ -50,7 +50,7 @@ public final class FontHelper {
 
 	public static List<Component> cutStringTextComponent(String c, Style primaryStyle,
 														 Style highlightStyle, int indent) {
-		return cutTextComponent(Components.literal(c), primaryStyle, highlightStyle, indent);
+		return cutTextComponent(Component.literal(c), primaryStyle, highlightStyle, indent);
 	}
 
 	public static List<Component> cutTextComponent(Component c, Style primaryStyle,
@@ -93,7 +93,7 @@ public final class FontHelper {
 		}
 
 		// Format
-		MutableComponent lineStart = Components.literal(Strings.repeat(" ", indent));
+		MutableComponent lineStart = Component.literal(Strings.repeat(" ", indent));
 		lineStart.withStyle(primaryStyle);
 		List<Component> formattedLines = new ArrayList<>(lines.size());
 		Couple<Style> styles = Couple.create(highlightStyle, primaryStyle);
@@ -103,7 +103,7 @@ public final class FontHelper {
 			MutableComponent currentComponent = lineStart.plainCopy();
 			String[] split = string.split("_");
 			for (String part : split) {
-				currentComponent.append(Components.literal(part).withStyle(styles.get(currentlyHighlighted)));
+				currentComponent.append(Component.literal(part).withStyle(styles.get(currentlyHighlighted)));
 				currentlyHighlighted = !currentlyHighlighted;
 			}
 

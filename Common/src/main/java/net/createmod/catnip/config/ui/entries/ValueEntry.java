@@ -9,6 +9,7 @@ import javax.annotation.Nonnull;
 
 import net.createmod.ponder.enums.PonderGuiTextures;
 
+import net.minecraft.network.chat.Component;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -27,7 +28,6 @@ import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.FontHelper.Palette;
 import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -61,7 +61,7 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 		listeners.add(resetButton);
 
 		List<String> path = value.getPath();
-		labelTooltip.add(Components.literal(label).withStyle(ChatFormatting.WHITE));
+		labelTooltip.add(Component.literal(label).withStyle(ChatFormatting.WHITE));
 		String comment = spec.getComment();
 		if (comment == null || comment.isEmpty())
 			return;
@@ -80,18 +80,18 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 		labelTooltip.addAll(commentLines.stream()
 				.filter(s -> !s.startsWith("Range"))
 				.map(s -> s.equals(".") ? " " : s)
-				.map(Components::literal)
+				.map(str -> Component.literal(str))
 				.flatMap(stc -> FontHelper.cutTextComponent(stc, Palette.ALL_GRAY).stream())
 				.toList()
 		);
 
 		if (annotations.containsKey(ConfigAnnotations.RequiresRelog.TRUE.getName()))
-			labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("Changing this value will require a _relog_ to take full effect"), Palette.GRAY_AND_GOLD));
+			labelTooltip.addAll(FontHelper.cutTextComponent(Component.literal("Changing this value will require a _relog_ to take full effect"), Palette.GRAY_AND_GOLD));
 
 		if (annotations.containsKey(ConfigAnnotations.RequiresRestart.CLIENT.getName()))
-			labelTooltip.addAll(FontHelper.cutTextComponent(Components.literal("Changing this value will require a _restart_ to take full effect"), Palette.GRAY_AND_RED));
+			labelTooltip.addAll(FontHelper.cutTextComponent(Component.literal("Changing this value will require a _restart_ to take full effect"), Palette.GRAY_AND_RED));
 
-		labelTooltip.add(Components.literal(ConfigScreen.modID + ":" + path.get(path.size() - 1)).withStyle(ChatFormatting.DARK_GRAY));
+		labelTooltip.add(Component.literal(ConfigScreen.modID + ":" + path.get(path.size() - 1)).withStyle(ChatFormatting.DARK_GRAY));
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 import net.createmod.catnip.net.packets.ServerboundConfigPacket;
 import net.createmod.ponder.enums.PonderGuiTextures;
 
+import net.minecraft.network.chat.Component;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -43,7 +44,6 @@ import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.FontHelper.Palette;
 import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.lang.Components;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -196,7 +196,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 				);
 
 		resetAll.showingElement(PonderGuiTextures.ICON_CONFIG_RESET.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(resetAll)));
-		resetAll.getToolTip().add(Components.literal("Reset All"));
+		resetAll.getToolTip().add(Component.literal("Reset All"));
 		resetAll.getToolTip().addAll(FontHelper.cutStringTextComponent("Click here to reset all settings to their default value.", Palette.ALL_GRAY));
 
 		saveChanges = new BoxWidget(listL - 30, yCenter - 25, 20, 20)
@@ -216,7 +216,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 					addAnnotationsToConfirm(confirm).open(this);
 				});
 		saveChanges.showingElement(PonderGuiTextures.ICON_CONFIG_SAVE.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(saveChanges)));
-		saveChanges.getToolTip().add(Components.literal("Save Changes"));
+		saveChanges.getToolTip().add(Component.literal("Save Changes"));
 		saveChanges.getToolTip().addAll(FontHelper.cutStringTextComponent("Click here to save your current changes.", Palette.ALL_GRAY));
 
 		discardChanges = new BoxWidget(listL - 30, yCenter + 5, 20, 20)
@@ -235,14 +235,14 @@ public class SubMenuConfigScreen extends ConfigScreen {
 							.open(this);
 				});
 		discardChanges.showingElement(PonderGuiTextures.ICON_CONFIG_DISCARD.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(discardChanges)));
-		discardChanges.getToolTip().add(Components.literal("Discard Changes"));
+		discardChanges.getToolTip().add(Component.literal("Discard Changes"));
 		discardChanges.getToolTip().addAll(FontHelper.cutStringTextComponent("Click here to discard all the changes you made.", Palette.ALL_GRAY));
 
 		goBack = new BoxWidget(listL - 30, yCenter + 65, 20, 20)
 				.withPadding(2, 2)
 				.withCallback(this::attemptBackstep);
 		goBack.showingElement(PonderGuiTextures.ICON_CONFIG_BACK.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(goBack)));
-		goBack.getToolTip().add(Components.literal("Go Back"));
+		goBack.getToolTip().add(Component.literal("Go Back"));
 
 		addRenderableWidget(resetAll);
 		addRenderableWidget(saveChanges);
@@ -330,13 +330,13 @@ public class SubMenuConfigScreen extends ConfigScreen {
 			stencil.withStencilRenderer((ms, w, h, alpha) -> PonderGuiTextures.ICON_CONFIG_LOCKED.render(ms, 0, 0));
 			stencil.withElementRenderer((ms, w, h, alpha) -> UIRenderHelper.angledGradient(ms, 90, 8, 0, 16, 16, red));
 			serverLocked.withBorderColors(red);
-			serverLocked.getToolTip().add(Components.literal("Locked").withStyle(ChatFormatting.BOLD));
+			serverLocked.getToolTip().add(Component.literal("Locked").withStyle(ChatFormatting.BOLD));
 			serverLocked.getToolTip().addAll(FontHelper.cutStringTextComponent("You do not have enough permissions to edit the server config. You can still look at the current values here though.", Palette.ALL_GRAY));
 		} else {
 			stencil.withStencilRenderer((ms, w, h, alpha) -> PonderGuiTextures.ICON_CONFIG_UNLOCKED.render(ms, 0, 0));
 			stencil.withElementRenderer((ms, w, h, alpha) -> UIRenderHelper.angledGradient(ms, 90, 8, 0, 16, 16, green));
 			serverLocked.withBorderColors(green);
-			serverLocked.getToolTip().add(Components.literal("Unlocked").withStyle(ChatFormatting.BOLD));
+			serverLocked.getToolTip().add(Component.literal("Unlocked").withStyle(ChatFormatting.BOLD));
 			serverLocked.getToolTip().addAll(FontHelper.cutStringTextComponent("You have enough permissions to edit the server config. Changes you make here will be synced with the server when you save them.", Palette.ALL_GRAY));
 		}
 

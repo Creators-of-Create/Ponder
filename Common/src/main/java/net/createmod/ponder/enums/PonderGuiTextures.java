@@ -12,6 +12,9 @@ import net.minecraft.resources.ResourceLocation;
 
 public enum PonderGuiTextures implements TextureSheetSegment, ScreenElement, ColoredRenderable {
 
+	//logo
+	LOGO("logo", 0, 0, 32, 32),
+
 	//widgets
 	SPEECH_TOOLTIP_BACKGROUND("widgets", 0, 24, 8, 8),
 	SPEECH_TOOLTIP_COLOR("widgets", 8, 24, 8, 8),

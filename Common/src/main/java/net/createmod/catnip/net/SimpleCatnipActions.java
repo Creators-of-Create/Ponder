@@ -4,9 +4,9 @@ import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.config.ui.ConfigModListScreen;
 import net.createmod.catnip.config.ui.SubMenuConfigScreen;
 import net.createmod.catnip.gui.ScreenOpener;
-import net.createmod.catnip.lang.Components;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 
 public class SimpleCatnipActions {
 
@@ -25,14 +25,14 @@ public class SimpleCatnipActions {
 		try {
 			configPath = ConfigHelper.ConfigPath.parse(value);
 		} catch (IllegalArgumentException e) {
-			player.displayClientMessage(Components.literal(e.getMessage()), false);
+			player.displayClientMessage(Component.literal(e.getMessage()), false);
 			return;
 		}
 
 		try {
 			ScreenOpener.open(SubMenuConfigScreen.find(configPath));
 		} catch (Exception e) {
-			player.displayClientMessage(Components.literal("Unable to find the specified config"), false);
+			player.displayClientMessage(Component.literal("Unable to find the specified config"), false);
 		}
 	}
 

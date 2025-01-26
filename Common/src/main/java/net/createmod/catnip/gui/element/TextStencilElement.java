@@ -1,16 +1,17 @@
 package net.createmod.catnip.gui.element;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.createmod.catnip.lang.Components;
+
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public class TextStencilElement extends DelegatedStencilElement {
 
 	protected Font font;
-	protected MutableComponent component = Components.empty();
+	protected MutableComponent component = Component.empty();
 	protected boolean centerVertically = false;
 	protected boolean centerHorizontally = false;
 
@@ -22,7 +23,7 @@ public class TextStencilElement extends DelegatedStencilElement {
 
 	public TextStencilElement(Font font, String text) {
 		this(font);
-		component = Components.literal(text);
+		component = Component.literal(text);
 	}
 
 	public TextStencilElement(Font font, MutableComponent component) {
@@ -31,7 +32,7 @@ public class TextStencilElement extends DelegatedStencilElement {
 	}
 
 	public TextStencilElement withText(String text) {
-		component = Components.literal(text);
+		component = Component.literal(text);
 		return this;
 	}
 
