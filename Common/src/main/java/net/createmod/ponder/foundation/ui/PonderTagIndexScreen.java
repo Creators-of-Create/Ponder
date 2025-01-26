@@ -188,7 +188,6 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 			.withBounds(30, 30)
 			.render(graphics);
 
-		// FIXME this doesnt show anything
 		PonderGuiTextures.LOGO.render(graphics, -1, -1);
 
 		//34 = 30 bounds + 2 padding + 2 box width
