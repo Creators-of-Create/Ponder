@@ -189,7 +189,8 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 			.withBounds(30, 30)
 			.render(graphics);
 
-		//todo add icon inside the box
+		// FIXME this doesnt show anything
+		PonderGuiTextures.LOGO.render(graphics, 0, 0);
 
 		//34 = 30 bounds + 2 padding + 2 box width
 		//-3 = 2 padding + 1 pixel of the box
