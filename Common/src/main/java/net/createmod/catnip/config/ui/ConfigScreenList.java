@@ -17,7 +17,6 @@ import net.createmod.catnip.gui.TickableGuiEventListener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.TextStencilElement;
 import net.createmod.catnip.animation.LerpedFloat;
-import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -25,6 +24,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -282,7 +282,7 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 		// TODO 1.17
 		@Override
 		public Component getNarration() {
-			return Lang.IMMUTABLE_EMPTY;
+			return CommonComponents.EMPTY;
 		}
 	}
 }

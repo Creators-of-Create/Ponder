@@ -1,12 +1,8 @@
 package net.createmod.catnip.lang;
 
-import net.minecraft.network.chat.Component;
-
 import java.util.Locale;
 
 public class Lang {
-	public static final Component IMMUTABLE_EMPTY = Component.empty();
-
 	public static String asId(String name) {
 		return name.toLowerCase(Locale.ROOT);
 	}

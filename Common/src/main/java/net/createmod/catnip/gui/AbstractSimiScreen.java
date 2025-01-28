@@ -6,7 +6,6 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
-import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -14,6 +13,7 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 public abstract class AbstractSimiScreen extends Screen {
@@ -29,7 +29,7 @@ public abstract class AbstractSimiScreen extends Screen {
 	}
 
 	protected AbstractSimiScreen() {
-		this(Lang.IMMUTABLE_EMPTY);
+		this(CommonComponents.EMPTY);
 	}
 
 	/**
