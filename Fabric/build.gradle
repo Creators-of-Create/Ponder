@@ -22,8 +22,8 @@ dependencies {
         modApi "io.github.fabricators_of_create.Porting-Lib:$module:$port_lib_version"
     }
 
-    modApi "dev.engine_room.flywheel:flywheel-fabric-api-${minecraft_version}:${flywheel_version}"
-    modImplementation "dev.engine_room.flywheel:flywheel-fabric-${minecraft_version}:${flywheel_version}"
+    modApi "dev.engine-room.flywheel:flywheel-fabric-api-${minecraft_version}:${flywheel_version}"
+    modImplementation "dev.engine-room.flywheel:flywheel-fabric-${minecraft_version}:${flywheel_version}"
 
     //implementation("com.electronwill.night-config:core:3.6.3")
     //implementation("com.electronwill.night-config:toml:3.6.3")

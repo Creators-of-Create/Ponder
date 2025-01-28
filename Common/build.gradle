@@ -18,7 +18,7 @@ neoForge {
 }
 
 dependencies {
-    compileOnly "dev.engine_room.flywheel:flywheel-common-mojmap-api-${minecraft_version}:${flywheel_version}"
+    compileOnly "dev.engine-room.flywheel:flywheel-common-mojmap-api-${minecraft_version}:${flywheel_version}"
 
     compileOnly "net.fabricmc:sponge-mixin:0.15.4+mixin.0.8.7"
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1"))
