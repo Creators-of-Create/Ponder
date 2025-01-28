@@ -18,7 +18,7 @@ dependencies {
     implementation "com.electronwill.night-config:toml:3.6.5"
     compileOnly "net.minecraftforge:forgeconfigapiport-fabric:3.2.3" //source: https://github.com/Fuzss/forgeconfigapiport-fabric
 
-    compileOnly "dev.engine_room.flywheel:flywheel-common-mojmap-api-${minecraft_version}:${flywheel_version}"
+    compileOnly "dev.engine-room.flywheel:flywheel-common-mojmap-api-${minecraft_version}:${flywheel_version}"
 
 }
 

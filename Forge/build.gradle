@@ -92,8 +92,8 @@ dependencies {
     minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
     compileOnly(commonProject)
 
-    compileOnly(fg.deobf("dev.engine_room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"))
-    runtimeOnly(fg.deobf("dev.engine_room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"))
+    compileOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"))
+    runtimeOnly(fg.deobf("dev.engine-room.flywheel:flywheel-forge-${minecraft_version}:${flywheel_version}"))
 
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
 }

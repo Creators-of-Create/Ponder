@@ -25,12 +25,12 @@ subprojects {
     project.logger.lifecycle("Mixin ${project.ext.mixin_enabled ? "enabled" : "disabled"} for project ${mod_id}:${project.name}.")
 
     repositories {
+        maven { url = "https://maven.createmod.net" }
         maven { url = "https://maven.terraformersmc.com/releases/" }
         maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
         maven { url = "https://maven.jamieswhiteshirt.com/libs-release" }
         maven { url = "https://mvn.devos.one/snapshots/" }
         maven { url = "https://mvn.devos.one/releases/" }
-        maven { url = "https://maven.tterrag.com" }
         maven { url = "https://maven.createmod.net" }
         maven { url = "https://jitpack.io" }
     }
