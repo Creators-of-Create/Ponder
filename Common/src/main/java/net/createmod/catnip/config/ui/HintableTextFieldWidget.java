@@ -1,7 +1,6 @@
 package net.createmod.catnip.config.ui;
 
-import net.createmod.catnip.lang.Lang;
-
+import net.minecraft.network.chat.CommonComponents;
 import org.lwjgl.glfw.GLFW;
 
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -16,7 +15,7 @@ public class HintableTextFieldWidget extends EditBox {
 	protected String hint;
 
 	public HintableTextFieldWidget(Font font, int x, int y, int width, int height) {
-		super(font, x, y, width, height, Lang.IMMUTABLE_EMPTY);
+		super(font, x, y, width, height, CommonComponents.EMPTY);
 		this.font = font;
 	}
 
