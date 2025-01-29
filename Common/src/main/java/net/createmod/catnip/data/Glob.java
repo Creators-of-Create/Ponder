@@ -28,14 +28,8 @@ public class Glob {
 			char c = globPattern.charAt(i++);
 
 			switch(c) {
-				case '*' -> {
-					if (next(globPattern, i) == '*') {
-						regex.append(".*");
-						++i;
-					} else {
-						regex.append("*");
-					}
-				}
+				case '*' -> regex.append("*");
+				case '?' -> regex.append(".");
 				case ',' -> {
 					if (inGroup) {
 						regex.append(")|(?:");
@@ -43,7 +37,6 @@ public class Glob {
 						regex.append(',');
 					}
 				}
-				case '?' -> regex.append(".");
 				case '[' -> {
 					regex.append("[");
 
