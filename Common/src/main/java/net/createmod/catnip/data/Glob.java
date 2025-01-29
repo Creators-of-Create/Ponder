@@ -28,7 +28,7 @@ public class Glob {
 			char c = globPattern.charAt(i++);
 
 			switch(c) {
-				case '*' -> regex.append("*");
+				case '*' -> regex.append(".*");
 				case '?' -> regex.append(".");
 				case ',' -> {
 					if (inGroup) {
