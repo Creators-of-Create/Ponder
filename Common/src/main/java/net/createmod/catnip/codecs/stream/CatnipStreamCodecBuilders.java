@@ -55,20 +55,12 @@ public interface CatnipStreamCodecBuilders {
             @Override
             @SuppressWarnings("NullableProblems")
             public @Nullable V decode(@NotNull B buffer) {
-                if (buffer.readBoolean())
-                    return base.decode(buffer);
-                else
-                    return null;
+				return FriendlyByteBuf.readNullable(buffer, base);
             }
 
             @Override
             public void encode(@NotNull B buffer, @Nullable V value) {
-                if (value != null) {
-                    buffer.writeBoolean(true);
-                    base.encode(buffer, value);
-                } else {
-                    buffer.writeBoolean(false);
-                }
+				FriendlyByteBuf.writeNullable(buffer, value, base);
             }
         };
     }
