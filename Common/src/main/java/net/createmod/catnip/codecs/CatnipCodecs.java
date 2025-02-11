@@ -2,6 +2,8 @@ package net.createmod.catnip.codecs;
 
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
@@ -26,11 +28,8 @@ public interface CatnipCodecs {
 		}
 	};
 
-	static <E> Codec<Set<E>> set(final Codec<E> elementCodec) {
-		return set(elementCodec, 0, Integer.MAX_VALUE);
-	}
-
-	static <E> Codec<Set<E>> set(final Codec<E> elementCodec, final int minSize, final int maxSize) {
-		return new SetCodec<>(elementCodec, minSize, maxSize);
+	static <E> Codec<Set<E>> set(Codec<E> codec) {
+		return Codec.list(codec)
+			.xmap(ImmutableSet::copyOf, ImmutableList::copyOf);
 	}
 }
