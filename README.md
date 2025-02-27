@@ -38,18 +38,14 @@ Then add ponder to your project based on the loader and minecraft version you ar
 ### Architectury MultiLoader 1.20.1/1.21.1
 ```groovy
 dependencies {
-    ...
-    modImplementation("")
-    ...
+    modImplementation("net.createmod.ponder:Ponder-Common-${minecraft_version}:${ponder_version}")
 }
 ```
 
 ### Jared's MultiLoader Template 1.20.1/1.21.1
 ```groovy
 dependencies {
-    ...
     implementation("net.createmod.ponder:Ponder-Common-${minecraft_version}:${ponder_version}")
-    ...
 }
 ```
 </details>
@@ -60,9 +56,7 @@ dependencies {
 ### Fabric 1.20.1/1.21.1
 ```groovy
 dependencies {
-    ...
     modImplementation("net.createmod.ponder:Ponder-Fabric-${minecraft_version}:${ponder_version}")
-    ...
 }
 ```
 </details>
@@ -73,18 +67,14 @@ dependencies {
 ### Forge 1.20.1 \w ForgeGradle
 ```groovy
 dependencies {
-    ...
     implementation fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
-    ...
 }
 ```
 
 ### Forge 1.20.1 \w ModDevGradle
 ```groovy
 dependencies {
-    ...
     modImplementation("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
-    ...
 }
 ```
 </details>
@@ -95,9 +85,7 @@ dependencies {
 ### NeoForge 1.21.1 \w ModDevGradle
 ```groovy
 dependencies {
-    ...
     modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
-    ...
 }
 ```
 </details>
