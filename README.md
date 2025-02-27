@@ -20,7 +20,7 @@ repositories {
 }
 ```
 
-Add a property in your gradle.properties with the latest ponder version
+Add a property in your `gradle.properties` with the latest ponder version
 which can be found [here](https://ci.createmod.net/job/createmod/job/Ponder/),
 it should look like the following with the x replaced with the version you got from the link:
 
