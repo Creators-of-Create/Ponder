@@ -10,7 +10,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import dev.engine_room.flywheel.lib.model.baked.VirtualEmptyBlockGetter;
+import dev.engine_room.flywheel.lib.model.baked.EmptyVirtualBlockGetter;
 import io.github.fabricators_of_create.porting_lib.mixin.accessors.client.accessor.ParticleEngineAccessor;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
 import net.createmod.catnip.render.BasicFluidRenderer;
@@ -107,7 +107,7 @@ public class FabricClientHooksHelper implements ModClientHooksHelper {
 
 		RenderType renderType = ItemBlockRenderTypes.getChunkRenderType(state);
 		blockRenderer.getModelRenderer()
-				.tesselateBlock(VirtualEmptyBlockGetter.FULL_BRIGHT, model, state, BlockPos.ZERO, ms, buffer.getBuffer(
+				.tesselateBlock(EmptyVirtualBlockGetter.FULL_BRIGHT, model, state, BlockPos.ZERO, ms, buffer.getBuffer(
 						renderType), false, RandomSource.create(), 42L, OverlayTexture.NO_OVERLAY);
 
 	}
