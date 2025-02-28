@@ -11,7 +11,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import dev.engine_room.flywheel.lib.model.baked.VirtualEmptyBlockGetter;
+import dev.engine_room.flywheel.lib.model.baked.EmptyVirtualBlockGetter;
 import net.createmod.ponder.mixin.client.accessor.ParticleEngineAccessor;
 import net.createmod.catnip.platform.services.ModClientHooksHelper;
 import net.createmod.ponder.render.ForgeShadedBlockSbbBuilder;
@@ -72,8 +72,8 @@ public class ForgeClientHooksHelper implements ModClientHooksHelper {
 	@Override
 	public void tesselateBlockVirtual(BlockRenderDispatcher dispatcher, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer consumer, boolean checkSides, RandomSource randomSource, long seed, int packedOverlay, RenderType renderType) {
 		ModelBlockRenderer modelRenderer = dispatcher.getModelRenderer();
-		ModelData modelData = model.getModelData(VirtualEmptyBlockGetter.FULL_DARK, pos, state, VirtualRenderHelper.VIRTUAL_DATA);
-		modelRenderer.tesselateBlock(VirtualEmptyBlockGetter.FULL_DARK, model, state, pos, poseStack, consumer, checkSides, randomSource, seed, packedOverlay, modelData, renderType);
+		ModelData modelData = model.getModelData(EmptyVirtualBlockGetter.FULL_DARK, pos, state, VirtualRenderHelper.VIRTUAL_DATA);
+		modelRenderer.tesselateBlock(EmptyVirtualBlockGetter.FULL_DARK, model, state, pos, poseStack, consumer, checkSides, randomSource, seed, packedOverlay, modelData, renderType);
 	}
 
 	@Override
