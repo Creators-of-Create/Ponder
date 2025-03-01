@@ -16,6 +16,7 @@ for players to learn how to use your mod.
 Add the Create maven to your `repositories` block in your build script
 ```groovy
 repositories {
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
     maven { url = "https://maven.createmod.net" }
 }
 ```
