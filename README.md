@@ -16,6 +16,7 @@ for players to learn how to use your mod.
 Add the Create maven to your `repositories` block in your build script
 ```groovy
 repositories {
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
     maven { url = "https://maven.createmod.net" }
 }
 ```
@@ -32,34 +33,8 @@ ponder_version = x
 
 Then add ponder to your project based on the loader and minecraft version you are using.
 
-<details>
-<summary>MultiLoader</summary>
-
-### Architectury MultiLoader 1.20.1/1.21.1
-```groovy
-dependencies {
-    modImplementation("net.createmod.ponder:Ponder-Common-${minecraft_version}:${ponder_version}")
-}
-```
-
-### Jared's MultiLoader Template 1.20.1/1.21.1
-```groovy
-dependencies {
-    implementation("net.createmod.ponder:Ponder-Common-${minecraft_version}:${ponder_version}")
-}
-```
-</details>
-
-<details>
-<summary>Fabric</summary>
-
-### Fabric 1.20.1/1.21.1
-```groovy
-dependencies {
-    modImplementation("net.createmod.ponder:Ponder-Fabric-${minecraft_version}:${ponder_version}")
-}
-```
-</details>
+#### Notice
+Fabric (and multiloader) support are in progress, but not yet functional. Instructions will be added when Ponder is ready for use in those environments.
 
 <details>
 <summary>Forge</summary>

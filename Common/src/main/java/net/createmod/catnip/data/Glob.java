@@ -38,6 +38,10 @@ public class Glob {
 					}
 				}
 				case '[' -> {
+					if (next(globPattern, i) == ']') {
+						throw new PatternSyntaxException("Cannot have set with no entries", globPattern, i);
+					}
+
 					regex.append("[");
 
 					if (next(globPattern, i) == '^') {
