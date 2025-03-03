@@ -32,7 +32,7 @@ public class Glob {
 				case '?' -> regex.append(".");
 				case ',' -> {
 					if (inGroup) {
-						regex.append(")|(?:");
+						regex.append("|");
 					} else {
 						regex.append(',');
 					}
