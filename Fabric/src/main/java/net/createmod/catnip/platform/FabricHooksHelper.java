@@ -15,6 +15,7 @@ import net.minecraft.world.phys.HitResult;
 public class FabricHooksHelper implements ModHooksHelper {
 	@Override
 	public boolean playerPlaceSingleBlock(Player player, Level level, BlockPos pos, BlockState newState) {
+		level.setBlockAndUpdate(pos, newState);
 		return false;
 	}
 
