@@ -1,13 +1,13 @@
 {
-    "ponder.ui.hold_to_ponder": "Gi\u1eef [%1$s] \u0111\u1ec3 xem ch\u1ec9 d\u1eabn",
-    "ponder.ui.pondering": "Ch\u1ec9 d\u1eabn v\u1ec1...",
-    "ponder.ui.identify_mode": "\u0110\u00e3 b\u1eadt ch\u1ebf \u0111\u1ed9 t\u00ecm hi\u1ec3u.\nT\u1eaft t\u1ea1m d\u1eebng b\u1eb1ng [%1$s]",
-    "ponder.ui.associated": "C\u00e1c kh\u1ed1i li\u00ean quan",
-    "ponder.ui.close": "\u0110\u00f3ng",
-    "ponder.ui.identify": "T\u00ecm hi\u1ec3u",
-    "ponder.ui.exit": "Tho\u00e1t",
-    "ponder.ui.categories": "C\u00e1c ch\u1ec9 m\u1ee5c s\u1eb5n c\u00f3 c\u1ee7a Create",
-    "ponder.ui.index_description": "B\u1ea5m v\u00e0o m\u1ed9t trong c\u00e1c bi\u1ec3u t\u01b0\u1ee3ng \u0111\u1ec3 t\u00ecm hi\u1ec3u v\u1ec1 c\u00e1c V\u1eadt ph\u1ea9m v\u00e0 Kh\u1ed1i li\u00ean quan",
-    "ponder.ui.index_title": "Th\u01b0 vi\u1ec7n ch\u1ec9 d\u1eabn",
-    "ponder.keyinfo.ponder": "Ch\u1ec9 d\u1eabn"
+    "ponder.ui.hold_to_ponder": "Giữ [%1$s] để xem chỉ dẫn",
+    "ponder.ui.pondering": "Chỉ dẫn về...",
+    "ponder.ui.identify_mode": "Đã bật chế độ tìm hiểu.\nTắt tạm dừng bằng [%1$s]",
+    "ponder.ui.associated": "Các khối liên quan",
+    "ponder.ui.close": "Đóng",
+    "ponder.ui.identify": "Tìm hiểu",
+    "ponder.ui.exit": "Thoát",
+    "ponder.ui.categories": "Các chỉ mục sẵn có của Create",
+    "ponder.ui.index_description": "Bấm vào một trong các biểu tượng để tìm hiểu về các Vật phẩm và Khối liên quan",
+    "ponder.ui.index_title": "Thư viện chỉ dẫn",
+    "ponder.keyinfo.ponder": "Chỉ dẫn"
 }

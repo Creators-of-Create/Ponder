@@ -1,7 +1,7 @@
 {
-    "ponder.ui.pondering": "\u0420\u0430\u0437\u0432\u0430\u0436\u0430\u0435\u043c \u043d\u0430\u0434...",
-    "ponder.ui.next": "\u041d\u0430\u0441\u0442\u0443\u043f\u043d\u0430\u044f \u0441\u0446\u044d\u043d\u0430",
-    "ponder.ui.next_up": "\u0414\u0430\u043b\u0435\u0439: \u0440\u0430\u0437\u0432\u0430\u0436\u0430\u0446\u044c \u043d\u0430\u0434",
-    "ponder.ui.index_title": "\u041a\u0430\u0442\u0430\u043b\u043e\u0433 \u0440\u0430\u0437\u0432\u0430\u0436\u0430\u043d\u043d\u044f\u045e",
-    "ponder.keyinfo.ponder": "\u0420\u0430\u0437\u0432\u0430\u0436\u0430\u043d\u043d\u0435"
+    "ponder.ui.pondering": "Разважаем над...",
+    "ponder.ui.next": "Наступная сцэна",
+    "ponder.ui.next_up": "Далей: разважаць над",
+    "ponder.ui.index_title": "Каталог разважанняў",
+    "ponder.keyinfo.ponder": "Разважанне"
 }

@@ -1,5 +1,5 @@
 {
-    "ponder.ui.hold_to_ponder": "Mant\u00e9n [%1$s] para considerar",
+    "ponder.ui.hold_to_ponder": "Mantén [%1$s] para considerar",
     "ponder.ui.subject": "Tema de esta escena",
     "ponder.ui.pondering": "Considerando sobre...",
     "ponder.ui.identify_mode": "Identificando modo activo.\nReanuda con [%1$s]",
@@ -9,14 +9,14 @@
     "ponder.ui.next": "Escena siguiente",
     "ponder.ui.next_up": "Siguiente:",
     "ponder.ui.previous": "Escena previa",
-    "ponder.ui.replay": "Repetici\u00f3n",
-    "ponder.ui.think_back": "Volver atr\u00e1s",
-    "ponder.ui.slow_text": "Lectura c\u00f3moda",
+    "ponder.ui.replay": "Repetición",
+    "ponder.ui.think_back": "Volver atrás",
+    "ponder.ui.slow_text": "Lectura cómoda",
     "ponder.ui.exit": "Salir",
     "ponder.ui.welcome": "Bienvenido al instructivo de Create",
-    "ponder.ui.categories": "Categor\u00edas disponibles",
+    "ponder.ui.categories": "Categorías disponibles",
     "ponder.ui.index_description": "Haga clic en uno de los iconos para conocer sus objetos y bloques asociados",
-    "ponder.ui.index_title": "\u00cdndice",
-    "ponder.ponder.shared.sneak_and": "May\u00fas izdo. +",
+    "ponder.ui.index_title": "Índice",
+    "ponder.ponder.shared.sneak_and": "Mayús izdo. +",
     "ponder.ponder.shared.ctrl_and": "Ctrl +"
 }
