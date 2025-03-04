@@ -1,0 +1,22 @@
+{
+  "ponder.ui.hold_to_ponder": "Tryck [%1$s] för att visualisera",
+  "ponder.ui.subject": "Scenämne",
+  "ponder.ui.pondering": "Visualiserar...",
+  "ponder.ui.identify_mode": "Identifieringsläge aktivt.\nÅteruppta med [%1$s]",
+  "ponder.ui.associated": "Tillhörande artiklar",
+  "ponder.ui.close": "Stäng",
+  "ponder.ui.identify": "Identifiera",
+  "ponder.ui.next": "Nästa scen",
+  "ponder.ui.next_up": "Nästa:",
+  "ponder.ui.previous": "Föregående scen",
+  "ponder.ui.replay": "Spela om",
+  "ponder.ui.think_back": "Tänk tillbaka",
+  "ponder.ui.slow_text": "Bekväm läsning",
+  "ponder.ui.exit": "Lämna",
+  "ponder.ui.welcome": "Välkommen till visualisering",
+  "ponder.ui.categories": "Tillgängliga kategorier inom Create",
+  "ponder.ui.index_description": "Klicka på en av ikonerna för att lära dig mer om tillhörande föremål och block",
+  "ponder.ui.index_title": "Visualiseringsindex",
+  "ponder.ponder.shared.sneak_and": "Smyg +",
+  "ponder.ponder.shared.ctrl_and": "Ctrl +"
+}

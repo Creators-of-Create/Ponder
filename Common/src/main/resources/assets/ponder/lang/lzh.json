@@ -1,0 +1,16 @@
+{
+  "ponder.ui.hold_to_ponder": "押 [%1$s] 以格物",
+  "ponder.ui.subject": "所格之物",
+  "ponder.ui.pondering": "格物……",
+  "ponder.ui.identify_mode": "塊名已示\n押 [%1$s] 以继之",
+  "ponder.ui.close": "畢",
+  "ponder.ui.identify": "示塊名",
+  "ponder.ui.next": "次回",
+  "ponder.ui.next_up": "次：",
+  "ponder.ui.previous": "前",
+  "ponder.ui.think_back": "迴想",
+  "ponder.ui.welcome": "恭迎至格物界面",
+  "ponder.ui.categories": "創藝之屬",
+  "ponder.ui.index_description": "擊圖以觀其所陳之塊與物",
+  "ponder.ui.index_title": "格物索引"
+}
