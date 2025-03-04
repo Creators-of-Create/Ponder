@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "舒适阅读",
   "ponder.ui.exit": "退出",
   "ponder.ui.welcome": "欢迎来到思索界面",
-  "ponder.ui.categories": "机械动力中包含的条目",
+  "ponder.ui.categories": "%1$s中包含的条目",
   "ponder.ui.index_description": "点击一个图标来查看相关的物品和方块",
   "ponder.ui.index_title": "思索索引",
   "ponder.ponder.shared.sneak_and": "潜行 +",
