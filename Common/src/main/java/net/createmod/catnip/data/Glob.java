@@ -32,12 +32,16 @@ public class Glob {
 				case '?' -> regex.append(".");
 				case ',' -> {
 					if (inGroup) {
-						regex.append(")|(?:");
+						regex.append("|");
 					} else {
 						regex.append(',');
 					}
 				}
 				case '[' -> {
+					if (next(globPattern, i) == ']') {
+						throw new PatternSyntaxException("Cannot have set with no entries", globPattern, i);
+					}
+
 					regex.append("[");
 
 					if (next(globPattern, i) == '^') {

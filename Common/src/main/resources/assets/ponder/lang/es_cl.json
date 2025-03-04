@@ -1,0 +1,20 @@
+{
+  "ponder.ui.hold_to_ponder": ">Mantén [%1$s] para reflexionar",
+  "ponder.ui.subject": "Sujeto de esta escena",
+  "ponder.ui.pondering": "Reflexionando sobre...",
+  "ponder.ui.identify_mode": "Modo de identificación activado.\nDespausa con [%1$s]",
+  "ponder.ui.associated": "Entradas asociadas",
+  "ponder.ui.close": "Cerrar",
+  "ponder.ui.identify": "Identificar",
+  "ponder.ui.next": "Siguiente Escena",
+  "ponder.ui.previous": "Escena Previa",
+  "ponder.ui.replay": "Reiniciar",
+  "ponder.ui.think_back": "Pensar Atrás",
+  "ponder.ui.slow_text": "Lectura Cómoda",
+  "ponder.ui.exit": "Salir",
+  "ponder.ui.welcome": "Bienvenido a Reflexionar",
+  "ponder.ui.categories": "Categorías Disponibles en Create",
+  "ponder.ui.index_description": "Haz clic en uno de los iconos para conocer sus elementos y bloques asociados",
+  "ponder.ui.index_title": "Índice de Reflexión",
+  "ponder.ponder.shared.sneak_and": "Agáchate +"
+}

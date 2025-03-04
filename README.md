@@ -16,6 +16,7 @@ for players to learn how to use your mod.
 Add the Create maven to your `repositories` block in your build script
 ```groovy
 repositories {
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
     maven { url = "https://maven.createmod.net" }
 }
 ```
@@ -41,7 +42,7 @@ Fabric (and multiloader) support are in progress, but not yet functional. Instru
 ### Forge 1.20.1 \w ForgeGradle
 ```groovy
 dependencies {
-    implementation fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}")
+    implementation(fg.deobf("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"))
 }
 ```
 
@@ -56,10 +57,10 @@ dependencies {
 <details>
 <summary>NeoForge</summary>
 
-### NeoForge 1.21.1 \w ModDevGradle
+### NeoForge 1.21.1
 ```groovy
 dependencies {
-    modImplementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
+    implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:${ponder_version}")
 }
 ```
 </details>

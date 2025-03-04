@@ -1,0 +1,15 @@
+{
+  "ponder.ui.subject": "Subjek dari adegan ini",
+  "ponder.ui.identify_mode": "Mode identifikasi aktif.\nLanjutkan dengan [%1$s]",
+  "ponder.ui.associated": "Entri Terkait",
+  "ponder.ui.close": "Tutup",
+  "ponder.ui.identify": "Identifikasi",
+  "ponder.ui.next": "Adegan Berikutnya",
+  "ponder.ui.next_up": "Selanjutnya:",
+  "ponder.ui.previous": "Adegan Sebelumnya",
+  "ponder.ui.replay": "Putar ulang",
+  "ponder.ui.think_back": "Pikir Kembali",
+  "ponder.ui.slow_text": "Bacaan Nyaman",
+  "ponder.ui.exit": "Keluar",
+  "ponder.ponder.shared.ctrl_and": "Ctrl +"
+}
