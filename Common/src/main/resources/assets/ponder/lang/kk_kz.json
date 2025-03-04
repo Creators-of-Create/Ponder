@@ -1,10 +1,10 @@
 {
-    "ponder.ui.close": "Жабу",
-    "ponder.ui.identify": "Анықтау",
-    "ponder.ui.next": "Келесі сахна",
-    "ponder.ui.previous": "Алдыңғы сахна",
-    "ponder.ui.replay": "Қайта ойнату",
-    "ponder.ui.slow_text": "Ыңғайлы оқу",
-    "ponder.ui.exit": "Шығу",
-    "ponder.ui.categories": "Create-те қолжетімді санаттар"
+  "ponder.ui.close": "Жабу",
+  "ponder.ui.identify": "Анықтау",
+  "ponder.ui.next": "Келесі сахна",
+  "ponder.ui.previous": "Алдыңғы сахна",
+  "ponder.ui.replay": "Қайта ойнату",
+  "ponder.ui.slow_text": "Ыңғайлы оқу",
+  "ponder.ui.exit": "Шығу",
+  "ponder.ui.categories": "Create-те қолжетімді санаттар"
 }
