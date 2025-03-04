@@ -1,0 +1,23 @@
+{
+    "ponder.ui.hold_to_ponder": "Halte [%1$s] f\u00fcr die Vorschau",
+    "ponder.ui.subject": "Zielgegenstand",
+    "ponder.ui.pondering": "Vorschau f\u00fcr...",
+    "ponder.ui.identify_mode": "Identifiziere den aktiven Modus.\nStarten mit [%1$s]",
+    "ponder.ui.associated": "Verkn\u00fcpfte Vorschau",
+    "ponder.ui.close": "Schlie\u00dfen",
+    "ponder.ui.identify": "Identifizieren",
+    "ponder.ui.next": "N\u00e4chste Szene",
+    "ponder.ui.next_up": "Weiter:",
+    "ponder.ui.previous": "Zur\u00fcck",
+    "ponder.ui.replay": "Wiederholen",
+    "ponder.ui.think_back": "Zur\u00fcck",
+    "ponder.ui.slow_text": "Gem\u00fctliches Lesen",
+    "ponder.ui.exit": "Beenden",
+    "ponder.ui.welcome": "Willkommen in der Vorschau",
+    "ponder.ui.categories": "Verf\u00fcgbare Kategorien in Create",
+    "ponder.ui.index_description": "Klicke auf eines der Icons um etwas \u00fcber dessen zugeh\u00f6rige Items und Bl\u00f6cke zu lernen",
+    "ponder.ui.index_title": "Vorschau-Index",
+    "ponder.ponder.shared.sneak_and": "Schleichen +",
+    "ponder.ponder.shared.ctrl_and": "Strg +",
+    "ponder.keyinfo.ponder": "Nachgr\u00fcbeln"
+}

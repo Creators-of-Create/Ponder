@@ -1,0 +1,22 @@
+{
+    "ponder.ui.hold_to_ponder": "Pid\u00e4 [%1$s] pohjassa pohtiaksesi",
+    "ponder.ui.subject": "T\u00e4m\u00e4n kohtauksen aihe",
+    "ponder.ui.pondering": "Pohditaan...",
+    "ponder.ui.identify_mode": "Tunnistustila aktiivisena.\nKeskeyt\u00e4 [%1$s]:lla",
+    "ponder.ui.associated": "Samankaltaiset pohdinnat",
+    "ponder.ui.close": "Sulje",
+    "ponder.ui.identify": "Tunnista",
+    "ponder.ui.next": "Seuraava kohtaus",
+    "ponder.ui.next_up": "Seuraavaksi:",
+    "ponder.ui.previous": "Edellinen kohtaus",
+    "ponder.ui.replay": "Toista",
+    "ponder.ui.think_back": "Muistele edellist\u00e4",
+    "ponder.ui.slow_text": "Mukava lukeminen",
+    "ponder.ui.exit": "Poistu",
+    "ponder.ui.welcome": "Tervettuloa pohtimaan",
+    "ponder.ui.categories": "Createssa saatavilla olevat kategoriat",
+    "ponder.ui.index_description": "Klikkaa kuvaketta oppiaksesi siihen liittyvist\u00e4 esineist\u00e4 ja palikoista",
+    "ponder.ui.index_title": "Pohdintahakemisto",
+    "ponder.ponder.shared.sneak_and": "Kyykky +",
+    "ponder.ponder.shared.ctrl_and": "Ctrl +"
+}

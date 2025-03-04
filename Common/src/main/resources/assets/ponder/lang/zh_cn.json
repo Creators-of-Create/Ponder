@@ -1,0 +1,23 @@
+{
+    "ponder.ui.hold_to_ponder": "\u6309\u4f4f [%1$s] \u5f00\u59cb\u601d\u7d22",
+    "ponder.ui.subject": "\u60c5\u666f\u4e3b\u9898",
+    "ponder.ui.pondering": "\u601d\u7d22\u2026\u2026",
+    "ponder.ui.identify_mode": "\u663e\u793a\u65b9\u5757\u540d\u79f0\u5df2\u542f\u7528\n\u6309 [%1$s] \u7ee7\u7eed\u601d\u7d22",
+    "ponder.ui.associated": "\u5173\u8054\u8bcd\u6761",
+    "ponder.ui.close": "\u601d\u7d22\u7ed3\u675f",
+    "ponder.ui.identify": "\u663e\u793a\u65b9\u5757\u540d\u79f0",
+    "ponder.ui.next": "\u4e0b\u4e00\u4e2a\u60c5\u666f",
+    "ponder.ui.next_up": "\u63a5\u4e0b\u6765\uff1a",
+    "ponder.ui.previous": "\u4e0a\u4e00\u4e2a\u60c5\u666f",
+    "ponder.ui.replay": "\u91cd\u653e",
+    "ponder.ui.think_back": "\u56de\u60f3",
+    "ponder.ui.slow_text": "\u8212\u9002\u9605\u8bfb",
+    "ponder.ui.exit": "\u9000\u51fa",
+    "ponder.ui.welcome": "\u6b22\u8fce\u6765\u5230\u601d\u7d22\u754c\u9762",
+    "ponder.ui.categories": "\u673a\u68b0\u52a8\u529b\u4e2d\u5305\u542b\u7684\u6761\u76ee",
+    "ponder.ui.index_description": "\u70b9\u51fb\u4e00\u4e2a\u56fe\u6807\u6765\u67e5\u770b\u76f8\u5173\u7684\u7269\u54c1\u548c\u65b9\u5757",
+    "ponder.ui.index_title": "\u601d\u7d22\u7d22\u5f15",
+    "ponder.ponder.shared.sneak_and": "\u6f5c\u884c +",
+    "ponder.ponder.shared.ctrl_and": "Ctrl +",
+    "ponder.keyinfo.ponder": "\u601d\u7d22"
+}

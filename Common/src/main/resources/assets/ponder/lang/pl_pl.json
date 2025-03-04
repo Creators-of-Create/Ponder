@@ -1,0 +1,23 @@
+{
+    "ponder.ui.hold_to_ponder": "Przytrzymaj [%1$s], aby przeanalizowa\u0107",
+    "ponder.ui.subject": "Temat tej sceny",
+    "ponder.ui.pondering": "Temat analizy:",
+    "ponder.ui.identify_mode": "Tryb identyfikacji aktywny. Naci\u015bnij [%1$s], aby wy\u0142\u0105czy\u0107",
+    "ponder.ui.associated": "Powi\u0105zane has\u0142a",
+    "ponder.ui.close": "Zamknij",
+    "ponder.ui.identify": "Identyfikacja",
+    "ponder.ui.next": "Nast\u0119pna scena",
+    "ponder.ui.next_up": "Nast\u0119pnie:",
+    "ponder.ui.previous": "Poprzednia scena",
+    "ponder.ui.replay": "Powt\u00f3rka",
+    "ponder.ui.think_back": "Powr\u00f3t",
+    "ponder.ui.slow_text": "Wygodne czytanie",
+    "ponder.ui.exit": "Wyj\u015bcie",
+    "ponder.ui.welcome": "Witaj w menu analizowania",
+    "ponder.ui.categories": "Dost\u0119pne kategorie w Create",
+    "ponder.ui.index_description": "Kliknij na jedn\u0105 z ikon aby dowiedzie\u0107 si\u0119 informacji na temat powi\u0105zanych blok\u00f3w i przedmiot\u00f3w.",
+    "ponder.ui.index_title": "Katalog analiz",
+    "ponder.ponder.shared.sneak_and": "Skradanie +",
+    "ponder.ponder.shared.ctrl_and": "Ctrl +",
+    "ponder.keyinfo.ponder": "Podumaj"
+}

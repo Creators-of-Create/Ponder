@@ -1,0 +1,22 @@
+{
+    "ponder.ui.hold_to_ponder": "[%1$s]\ud0a4\ub97c \ub20c\ub7ec \ubd84\uc11d\ud558\uae30",
+    "ponder.ui.subject": "\ubd84\uc11d\uc758 \uc8fc\uc81c",
+    "ponder.ui.pondering": "\ubd84\uc11d \uc911\uc785\ub2c8\ub2e4...",
+    "ponder.ui.identify_mode": "\ud0d0\uc0c9\ubaa8\ub4dc\uac00 \ud65c\uc131\ud654\ub418\uc5b4 \uc788\uc2b5\ub2c8\ub2e4. \n[%1$s]\uc744(\ub97c) \ub20c\ub7ec \uc911\uc9c0\ud569\ub2c8\ub2e4.",
+    "ponder.ui.associated": "\uc5f0\uad00\ub41c \ud56d\ubaa9\ub4e4",
+    "ponder.ui.close": "\ub2eb\uae30",
+    "ponder.ui.identify": "\ud0d0\uc0c9",
+    "ponder.ui.next": "\ub2e4\uc74c \uc7a5\uba74",
+    "ponder.ui.next_up": "\ub2e4\uc74c \uc7a5\uba74:",
+    "ponder.ui.previous": "\uc774\uc804 \uc7a5\uba74",
+    "ponder.ui.replay": "\ub2e4\uc2dc \uc7ac\uc0dd",
+    "ponder.ui.think_back": "\ub418\ub3cc\uc544\uac00\uae30",
+    "ponder.ui.slow_text": "\ud3b8\ud558\uac8c \uc77d\uae30",
+    "ponder.ui.exit": "\ub098\uac00\uae30",
+    "ponder.ui.welcome": "\ubd84\uc11d \uba54\ub274\uc5d0 \uc5b4\uc11c\uc624\uc138\uc694",
+    "ponder.ui.categories": "Create\uc5d0\uc11c \ub458\ub7ec\ubcfc \uc218 \uc788\ub294 \ubaa9\ub85d\ub4e4",
+    "ponder.ui.index_description": "\uc544\uc774\ucf58\uc744 \ud074\ub9ad\ud574 \uad00\ub828 \uc544\uc774\ud15c\uacfc \ube14\ub85d\uc5d0 \ub300\ud574 \uc54c\uc544\ubcfc \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+    "ponder.ui.index_title": "\ubd84\uc11d \uba54\ub274 \uc81c\ubaa9",
+    "ponder.ponder.shared.sneak_and": "\uc6c5\ud06c\ub9ac\uae30 +",
+    "ponder.ponder.shared.ctrl_and": "Ctrl +"
+}

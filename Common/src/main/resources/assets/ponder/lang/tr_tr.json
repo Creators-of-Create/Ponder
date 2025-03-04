@@ -1,0 +1,23 @@
+{
+    "ponder.ui.hold_to_ponder": "\u0130ncelemek i\u00e7in [%1$s] Bas\u0131l\u0131 Tut",
+    "ponder.ui.subject": "Bu sahnenin konusu",
+    "ponder.ui.pondering": "\u0130nceleniyor...",
+    "ponder.ui.identify_mode": "Tan\u0131mlama modu etkin.\n[%1$s] ile durdurun",
+    "ponder.ui.associated": "Ba\u011flant\u0131l\u0131 Girdiler",
+    "ponder.ui.close": "Kapat",
+    "ponder.ui.identify": "Tan\u0131mla",
+    "ponder.ui.next": "Sonraki Sahne",
+    "ponder.ui.next_up": "Bir Sonraki:",
+    "ponder.ui.previous": "\u00d6nceki Sahne",
+    "ponder.ui.replay": "Yeniden Oynat",
+    "ponder.ui.think_back": "\u00d6ncekini \u0130ncele",
+    "ponder.ui.slow_text": "Rahat Okuma",
+    "ponder.ui.exit": "\u00c7\u0131k\u0131\u015f",
+    "ponder.ui.welcome": "\u0130ncele'ye Ho\u015f Geldin",
+    "ponder.ui.categories": "Create'de Mevcut Kategoriler",
+    "ponder.ui.index_description": "Ba\u011flant\u0131l\u0131 E\u015fyalar ve Bloklar hakk\u0131nda bilgi edinmek i\u00e7in ikonlardan birine t\u0131klay\u0131n",
+    "ponder.ui.index_title": "\u0130ncele \u0130ndisi",
+    "ponder.ponder.shared.sneak_and": "E\u011filme +",
+    "ponder.ponder.shared.ctrl_and": "Ctrl +",
+    "ponder.keyinfo.ponder": "\u0130ncele"
+}

@@ -1,0 +1,22 @@
+{
+    "ponder.ui.hold_to_ponder": "Tryck [%1$s] f\u00f6r att visualisera",
+    "ponder.ui.subject": "Scen\u00e4mne",
+    "ponder.ui.pondering": "Visualiserar...",
+    "ponder.ui.identify_mode": "Identifieringsl\u00e4ge aktivt.\n\u00c5teruppta med [%1$s]",
+    "ponder.ui.associated": "Tillh\u00f6rande artiklar",
+    "ponder.ui.close": "St\u00e4ng",
+    "ponder.ui.identify": "Identifiera",
+    "ponder.ui.next": "N\u00e4sta scen",
+    "ponder.ui.next_up": "N\u00e4sta:",
+    "ponder.ui.previous": "F\u00f6reg\u00e5ende scen",
+    "ponder.ui.replay": "Spela om",
+    "ponder.ui.think_back": "T\u00e4nk tillbaka",
+    "ponder.ui.slow_text": "Bekv\u00e4m l\u00e4sning",
+    "ponder.ui.exit": "L\u00e4mna",
+    "ponder.ui.welcome": "V\u00e4lkommen till visualisering",
+    "ponder.ui.categories": "Tillg\u00e4ngliga kategorier inom Create",
+    "ponder.ui.index_description": "Klicka p\u00e5 en av ikonerna f\u00f6r att l\u00e4ra dig mer om tillh\u00f6rande f\u00f6rem\u00e5l och block",
+    "ponder.ui.index_title": "Visualiseringsindex",
+    "ponder.ponder.shared.sneak_and": "Smyg +",
+    "ponder.ponder.shared.ctrl_and": "Ctrl +"
+}
