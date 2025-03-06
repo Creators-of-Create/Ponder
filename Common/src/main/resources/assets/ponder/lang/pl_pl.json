@@ -1,0 +1,23 @@
+{
+  "ponder.ui.hold_to_ponder": "Przytrzymaj [%1$s], aby przeanalizować",
+  "ponder.ui.subject": "Temat tej sceny",
+  "ponder.ui.pondering": "Temat analizy:",
+  "ponder.ui.identify_mode": "Tryb identyfikacji aktywny. Naciśnij [%1$s], aby wyłączyć",
+  "ponder.ui.associated": "Powiązane hasła",
+  "ponder.ui.close": "Zamknij",
+  "ponder.ui.identify": "Identyfikacja",
+  "ponder.ui.next": "Następna scena",
+  "ponder.ui.next_up": "Następnie:",
+  "ponder.ui.previous": "Poprzednia scena",
+  "ponder.ui.replay": "Powtórka",
+  "ponder.ui.think_back": "Powrót",
+  "ponder.ui.slow_text": "Wygodne czytanie",
+  "ponder.ui.exit": "Wyjście",
+  "ponder.ui.welcome": "Witaj w menu analizowania",
+  "ponder.ui.categories": "Dostępne kategorie w Create",
+  "ponder.ui.index_description": "Kliknij na jedną z ikon aby dowiedzieć się informacji na temat powiązanych bloków i przedmiotów.",
+  "ponder.ui.index_title": "Katalog analiz",
+  "ponder.ponder.shared.sneak_and": "Skradanie +",
+  "ponder.ponder.shared.ctrl_and": "Ctrl +",
+  "ponder.keyinfo.ponder": "Podumaj"
+}

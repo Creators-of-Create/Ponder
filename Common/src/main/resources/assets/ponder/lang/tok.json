@@ -1,0 +1,19 @@
+{
+  "ponder.ui.hold_to_ponder": "kama sona la o awen luka e [%1$s]",
+  "ponder.ui.pondering": "sina kama sona e ni:",
+  "ponder.ui.identify_mode": "nasin sona li lon.\no open kepeken [%1$s]",
+  "ponder.ui.associated": "toki poka",
+  "ponder.ui.close": "pini",
+  "ponder.ui.identify": "sona",
+  "ponder.ui.next": "toki kama",
+  "ponder.ui.next_up": "ni li kama:",
+  "ponder.ui.previous": "lipu pini",
+  "ponder.ui.replay": "tawa open",
+  "ponder.ui.think_back": "sona pini",
+  "ponder.ui.slow_text": "lipu pi tawa lili",
+  "ponder.ui.exit": "weka",
+  "ponder.ui.welcome": "kama pona tawa lipu sona",
+  "ponder.ui.index_title": "lipu pi sona ilo",
+  "ponder.ponder.shared.sneak_and": "tawa anpa en",
+  "ponder.ponder.shared.ctrl_and": "nena [ctrl] +"
+}

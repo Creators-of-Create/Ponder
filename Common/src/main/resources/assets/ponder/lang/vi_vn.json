@@ -1,0 +1,13 @@
+{
+  "ponder.ui.hold_to_ponder": "Giữ [%1$s] để xem chỉ dẫn",
+  "ponder.ui.pondering": "Chỉ dẫn về...",
+  "ponder.ui.identify_mode": "Đã bật chế độ tìm hiểu.\nTắt tạm dừng bằng [%1$s]",
+  "ponder.ui.associated": "Các khối liên quan",
+  "ponder.ui.close": "Đóng",
+  "ponder.ui.identify": "Tìm hiểu",
+  "ponder.ui.exit": "Thoát",
+  "ponder.ui.categories": "Các chỉ mục sẵn có của Create",
+  "ponder.ui.index_description": "Bấm vào một trong các biểu tượng để tìm hiểu về các Vật phẩm và Khối liên quan",
+  "ponder.ui.index_title": "Thư viện chỉ dẫn",
+  "ponder.keyinfo.ponder": "Chỉ dẫn"
+}
