@@ -1,0 +1,23 @@
+{
+  "ponder.ui.hold_to_ponder": "Segure [%1$s] para Ponderar",
+  "ponder.ui.subject": "Sujeito desta cena",
+  "ponder.ui.pondering": "Ponderando sobre...",
+  "ponder.ui.identify_mode": "Modo de identificação ativo.\nRetomar com [%1$s]",
+  "ponder.ui.associated": "Entradas associadas",
+  "ponder.ui.close": "Fechar",
+  "ponder.ui.identify": "Identificar",
+  "ponder.ui.next": "Próxima Cena",
+  "ponder.ui.next_up": "A seguir:",
+  "ponder.ui.previous": "Cena Anterior",
+  "ponder.ui.replay": "Repetir",
+  "ponder.ui.think_back": "Pensar de volta",
+  "ponder.ui.slow_text": "Leitura Confortável",
+  "ponder.ui.exit": "Sair",
+  "ponder.ui.welcome": "Bem-vindo(a) ao ponderamento",
+  "ponder.ui.categories": "Categorias disponíveis em Create",
+  "ponder.ui.index_description": "Clique em um dos ícones para aprender sobre os seus Itens e Blocos associados",
+  "ponder.ui.index_title": "Tabela do ponderamento",
+  "ponder.ponder.shared.sneak_and": "Agache-se +",
+  "ponder.ponder.shared.ctrl_and": "Ctrl +",
+  "ponder.keyinfo.ponder": "Ponteiro"
+}

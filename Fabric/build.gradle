@@ -74,10 +74,23 @@ configurations {
         canBeResolved = false
         canBeConsumed = true
     }
+
+    // this garbage is needed to get gradle to use the non-remapped jar at runtime in a composite build
+    def runtimeElements = named("runtimeElements").get()
+    hRuntime {
+        canBeConsumed = true
+        attributes {
+            for (final def attr in runtimeElements.attributes.keySet()) {
+                attribute(attr, runtimeElements.attributes.getAttribute(attr))
+            }
+            attribute(Attribute.of("create.marker", String.class), "h")
+        }
+    }
 }
 
 artifacts {
     dev jar
+    hRuntime jar
 }
 
 // -- MAVEN PUBLISHING --
