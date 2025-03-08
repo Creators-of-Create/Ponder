@@ -132,6 +132,7 @@ public abstract class ConfigBase {
 				throw new AssertionError("Config " + getName() + " was accessed, but not registered before!");
 
 			this.value.set(value);
+			this.value.save();
 		}
 
 		public String getName() {

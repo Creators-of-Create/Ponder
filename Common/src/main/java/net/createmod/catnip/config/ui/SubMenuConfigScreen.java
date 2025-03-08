@@ -132,6 +132,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		ConfigHelper.changes.forEach((path, change) -> {
 			ModConfigSpec.ConfigValue<Object> configValue = values.get(path);
 			configValue.set(change.value);
+			configValue.save();
 
 			if (type == ModConfig.Type.SERVER) {
 				assert ConfigScreen.modID != null;

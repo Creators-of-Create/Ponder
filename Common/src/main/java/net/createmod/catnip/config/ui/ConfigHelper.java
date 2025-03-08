@@ -85,6 +85,7 @@ public class ConfigHelper {
 			throw new InvalidValueException();
 
 		configValue.set(v);
+		configValue.save();
 	}
 
 	// Add a value to the current UI's changes list

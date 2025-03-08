@@ -50,8 +50,6 @@ public class ServerboundConfigPacket<T> implements ServerboundPacketPayload {
 				return;
 
 			ModConfigSpec spec = ConfigHelper.findModConfigSpecFor(ModConfig.Type.SERVER, modID);
-			if (spec == null)
-				return;
 			ModConfigSpec.ValueSpec valueSpec = spec.getSpec().getRaw(path);
 			ModConfigSpec.ConfigValue<T> configValue = spec.getValues().get(path);
 
@@ -60,6 +58,7 @@ public class ServerboundConfigPacket<T> implements ServerboundPacketPayload {
 				return;
 
 			configValue.set(v);
+			configValue.save();
 		} catch (Exception e) {
 			Ponder.LOGGER.warn("Unable to handle ConfigureConfig Packet. ", e);
 		}
