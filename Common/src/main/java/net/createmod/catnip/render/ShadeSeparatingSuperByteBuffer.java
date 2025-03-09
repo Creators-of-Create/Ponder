@@ -2,7 +2,9 @@ package net.createmod.catnip.render;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import com.jcraft.jogg.Buffer;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
 import net.caffeinemc.mods.sodium.api.util.ColorARGB;
@@ -356,6 +358,110 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 		flush(writer, true, BlockVertex.FORMAT);
 	}
 
+	private void defaultPathRenderInto(PoseStack input, VertexConsumer builder) {
+		if (useLevelLight) {
+			WORLD_LIGHT_CACHE.clear();
+		}
+
+		Matrix4f modelMat = this.modelMat.set(input.last()
+			.pose());
+		Matrix4f localTransforms = transforms.last()
+			.pose();
+		modelMat.mul(localTransforms);
+
+		Matrix3f normalMat = this.normalMat.set(input.last()
+			.normal());
+		Matrix3f localNormalTransforms = transforms.last()
+			.normal();
+		normalMat.mul(localNormalTransforms);
+
+		Vector4f pos = this.pos;
+		Vector3f normal = this.normal;
+		ShiftOutput shiftOutput = this.shiftOutput;
+		Vector3f lightDir0 = this.lightDir0;
+		Vector3f lightDir1 = this.lightDir1;
+		Vector4f lightPos = this.lightPos;
+
+		boolean applyDiffuse = !disableDiffuse && !ShadersModHelper.isShaderPackInUse();
+		boolean shaded = true;
+		int shadeSwapIndex = 0;
+		int nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex] : -1;
+		int unshadedDiffuse = 255;
+		if (applyDiffuse) {
+			lightDir0.set(RenderSystemAccessor.catnip$getShaderLightDirections()[0]).normalize();
+			lightDir1.set(RenderSystemAccessor.catnip$getShaderLightDirections()[1]).normalize();
+			if (shadeSwapVertices.length > 0) {
+				// Pretend unshaded faces always point up to get the correct max diffuse value for the current level.
+				normal.set(0, invertFakeDiffuseNormal ? -1 : 1, 0);
+				// Don't apply the normal matrix since that would cause upside down objects to be dark.
+				unshadedDiffuse = (int) (255 * calculateDiffuse(normal, lightDir0, lightDir1));
+			}
+		}
+
+		int vertexCount = template.vertexCount();
+		for (int i = 0; i < vertexCount; i++) {
+			if (i == nextShadeSwapVertex) {
+				shaded = !shaded;
+				shadeSwapIndex++;
+				nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex] : -1;
+			}
+
+			float x = template.x(i);
+			float y = template.y(i);
+			float z = template.z(i);
+			pos.set(x, y, z, 1.0f);
+			pos.mul(modelMat);
+
+			int packedNormal = template.normal(i);
+			float normalX = ((byte) (packedNormal & 0xFF)) / 127.0f;
+			float normalY = ((byte) ((packedNormal >>> 8) & 0xFF)) / 127.0f;
+			float normalZ = ((byte) ((packedNormal >>> 16) & 0xFF)) / 127.0f;
+			normal.set(normalX, normalY, normalZ);
+			normal.mul(normalMat);
+
+			int color = ColorMixer.mulComponentWise(template.color(i), this.vertex_color);
+			if (applyDiffuse) {
+				int factor = shaded ? (int) (255.0F * calculateDiffuse(normal, lightDir0, lightDir1)) : unshadedDiffuse;
+				color = ColorARGB.mulRGB(color, factor);
+			}
+			float r = (color & 0xFF) / 255.0f;
+			float g = ((color >>> 8) & 0xFF) / 255.0f;
+			float b = ((color >>> 16) & 0xFF) / 255.0f;
+			float a = ((color >>> 24) & 0xFF) / 255.0f;
+
+			float u = template.u(i);
+			float v = template.v(i);
+			if (spriteShiftFunc != null) {
+				spriteShiftFunc.shift(u, v, shiftOutput);
+				u = shiftOutput.u;
+				v = shiftOutput.v;
+			}
+
+			int overlay;
+			if (hasCustomOverlay) {
+				overlay = this.overlay;
+			} else {
+				overlay = template.overlay(i);
+			}
+
+			int light = template.light(i);
+			if (hasCustomLight) {
+				light = SuperByteBuffer.maxLight(light, packedLight);
+			}
+			if (useLevelLight) {
+				lightPos.set(((x - .5f) * 15 / 16f) + .5f, (y - .5f) * 15 / 16f + .5f, (z - .5f) * 15 / 16f + .5f, 1f);
+				lightPos.mul(localTransforms);
+				if (lightTransform != null) {
+					lightPos.mul(lightTransform);
+				}
+				light = SuperByteBuffer.maxLight(light, getLight(levelWithLight, lightPos));
+			}
+
+			builder.addVertex(pos.x(), pos.y(), pos.z()).setColor(r, g, b, a).setUv(u, v).setOverlay(overlay).setLight(light).setNormal(normal.x(), normal.y(), normal.z());
+		}
+
+	}
+
 	public void renderInto(PoseStack input, VertexConsumer builder) {
 		if (isEmpty()) {
 			return;
@@ -364,13 +470,17 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 		if (useLevelLight) {
 			WORLD_LIGHT_CACHE.clear();
 		}
-		VertexBufferWriter writer = VertexBufferWriter.tryOf(builder);
-		if (writer != null) {
-			if (Iris.isPackInUseQuick()) {
-				irisPathRenderInto(input, writer);
-			} else {
-				sodiumPathRenderInto(input, writer);
+		if (builder instanceof BufferBuilder bb && bb.format == BlockVertex.FORMAT) {
+			VertexBufferWriter writer = VertexBufferWriter.tryOf(builder);
+			if (writer != null) {
+				if (Iris.isPackInUseQuick()) {
+					irisPathRenderInto(input, writer);
+				} else {
+					sodiumPathRenderInto(input, writer);
+				}
 			}
+		} else {
+			defaultPathRenderInto(input, builder);
 		}
 		reset();
 	}
