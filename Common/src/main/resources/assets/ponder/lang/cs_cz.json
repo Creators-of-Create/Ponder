@@ -1,0 +1,23 @@
+{
+  "ponder.ui.hold_to_ponder": "Podržte [%1$s] pro dumání",
+  "ponder.ui.subject": "Předmět této scény",
+  "ponder.ui.pondering": "Dumání o...",
+  "ponder.ui.identify_mode": "Režim identifikace je aktivní.\nSpusťte pomocí [%1$s]",
+  "ponder.ui.associated": "Přidružené položky",
+  "ponder.ui.close": "Zavřít",
+  "ponder.ui.identify": "Identifikovat",
+  "ponder.ui.next": "Další scéna",
+  "ponder.ui.next_up": "Na řadě:",
+  "ponder.ui.previous": "Předchozí scéna",
+  "ponder.ui.replay": "Přehrát znovu",
+  "ponder.ui.think_back": "Vrátit se",
+  "ponder.ui.slow_text": "Pohodlné čtení",
+  "ponder.ui.exit": "Odejít",
+  "ponder.ui.welcome": "Vítejte u dumání",
+  "ponder.ui.categories": "Dostupné kategorie v Create",
+  "ponder.ui.index_description": "Kliknutím na jednu z ikon se dozvíte o přidružených předmětech a blocích",
+  "ponder.ui.index_title": "Rejstřík dumání",
+  "ponder.ponder.shared.sneak_and": "Plížení +",
+  "ponder.ponder.shared.ctrl_and": "Ctrl +",
+  "ponder.keyinfo.ponder": "Dumat"
+}

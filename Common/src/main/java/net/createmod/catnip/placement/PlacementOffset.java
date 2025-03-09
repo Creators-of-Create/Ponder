@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
@@ -135,6 +136,7 @@ public class PlacementOffset {
 		BlockState newState = world.getBlockState(newPos);
 		SoundType soundtype = newState.getSoundType();
 		world.playSound(null, newPos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+		world.gameEvent(GameEvent.BLOCK_PLACE, newPos, GameEvent.Context.of(player, newState));
 
 		player.awardStat(Stats.ITEM_USED.get(blockItem));
 		newState.getBlock()

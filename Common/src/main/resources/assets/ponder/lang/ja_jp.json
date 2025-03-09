@@ -1,0 +1,23 @@
+{
+  "ponder.ui.hold_to_ponder": "[%1$s] 長押しで思案画面を開く",
+  "ponder.ui.subject": "このシーンの主題",
+  "ponder.ui.pondering": "思案中...",
+  "ponder.ui.identify_mode": "確認モードになっています。\n [%1$s] で一時停止を解除",
+  "ponder.ui.associated": "関連項目",
+  "ponder.ui.close": "閉じる",
+  "ponder.ui.identify": "ブロック名を確認",
+  "ponder.ui.next": "次のシーン",
+  "ponder.ui.next_up": "次:",
+  "ponder.ui.previous": "前のシーン",
+  "ponder.ui.replay": "最初から",
+  "ponder.ui.think_back": "戻る",
+  "ponder.ui.slow_text": "熟考(スロー再生)",
+  "ponder.ui.exit": "終了",
+  "ponder.ui.welcome": "思案画面へようこそ",
+  "ponder.ui.categories": "%1$sで閲覧できるカテゴリ",
+  "ponder.ui.index_description": "アイテムをクリックすると、関連するアイテムやブロックの情報が表示されます。",
+  "ponder.ui.index_title": "思案索引",
+  "ponder.ponder.shared.sneak_and": "スニーク + ",
+  "ponder.ponder.shared.ctrl_and": "Ctrl + ",
+  "ponder.keyinfo.ponder": "思案画面"
+}
