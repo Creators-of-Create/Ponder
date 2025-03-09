@@ -470,13 +470,15 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 		if (useLevelLight) {
 			WORLD_LIGHT_CACHE.clear();
 		}
-		if (builder instanceof BufferBuilder bb && bb.format == BlockVertex.FORMAT) {
+		if (builder instanceof BufferBuilder bb) {
 			VertexBufferWriter writer = VertexBufferWriter.tryOf(builder);
 			if (writer != null) {
-				if (Iris.isPackInUseQuick()) {
+				if (bb.format == TerrainVertex.FORMAT) {
 					irisPathRenderInto(input, writer);
-				} else {
+				} else if (bb.format == BlockVertex.FORMAT) {
 					sodiumPathRenderInto(input, writer);
+				} else {
+					defaultPathRenderInto(input, builder);
 				}
 			}
 		} else {
