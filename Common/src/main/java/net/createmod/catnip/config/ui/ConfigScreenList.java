@@ -64,6 +64,7 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 	@Override
 	public boolean mouseClicked(double x, double y, int button) {
 		//children().stream().filter(e -> e instanceof NumberEntry<?>).forEach(e -> e.mouseClicked(x, y, button));
+		//children().stream().filter(e -> e instanceof StringEntry).forEach(e -> e.mouseClicked(x, y, button));
 
 		return super.mouseClicked(x, y, button);
 	}
