@@ -1,9 +1,14 @@
 package net.createmod.ponder.api.registration;
 
+import java.util.Comparator;
+
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.resources.ResourceLocation;
 
 public interface PonderPlugin {
+	Comparator<PonderPlugin> ORDERING = Comparator.comparing(PonderPlugin::getModId,
+		Comparator.comparingInt(CatnipServices.PLATFORM.getLoadedMods()::indexOf));
 
 	/**
 	 * @return the modID of the mod that added this plugin
