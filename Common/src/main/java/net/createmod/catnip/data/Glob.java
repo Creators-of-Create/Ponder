@@ -120,10 +120,10 @@ public class Glob {
 					regex.append("(?");
 					if (next(globPattern, i) == '!') {
 						regex.append('!');
+						++i;
 					} else {
 						regex.append(":");
 					}
-					++i;
 
 					inGroup = true;
 				}
