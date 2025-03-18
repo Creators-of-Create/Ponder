@@ -16,7 +16,16 @@ public final class IrisCompat {
 		try {
 			Class<?> irisVertexFormats = Class.forName("net.irisshaders.iris.vertices.IrisVertexFormats");
 			Field field = irisVertexFormats.getDeclaredField("TERRAIN");
-			field.setAccessible(true);
+			return (VertexFormat) field.get(null);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	static VertexFormat GetEntityVertexFormat() {
+		try {
+			Class<?> irisVertexFormats = Class.forName("net.irisshaders.iris.vertices.IrisVertexFormats");
+			Field field = irisVertexFormats.getDeclaredField("ENTITY");
 			return (VertexFormat) field.get(null);
 		} catch (Exception e) {
 			return null;

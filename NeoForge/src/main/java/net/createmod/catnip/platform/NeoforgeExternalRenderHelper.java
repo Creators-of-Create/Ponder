@@ -12,6 +12,7 @@ import net.caffeinemc.mods.sodium.api.util.ColorMixer;
 import net.caffeinemc.mods.sodium.api.util.NormI8;
 import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
 import net.createmod.catnip.render.compat.EntityVertex;
+import net.createmod.catnip.render.compat.IrisEntityVertex;
 import net.createmod.ponder.mixin.client.accessor.RenderSystemAccessor;
 import net.irisshaders.iris.vertices.NormalHelper;
 import net.createmod.catnip.platform.services.ExternalRenderHelper;
@@ -34,7 +35,8 @@ import static net.createmod.catnip.render.ShadeSeparatingSuperByteBuffer.calcula
 public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 	private static final int BUFFER_VERTEX_COUNT = 48;
 	private static final MemoryStack STACK = MemoryStack.create();
-	private static final long SCRATCH_BUFFER = MemoryUtil.nmemAlignedAlloc(64, BUFFER_VERTEX_COUNT * IrisTerrainVertex.STRIDE);
+	private static final int BUFFER_SIZE = BUFFER_VERTEX_COUNT * IrisEntityVertex.STRIDE;
+	private static final long SCRATCH_BUFFER = MemoryUtil.nmemAlignedAlloc(64, BUFFER_SIZE);
 	private static long BUFFER_PTR = SCRATCH_BUFFER;
 	private static int BUFFED_VERTEX = 0;
 
@@ -70,7 +72,7 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 		return RenderSystem.getModelViewMatrix().m32() == 0;
 	}
 
-	private static void IrisRenderInto(ShadeSeparatingSuperByteBuffer byteBuffer, PoseStack input, VertexBufferWriter writer) {
+	private static void IrisRenderInto(ShadeSeparatingSuperByteBuffer byteBuffer, PoseStack input, VertexBufferWriter writer, VertexFormat format) {
 		PoseStack transforms = byteBuffer.getTransforms();
 		modelMat.set(input.last().pose());
 		Matrix4f localTransforms = transforms.last().pose();
@@ -155,23 +157,45 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 				light3 = SuperByteBuffer.maxLight(light3, byteBuffer.getLight(float3));
 			}
 
-			IrisTerrainVertex.write(BUFFER_PTR, pos4[0].x, pos4[0].y, pos4[0].z, color, uv4[0].x, uv4[0].y, mid_u, mid_v, light0, normal, tangent);
-			BUFFER_PTR += IrisTerrainVertex.STRIDE;
+			if (format == IrisTerrainVertex.FORMAT) { // IrisTerrainVertex.FORMAT
+				IrisTerrainVertex.write(BUFFER_PTR, pos4[0].x, pos4[0].y, pos4[0].z, color, uv4[0].x, uv4[0].y, mid_u, mid_v, light0, normal, tangent);
+				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 
-			IrisTerrainVertex.write(BUFFER_PTR, pos4[1].x, pos4[1].y, pos4[1].z, color, uv4[1].x, uv4[1].y, mid_u, mid_v, light1, normal, tangent);
-			BUFFER_PTR += IrisTerrainVertex.STRIDE;
+				IrisTerrainVertex.write(BUFFER_PTR, pos4[1].x, pos4[1].y, pos4[1].z, color, uv4[1].x, uv4[1].y, mid_u, mid_v, light1, normal, tangent);
+				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 
-			IrisTerrainVertex.write(BUFFER_PTR, pos4[2].x, pos4[2].y, pos4[2].z, color, uv4[2].x, uv4[2].y, mid_u, mid_v, light2, normal, tangent);
-			BUFFER_PTR += IrisTerrainVertex.STRIDE;
+				IrisTerrainVertex.write(BUFFER_PTR, pos4[2].x, pos4[2].y, pos4[2].z, color, uv4[2].x, uv4[2].y, mid_u, mid_v, light2, normal, tangent);
+				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 
-			IrisTerrainVertex.write(BUFFER_PTR, pos4[3].x, pos4[3].y, pos4[3].z, color, uv4[3].x, uv4[3].y, mid_u, mid_v, light3, normal, tangent);
-			BUFFER_PTR += IrisTerrainVertex.STRIDE;
+				IrisTerrainVertex.write(BUFFER_PTR, pos4[3].x, pos4[3].y, pos4[3].z, color, uv4[3].x, uv4[3].y, mid_u, mid_v, light3, normal, tangent);
+				BUFFER_PTR += IrisTerrainVertex.STRIDE;
+			} else { // IrisEntityVertex.FORMAT
+				int overlay0, overlay1, overlay2, overlay3;
+				if (byteBuffer.hasCustomOverlay()) {
+					overlay0 = overlay1 = overlay2 = overlay3 = byteBuffer.getOverlay();
+				} else {
+					overlay0 = template.overlay(i);
+					overlay1 = template.overlay(i + 1);
+					overlay2 = template.overlay(i + 2);
+					overlay3 = template.overlay(i + 3);
+				}
+				IrisEntityVertex.write(BUFFER_PTR, pos4[0].x, pos4[0].y, pos4[0].z, color, uv4[0].x, uv4[0].y, mid_u, mid_v, overlay0, light0, normal, tangent);
+				BUFFER_PTR += IrisEntityVertex.STRIDE;
 
+				IrisEntityVertex.write(BUFFER_PTR, pos4[1].x, pos4[1].y, pos4[1].z, color, uv4[1].x, uv4[1].y, mid_u, mid_v, overlay1, light1, normal, tangent);
+				BUFFER_PTR += IrisEntityVertex.STRIDE;
+
+				IrisEntityVertex.write(BUFFER_PTR, pos4[2].x, pos4[2].y, pos4[2].z, color, uv4[2].x, uv4[2].y, mid_u, mid_v, overlay2, light2, normal, tangent);
+				BUFFER_PTR += IrisEntityVertex.STRIDE;
+
+				IrisEntityVertex.write(BUFFER_PTR, pos4[3].x, pos4[3].y, pos4[3].z, color, uv4[3].x, uv4[3].y, mid_u, mid_v, overlay3, light3, normal, tangent);
+				BUFFER_PTR += IrisEntityVertex.STRIDE;
+			}
 			BUFFED_VERTEX += 4;
-			flush(writer, false, IrisTerrainVertex.FORMAT);
+			flush(writer, false, format);
 		}
 
-		flush(writer, true, IrisTerrainVertex.FORMAT);
+		flush(writer, true, format);
 	}
 
 	private static void SodiumRenderInto(ShadeSeparatingSuperByteBuffer byteBuffer, PoseStack input, VertexBufferWriter writer, VertexFormat format) {
@@ -316,8 +340,8 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 		VertexBufferWriter writer = VertexBufferWriter.tryOf(builder);
 		if (writer == null) return false;
 		if (builder instanceof BufferBuilder bb) {
-			if (bb.format == IrisTerrainVertex.FORMAT) {
-				IrisRenderInto(byteBuffer, input, writer);
+			if (bb.format == IrisTerrainVertex.FORMAT || bb.format == IrisEntityVertex.FORMAT) {
+				IrisRenderInto(byteBuffer, input, writer, bb.format);
 			} else if (bb.format == BlockVertex.FORMAT || bb.format == EntityVertex.FORMAT) {
 				SodiumRenderInto(byteBuffer, input, writer, bb.format);
 			} else {
