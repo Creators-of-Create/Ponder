@@ -9,6 +9,7 @@ import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -35,21 +36,31 @@ public final class NBTProcessors {
 	}
 
 	// Triggered by block tag, not BE type
+
+	// Remove the first layer of commands while preserving the styles.
+	// Since recursive commands won't be executed, there's no need to handle them.
 	private static final UnaryOperator<CompoundTag> signProcessor = data -> {
-		for (String key : List.of("front_text", "back_text")) {
-			CompoundTag textTag = data.getCompound(key);
-			if (!textTag.contains("messages", Tag.TAG_LIST))
-				continue;
-			for (Tag tag : textTag.getList("messages", Tag.TAG_STRING))
-				if (tag instanceof StringTag stringTag)
-					if (textComponentHasClickEvent(stringTag.getAsString()))
-						return null;
+		var front_text = data.getCompound("front_text").getList("messages", Tag.TAG_STRING);
+		var back_text = data.getCompound("back_text").getList("messages", Tag.TAG_STRING);
+		for (int i = 0; i < 4; ++i) {
+			tryRemovingCommand(front_text, i);
+			tryRemovingCommand(back_text, i);
 		}
-		if (data.contains("front_item") || data.contains("back_item"))
-			return null; // "Amendments" compat: sign data contains itemstacks
 		return data;
 	};
 
+	private static void tryRemovingCommand(ListTag front_text, int i) {
+		if(NBTProcessors.textComponentHasClickEvent(front_text.get(i).getAsString()))
+		{
+			var text =
+				Component.Serializer.fromJson(front_text.get(i).getAsString());
+			if (text != null) {
+				text.setStyle(text.getStyle().withClickEvent(null));
+				front_text.remove(i);
+				front_text.add(i,net.minecraft.nbt.StringTag.valueOf(Component.Serializer.toJson(text)));
+			}
+		}
+	}
 	public static UnaryOperator<CompoundTag> itemProcessor(String tagKey) {
 		return data -> {
 			CompoundTag compound = data.getCompound(tagKey);
