@@ -37,8 +37,7 @@ public final class NBTProcessors {
 
 	// Triggered by block tag, not BE type
 
-	// Remove the first layer of commands while preserving the styles.
-	// Since recursive commands won't be executed, there's no need to handle them.
+	// Remove commands while preserving the styles.
 	private static final UnaryOperator<CompoundTag> signProcessor = data -> {
 		var front_text = data.getCompound("front_text").getList("messages", Tag.TAG_STRING);
 		var back_text = data.getCompound("back_text").getList("messages", Tag.TAG_STRING);
