@@ -8,6 +8,8 @@ import net.caffeinemc.mods.sodium.api.vertex.attributes.common.NormalAttribute;
 import net.caffeinemc.mods.sodium.api.vertex.attributes.common.PositionAttribute;
 import net.caffeinemc.mods.sodium.api.vertex.attributes.common.TextureAttribute;
 
+import net.irisshaders.iris.uniforms.CapturedRenderingState;
+
 import org.lwjgl.system.MemoryUtil;
 
 public class IrisTerrainVertex {
@@ -23,9 +25,12 @@ public class IrisTerrainVertex {
 		TextureAttribute.put(ptr + 16L, u, v);
 		LightAttribute.set(ptr + 24L, light);
 		NormalAttribute.set(ptr + 28L, normal);
-		MemoryUtil.memPutFloat(ptr + 36, mid_u);
-		MemoryUtil.memPutFloat(ptr + 40, mid_v);
-		MemoryUtil.memPutInt(ptr + 44, tangent);
+		MemoryUtil.memPutShort(ptr + 32L, (short) CapturedRenderingState.INSTANCE.getCurrentRenderedEntity());
+		MemoryUtil.memPutShort(ptr + 34L, (short) CapturedRenderingState.INSTANCE.getCurrentRenderedBlockEntity());
+		MemoryUtil.memPutFloat(ptr + 36L, mid_u);
+		MemoryUtil.memPutFloat(ptr + 40L, mid_v);
+		MemoryUtil.memPutInt(ptr + 44L, tangent);
+		MemoryUtil.memPutInt(ptr + 48L, 0);
 	}
 
 	static {

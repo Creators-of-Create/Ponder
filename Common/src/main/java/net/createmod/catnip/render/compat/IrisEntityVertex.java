@@ -25,9 +25,9 @@ public class IrisEntityVertex {
 		OverlayAttribute.set(ptr + 24L, overlay);
 		LightAttribute.set(ptr + 28L, light);
 		NormalAttribute.set(ptr + 32L, normal);
-		MemoryUtil.memPutFloat(ptr + 42, mid_u);
-		MemoryUtil.memPutFloat(ptr + 46, mid_v);
-		MemoryUtil.memPutInt(ptr + 50, tangent);
+		MemoryUtil.memPutFloat(ptr + 42L, mid_u);
+		MemoryUtil.memPutFloat(ptr + 46L, mid_v);
+		MemoryUtil.memPutInt(ptr + 50L, tangent);
 	}
 
 	static {
