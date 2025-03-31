@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
 
+import net.caffeinemc.mods.sodium.api.math.MatrixHelper;
 import net.caffeinemc.mods.sodium.api.util.ColorARGB;
 import net.caffeinemc.mods.sodium.api.util.ColorMixer;
 import net.caffeinemc.mods.sodium.api.util.NormI8;
@@ -14,7 +15,6 @@ import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
 import net.createmod.catnip.render.compat.EntityVertex;
 import net.createmod.catnip.render.compat.IrisEntityVertex;
 import net.createmod.ponder.mixin.client.accessor.RenderSystemAccessor;
-import net.irisshaders.iris.vertices.NormalHelper;
 import net.createmod.catnip.platform.services.ExternalRenderHelper;
 import net.createmod.catnip.render.ShadeSeparatingSuperByteBuffer;
 import net.createmod.catnip.render.SuperByteBuffer;
@@ -22,11 +22,12 @@ import net.createmod.catnip.render.TemplateMesh;
 import net.createmod.catnip.render.compat.BlockVertex;
 import net.createmod.catnip.render.compat.IrisTerrainVertex;
 
+import net.irisshaders.iris.vertices.NormalHelper;
+
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -43,24 +44,28 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 	// Reused objects
 	private static final Matrix4f modelMat = new Matrix4f();
 	private static final Matrix3f normalMat = new Matrix3f();
-	private static final Vector4f pos = new Vector4f();
 	private static final Vector3f float3 = new Vector3f();
 	private static final Vector3f lightDir0 = new Vector3f();
 	private static final Vector3f lightDir1 = new Vector3f();
 	private static final SuperByteBuffer.ShiftOutput shiftOutput = new SuperByteBuffer.ShiftOutput();
-	private static final Vector4f lightPos = new Vector4f();
-	private static final Vector3f[] pos4 = new Vector3f[]{new Vector3f(), new Vector3f(), new Vector3f(), new Vector3f()};
-	private static final Vector2f[] uv4 = new Vector2f[]{new Vector2f(), new Vector2f(), new Vector2f(), new Vector2f()};
+	private static final Vector3f pos0 = new Vector3f();
+	private static final Vector3f pos1 = new Vector3f();
+	private static final Vector3f pos2 = new Vector3f();
+	private static final Vector3f pos3 = new Vector3f();
+	private static final Vector2f uv0 = new Vector2f();
+	private static final Vector2f uv1 = new Vector2f();
+	private static final Vector2f uv2 = new Vector2f();
+	private static final Vector2f uv3 = new Vector2f();
 
 	private static boolean isBufferMax() {
 		return BUFFED_VERTEX >= BUFFER_VERTEX_COUNT;
 	}
 
 	private static void flush(VertexBufferWriter writer, boolean force, VertexFormat format) {
-		if (BUFFED_VERTEX == 0) return;
 		if (!force && !isBufferMax()) {
 			return;
 		}
+		if (BUFFED_VERTEX == 0) return;
 		STACK.push();
 		writer.push(STACK, SCRATCH_BUFFER, BUFFED_VERTEX, format);
 		STACK.pop();
@@ -82,70 +87,71 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 		Matrix3f localNormalTransforms = transforms.last().normal();
 		normalMat.mul(localNormalTransforms);
 
-		boolean shaded = true;
-		int shadeSwapIndex = 0;
-		int[] shadeSwapVertices = byteBuffer.getShadeSwapVertices();
-		int nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex] : Integer.MAX_VALUE;
+		SuperByteBuffer.SpriteShiftFunc spriteShiftFunc = byteBuffer.getSpriteShiftFunc();
+		boolean useLevelLight = byteBuffer.isUsingLevelLight();
+		boolean hasCustomLight = byteBuffer.hasCustomLight();
+		boolean isTerrain = (format == IrisTerrainVertex.FORMAT);
+		boolean isPerspectiveProjection = isPerspectiveProjection();
 
 		TemplateMesh template = byteBuffer.getTemplateMesh();
 		int vertexCount = template.vertexCount();
 		for (int i = 0; i < vertexCount; i += 4) {
-			if (i >= nextShadeSwapVertex) {
-				shaded = !shaded;
-				shadeSwapIndex++;
-				nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex] : Integer.MAX_VALUE;
-			}
-
 			int packedNormal = template.normal(i);
-			NormI8.unpack(packedNormal, float3);
-			int normal = NormI8.pack(float3.mul(normalMat));
-			float nx = float3.x, ny = float3.y, nz = float3.z;
+			float unpackedX = NormI8.unpackX(packedNormal);
+			float unpackedY = NormI8.unpackY(packedNormal);
+			float unpackedZ = NormI8.unpackZ(packedNormal);
+			float nx = MatrixHelper.transformNormalX(normalMat, unpackedX, unpackedY, unpackedZ);
+			float ny = MatrixHelper.transformNormalY(normalMat, unpackedX, unpackedY, unpackedZ);
+			float nz = MatrixHelper.transformNormalZ(normalMat, unpackedX, unpackedY, unpackedZ);
 
-			pos4[0].set(template.x(i), template.y(i), template.z(i)).mulPosition(modelMat);
-			pos4[2].set(template.x(i + 2), template.y(i + 2), template.z(i + 2)).mulPosition(modelMat);
-			if (isPerspectiveProjection()) // do backface culling
-			{
-				if (float3.x * (pos4[0].x + pos4[2].x) + float3.y * (pos4[0].y + pos4[2].y) + float3.z * (pos4[0].z + pos4[2].z) > 0)
-					continue;
+			pos0.set(template.x(i), template.y(i), template.z(i)).mulPosition(modelMat);
+			pos2.set(template.x(i + 2), template.y(i + 2), template.z(i + 2)).mulPosition(modelMat);
+			if (isPerspectiveProjection) { // do backface culling
+				if (nx * (pos0.x + pos2.x) + ny * (pos0.y + pos2.y) + nz * (pos0.z + pos2.z) > 0) continue;
 			}
-			pos4[1].set(template.x(i + 1), template.y(i + 1), template.z(i + 1)).mulPosition(modelMat);
-			pos4[3].set(template.x(i + 3), template.y(i + 3), template.z(i + 3)).mulPosition(modelMat);
+			pos1.set(template.x(i + 1), template.y(i + 1), template.z(i + 1)).mulPosition(modelMat);
+			pos3.set(template.x(i + 3), template.y(i + 3), template.z(i + 3)).mulPosition(modelMat);
 
-			int tangent = NormalHelper.computeTangent(null, nx, ny, nz, pos4[0].x, pos4[0].y, pos4[0].z, uv4[0].x, uv4[0].y, pos4[1].x, pos4[1].y, pos4[1].z, uv4[1].x, uv4[1].y, pos4[2].x, pos4[2].y, pos4[2].z, uv4[2].x, uv4[2].y);
+			int normal = NormI8.pack(nx, ny, nz);
+			int tangent = NormalHelper.computeTangent(null, nx, ny, nz, pos0.x, pos0.y, pos0.z, uv0.x, uv0.y, pos1.x, pos1.y, pos1.z, uv1.x, uv1.y, pos2.x, pos2.y, pos2.z, uv2.x, uv2.y);
 
-			SuperByteBuffer.SpriteShiftFunc spriteShiftFunc = byteBuffer.getSpriteShiftFunc();
 			if (spriteShiftFunc != null) {
 				spriteShiftFunc.shift(template.u(i), template.v(i), shiftOutput);
-				uv4[0].set(shiftOutput.u, shiftOutput.v);
+				uv0.set(shiftOutput.u, shiftOutput.v);
 
 				spriteShiftFunc.shift(template.u(i + 1), template.v(i + 1), shiftOutput);
-				uv4[1].set(shiftOutput.u, shiftOutput.v);
+				uv1.set(shiftOutput.u, shiftOutput.v);
 
 				spriteShiftFunc.shift(template.u(i + 2), template.v(i + 2), shiftOutput);
-				uv4[2].set(shiftOutput.u, shiftOutput.v);
+				uv2.set(shiftOutput.u, shiftOutput.v);
 
 				spriteShiftFunc.shift(template.u(i + 3), template.v(i + 3), shiftOutput);
-				uv4[3].set(shiftOutput.u, shiftOutput.v);
+				uv3.set(shiftOutput.u, shiftOutput.v);
 			} else {
-				uv4[0].set(template.u(i), template.v(i));
-				uv4[1].set(template.u(i + 1), template.v(i + 1));
-				uv4[2].set(template.u(i + 2), template.v(i + 2));
-				uv4[3].set(template.u(i + 3), template.v(i + 3));
+				uv0.set(template.u(i), template.v(i));
+				uv1.set(template.u(i + 1), template.v(i + 1));
+				uv2.set(template.u(i + 2), template.v(i + 2));
+				uv3.set(template.u(i + 3), template.v(i + 3));
 			}
 
-			float mid_u = (uv4[0].x + uv4[1].x + uv4[2].x + uv4[3].x) / 4;
-			float mid_v = (uv4[0].y + uv4[1].y + uv4[2].y + uv4[3].y) / 4;
+			float mid_u = (uv0.x + uv1.x + uv2.x + uv3.x) / 4;
+			float mid_v = (uv0.y + uv1.y + uv2.y + uv3.y) / 4;
 
-			int color = ColorMixer.mulComponentWise(template.color(i), byteBuffer.getVertexColor());
+			int vertexColor = byteBuffer.getVertexColor();
+			int color = ColorMixer.mulComponentWise(template.color(i), vertexColor);
 
-			boolean hasCustomLight = byteBuffer.hasCustomLight();
-			int packedLight = byteBuffer.getPackedLight();
-			int light0 = hasCustomLight ? SuperByteBuffer.maxLight(template.light(i), packedLight) : template.light(i);
-			int light1 = hasCustomLight ? SuperByteBuffer.maxLight(template.light(i + 1), packedLight) : template.light(i + 1);
-			int light2 = hasCustomLight ? SuperByteBuffer.maxLight(template.light(i + 2), packedLight) : template.light(i + 2);
-			int light3 = hasCustomLight ? SuperByteBuffer.maxLight(template.light(i + 3), packedLight) : template.light(i + 3);
+			int light0 = template.light(i);
+			int light1 = template.light(i + 1);
+			int light2 = template.light(i + 2);
+			int light3 = template.light(i + 3);
+			if (hasCustomLight) {
+				int packedLight = byteBuffer.getPackedLight();
+				light0 = SuperByteBuffer.maxLight(light0, packedLight);
+				light1 = SuperByteBuffer.maxLight(light1, packedLight);
+				light2 = SuperByteBuffer.maxLight(light2, packedLight);
+				light3 = SuperByteBuffer.maxLight(light3, packedLight);
+			}
 
-			boolean useLevelLight = byteBuffer.isUsingLevelLight();
 			if (useLevelLight) {
 				float3.set(((template.x(i) - .5f) * 15 / 16f) + .5f, (template.y(i) - .5f) * 15 / 16f + .5f, (template.z(i) - .5f) * 15 / 16f + .5f).mulPosition(localTransforms);
 				light0 = SuperByteBuffer.maxLight(light0, byteBuffer.getLight(float3));
@@ -157,17 +163,17 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 				light3 = SuperByteBuffer.maxLight(light3, byteBuffer.getLight(float3));
 			}
 
-			if (format == IrisTerrainVertex.FORMAT) { // IrisTerrainVertex.FORMAT
-				IrisTerrainVertex.write(BUFFER_PTR, pos4[0].x, pos4[0].y, pos4[0].z, color, uv4[0].x, uv4[0].y, mid_u, mid_v, light0, normal, tangent);
+			if (isTerrain) { // IrisTerrainVertex.FORMAT
+				IrisTerrainVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color, uv0.x, uv0.y, mid_u, mid_v, light0, normal, tangent);
 				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 
-				IrisTerrainVertex.write(BUFFER_PTR, pos4[1].x, pos4[1].y, pos4[1].z, color, uv4[1].x, uv4[1].y, mid_u, mid_v, light1, normal, tangent);
+				IrisTerrainVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color, uv1.x, uv1.y, mid_u, mid_v, light1, normal, tangent);
 				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 
-				IrisTerrainVertex.write(BUFFER_PTR, pos4[2].x, pos4[2].y, pos4[2].z, color, uv4[2].x, uv4[2].y, mid_u, mid_v, light2, normal, tangent);
+				IrisTerrainVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color, uv2.x, uv2.y, mid_u, mid_v, light2, normal, tangent);
 				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 
-				IrisTerrainVertex.write(BUFFER_PTR, pos4[3].x, pos4[3].y, pos4[3].z, color, uv4[3].x, uv4[3].y, mid_u, mid_v, light3, normal, tangent);
+				IrisTerrainVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color, uv3.x, uv3.y, mid_u, mid_v, light3, normal, tangent);
 				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 			} else { // IrisEntityVertex.FORMAT
 				int overlay0, overlay1, overlay2, overlay3;
@@ -179,16 +185,16 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 					overlay2 = template.overlay(i + 2);
 					overlay3 = template.overlay(i + 3);
 				}
-				IrisEntityVertex.write(BUFFER_PTR, pos4[0].x, pos4[0].y, pos4[0].z, color, uv4[0].x, uv4[0].y, mid_u, mid_v, overlay0, light0, normal, tangent);
+				IrisEntityVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color, uv0.x, uv0.y, mid_u, mid_v, overlay0, light0, normal, tangent);
 				BUFFER_PTR += IrisEntityVertex.STRIDE;
 
-				IrisEntityVertex.write(BUFFER_PTR, pos4[1].x, pos4[1].y, pos4[1].z, color, uv4[1].x, uv4[1].y, mid_u, mid_v, overlay1, light1, normal, tangent);
+				IrisEntityVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color, uv1.x, uv1.y, mid_u, mid_v, overlay1, light1, normal, tangent);
 				BUFFER_PTR += IrisEntityVertex.STRIDE;
 
-				IrisEntityVertex.write(BUFFER_PTR, pos4[2].x, pos4[2].y, pos4[2].z, color, uv4[2].x, uv4[2].y, mid_u, mid_v, overlay2, light2, normal, tangent);
+				IrisEntityVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color, uv2.x, uv2.y, mid_u, mid_v, overlay2, light2, normal, tangent);
 				BUFFER_PTR += IrisEntityVertex.STRIDE;
 
-				IrisEntityVertex.write(BUFFER_PTR, pos4[3].x, pos4[3].y, pos4[3].z, color, uv4[3].x, uv4[3].y, mid_u, mid_v, overlay3, light3, normal, tangent);
+				IrisEntityVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color, uv3.x, uv3.y, mid_u, mid_v, overlay3, light3, normal, tangent);
 				BUFFER_PTR += IrisEntityVertex.STRIDE;
 			}
 			BUFFED_VERTEX += 4;
@@ -225,6 +231,11 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 			}
 		}
 
+		SuperByteBuffer.SpriteShiftFunc spriteShiftFunc = byteBuffer.getSpriteShiftFunc();
+		boolean useLevelLight = byteBuffer.isUsingLevelLight();
+		boolean hasCustomLight = byteBuffer.hasCustomLight();
+		boolean isPerspectiveProjection = isPerspectiveProjection();
+
 		TemplateMesh template = byteBuffer.getTemplateMesh();
 		int vertexCount = template.vertexCount();
 		for (int i = 0; i < vertexCount; i += 4) {
@@ -235,53 +246,61 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 			}
 
 			int packedNormal = template.normal(i);
-			NormI8.unpack(packedNormal, float3);
-			int normal = NormI8.pack(float3.mul(normalMat));
+			float unpackedX = NormI8.unpackX(packedNormal);
+			float unpackedY = NormI8.unpackY(packedNormal);
+			float unpackedZ = NormI8.unpackZ(packedNormal);
+			float nx = MatrixHelper.transformNormalX(normalMat, unpackedX, unpackedY, unpackedZ);
+			float ny = MatrixHelper.transformNormalY(normalMat, unpackedX, unpackedY, unpackedZ);
+			float nz = MatrixHelper.transformNormalZ(normalMat, unpackedX, unpackedY, unpackedZ);
 
-			pos4[0].set(template.x(i), template.y(i), template.z(i)).mulPosition(modelMat);
-			pos4[2].set(template.x(i + 2), template.y(i + 2), template.z(i + 2)).mulPosition(modelMat);
-			if (isPerspectiveProjection()) // do backface culling
-			{
-				if (float3.x * (pos4[0].x + pos4[2].x) + float3.y * (pos4[0].y + pos4[2].y) + float3.z * (pos4[0].z + pos4[2].z) > 0)
-					continue;
+			pos0.set(template.x(i), template.y(i), template.z(i)).mulPosition(modelMat);
+			pos2.set(template.x(i + 2), template.y(i + 2), template.z(i + 2)).mulPosition(modelMat);
+			if (isPerspectiveProjection) { // do backface culling
+				if (nx * (pos0.x + pos2.x) + ny * (pos0.y + pos2.y) + nz * (pos0.z + pos2.z) > 0) continue;
 			}
-			pos4[1].set(template.x(i + 1), template.y(i + 1), template.z(i + 1)).mulPosition(modelMat);
-			pos4[3].set(template.x(i + 3), template.y(i + 3), template.z(i + 3)).mulPosition(modelMat);
+			int normal = NormI8.pack(nx, ny, nz);
+			pos1.set(template.x(i + 1), template.y(i + 1), template.z(i + 1)).mulPosition(modelMat);
+			pos3.set(template.x(i + 3), template.y(i + 3), template.z(i + 3)).mulPosition(modelMat);
 
-			SuperByteBuffer.SpriteShiftFunc spriteShiftFunc = byteBuffer.getSpriteShiftFunc();
 			if (spriteShiftFunc != null) {
 				spriteShiftFunc.shift(template.u(i), template.v(i), shiftOutput);
-				uv4[0].set(shiftOutput.u, shiftOutput.v);
+				uv0.set(shiftOutput.u, shiftOutput.v);
 
 				spriteShiftFunc.shift(template.u(i + 1), template.v(i + 1), shiftOutput);
-				uv4[1].set(shiftOutput.u, shiftOutput.v);
+				uv1.set(shiftOutput.u, shiftOutput.v);
 
 				spriteShiftFunc.shift(template.u(i + 2), template.v(i + 2), shiftOutput);
-				uv4[2].set(shiftOutput.u, shiftOutput.v);
+				uv2.set(shiftOutput.u, shiftOutput.v);
 
 				spriteShiftFunc.shift(template.u(i + 3), template.v(i + 3), shiftOutput);
-				uv4[3].set(shiftOutput.u, shiftOutput.v);
+				uv3.set(shiftOutput.u, shiftOutput.v);
 			} else {
-				uv4[0].set(template.u(i), template.v(i));
-				uv4[1].set(template.u(i + 1), template.v(i + 1));
-				uv4[2].set(template.u(i + 2), template.v(i + 2));
-				uv4[3].set(template.u(i + 3), template.v(i + 3));
+				uv0.set(template.u(i), template.v(i));
+				uv1.set(template.u(i + 1), template.v(i + 1));
+				uv2.set(template.u(i + 2), template.v(i + 2));
+				uv3.set(template.u(i + 3), template.v(i + 3));
 			}
 
-			int color = ColorMixer.mulComponentWise(template.color(i), byteBuffer.getVertexColor());
+			int vertexColor = byteBuffer.getVertexColor();
+			int color = ColorMixer.mulComponentWise(template.color(i), vertexColor);
 			if (applyDiffuse) {
+				float3.set(nx, ny, nz);
 				int factor = shaded ? (int) (255.0F * calculateDiffuse(float3, lightDir0, lightDir1)) : unshadedDiffuse;
 				color = ColorARGB.mulRGB(color, factor);
 			}
 
-			boolean hasCustomLight = byteBuffer.hasCustomLight();
-			int packedLight = byteBuffer.getPackedLight();
-			int light0 = hasCustomLight ? SuperByteBuffer.maxLight(template.light(i), packedLight) : template.light(i);
-			int light1 = hasCustomLight ? SuperByteBuffer.maxLight(template.light(i + 1), packedLight) : template.light(i + 1);
-			int light2 = hasCustomLight ? SuperByteBuffer.maxLight(template.light(i + 2), packedLight) : template.light(i + 2);
-			int light3 = hasCustomLight ? SuperByteBuffer.maxLight(template.light(i + 3), packedLight) : template.light(i + 3);
+			int light0 = template.light(i);
+			int light1 = template.light(i + 1);
+			int light2 = template.light(i + 2);
+			int light3 = template.light(i + 3);
+			if (hasCustomLight) {
+				int packedLight = byteBuffer.getPackedLight();
+				light0 = SuperByteBuffer.maxLight(light0, packedLight);
+				light1 = SuperByteBuffer.maxLight(light1, packedLight);
+				light2 = SuperByteBuffer.maxLight(light2, packedLight);
+				light3 = SuperByteBuffer.maxLight(light3, packedLight);
+			}
 
-			boolean useLevelLight = byteBuffer.isUsingLevelLight();
 			if (useLevelLight) {
 				float3.set(((template.x(i) - .5f) * 15 / 16f) + .5f, (template.y(i) - .5f) * 15 / 16f + .5f, (template.z(i) - .5f) * 15 / 16f + .5f).mulPosition(localTransforms);
 				light0 = SuperByteBuffer.maxLight(light0, byteBuffer.getLight(float3));
@@ -294,16 +313,16 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 			}
 
 			if (format == BlockVertex.FORMAT) { // BlockVertex.FORMAT
-				BlockVertex.write(BUFFER_PTR, pos4[0].x, pos4[0].y, pos4[0].z, color, uv4[0].x, uv4[0].y, light0, normal);
+				BlockVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color, uv0.x, uv0.y, light0, normal);
 				BUFFER_PTR += BlockVertex.STRIDE;
 
-				BlockVertex.write(BUFFER_PTR, pos4[1].x, pos4[1].y, pos4[1].z, color, uv4[1].x, uv4[1].y, light1, normal);
+				BlockVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color, uv1.x, uv1.y, light1, normal);
 				BUFFER_PTR += BlockVertex.STRIDE;
 
-				BlockVertex.write(BUFFER_PTR, pos4[2].x, pos4[2].y, pos4[2].z, color, uv4[2].x, uv4[2].y, light2, normal);
+				BlockVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color, uv2.x, uv2.y, light2, normal);
 				BUFFER_PTR += BlockVertex.STRIDE;
 
-				BlockVertex.write(BUFFER_PTR, pos4[3].x, pos4[3].y, pos4[3].z, color, uv4[3].x, uv4[3].y, light3, normal);
+				BlockVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color, uv3.x, uv3.y, light3, normal);
 				BUFFER_PTR += BlockVertex.STRIDE;
 			} else { // EntityVertex.FORMAT
 				int overlay0, overlay1, overlay2, overlay3;
@@ -315,16 +334,16 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 					overlay2 = template.overlay(i + 2);
 					overlay3 = template.overlay(i + 3);
 				}
-				EntityVertex.write(BUFFER_PTR, pos4[0].x, pos4[0].y, pos4[0].z, color, uv4[0].x, uv4[0].y, overlay0, light0, normal);
+				EntityVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color, uv0.x, uv0.y, overlay0, light0, normal);
 				BUFFER_PTR += EntityVertex.STRIDE;
 
-				EntityVertex.write(BUFFER_PTR, pos4[1].x, pos4[1].y, pos4[1].z, color, uv4[1].x, uv4[1].y, overlay1, light1, normal);
+				EntityVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color, uv1.x, uv1.y, overlay1, light1, normal);
 				BUFFER_PTR += EntityVertex.STRIDE;
 
-				EntityVertex.write(BUFFER_PTR, pos4[2].x, pos4[2].y, pos4[2].z, color, uv4[2].x, uv4[2].y, overlay2, light2, normal);
+				EntityVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color, uv2.x, uv2.y, overlay2, light2, normal);
 				BUFFER_PTR += EntityVertex.STRIDE;
 
-				EntityVertex.write(BUFFER_PTR, pos4[3].x, pos4[3].y, pos4[3].z, color, uv4[3].x, uv4[3].y, overlay3, light3, normal);
+				EntityVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color, uv3.x, uv3.y, overlay3, light3, normal);
 				BUFFER_PTR += EntityVertex.STRIDE;
 			}
 
