@@ -361,13 +361,13 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 		if (builder instanceof BufferBuilder bb) {
 			if (bb.format == IrisTerrainVertex.FORMAT || bb.format == IrisEntityVertex.FORMAT) {
 				IrisRenderInto(byteBuffer, input, writer, bb.format);
+				return true;
 			} else if (bb.format == BlockVertex.FORMAT || bb.format == EntityVertex.FORMAT) {
 				SodiumRenderInto(byteBuffer, input, writer, bb.format);
-			} else {
-				return false;
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 }

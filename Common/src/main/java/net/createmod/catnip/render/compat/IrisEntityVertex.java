@@ -9,6 +9,8 @@ import net.caffeinemc.mods.sodium.api.vertex.attributes.common.OverlayAttribute;
 import net.caffeinemc.mods.sodium.api.vertex.attributes.common.PositionAttribute;
 import net.caffeinemc.mods.sodium.api.vertex.attributes.common.TextureAttribute;
 
+import net.irisshaders.iris.uniforms.CapturedRenderingState;
+
 import org.lwjgl.system.MemoryUtil;
 
 public class IrisEntityVertex {
@@ -25,6 +27,9 @@ public class IrisEntityVertex {
 		OverlayAttribute.set(ptr + 24L, overlay);
 		LightAttribute.set(ptr + 28L, light);
 		NormalAttribute.set(ptr + 32L, normal);
+		MemoryUtil.memPutShort(ptr + 36L, (short) CapturedRenderingState.INSTANCE.getCurrentRenderedEntity());
+		MemoryUtil.memPutShort(ptr + 38L, (short) CapturedRenderingState.INSTANCE.getCurrentRenderedBlockEntity());
+		MemoryUtil.memPutShort(ptr + 40L, (short) CapturedRenderingState.INSTANCE.getCurrentRenderedItem());
 		MemoryUtil.memPutFloat(ptr + 42L, mid_u);
 		MemoryUtil.memPutFloat(ptr + 46L, mid_v);
 		MemoryUtil.memPutInt(ptr + 50L, tangent);
