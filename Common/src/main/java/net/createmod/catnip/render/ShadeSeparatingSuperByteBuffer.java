@@ -46,7 +46,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 	private final PoseStack transforms = new PoseStack();
 
 	// Vertex Coloring
-	private int vertexColor;
+	private int vertexColor; // aabbggrr
 	private boolean disableDiffuse;
 
 	// Vertex Texture Coords
@@ -150,16 +150,16 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 			normal.mul(normalMat);
 
 			int quadColor = template.color(i);
-			int b = ((((quadColor) & 0xFF) * ((vertexColor) & 0xFF)) + 0xFF) >>> 8;
+			int r = ((((quadColor) & 0xFF) * ((vertexColor) & 0xFF)) + 0xFF) >>> 8;
 			int g = ((((quadColor >>>  8) & 0xFF) * ((vertexColor >>>  8) & 0xFF)) + 0xFF) >>> 8;
-			int r = ((((quadColor >>> 16) & 0xFF) * ((vertexColor >>> 16) & 0xFF)) + 0xFF) >>> 8;
+			int b = ((((quadColor >>> 16) & 0xFF) * ((vertexColor >>> 16) & 0xFF)) + 0xFF) >>> 8;
 			int a = ((((quadColor >>> 24) & 0xFF) * ((vertexColor >>> 24) & 0xFF)) + 0xFF) >>> 8;
 
 			if (applyDiffuse) {
 				int factor = shaded ? (int) (255.0F * calculateDiffuse(normal, lightDir0, lightDir1)) : unshadedDiffuse;
-				r = (r * factor + 255) >>> 3;
-				g = (g * factor + 255) >>> 3;
-				b = (b * factor + 255) >>> 3;
+				r = (r * factor + 255) >>> 8;
+				g = (g * factor + 255) >>> 8;
+				b = (b * factor + 255) >>> 8;
 			}
 			int color = (a << 24) | (r << 16) | (g << 8) | b;
 
@@ -329,7 +329,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 		return this;
 	}
 	public SuperByteBuffer color(float r, float g, float b, float a) {
-		color((int) (r / 255.0f), (int) (r / 255.0f), (int) (r / 255.0f), (int) (r / 255.0f));
+		color((int) (r * 255.0f), (int) (g * 255.0f), (int) (b * 255.0f), (int) (a * 255.0f));
 		return this;
 	}
 
@@ -339,7 +339,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	public SuperByteBuffer color(int color) {
-		this.vertexColor = 0xff000000 | (color & 0xffffff);
+		this.vertexColor = 0xff000000 | ((color & 0xFF) << 16) | ((color & 0xFF00)) | ((color & 0xFF0000) >>> 16);
 		return this;
 	}
 
