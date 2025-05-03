@@ -1,23 +1,26 @@
 package net.createmod.ponder.utility;
 
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.core.Vec3i;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.core.Vec3i;
 
 /*
  * https://github.com/Fabricators-of-Create/Porting-Lib/blob/2b136dfa25d1b364c15dd2cca1a4fefb3050c4fc/src/main/java/io/github/fabricators_of_create/porting_lib/util/client/VertexUtils.java
  * */
+@Deprecated(forRemoval = true)
 public class VertexUtils {
 	// Copy of putBulkData, but enables tinting and per-vertex alpha
 	public static void putBulkData(VertexConsumer builder, PoseStack.Pose poseStack, BakedQuad bakedQuad, float red, float green, float blue, int packedLight, int packedOverlay, boolean readExistingColor) {

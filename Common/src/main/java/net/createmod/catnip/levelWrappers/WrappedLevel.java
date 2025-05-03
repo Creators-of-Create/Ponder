@@ -1,5 +1,11 @@
 package net.createmod.catnip.levelWrappers;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
+
+import javax.annotation.Nullable;
+
 import net.createmod.ponder.mixin.accessor.EntityAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,11 +33,6 @@ import net.minecraft.world.level.storage.WritableLevelData;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.ticks.LevelTickAccess;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Predicate;
 
 public class WrappedLevel extends Level {
 

@@ -9,22 +9,24 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import dev.engine_room.flywheel.lib.transform.TransformStack;
-import net.createmod.catnip.platform.CatnipClientServices;
-import net.createmod.catnip.platform.CatnipServices;
-import net.createmod.catnip.render.ShadedBlockSbbBuilder;
-import net.createmod.catnip.render.SuperByteBuffer;
-import net.createmod.catnip.render.SuperByteBufferCache;
-import net.createmod.catnip.render.SuperByteBufferCache.Compartment;
-import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.client.render.model.BakedModelBufferer;
+import net.createmod.catnip.client.render.model.ShadeSeparatedResultConsumer;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.AABBOutline;
+import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.catnip.render.SuperByteBuffer;
+import net.createmod.catnip.render.SuperByteBufferBuilder;
+import net.createmod.catnip.render.SuperByteBufferCache;
+import net.createmod.catnip.render.SuperByteBufferCache.Compartment;
+import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.api.level.PonderLevel;
@@ -32,29 +34,22 @@ import net.createmod.ponder.api.scene.Selection;
 import net.createmod.ponder.foundation.PonderScene;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -441,52 +436,41 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 	}
 
 	private SuperByteBuffer buildStructureBuffer(PonderLevel world, RenderType layer) {
-		BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
+		SbbBuilder sbbBuilder = objects.sbbBuilder;
+		sbbBuilder.prepare(layer);
 
-		PoseStack poseStack = objects.poseStack;
-		RandomSource random = objects.random;
-		ShadedBlockSbbBuilder sbbBuilder = objects.sbbBuilder;
-
-		sbbBuilder.begin();
-
-		world.setMask(this.section);
+		world.setMask(section);
 		world.pushFakeLight(0);
-		ModelBlockRenderer.enableCaching();
-		section.forEach(pos -> {
-			BlockState state = world.getBlockState(pos);
-			FluidState fluidState = world.getFluidState(pos);
 
-			poseStack.pushPose();
-			poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
+		BakedModelBufferer.bufferBlocks(section.iterator(), world, null, true, sbbBuilder);
 
-			if (state.getRenderShape() == RenderShape.MODEL) {
-				BlockEntity blockEntity = world.getBlockEntity(pos);
-				BakedModel model = dispatcher.getBlockModel(state);
-				long seed = state.getSeed(pos);
-				random.setSeed(seed);
-
-				if (CatnipClientServices.CLIENT_HOOKS.doesBlockModelContainRenderType(layer, state, random, blockEntity)) {
-					CatnipClientServices.CLIENT_HOOKS.tesselateBlockVirtual(world, dispatcher, model, state, pos, poseStack, sbbBuilder, true, random, seed, OverlayTexture.NO_OVERLAY, layer);
-				}
-			}
-
-			if (!fluidState.isEmpty() && ItemBlockRenderTypes.getRenderLayer(fluidState) == layer)
-				dispatcher.renderLiquid(pos, world, sbbBuilder.unwrap(true), state, fluidState);
-
-			poseStack.popPose();
-		});
-		ModelBlockRenderer.clearCache();
 		world.popLight();
 		world.clearMask();
 
-		return sbbBuilder.end();
+		return sbbBuilder.build();
+	}
+
+	private static class SbbBuilder extends SuperByteBufferBuilder implements ShadeSeparatedResultConsumer {
+		private RenderType renderType;
+
+		public void prepare(RenderType renderType) {
+			prepare();
+			this.renderType = renderType;
+		}
+
+		@Override
+		public void accept(RenderType renderType, boolean shaded, BufferBuilder.RenderedBuffer data) {
+			if (renderType != this.renderType) {
+				return;
+			}
+
+			add(data, shaded);
+		}
 	}
 
 	private static class ThreadLocalObjects {
-		public final PoseStack poseStack = new PoseStack();
-		public final RandomSource random = RandomSource.createNewThreadLocalInstance();
-		public final ShadedBlockSbbBuilder sbbBuilder = ShadedBlockSbbBuilder.create();
+		public final SbbBuilder sbbBuilder = new SbbBuilder();
 	}
 
 }

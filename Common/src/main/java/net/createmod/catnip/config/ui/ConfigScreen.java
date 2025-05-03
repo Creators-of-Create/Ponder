@@ -17,12 +17,12 @@ import org.lwjgl.opengl.GL30;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.createmod.catnip.animation.Force;
+import net.createmod.catnip.animation.PhysicalFloat;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.element.GuiGameElement;
-import net.createmod.catnip.animation.Force;
-import net.createmod.catnip.animation.PhysicalFloat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;

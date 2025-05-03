@@ -1,9 +1,11 @@
 package net.createmod.catnip.gui.element;
 
+import org.lwjgl.opengl.GL11;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import org.lwjgl.opengl.GL11;
 
 public interface StencilElement extends RenderElement {
 

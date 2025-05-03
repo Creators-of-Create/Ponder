@@ -6,12 +6,12 @@ import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
-import net.createmod.catnip.animation.AnimationTickHolder;
-import net.createmod.catnip.data.Couple;
-import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.foundation.PonderTag;
 import net.minecraft.client.KeyMapping;
@@ -110,9 +110,8 @@ public class PonderButton extends BoxWidget {
 	@Override
 	public void doRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.doRender(graphics, mouseX, mouseY, partialTicks);
-		float fadeValue = fade.getValue();
 
-		if (fadeValue < .1f)
+		if (!isVisible())
 			return;
 
 		if (shortcut != null) {
@@ -120,7 +119,7 @@ public class PonderButton extends BoxWidget {
 			poseStack.pushPose();
 			poseStack.translate(0, 0, z + 10);
 			graphics.drawCenteredString(Minecraft.getInstance().font, shortcut.getTranslatedKeyMessage().getString().toLowerCase(
-					Locale.ROOT), getX() + width / 2 + 8, getY() + height - 6, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().scaleAlpha(fadeValue).getRGB());
+					Locale.ROOT), getX() + width / 2 + 8, getY() + height - 6, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().scaleAlpha(fade.getValue()).getRGB());
 			poseStack.popPose();
 		}
 	}
@@ -133,7 +132,6 @@ public class PonderButton extends BoxWidget {
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (shortcut != null && shortcut.matches(keyCode, scanCode)) {
-
 			gradientColor = getColorClick();
 			startGradientAnimation(getColorForState(), 0.15);
 
@@ -144,6 +142,11 @@ public class PonderButton extends BoxWidget {
 		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 
+	@Override
+	protected boolean isValidClickButton(int i) {
+		return isVisible();
+	}
+
 	@Nullable
 	public ItemStack getItem() {
 		return item;
@@ -152,5 +155,9 @@ public class PonderButton extends BoxWidget {
 	@Nullable
 	public PonderTag getTag() {
 		return tag;
+	}
+
+	public boolean isVisible() {
+		return !(fade.getValue() < .1f);
 	}
 }

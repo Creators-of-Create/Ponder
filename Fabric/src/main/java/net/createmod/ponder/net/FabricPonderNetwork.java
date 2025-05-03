@@ -3,7 +3,11 @@ package net.createmod.ponder.net;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import net.createmod.catnip.net.*;
+import net.createmod.catnip.net.ClientboundConfigPacket;
+import net.createmod.catnip.net.ClientboundPacket;
+import net.createmod.catnip.net.ClientboundSimpleActionPacket;
+import net.createmod.catnip.net.ServerboundConfigPacket;
+import net.createmod.catnip.net.ServerboundPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;

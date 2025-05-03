@@ -7,10 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.createmod.ponder.enums.PonderGuiTextures;
-
-import net.minecraft.network.chat.Component;
-
 import org.lwjgl.glfw.GLFW;
 
 import com.mojang.blaze3d.platform.ClipboardManager;
@@ -21,15 +17,17 @@ import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.config.ui.ConfigScreenList;
 import net.createmod.catnip.config.ui.SubMenuConfigScreen;
+import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.FontHelper.Palette;
-import net.createmod.catnip.data.Pair;
+import net.createmod.ponder.enums.PonderGuiTextures;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 

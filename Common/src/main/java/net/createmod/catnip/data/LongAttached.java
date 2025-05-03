@@ -1,9 +1,9 @@
 package net.createmod.catnip.data;
 
-import net.minecraft.nbt.CompoundTag;
-
 import java.util.Comparator;
 import java.util.function.Function;
+
+import net.minecraft.nbt.CompoundTag;
 
 public class LongAttached<V> extends Pair<Long, V> {
 	protected LongAttached(Long first, V second) {

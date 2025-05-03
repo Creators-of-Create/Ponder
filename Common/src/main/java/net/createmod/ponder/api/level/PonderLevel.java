@@ -12,10 +12,10 @@ import javax.annotation.Nullable;
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.createmod.catnip.platform.CatnipClientServices;
-import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.levelWrappers.SchematicLevel;
 import net.createmod.catnip.levelWrappers.WrappedClientLevel;
+import net.createmod.catnip.platform.CatnipClientServices;
+import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.ponder.api.VirtualBlockEntity;
 import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.api.scene.Selection;

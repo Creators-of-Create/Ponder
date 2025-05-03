@@ -1,13 +1,13 @@
 package net.createmod.catnip.platform;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.createmod.catnip.platform.services.ModFluidHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
-
-import org.jetbrains.annotations.Nullable;
 
 public class ForgeFluidHelper implements ModFluidHelper<FluidStack> {
 	@Override

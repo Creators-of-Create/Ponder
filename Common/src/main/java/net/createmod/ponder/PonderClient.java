@@ -2,19 +2,19 @@ package net.createmod.ponder;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.event.ClientResourceReloadListener;
+import net.createmod.catnip.ghostblock.GhostBlocks;
 import net.createmod.catnip.gui.UIRenderHelper;
+import net.createmod.catnip.levelWrappers.WrappedClientLevel;
 import net.createmod.catnip.net.ClientboundSimpleActionPacket;
+import net.createmod.catnip.outliner.Outliner;
+import net.createmod.catnip.placement.PlacementClient;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.CachedBuffers;
 import net.createmod.catnip.render.DefaultSuperRenderTypeBuffer;
 import net.createmod.catnip.render.SuperByteBufferCache;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
-import net.createmod.catnip.animation.AnimationTickHolder;
-import net.createmod.catnip.ghostblock.GhostBlocks;
-import net.createmod.catnip.levelWrappers.WrappedClientLevel;
-import net.createmod.catnip.outliner.Outliner;
-import net.createmod.catnip.placement.PlacementClient;
 import net.createmod.ponder.command.SimplePonderActions;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.createmod.ponder.foundation.content.BasePonderPlugin;

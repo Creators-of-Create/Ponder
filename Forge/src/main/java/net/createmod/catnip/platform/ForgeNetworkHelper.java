@@ -1,8 +1,8 @@
 package net.createmod.catnip.platform;
 
 import net.createmod.catnip.net.BasePacket;
-import net.createmod.ponder.net.ForgePonderNetwork;
 import net.createmod.catnip.platform.services.NetworkHelper;
+import net.createmod.ponder.net.ForgePonderNetwork;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;

@@ -13,10 +13,10 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.gui.TickableGuiEventListener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.TextStencilElement;
-import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

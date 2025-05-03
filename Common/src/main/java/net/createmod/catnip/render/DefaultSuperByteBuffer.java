@@ -28,6 +28,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 
 @SuppressWarnings("unchecked")
+@Deprecated(forRemoval = true)
 public class DefaultSuperByteBuffer implements SuperByteBuffer {
 
 	protected ByteBuffer template;

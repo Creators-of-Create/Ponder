@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.createmod.ponder.enums.PonderGuiTextures;
-
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.joml.Matrix4f;
@@ -16,12 +14,13 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
-import net.createmod.catnip.data.Couple;
-import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.lang.Lang;
 import net.createmod.catnip.theme.Color;
+import net.createmod.ponder.enums.PonderGuiTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;

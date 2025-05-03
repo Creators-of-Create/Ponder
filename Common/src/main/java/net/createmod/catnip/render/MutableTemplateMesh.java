@@ -7,39 +7,79 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 
 public class MutableTemplateMesh extends TemplateMesh {
-	public MutableTemplateMesh(int[] data) {
-		super(data);
+	public MutableTemplateMesh() {
+		this(0);
 	}
 
 	public MutableTemplateMesh(int vertexCount) {
 		super(vertexCount);
 	}
 
-	public void copyFrom(int index, TemplateMesh template) {
-		System.arraycopy(template.data, 0, data, index * INT_STRIDE, template.data.length);
+	public MutableTemplateMesh(TemplateMesh template) {
+		super(0);
+		copyFrom(0, template);
 	}
 
 	public MutableTemplateMesh(BufferBuilder.RenderedBuffer data) {
-		this(data.drawState().vertexCount());
+		super(0);
+		copyFrom(0, data);
+	}
+
+	@Deprecated(forRemoval = true)
+	public MutableTemplateMesh(int[] data) {
+		super(data);
+	}
+
+	@Deprecated(forRemoval = true)
+	public static void transferFromVertexData(int srcIndex, int dstIndex, int vertexCount, MutableTemplateMesh mutableMesh, ByteBuffer vertexBuffer, int stride) {
+		mutableMesh.copyFrom(srcIndex, dstIndex, vertexCount, vertexBuffer, stride);
+	}
+
+	public void ensureCapacity(int vertexCount) {
+		if (vertexCount > data.length / INT_STRIDE) {
+			int[] newData = new int[vertexCount * INT_STRIDE];
+			System.arraycopy(data, 0, newData, 0, data.length);
+			data = newData;
+		}
+	}
+
+	public void copyFrom(int index, TemplateMesh template) {
+		if (index < 0 || index > vertexCount) {
+			throw new IllegalArgumentException();
+		}
+
+		ensureCapacity(index + template.vertexCount);
+		vertexCount = index + template.vertexCount;
+		System.arraycopy(template.data, 0, data, index * INT_STRIDE, template.vertexCount * INT_STRIDE);
+	}
+
+	public void copyFrom(int srcIndex, int dstIndex, int vertexCount, ByteBuffer vertexBuffer, int stride) {
+		if (dstIndex < 0 || dstIndex > this.vertexCount) {
+			throw new IllegalArgumentException();
+		}
+
+		ensureCapacity(dstIndex + vertexCount);
+		this.vertexCount = dstIndex + vertexCount;
+
+		for (int i = 0; i < vertexCount; i++) {
+			x(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride));
+			y(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 4));
+			z(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 8));
+			color(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 12));
+			u(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 16));
+			v(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 20));
+			overlay(dstIndex + i, OverlayTexture.NO_OVERLAY);
+			light(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 24));
+			normal(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 28));
+		}
+	}
+
+	public void copyFrom(int index, BufferBuilder.RenderedBuffer data) {
 		int vertexCount = data.drawState().vertexCount();
 		ByteBuffer vertexBuffer = data.vertexBuffer();
 		int stride = data.drawState().format().getVertexSize();
 
-		transferFromVertexData(0, 0, vertexCount, this, vertexBuffer, stride);
-	}
-
-	public static void transferFromVertexData(int srcIndex, int dstIndex, int vertexCount, MutableTemplateMesh mutableMesh, ByteBuffer vertexBuffer, int stride) {
-		for (int i = 0; i < vertexCount; i++) {
-			mutableMesh.x(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride));
-			mutableMesh.y(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 4));
-			mutableMesh.z(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 8));
-			mutableMesh.color(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 12));
-			mutableMesh.u(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 16));
-			mutableMesh.v(dstIndex + i, vertexBuffer.getFloat(srcIndex + i * stride + 20));
-			mutableMesh.overlay(dstIndex + i, OverlayTexture.NO_OVERLAY);
-			mutableMesh.light(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 24));
-			mutableMesh.normal(dstIndex + i, vertexBuffer.getInt(srcIndex + i * stride + 28));
-		}
+		copyFrom(0, index, vertexCount, vertexBuffer, stride);
 	}
 
 	public void x(int index, float x) {
@@ -79,6 +119,12 @@ public class MutableTemplateMesh extends TemplateMesh {
 	}
 
 	public TemplateMesh toImmutable() {
-		return new TemplateMesh(data);
+		int[] newData = new int[vertexCount * INT_STRIDE];
+		System.arraycopy(data, 0, newData, 0, newData.length);
+		return new TemplateMesh(newData);
+	}
+
+	public void clear() {
+		vertexCount = 0;
 	}
 }

@@ -14,8 +14,8 @@ public class TemplateMesh {
 	public static final int LIGHT_OFFSET = 7;
 	public static final int NORMAL_OFFSET = 8;
 
-	protected final int[] data;
-	protected final int vertexCount;
+	protected int[] data;
+	protected int vertexCount;
 
 	public TemplateMesh(int[] data) {
 		if (data.length % INT_STRIDE != 0) {

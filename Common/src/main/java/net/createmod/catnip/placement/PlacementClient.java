@@ -1,5 +1,12 @@
 package net.createmod.catnip.placement;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -8,9 +15,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
-import net.createmod.catnip.math.VecHelper;
+
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.math.AngleHelper;
+import net.createmod.catnip.math.VecHelper;
 import net.createmod.ponder.config.CClient;
 import net.createmod.ponder.enums.PonderConfig;
 import net.createmod.ponder.enums.PonderGuiTextures;
@@ -25,12 +33,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
-
-import javax.annotation.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class PlacementClient {
 

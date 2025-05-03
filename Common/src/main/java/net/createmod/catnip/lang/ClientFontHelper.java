@@ -1,16 +1,18 @@
 package net.createmod.catnip.lang;
 
+import java.text.BreakIterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.joml.Matrix4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
+
 import net.createmod.catnip.platform.CatnipClientServices;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import org.joml.Matrix4f;
-
-import java.text.BreakIterator;
-import java.util.LinkedList;
-import java.util.List;
 
 public class ClientFontHelper {
 

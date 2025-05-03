@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import net.createmod.catnip.animation.AnimationTickHolder;
 import org.apache.commons.lang3.mutable.MutableDouble;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.joml.Matrix4f;
@@ -28,13 +27,14 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.gui.UIRenderHelper;
+import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
-import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.math.VecHelper;
-import net.createmod.catnip.animation.LerpedFloat;
-import net.createmod.catnip.outliner.Outliner;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.PonderElement;
 import net.createmod.ponder.api.element.PonderOverlayElement;

@@ -5,7 +5,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.createmod.catnip.net.*;
+import net.createmod.catnip.net.ClientboundConfigPacket;
+import net.createmod.catnip.net.ClientboundPacket;
+import net.createmod.catnip.net.ClientboundSimpleActionPacket;
+import net.createmod.catnip.net.ServerboundConfigPacket;
+import net.createmod.catnip.net.ServerboundPacket;
 import net.createmod.ponder.Ponder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

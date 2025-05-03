@@ -1,5 +1,7 @@
 package net.createmod.catnip.platform;
 
+import org.jetbrains.annotations.Nullable;
+
 import io.github.fabricators_of_create.porting_lib.fluids.FluidStack;
 import net.createmod.catnip.platform.services.ModFluidHelper;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
@@ -9,8 +11,6 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
-
-import org.jetbrains.annotations.Nullable;
 
 public class FabricFluidHelper implements ModFluidHelper<FluidStack> {
 	@Override

@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 
-import net.createmod.catnip.platform.CatnipClientServices;
 import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.platform.CatnipClientServices;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

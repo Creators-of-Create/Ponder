@@ -1,10 +1,10 @@
 package net.createmod.catnip.platform.services;
 
-import net.createmod.catnip.platform.Env;
-import net.createmod.catnip.platform.Loader;
-
 import java.util.List;
 import java.util.function.Supplier;
+
+import net.createmod.catnip.platform.Env;
+import net.createmod.catnip.platform.Loader;
 
 public interface PlatformHelper {
 	/**

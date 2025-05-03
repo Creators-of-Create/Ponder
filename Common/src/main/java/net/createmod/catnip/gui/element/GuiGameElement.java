@@ -11,20 +11,26 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
+import dev.engine_room.flywheel.lib.model.baked.SinglePosVirtualBlockGetter;
+import net.createmod.catnip.client.render.model.BakedModelBufferer;
 import net.createmod.catnip.gui.ILightingSettings;
 import net.createmod.catnip.gui.UIRenderHelper;
-import net.createmod.catnip.platform.CatnipClientServices;
+import net.createmod.catnip.impl.client.render.ColoringVertexConsumer;
 import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.platform.CatnipClientServices;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -188,7 +194,13 @@ public class GuiGameElement {
 
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer,
 								   PoseStack ms) {
-			CatnipClientServices.CLIENT_HOOKS.renderGuiGameElementModel(blockRenderer, buffer, ms, blockState, blockModel, color, blockEntity);
+			SinglePosVirtualBlockGetter level = SinglePosVirtualBlockGetter.createFullBright();
+			level.blockState(blockState);
+			level.blockEntity(blockEntity);
+			BakedModelBufferer.bufferModel(blockModel, BlockPos.ZERO, level, blockState, ms, (layer, shade) -> {
+				layer = layer == RenderType.translucent() ? Sheets.translucentCullBlockSheet() : Sheets.cutoutBlockSheet();
+				return new ColoringVertexConsumer(buffer.getBuffer(layer), FastColor.ARGB32.red(color) / 255f, FastColor.ARGB32.green(color) / 255f, FastColor.ARGB32.blue(color) / 255f, 1);
+			});
 
 			buffer.endBatch();
 		}

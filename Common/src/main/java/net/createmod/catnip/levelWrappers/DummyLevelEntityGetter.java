@@ -1,14 +1,14 @@
 package net.createmod.catnip.levelWrappers;
 
+import java.util.Collections;
+import java.util.UUID;
+import java.util.function.Consumer;
+
 import net.minecraft.util.AbortableIterationConsumer;
 import net.minecraft.world.level.entity.EntityAccess;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.entity.LevelEntityGetter;
 import net.minecraft.world.phys.AABB;
-
-import java.util.Collections;
-import java.util.UUID;
-import java.util.function.Consumer;
 
 public class DummyLevelEntityGetter<T extends EntityAccess> implements LevelEntityGetter<T> {
 

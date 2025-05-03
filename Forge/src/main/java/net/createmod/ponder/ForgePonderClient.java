@@ -3,9 +3,9 @@ package net.createmod.ponder;
 import java.util.Optional;
 
 import net.createmod.catnip.config.ui.BaseConfigScreen;
-import net.createmod.catnip.render.StitchedSprite;
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.placement.PlacementClient;
+import net.createmod.catnip.render.StitchedSprite;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.enums.PonderConfig;
 import net.createmod.ponder.enums.PonderKeybinds;

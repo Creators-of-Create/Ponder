@@ -4,8 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import net.createmod.catnip.gui.TickableGuiEventListener;
 import net.createmod.catnip.data.Couple;
+import net.createmod.catnip.gui.TickableGuiEventListener;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;

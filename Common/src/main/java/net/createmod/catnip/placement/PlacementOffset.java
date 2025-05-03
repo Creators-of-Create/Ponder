@@ -1,5 +1,9 @@
 package net.createmod.catnip.placement;
 
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -21,9 +25,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
-
-import javax.annotation.Nullable;
-import java.util.function.Function;
 
 public class PlacementOffset {
 

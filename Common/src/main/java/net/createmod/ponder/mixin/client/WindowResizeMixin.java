@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.platform.Window;
-import net.createmod.catnip.gui.UIRenderHelper;
 
+import net.createmod.catnip.gui.UIRenderHelper;
 import net.minecraft.client.Minecraft;
 
 @Mixin(Minecraft.class)

@@ -21,8 +21,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import net.createmod.catnip.net.ServerboundConfigPacket;
 import net.createmod.catnip.data.Pair;
+import net.createmod.catnip.net.ServerboundConfigPacket;
 import net.createmod.ponder.Ponder;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ConfigTracker;

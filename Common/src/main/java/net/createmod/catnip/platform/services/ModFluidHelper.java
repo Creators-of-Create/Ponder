@@ -1,10 +1,10 @@
 package net.createmod.catnip.platform.services;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
-
-import org.jetbrains.annotations.Nullable;
 
 public interface ModFluidHelper<R> {
 	int getColor(Fluid fluid);

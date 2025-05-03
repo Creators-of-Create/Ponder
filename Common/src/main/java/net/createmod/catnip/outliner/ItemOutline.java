@@ -1,6 +1,7 @@
 package net.createmod.catnip.outliner;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;

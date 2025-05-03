@@ -2,11 +2,11 @@ package net.createmod.ponder.foundation.ui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
-import net.createmod.catnip.data.Couple;
-import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.foundation.PonderScene;
 import net.minecraft.ChatFormatting;

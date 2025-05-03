@@ -6,10 +6,6 @@ import java.util.Locale;
 
 import javax.annotation.Nullable;
 
-import net.createmod.ponder.enums.PonderGuiTextures;
-
-import net.minecraft.network.chat.Component;
-
 import org.lwjgl.glfw.GLFW;
 
 import net.createmod.catnip.gui.ScreenOpener;
@@ -17,11 +13,13 @@ import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.BoxWidget;
-import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.FontHelper.Palette;
+import net.createmod.catnip.platform.CatnipServices;
+import net.createmod.ponder.enums.PonderGuiTextures;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class ConfigModListScreen extends ConfigScreen {
 

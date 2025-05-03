@@ -9,9 +9,8 @@ import java.util.function.Predicate;
 
 import net.createmod.catnip.data.Iterate;
 import net.createmod.catnip.data.Pair;
-import net.createmod.catnip.math.VecHelper;
-
 import net.createmod.catnip.ghostblock.GhostBlocks;
+import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

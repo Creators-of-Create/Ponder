@@ -1,6 +1,7 @@
 package net.createmod.catnip.config.ui.entries;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+
 import net.createmod.catnip.config.ui.ConfigScreenList;
 import net.createmod.catnip.config.ui.SubMenuConfigScreen;
 import net.createmod.catnip.gui.ScreenOpener;

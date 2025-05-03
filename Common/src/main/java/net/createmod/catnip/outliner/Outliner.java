@@ -8,9 +8,9 @@ import java.util.Optional;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.outliner.LineOutline.EndChasingLineOutline;
 import net.createmod.catnip.outliner.Outline.OutlineParams;
+import net.createmod.catnip.render.SuperRenderTypeBuffer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;

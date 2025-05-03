@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import net.createmod.catnip.data.Iterate;
-
 import org.apache.commons.lang3.mutable.MutableObject;
 
+import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;

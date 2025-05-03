@@ -1,8 +1,8 @@
 package net.createmod.ponder.foundation;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -21,9 +21,9 @@ public class SelectionImpl {
 	}
 
 	private static class Compound implements Selection {
-
-		Set<BlockPos> posSet;
-		@Nullable Vec3 center;
+		private final Set<BlockPos> posSet;
+		@Nullable
+		private Vec3 center;
 
 		public Compound(Simple initial) {
 			posSet = new HashSet<>();
@@ -54,11 +54,6 @@ public class SelectionImpl {
 		}
 
 		@Override
-		public void forEach(Consumer<BlockPos> callback) {
-			posSet.forEach(callback);
-		}
-
-		@Override
 		public OutlineParams makeOutline(Outliner outliner, Object slot) {
 			return outliner.showCluster(slot, posSet);
 		}
@@ -83,16 +78,21 @@ public class SelectionImpl {
 			return new Compound(posSet);
 		}
 
+		@Override
+		public Iterator<BlockPos> iterator() {
+			return posSet.iterator();
+		}
 	}
 
 	private static class Simple implements Selection {
-
 		private final BoundingBox bb;
 		private final AABB aabb;
+		private final Iterable<BlockPos> iterable;
 
 		public Simple(BoundingBox bb) {
 			this.bb = bb;
-			this.aabb = getAABB();
+			this.aabb = new AABB(bb.minX(), bb.minY(), bb.minZ(), bb.maxX() + 1, bb.maxY() + 1, bb.maxZ() + 1);
+			iterable = BlockPos.betweenClosed(Math.min(bb.minX(), bb.maxX()), Math.min(bb.minY(), bb.maxY()), Math.min(bb.minZ(), bb.maxZ()), Math.max(bb.minX(), bb.maxX()), Math.max(bb.minY(), bb.maxY()), Math.max(bb.minZ(), bb.maxZ()));
 		}
 
 		@Override
@@ -111,12 +111,6 @@ public class SelectionImpl {
 		}
 
 		@Override
-		public void forEach(Consumer<BlockPos> callback) {
-			BlockPos.betweenClosedStream(bb)
-				.forEach(callback);
-		}
-
-		@Override
 		public Vec3 getCenter() {
 			return aabb.getCenter();
 		}
@@ -126,15 +120,15 @@ public class SelectionImpl {
 			return outliner.showAABB(slot, aabb);
 		}
 
-		private AABB getAABB() {
-			return new AABB(bb.minX(), bb.minY(), bb.minZ(), bb.maxX() + 1, bb.maxY() + 1, bb.maxZ() + 1);
-		}
-
 		@Override
 		public Selection copy() {
 			return new Simple(new BoundingBox(bb.minX(), bb.minY(), bb.minZ(), bb.maxX(), bb.maxY(), bb.maxZ()));
 		}
 
+		@Override
+		public Iterator<BlockPos> iterator() {
+			return iterable.iterator();
+		}
 	}
 
 }

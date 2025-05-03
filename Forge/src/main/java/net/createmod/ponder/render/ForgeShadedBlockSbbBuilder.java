@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.createmod.catnip.render.ShadedBlockSbbBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 
+@Deprecated(forRemoval = true)
 public class ForgeShadedBlockSbbBuilder extends ShadedBlockSbbBuilder implements VertexConsumer {
 
 	public ForgeShadedBlockSbbBuilder(BufferBuilder bufferBuilder) {
