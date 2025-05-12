@@ -116,11 +116,8 @@ public class PonderScene {
 					   Collection<SceneOrderingEntry> orderingEntries) {
 		if (world != null) {
             world.scene = this;
-			this.world = world;
-        } else {
-			this.world = null; //TODO
-			//this.world = new PonderLevel(BlockPos.ZERO, new EmptyLevel());
-		}
+        }
+		this.world = world;
 
 		this.localization = localization;
 
