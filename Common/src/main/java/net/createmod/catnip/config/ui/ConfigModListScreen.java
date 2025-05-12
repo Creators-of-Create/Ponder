@@ -120,7 +120,7 @@ public class ConfigModListScreen extends ConfigScreen {
 		protected String id;
 
 		public ModEntry(String id, Screen parent) {
-			super(modName(id));
+			super(CatnipServices.PLATFORM.getModDisplayName(id));
 			this.id = id;
 
 			button = new BoxWidget(0, 0, 35, 16)
@@ -133,15 +133,11 @@ public class ConfigModListScreen extends ConfigScreen {
 				button.active = false;
 				button.updateGradientFromState();
 				button.modifyElement(e -> ((DelegatedStencilElement) e).withElementRenderer(BaseConfigScreen.DISABLED_RENDERER));
-				labelTooltip.add(Component.literal(modName(id)));
+				labelTooltip.add(Component.literal(CatnipServices.PLATFORM.getModDisplayName(id)));
 				labelTooltip.addAll(FontHelper.cutTextComponent(Component.literal("This Mod does not have any configs registered or is not using Forge's config system"), Palette.ALL_GRAY));
 			}
 
 			listeners.add(button);
-		}
-
-		private static String modName(String modID) {
-			return getModDisplayName(modID).orElse(toHumanReadable(modID));
 		}
 
 		public String getId() {

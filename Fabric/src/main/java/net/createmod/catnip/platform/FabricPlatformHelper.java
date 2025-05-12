@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import io.github.fabricators_of_create.porting_lib.util.EnvExecutor;
+import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.platform.services.PlatformHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -37,6 +38,13 @@ public class FabricPlatformHelper implements PlatformHelper {
 		for (ModContainer mod : FabricLoader.getInstance().getAllMods())
 			modIds.add(mod.getMetadata().getId());
 		return modIds;
+	}
+
+	@Override
+	public String getModDisplayName(String modId) {
+		return FabricLoader.getInstance().getModContainer(modId)
+				.map(mod -> mod.getMetadata().getName())
+				.orElse(ConfigScreen.toHumanReadable(modId));
 	}
 
 	@Override

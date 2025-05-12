@@ -39,6 +39,8 @@ public interface PlatformHelper {
 
 	List<String> getLoadedMods();
 
+	String getModDisplayName(String modId);
+
 	void executeOnClientOnly(Supplier<Runnable> toRun);
 
 	void executeOnServerOnly(Supplier<Runnable> toRun);

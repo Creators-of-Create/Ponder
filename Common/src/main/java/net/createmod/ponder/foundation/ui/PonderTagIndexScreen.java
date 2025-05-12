@@ -13,7 +13,6 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.gui.ScreenOpener;
 import net.createmod.catnip.gui.UIRenderHelper;
 import net.createmod.catnip.gui.element.BoxElement;
@@ -23,6 +22,7 @@ import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.FontHelper.Palette;
 import net.createmod.catnip.layout.LayoutHelper;
 import net.createmod.catnip.layout.PaginationState;
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.createmod.ponder.foundation.PonderIndex;
@@ -103,7 +103,7 @@ public class PonderTagIndexScreen extends AbstractPonderScreen {
 
 		paginationState.iterateForCurrentPage((iPage, iOverall) -> {
 			Map.Entry<String, List<PonderTag>> entry = sortedModTags.get(iOverall);
-			String modName = ConfigScreen.getModDisplayName(entry.getKey()).orElse(entry.getKey());
+			String modName = CatnipServices.PLATFORM.getModDisplayName(entry.getKey());
 			List<PonderTag> tags = entry.getValue();
 
 			LayoutHelper layout = LayoutHelper.centeredHorizontal(tags.size(), 1, 28, 28, 8);

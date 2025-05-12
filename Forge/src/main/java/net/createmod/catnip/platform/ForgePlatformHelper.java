@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.platform.services.PlatformHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -39,6 +40,13 @@ public class ForgePlatformHelper implements PlatformHelper {
 		for (IModInfo mod : ModList.get().getMods())
 			modIds.add(mod.getModId());
 		return modIds;
+	}
+
+	@Override
+	public String getModDisplayName(String modId) {
+		return ModList.get().getModContainerById(modId)
+				.map(mod -> mod.getModInfo().getDisplayName())
+				.orElse(ConfigScreen.toHumanReadable(modId));
 	}
 
 	@Override

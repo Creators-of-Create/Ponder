@@ -1,7 +1,6 @@
 package net.createmod.catnip.config.ui;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
@@ -17,6 +16,7 @@ import net.createmod.catnip.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.gui.widget.BoxWidget;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.FontHelper.Palette;
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.Ponder;
 import net.createmod.ponder.enums.PonderGuiTextures;
@@ -172,8 +172,7 @@ public class BaseConfigScreen extends ConfigScreen {
 			serverText.withElementRenderer(BoxWidget.gradientFactory.apply(serverConfigWidget));
 		}
 
-		TextStencilElement titleText = new TextStencilElement(font, getModDisplayName(modID).orElse(modID.toLowerCase(
-				Locale.ROOT)))
+		TextStencilElement titleText = new TextStencilElement(font, CatnipServices.PLATFORM.getModDisplayName(modID))
 				.centered(true, true)
 				.withElementRenderer((ms, w, h, alpha) -> {
 					UIRenderHelper.angledGradient(ms, 0, 0, h / 2, h, w / 2, COLOR_TITLE_A, COLOR_TITLE_B);
