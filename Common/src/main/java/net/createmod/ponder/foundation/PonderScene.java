@@ -143,10 +143,15 @@ public class PonderScene {
 		basePlateSize = getBounds().getXSpan();
 		camera = new SceneCamera();
 		baseWorldSection = new WorldSectionElementImpl();
-		renderViewEntity = new ArmorStand(world, 0, 0, 0);
 		keyframeTimes = new IntArrayList(4);
 		scaleFactor = 1;
 		yOffset = 0;
+
+		if (world != null) {
+			renderViewEntity = new ArmorStand(world, 0, 0, 0);
+		} else {
+			renderViewEntity = null;
+		}
 
 		setPointOfInterest(new Vec3(0, 4, 0));
 	}
