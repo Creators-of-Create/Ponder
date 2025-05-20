@@ -81,8 +81,16 @@ public class Glob {
 							break;
 						}
 
-						if (c == '\\' || c == '[' || c == '&' && next(globPattern, i) == '&') {
-							regex.append('\\');
+						if (c == '\\') {
+							//escape next character if available and needed (only '-' and ']' have special meaning within sets, all other characters are treated as literals 
+							if (i == globPattern.length()) {
+								throw new PatternSyntaxException("No character to escape", globPattern, i - 1);
+							}
+							if (next(globPattern, i) == ']' || next(globPattern, i)=='-') {
+								regex.append('\\');
+							}
+							regex.append(next(globPattern, i++));
+							continue; //Character is escaped and will not be processed further
 						}
 
 						regex.append(c);
