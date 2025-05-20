@@ -75,6 +75,29 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 		return RenderSystem.getModelViewMatrix().m32() == 0;
 	}
 
+	private static int calcColorSodium(int quadColor, int vertexColor, int unshadedDiffuse, boolean applyDiffuse, boolean shaded, float nx, float ny, float nz) {
+		int r = ((((quadColor) & 0xFF) * ((vertexColor) & 0xFF)) + 0xFF) >>> 8;
+		int g = ((((quadColor >>>  8) & 0xFF) * ((vertexColor >>>  8) & 0xFF)) + 0xFF) >>> 8;
+		int b = ((((quadColor >>> 16) & 0xFF) * ((vertexColor >>> 16) & 0xFF)) + 0xFF) >>> 8;
+		int a = ((((quadColor >>> 24) & 0xFF) * ((vertexColor >>> 24) & 0xFF)) + 0xFF) >>> 8;
+		if (applyDiffuse) {
+			float3.set(nx, ny, nz);
+			int factor = shaded ? (int) (255.0F * calculateDiffuse(float3, lightDir0, lightDir1)) : unshadedDiffuse;
+			r = (r * factor + 255) >>> 8;
+			g = (g * factor + 255) >>> 8;
+			b = (b * factor + 255) >>> 8;
+		}
+		return (a << 24) | (b << 16) | (g << 8) | r;
+	}
+
+	private static int calcColorIris(int quadColor, int vertexColor) {
+		int r = ((((quadColor) & 0xFF) * ((vertexColor) & 0xFF)) + 0xFF) >>> 8;
+		int g = ((((quadColor >>>  8) & 0xFF) * ((vertexColor >>>  8) & 0xFF)) + 0xFF) >>> 8;
+		int b = ((((quadColor >>> 16) & 0xFF) * ((vertexColor >>> 16) & 0xFF)) + 0xFF) >>> 8;
+		int a = ((((quadColor >>> 24) & 0xFF) * ((vertexColor >>> 24) & 0xFF)) + 0xFF) >>> 8;
+		return (a << 24) | (b << 16) | (g << 8) | r;
+	}
+
 	private static void IrisRenderInto(ShadeSeparatingSuperByteBuffer byteBuffer, PoseStack input, VertexBufferWriter writer, VertexFormat format) {
 		PoseStack transforms = byteBuffer.getTransforms();
 		modelMat.set(input.last().pose());
@@ -135,13 +158,11 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 			float mid_u = (uv0.x + uv1.x + uv2.x + uv3.x) / 4;
 			float mid_v = (uv0.y + uv1.y + uv2.y + uv3.y) / 4;
 
-			int quadColor = template.color(i);
 			int vertexColor = byteBuffer.getVertexColor();
-			int r = ((((quadColor) & 0xFF) * ((vertexColor) & 0xFF)) + 0xFF) >>> 8;
-			int g = ((((quadColor >>>  8) & 0xFF) * ((vertexColor >>>  8) & 0xFF)) + 0xFF) >>> 8;
-			int b = ((((quadColor >>> 16) & 0xFF) * ((vertexColor >>> 16) & 0xFF)) + 0xFF) >>> 8;
-			int a = ((((quadColor >>> 24) & 0xFF) * ((vertexColor >>> 24) & 0xFF)) + 0xFF) >>> 8;
-			int color = (a << 24) | (b << 16) | (g << 8) | r;
+			int color0 = calcColorIris(template.color(i), vertexColor);
+			int color1 = calcColorIris(template.color(i + 1), vertexColor);
+			int color2 = calcColorIris(template.color(i + 2), vertexColor);
+			int color3 = calcColorIris(template.color(i + 3), vertexColor);
 
 			int light0 = template.light(i);
 			int light1 = template.light(i + 1);
@@ -167,16 +188,16 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 			}
 
 			if (isTerrain) { // IrisTerrainVertex.FORMAT
-				IrisTerrainVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color, uv0.x, uv0.y, mid_u, mid_v, light0, normal, tangent);
+				IrisTerrainVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color0, uv0.x, uv0.y, mid_u, mid_v, light0, normal, tangent);
 				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 
-				IrisTerrainVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color, uv1.x, uv1.y, mid_u, mid_v, light1, normal, tangent);
+				IrisTerrainVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color1, uv1.x, uv1.y, mid_u, mid_v, light1, normal, tangent);
 				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 
-				IrisTerrainVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color, uv2.x, uv2.y, mid_u, mid_v, light2, normal, tangent);
+				IrisTerrainVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color2, uv2.x, uv2.y, mid_u, mid_v, light2, normal, tangent);
 				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 
-				IrisTerrainVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color, uv3.x, uv3.y, mid_u, mid_v, light3, normal, tangent);
+				IrisTerrainVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color3, uv3.x, uv3.y, mid_u, mid_v, light3, normal, tangent);
 				BUFFER_PTR += IrisTerrainVertex.STRIDE;
 			} else { // IrisEntityVertex.FORMAT
 				int overlay0, overlay1, overlay2, overlay3;
@@ -188,16 +209,16 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 					overlay2 = template.overlay(i + 2);
 					overlay3 = template.overlay(i + 3);
 				}
-				IrisEntityVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color, uv0.x, uv0.y, mid_u, mid_v, overlay0, light0, normal, tangent);
+				IrisEntityVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color0, uv0.x, uv0.y, mid_u, mid_v, overlay0, light0, normal, tangent);
 				BUFFER_PTR += IrisEntityVertex.STRIDE;
 
-				IrisEntityVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color, uv1.x, uv1.y, mid_u, mid_v, overlay1, light1, normal, tangent);
+				IrisEntityVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color1, uv1.x, uv1.y, mid_u, mid_v, overlay1, light1, normal, tangent);
 				BUFFER_PTR += IrisEntityVertex.STRIDE;
 
-				IrisEntityVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color, uv2.x, uv2.y, mid_u, mid_v, overlay2, light2, normal, tangent);
+				IrisEntityVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color2, uv2.x, uv2.y, mid_u, mid_v, overlay2, light2, normal, tangent);
 				BUFFER_PTR += IrisEntityVertex.STRIDE;
 
-				IrisEntityVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color, uv3.x, uv3.y, mid_u, mid_v, overlay3, light3, normal, tangent);
+				IrisEntityVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color3, uv3.x, uv3.y, mid_u, mid_v, overlay3, light3, normal, tangent);
 				BUFFER_PTR += IrisEntityVertex.STRIDE;
 			}
 			BUFFED_VERTEX += 4;
@@ -284,20 +305,11 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 				uv3.set(template.u(i + 3), template.v(i + 3));
 			}
 
-			int quadColor = template.color(i);
 			int vertexColor = byteBuffer.getVertexColor();
-			int r = ((((quadColor) & 0xFF) * ((vertexColor) & 0xFF)) + 0xFF) >>> 8;
-			int g = ((((quadColor >>>  8) & 0xFF) * ((vertexColor >>>  8) & 0xFF)) + 0xFF) >>> 8;
-			int b = ((((quadColor >>> 16) & 0xFF) * ((vertexColor >>> 16) & 0xFF)) + 0xFF) >>> 8;
-			int a = ((((quadColor >>> 24) & 0xFF) * ((vertexColor >>> 24) & 0xFF)) + 0xFF) >>> 8;
-			if (applyDiffuse) {
-				float3.set(nx, ny, nz);
-				int factor = shaded ? (int) (255.0F * calculateDiffuse(float3, lightDir0, lightDir1)) : unshadedDiffuse;
-				r = (r * factor + 255) >>> 8;
-				g = (g * factor + 255) >>> 8;
-				b = (b * factor + 255) >>> 8;
-			}
-			int color = (a << 24) | (b << 16) | (g << 8) | r;
+			int color0 = calcColorSodium(template.color(i), vertexColor, unshadedDiffuse, applyDiffuse, shaded, nx, ny, nz);
+			int color1 = calcColorSodium(template.color(i + 1), vertexColor, unshadedDiffuse, applyDiffuse, shaded, nx, ny, nz);
+			int color2 = calcColorSodium(template.color(i + 2), vertexColor, unshadedDiffuse, applyDiffuse, shaded, nx, ny, nz);
+			int color3 = calcColorSodium(template.color(i + 3), vertexColor, unshadedDiffuse, applyDiffuse, shaded, nx, ny, nz);
 
 			int light0 = template.light(i);
 			int light1 = template.light(i + 1);
@@ -323,16 +335,16 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 			}
 
 			if (format == BlockVertex.FORMAT) { // BlockVertex.FORMAT
-				BlockVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color, uv0.x, uv0.y, light0, normal);
+				BlockVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color0, uv0.x, uv0.y, light0, normal);
 				BUFFER_PTR += BlockVertex.STRIDE;
 
-				BlockVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color, uv1.x, uv1.y, light1, normal);
+				BlockVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color1, uv1.x, uv1.y, light1, normal);
 				BUFFER_PTR += BlockVertex.STRIDE;
 
-				BlockVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color, uv2.x, uv2.y, light2, normal);
+				BlockVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color2, uv2.x, uv2.y, light2, normal);
 				BUFFER_PTR += BlockVertex.STRIDE;
 
-				BlockVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color, uv3.x, uv3.y, light3, normal);
+				BlockVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color3, uv3.x, uv3.y, light3, normal);
 				BUFFER_PTR += BlockVertex.STRIDE;
 			} else { // EntityVertex.FORMAT
 				int overlay0, overlay1, overlay2, overlay3;
@@ -344,16 +356,16 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 					overlay2 = template.overlay(i + 2);
 					overlay3 = template.overlay(i + 3);
 				}
-				EntityVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color, uv0.x, uv0.y, overlay0, light0, normal);
+				EntityVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, color0, uv0.x, uv0.y, overlay0, light0, normal);
 				BUFFER_PTR += EntityVertex.STRIDE;
 
-				EntityVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color, uv1.x, uv1.y, overlay1, light1, normal);
+				EntityVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, color1, uv1.x, uv1.y, overlay1, light1, normal);
 				BUFFER_PTR += EntityVertex.STRIDE;
 
-				EntityVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color, uv2.x, uv2.y, overlay2, light2, normal);
+				EntityVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, color2, uv2.x, uv2.y, overlay2, light2, normal);
 				BUFFER_PTR += EntityVertex.STRIDE;
 
-				EntityVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color, uv3.x, uv3.y, overlay3, light3, normal);
+				EntityVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, color3, uv3.x, uv3.y, overlay3, light3, normal);
 				BUFFER_PTR += EntityVertex.STRIDE;
 			}
 
