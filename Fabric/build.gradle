@@ -26,6 +26,10 @@ dependencies {
     implementation(include("javax.annotation:javax.annotation-api:1.3.2"))
     implementation(include("com.google.code.findbugs:jsr305:3.0.2"))
 
+    compileOnly("maven.modrinth:sodium:mc${minecraft_version}-${sodium_version}-fabric")
+    compileOnly("maven.modrinth:iris:${iris_version}+${minecraft_version}-fabric")
+    testImplementation("maven.modrinth:sodium:mc${minecraft_version}-${sodium_version}-fabric")
+    testImplementation("maven.modrinth:iris:${iris_version}+${minecraft_version}-fabric")
     implementation(commonProject)
 }
 
