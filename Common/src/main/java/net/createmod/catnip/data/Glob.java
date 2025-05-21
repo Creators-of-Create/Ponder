@@ -86,7 +86,7 @@ public class Glob {
 							if (i == globPattern.length()) {
 								throw new PatternSyntaxException("No character to escape", globPattern, i - 1);
 							}
-							if (next(globPattern, i) == ']' || next(globPattern, i)=='-') {
+							if (next(globPattern, i) == ']' || next(globPattern, i)=='-' || next(globPattern, i)=='\\') {
 								regex.append('\\');
 							}
 							regex.append(next(globPattern, i++));
