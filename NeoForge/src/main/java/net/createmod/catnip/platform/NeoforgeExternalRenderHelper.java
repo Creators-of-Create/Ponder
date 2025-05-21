@@ -11,6 +11,7 @@ import net.caffeinemc.mods.sodium.api.math.MatrixHelper;
 import net.caffeinemc.mods.sodium.api.util.NormI8;
 import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
 import net.createmod.catnip.render.compat.EntityVertex;
+import net.createmod.catnip.render.compat.IrisCompat;
 import net.createmod.catnip.render.compat.IrisEntityVertex;
 import net.createmod.ponder.mixin.client.accessor.RenderSystemAccessor;
 import net.createmod.catnip.platform.services.ExternalRenderHelper;
@@ -77,12 +78,12 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 
 	private static int calcColorSodium(int quadColor, int vertexColor, int unshadedDiffuse, boolean applyDiffuse, boolean shaded, float nx, float ny, float nz) {
 		int r = ((((quadColor) & 0xFF) * ((vertexColor) & 0xFF)) + 0xFF) >>> 8;
-		int g = ((((quadColor >>>  8) & 0xFF) * ((vertexColor >>>  8) & 0xFF)) + 0xFF) >>> 8;
+		int g = ((((quadColor >>> 8) & 0xFF) * ((vertexColor >>> 8) & 0xFF)) + 0xFF) >>> 8;
 		int b = ((((quadColor >>> 16) & 0xFF) * ((vertexColor >>> 16) & 0xFF)) + 0xFF) >>> 8;
 		int a = ((((quadColor >>> 24) & 0xFF) * ((vertexColor >>> 24) & 0xFF)) + 0xFF) >>> 8;
 		if (applyDiffuse) {
 			float3.set(nx, ny, nz);
-			int factor = shaded ? (int) (255.0F * calculateDiffuse(float3, lightDir0, lightDir1)) : unshadedDiffuse;
+			int factor = shaded ? (int) (255.0F * calculateDiffuse(float3, lightDir0, lightDir1)):unshadedDiffuse;
 			r = (r * factor + 255) >>> 8;
 			g = (g * factor + 255) >>> 8;
 			b = (b * factor + 255) >>> 8;
@@ -92,10 +93,93 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 
 	private static int calcColorIris(int quadColor, int vertexColor) {
 		int r = ((((quadColor) & 0xFF) * ((vertexColor) & 0xFF)) + 0xFF) >>> 8;
-		int g = ((((quadColor >>>  8) & 0xFF) * ((vertexColor >>>  8) & 0xFF)) + 0xFF) >>> 8;
+		int g = ((((quadColor >>> 8) & 0xFF) * ((vertexColor >>> 8) & 0xFF)) + 0xFF) >>> 8;
 		int b = ((((quadColor >>> 16) & 0xFF) * ((vertexColor >>> 16) & 0xFF)) + 0xFF) >>> 8;
 		int a = ((((quadColor >>> 24) & 0xFF) * ((vertexColor >>> 24) & 0xFF)) + 0xFF) >>> 8;
 		return (a << 24) | (b << 16) | (g << 8) | r;
+	}
+
+	private static void IrisRenderShadowInto(ShadeSeparatingSuperByteBuffer byteBuffer, PoseStack input, VertexBufferWriter writer, VertexFormat format) {
+		PoseStack transforms = byteBuffer.getTransforms();
+		modelMat.set(input.last().pose());
+		Matrix4f localTransforms = transforms.last().pose();
+		modelMat.mul(localTransforms);
+
+		PoseStack.Pose pose = input.poseStack.peekFirst();
+		Matrix3f sunNormal = pose.normal();
+		float3.set(sunNormal.m02, sunNormal.m12, sunNormal.m22); // lightDirection
+
+		SuperByteBuffer.SpriteShiftFunc spriteShiftFunc = byteBuffer.getSpriteShiftFunc();
+		boolean isTerrain = (format == IrisTerrainVertex.FORMAT);
+
+		TemplateMesh template = byteBuffer.getTemplateMesh();
+		int vertexCount = template.vertexCount();
+		for (int i = 0; i < vertexCount; i += 4) {
+			int packedNormal = template.normal(i);
+			float unpackedX = NormI8.unpackX(packedNormal);
+			float unpackedY = NormI8.unpackY(packedNormal);
+			float unpackedZ = NormI8.unpackZ(packedNormal);
+			float nx = MatrixHelper.transformNormalX(normalMat, unpackedX, unpackedY, unpackedZ);
+			float ny = MatrixHelper.transformNormalY(normalMat, unpackedX, unpackedY, unpackedZ);
+			float nz = MatrixHelper.transformNormalZ(normalMat, unpackedX, unpackedY, unpackedZ);
+
+			if (float3.dot(nx, ny, nz) >= 0) continue; // backface culling
+			pos0.set(template.x(i), template.y(i), template.z(i)).mulPosition(modelMat);
+			pos1.set(template.x(i + 1), template.y(i + 1), template.z(i + 1)).mulPosition(modelMat);
+			pos2.set(template.x(i + 2), template.y(i + 2), template.z(i + 2)).mulPosition(modelMat);
+			pos3.set(template.x(i + 3), template.y(i + 3), template.z(i + 3)).mulPosition(modelMat);
+
+			int normal = NormI8.pack(nx, ny, nz);
+
+			if (spriteShiftFunc != null) {
+				spriteShiftFunc.shift(template.u(i), template.v(i), shiftOutput);
+				uv0.set(shiftOutput.u, shiftOutput.v);
+
+				spriteShiftFunc.shift(template.u(i + 1), template.v(i + 1), shiftOutput);
+				uv1.set(shiftOutput.u, shiftOutput.v);
+
+				spriteShiftFunc.shift(template.u(i + 2), template.v(i + 2), shiftOutput);
+				uv2.set(shiftOutput.u, shiftOutput.v);
+
+				spriteShiftFunc.shift(template.u(i + 3), template.v(i + 3), shiftOutput);
+				uv3.set(shiftOutput.u, shiftOutput.v);
+			} else {
+				uv0.set(template.u(i), template.v(i));
+				uv1.set(template.u(i + 1), template.v(i + 1));
+				uv2.set(template.u(i + 2), template.v(i + 2));
+				uv3.set(template.u(i + 3), template.v(i + 3));
+			}
+
+			if (isTerrain) { // IrisTerrainVertex.FORMAT
+				IrisTerrainVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, 0xffffffff, uv0.x, uv0.y, 0.5f, 0.5f, 0xf000f0, normal, 0xffffffff);
+				BUFFER_PTR += IrisTerrainVertex.STRIDE;
+
+				IrisTerrainVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, 0xffffffff, uv1.x, uv1.y, 0.5f, 0.5f, 0xf000f0, normal, 0xffffffff);
+				BUFFER_PTR += IrisTerrainVertex.STRIDE;
+
+				IrisTerrainVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, 0xffffffff, uv2.x, uv2.y, 0.5f, 0.5f, 0xf000f0, normal, 0xffffffff);
+				BUFFER_PTR += IrisTerrainVertex.STRIDE;
+
+				IrisTerrainVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, 0xffffffff, uv3.x, uv3.y, 0.5f, 0.5f, 0xf000f0, normal, 0xffffffff);
+				BUFFER_PTR += IrisTerrainVertex.STRIDE;
+			} else { // IrisEntityVertex.FORMAT
+				IrisEntityVertex.write(BUFFER_PTR, pos0.x, pos0.y, pos0.z, 0xffffffff, uv0.x, uv0.y, 0.5f, 0.5f, 0xffffffff, 0xf000f0, normal, 0xffffffff);
+				BUFFER_PTR += IrisEntityVertex.STRIDE;
+
+				IrisEntityVertex.write(BUFFER_PTR, pos1.x, pos1.y, pos1.z, 0xffffffff, uv1.x, uv1.y, 0.5f, 0.5f, 0xffffffff, 0xf000f0, normal, 0xffffffff);
+				BUFFER_PTR += IrisEntityVertex.STRIDE;
+
+				IrisEntityVertex.write(BUFFER_PTR, pos2.x, pos2.y, pos2.z, 0xffffffff, uv2.x, uv2.y, 0.5f, 0.5f, 0xffffffff, 0xf000f0, normal, 0xffffffff);
+				BUFFER_PTR += IrisEntityVertex.STRIDE;
+
+				IrisEntityVertex.write(BUFFER_PTR, pos3.x, pos3.y, pos3.z, 0xffffffff, uv3.x, uv3.y, 0.5f, 0.5f, 0xffffffff, 0xf000f0, normal, 0xffffffff);
+				BUFFER_PTR += IrisEntityVertex.STRIDE;
+			}
+			BUFFED_VERTEX += 4;
+			flush(writer, false, format);
+		}
+
+		flush(writer, true, format);
 	}
 
 	private static void IrisRenderInto(ShadeSeparatingSuperByteBuffer byteBuffer, PoseStack input, VertexBufferWriter writer, VertexFormat format) {
@@ -241,7 +325,7 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 		boolean shaded = true;
 		int shadeSwapIndex = 0;
 		int[] shadeSwapVertices = byteBuffer.getShadeSwapVertices();
-		int nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex] : Integer.MAX_VALUE;
+		int nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex]:Integer.MAX_VALUE;
 		int unshadedDiffuse = 255;
 		boolean applyDiffuse = !byteBuffer.isDisableDiffuse();
 		if (!byteBuffer.isDisableDiffuse()) {
@@ -249,7 +333,7 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 			lightDir1.set(RenderSystemAccessor.catnip$getShaderLightDirections()[1]).normalize();
 			if (shadeSwapVertices.length > 0) {
 				// Pretend unshaded faces always point up to get the correct max diffuse value for the current level.
-				float3.set(0, byteBuffer.isInvertFakeDiffuseNormal() ? -1 : 1, 0);
+				float3.set(0, byteBuffer.isInvertFakeDiffuseNormal() ? -1:1, 0);
 				// Don't apply the normal matrix since that would cause upside down objects to be dark.
 				unshadedDiffuse = (int) (255 * calculateDiffuse(float3, lightDir0, lightDir1));
 			}
@@ -266,7 +350,7 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 			if (i >= nextShadeSwapVertex) {
 				shaded = !shaded;
 				shadeSwapIndex++;
-				nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex] : Integer.MAX_VALUE;
+				nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex]:Integer.MAX_VALUE;
 			}
 
 			int packedNormal = template.normal(i);
@@ -382,7 +466,11 @@ public class NeoforgeExternalRenderHelper implements ExternalRenderHelper {
 		if (writer == null) return false;
 		if (builder instanceof BufferBuilder bb) {
 			if (bb.format == IrisTerrainVertex.FORMAT || bb.format == IrisEntityVertex.FORMAT) {
-				IrisRenderInto(byteBuffer, input, writer, bb.format);
+				if (!IrisCompat.isShadowPass()) {
+					IrisRenderInto(byteBuffer, input, writer, bb.format);
+				} else {
+					IrisRenderShadowInto(byteBuffer, input, writer, bb.format);
+				}
 				return true;
 			} else if (bb.format == BlockVertex.FORMAT || bb.format == EntityVertex.FORMAT) {
 				SodiumRenderInto(byteBuffer, input, writer, bb.format);

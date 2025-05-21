@@ -3,6 +3,7 @@ package net.createmod.catnip.render.compat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 
 import dev.engine_room.flywheel.lib.util.ShadersModHelper;
+import net.irisshaders.iris.shadows.ShadowRenderer;
 
 import java.lang.reflect.Field;
 
@@ -30,5 +31,9 @@ public final class IrisCompat {
 		} catch (Exception e) {
 			return null;
 		}
+	}
+
+	public static boolean isShadowPass() {
+		return ShadowRenderer.ACTIVE;
 	}
 }
