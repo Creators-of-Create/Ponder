@@ -51,7 +51,7 @@ public class Glob {
 					}
 				}
 				case '[' -> {
-					if (next(globPattern, i) == ']') {
+					if (next(globPattern, i) == ']' || (next(globPattern, i) == '!' && next(globPattern, i+1) == ']')) {
 						throw new PatternSyntaxException("Cannot have set with no entries", globPattern, i);
 					}
 
