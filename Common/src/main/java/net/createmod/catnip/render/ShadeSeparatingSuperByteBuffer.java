@@ -2,7 +2,6 @@ package net.createmod.catnip.render;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import net.createmod.catnip.render.compat.IrisCompat;
 import net.createmod.catnip.render.compat.SodiumCompat;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.mixin.client.accessor.RenderSystemAccessor;
@@ -23,8 +22,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.engine_room.flywheel.lib.util.ShadersModHelper;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import net.createmod.catnip.theme.Color;
-import net.createmod.ponder.mixin.client.accessor.RenderSystemAccessor;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
