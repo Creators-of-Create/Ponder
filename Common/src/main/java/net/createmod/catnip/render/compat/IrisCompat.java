@@ -5,6 +5,8 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.engine_room.flywheel.lib.util.ShadersModHelper;
 import net.irisshaders.iris.shadows.ShadowRenderer;
 
+import org.joml.Matrix4f;
+
 import java.lang.reflect.Field;
 
 public final class IrisCompat {
@@ -35,5 +37,9 @@ public final class IrisCompat {
 
 	public static boolean isShadowPass() {
 		return ShadowRenderer.ACTIVE;
+	}
+
+	public static Matrix4f getShadowMV() {
+		return ShadowRenderer.MODELVIEW;
 	}
 }
