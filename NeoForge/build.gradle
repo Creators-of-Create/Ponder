@@ -67,6 +67,9 @@ dependencies {
 
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:${flywheel_version}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
+
+    compileOnly("maven.modrinth:sodium:mc${minecraft_version}-${sodium_version}-neoforge")
+    compileOnly("maven.modrinth:iris:${iris_version}+${minecraft_version}-neoforge")
 }
 
 tasks.withType(JavaCompile).configureEach {

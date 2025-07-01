@@ -2,6 +2,7 @@ package net.createmod.catnip.render;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.createmod.catnip.render.compat.SodiumCompat;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.mixin.client.accessor.RenderSystemAccessor;
 
@@ -21,13 +22,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.engine_room.flywheel.lib.util.ShadersModHelper;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import net.createmod.catnip.theme.Color;
-import net.createmod.ponder.mixin.client.accessor.RenderSystemAccessor;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockAndTintGetter;
+
+import static net.createmod.catnip.platform.CatnipClientServices.EXTERNAL_RENDER_HELPER;
 
 @SuppressWarnings("unchecked")
 @MethodsReturnNonnullByDefault
@@ -42,7 +43,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 	private final PoseStack transforms = new PoseStack();
 
 	// Vertex Coloring
-	private float r, g, b, a;
+	private int vertexColor; // aabbggrr
 	private boolean disableDiffuse;
 
 	// Vertex Texture Coords
@@ -71,7 +72,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 	private final Vector3f lightDir0 = new Vector3f();
 	private final Vector3f lightDir1 = new Vector3f();
 	private final ShiftOutput shiftOutput = new ShiftOutput();
-	private final Vector4f lightPos = new Vector4f();
+	private final Vector3f lightPos = new Vector3f();
 
 	public ShadeSeparatingSuperByteBuffer(TemplateMesh template, int[] shadeSwapVertices, boolean invertFakeDiffuseNormal) {
 		this.template = template;
@@ -88,15 +89,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 		this(template, new int[0]);
 	}
 
-	public void renderInto(PoseStack input, VertexConsumer builder) {
-		if (isEmpty()) {
-			return;
-		}
-
-		if (useLevelLight) {
-			WORLD_LIGHT_CACHE.clear();
-		}
-
+	public void renderIntoImpl(PoseStack input, VertexConsumer builder) {
 		Matrix4f modelMat = this.modelMat.set(input.last()
 			.pose());
 		Matrix4f localTransforms = transforms.last()
@@ -114,13 +107,13 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 		ShiftOutput shiftOutput = this.shiftOutput;
 		Vector3f lightDir0 = this.lightDir0;
 		Vector3f lightDir1 = this.lightDir1;
-		Vector4f lightPos = this.lightPos;
+		Vector3f lightPos = this.lightPos;
 
 		boolean applyDiffuse = !disableDiffuse && !ShadersModHelper.isShaderPackInUse();
 		boolean shaded = true;
 		int shadeSwapIndex = 0;
 		int nextShadeSwapVertex = shadeSwapIndex < shadeSwapVertices.length ? shadeSwapVertices[shadeSwapIndex] : -1;
-		float unshadedDiffuse = 1;
+		int unshadedDiffuse = 255;
 		if (applyDiffuse) {
 			lightDir0.set(RenderSystemAccessor.catnip$getShaderLightDirections()[0]).normalize();
 			lightDir1.set(RenderSystemAccessor.catnip$getShaderLightDirections()[1]).normalize();
@@ -128,7 +121,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 				// Pretend unshaded faces always point up to get the correct max diffuse value for the current level.
 				normal.set(0, invertFakeDiffuseNormal ? -1 : 1, 0);
 				// Don't apply the normal matrix since that would cause upside down objects to be dark.
-				unshadedDiffuse = calculateDiffuse(normal, lightDir0, lightDir1);
+				unshadedDiffuse = (int) (255 * calculateDiffuse(normal, lightDir0, lightDir1));
 			}
 		}
 
@@ -153,17 +146,19 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 			normal.set(normalX, normalY, normalZ);
 			normal.mul(normalMat);
 
-			int color = template.color(i);
-			float r = (color & 0xFF) / 255.0f * this.r;
-			float g = ((color >>> 8) & 0xFF) / 255.0f * this.g;
-			float b = ((color >>> 16) & 0xFF) / 255.0f * this.b;
-			float a = ((color >>> 24) & 0xFF) / 255.0f * this.a;
+			int quadColor = template.color(i);
+			int r = ((((quadColor) & 0xFF) * ((vertexColor) & 0xFF)) + 0xFF) >>> 8;
+			int g = ((((quadColor >>>  8) & 0xFF) * ((vertexColor >>>  8) & 0xFF)) + 0xFF) >>> 8;
+			int b = ((((quadColor >>> 16) & 0xFF) * ((vertexColor >>> 16) & 0xFF)) + 0xFF) >>> 8;
+			int a = ((((quadColor >>> 24) & 0xFF) * ((vertexColor >>> 24) & 0xFF)) + 0xFF) >>> 8;
+
 			if (applyDiffuse) {
-				float diffuse = shaded ? calculateDiffuse(normal, lightDir0, lightDir1) : unshadedDiffuse;
-				r *= diffuse;
-				g *= diffuse;
-				b *= diffuse;
+				int factor = shaded ? (int) (255.0F * calculateDiffuse(normal, lightDir0, lightDir1)) : unshadedDiffuse;
+				r = (r * factor + 255) >>> 8;
+				g = (g * factor + 255) >>> 8;
+				b = (b * factor + 255) >>> 8;
 			}
+			int color = (a << 24) | (r << 16) | (g << 8) | b;
 
 			float u = template.u(i);
 			float v = template.v(i);
@@ -185,17 +180,31 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 				light = SuperByteBuffer.maxLight(light, packedLight);
 			}
 			if (useLevelLight) {
-				lightPos.set(((x - .5f) * 15 / 16f) + .5f, (y - .5f) * 15 / 16f + .5f, (z - .5f) * 15 / 16f + .5f, 1f);
-				lightPos.mul(localTransforms);
-				if (lightTransform != null) {
-					lightPos.mul(lightTransform);
-				}
-				light = SuperByteBuffer.maxLight(light, getLight(levelWithLight, lightPos));
+				lightPos.set(((x - .5f) * 15 / 16f) + .5f, (y - .5f) * 15 / 16f + .5f, (z - .5f) * 15 / 16f + .5f);
+				light = SuperByteBuffer.maxLight(light, getLight(lightPos));
 			}
 
-			builder.addVertex(pos.x(), pos.y(), pos.z()).setColor(r, g, b, a).setUv(u, v).setOverlay(overlay).setLight(light).setNormal(normal.x(), normal.y(), normal.z());
+			builder.addVertex(pos.x(), pos.y(), pos.z()).setColor(color).setUv(u, v).setOverlay(overlay).setLight(light).setNormal(normal.x(), normal.y(), normal.z());
+		}
+	}
+
+	public void renderInto(PoseStack input, VertexConsumer builder) {
+		if (isEmpty()) {
+			return;
 		}
 
+		if (useLevelLight) {
+			WORLD_LIGHT_CACHE.clear();
+		}
+
+		if (SodiumCompat.IS_SODIUM_INSTALLED) {
+			if (EXTERNAL_RENDER_HELPER.renderInto(this, input, builder)) {
+				reset();
+				return;
+			}
+		}
+
+		renderIntoImpl(input, builder);
 		reset();
 	}
 
@@ -204,10 +213,7 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 			transforms.popPose();
 		transforms.pushPose();
 
-		r = 1;
-		g = 1;
-		b = 1;
-		a = 1;
+		vertexColor = 0xffffffff;
 		disableDiffuse = false;
 		spriteShiftFunc = null;
 		hasCustomOverlay = false;
@@ -226,6 +232,50 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 
 	public PoseStack getTransforms() {
 		return transforms;
+	}
+
+	public boolean isDisableDiffuse() {
+		return disableDiffuse;
+	}
+
+	public int getVertexColor() {
+		return vertexColor;
+	}
+
+	public TemplateMesh getTemplateMesh() {
+		return template;
+	}
+
+	public int[] getShadeSwapVertices(){
+		return shadeSwapVertices;
+	}
+
+	public @Nullable SpriteShiftFunc getSpriteShiftFunc() {
+		return spriteShiftFunc;
+	}
+
+	public boolean hasCustomOverlay() {
+		return hasCustomOverlay;
+	}
+
+	public int getOverlay() {
+		return overlay;
+	}
+
+	public boolean hasCustomLight() {
+		return hasCustomLight;
+	}
+
+	public int getPackedLight() {
+		return packedLight;
+	}
+
+	public boolean isUsingLevelLight() {
+		return useLevelLight;
+	}
+
+	public boolean isInvertFakeDiffuseNormal(){
+		return invertFakeDiffuseNormal;
 	}
 
 	@Override
@@ -275,22 +325,18 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 		transforms.popPose();
 		return this;
 	}
-
 	public SuperByteBuffer color(float r, float g, float b, float a) {
-		this.r = r;
-		this.g = g;
-		this.b = b;
-		this.a = a;
+		color((int) (r * 255.0f), (int) (g * 255.0f), (int) (b * 255.0f), (int) (a * 255.0f));
 		return this;
 	}
 
 	public SuperByteBuffer color(int r, int g, int b, int a) {
-		color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+		this.vertexColor = (a & 0xff) << 24 | (b & 0xff) << 16 | (g & 0xff) << 8 | (r & 0xff);
 		return this;
 	}
 
 	public SuperByteBuffer color(int color) {
-		color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, 255);
+		this.vertexColor = 0xff000000 | ((color & 0xFF) << 16) | ((color & 0xFF00)) | ((color & 0xFF0000) >>> 16);
 		return this;
 	}
 
@@ -368,14 +414,18 @@ public class ShadeSeparatingSuperByteBuffer implements SuperByteBuffer {
 	}
 
 	// Adapted from minecraft:shaders/include/light.glsl
-	private static float calculateDiffuse(Vector3fc normal, Vector3fc lightDir0, Vector3fc lightDir1) {
+	public static float calculateDiffuse(Vector3fc normal, Vector3fc lightDir0, Vector3fc lightDir1) {
 		float light0 = Math.max(0.0f, lightDir0.dot(normal));
 		float light1 = Math.max(0.0f, lightDir1.dot(normal));
 		return Math.min(1.0f, (light0 + light1) * 0.6f + 0.4f);
 	}
 
-	private static int getLight(BlockAndTintGetter world, Vector4f lightPos) {
+	public static int getLight(BlockAndTintGetter world, Vector3f lightPos) {
 		BlockPos pos = BlockPos.containing(lightPos.x(), lightPos.y(), lightPos.z());
 		return WORLD_LIGHT_CACHE.computeIfAbsent(pos.asLong(), $ -> LevelRenderer.getLightColor(world, pos));
+	}
+
+	public int getLight(Vector3f lightPos) {
+		return getLight(levelWithLight, lightTransform == null ? lightPos : lightPos.mulPosition(lightTransform));
 	}
 }
