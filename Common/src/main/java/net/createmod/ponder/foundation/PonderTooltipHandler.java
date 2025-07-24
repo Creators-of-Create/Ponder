@@ -164,7 +164,7 @@ public class PonderTooltipHandler {
 	private static Component makeProgressBar(float progress) {
 		MutableComponent holdW = Ponder.lang()
 			.translate(HOLD_TO_PONDER,
-				((MutableComponent) ponderKeybind().getTranslatedKeyMessage()).withStyle(ChatFormatting.GRAY))
+				ponderKeybind().getTranslatedKeyMessage().copy().withStyle(ChatFormatting.GRAY))
 				.style(ChatFormatting.DARK_GRAY)
 				.component();
 
