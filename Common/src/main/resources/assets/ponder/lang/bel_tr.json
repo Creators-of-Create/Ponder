@@ -2,6 +2,6 @@
   "ponder.ui.associated": "Зьвязаныя сцэны",
   "ponder.ui.close": "Закрыць",
   "ponder.ui.exit": "Выхад",
-  "ponder.ui.categories": "Катэгорыямі, даступнымі ў Create",
+  "ponder.ui.categories": "Катэгорыямі, даступнымі ў %1$s",
   "ponder.keyinfo.ponder": "Разважаньне"
 }

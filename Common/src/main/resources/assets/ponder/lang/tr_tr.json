@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "Rahat Okuma",
   "ponder.ui.exit": "Çıkış",
   "ponder.ui.welcome": "İncele'ye Hoş Geldin",
-  "ponder.ui.categories": "Create'de Mevcut Kategoriler",
+  "ponder.ui.categories": "%1$s'de Mevcut Kategoriler",
   "ponder.ui.index_description": "Bağlantılı Eşyalar ve Bloklar hakkında bilgi edinmek için ikonlardan birine tıklayın",
   "ponder.ui.index_title": "İncele İndisi",
   "ponder.ponder.shared.sneak_and": "Eğilme +",

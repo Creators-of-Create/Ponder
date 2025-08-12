@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "Leitura Confortável",
   "ponder.ui.exit": "Sair",
   "ponder.ui.welcome": "Bem-vindo(a) ao ponderamento",
-  "ponder.ui.categories": "Categorias disponíveis em Create",
+  "ponder.ui.categories": "Categorias disponíveis em %1$s",
   "ponder.ui.index_description": "Clique em um dos ícones para aprender sobre os seus Itens e Blocos associados",
   "ponder.ui.index_title": "Tabela do ponderamento",
   "ponder.ponder.shared.sneak_and": "Agache-se +",

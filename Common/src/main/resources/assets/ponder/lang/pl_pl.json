@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "Wygodne czytanie",
   "ponder.ui.exit": "Wyjście",
   "ponder.ui.welcome": "Witaj w menu analizowania",
-  "ponder.ui.categories": "Dostępne kategorie w Create",
+  "ponder.ui.categories": "Dostępne kategorie w %1$s",
   "ponder.ui.index_description": "Kliknij na jedną z ikon aby dowiedzieć się informacji na temat powiązanych bloków i przedmiotów.",
   "ponder.ui.index_title": "Katalog analiz",
   "ponder.ponder.shared.sneak_and": "Skradanie +",

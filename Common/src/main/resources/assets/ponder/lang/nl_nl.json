@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "Comfortabel Lezen",
   "ponder.ui.exit": "Verlaten",
   "ponder.ui.welcome": "Welkom bij Onderzoek",
-  "ponder.ui.categories": "Beschikbare Categorieën in Create",
+  "ponder.ui.categories": "Beschikbare Categorieën in %1$s",
   "ponder.ui.index_description": "Klik op een van de pictogrammen om te leren over de bijbehorende Items en Blokken",
   "ponder.ui.index_title": "Denkindex",
   "ponder.ponder.shared.sneak_and": "Sluipen +",

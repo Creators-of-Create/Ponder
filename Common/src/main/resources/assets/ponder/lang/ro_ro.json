@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "Citit confortabil",
   "ponder.ui.exit": "Ieși",
   "ponder.ui.welcome": "Bine ai venit la Chibzuire",
-  "ponder.ui.categories": "Categorii valabile în Create",
+  "ponder.ui.categories": "Categorii valabile în %1$s",
   "ponder.ui.index_description": "Apasă pe una dintre iconițe pentru a învăța despre obiectele și blocurile asociate lui",
   "ponder.ui.index_title": "Indicele de chibzuire",
   "ponder.ponder.shared.sneak_and": "Furișare +",

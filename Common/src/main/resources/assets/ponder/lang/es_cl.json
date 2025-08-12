@@ -13,7 +13,7 @@
   "ponder.ui.slow_text": "Lectura Cómoda",
   "ponder.ui.exit": "Salir",
   "ponder.ui.welcome": "Bienvenido a Reflexionar",
-  "ponder.ui.categories": "Categorías Disponibles en Create",
+  "ponder.ui.categories": "Categorías Disponibles en %1$s",
   "ponder.ui.index_description": "Haz clic en uno de los iconos para conocer sus elementos y bloques asociados",
   "ponder.ui.index_title": "Índice de Reflexión",
   "ponder.ponder.shared.sneak_and": "Agáchate +"

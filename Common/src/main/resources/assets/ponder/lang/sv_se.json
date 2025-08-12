@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "Bekväm läsning",
   "ponder.ui.exit": "Lämna",
   "ponder.ui.welcome": "Välkommen till visualisering",
-  "ponder.ui.categories": "Tillgängliga kategorier inom Create",
+  "ponder.ui.categories": "Tillgängliga kategorier inom %1$s",
   "ponder.ui.index_description": "Klicka på en av ikonerna för att lära dig mer om tillhörande föremål och block",
   "ponder.ui.index_title": "Visualiseringsindex",
   "ponder.ponder.shared.sneak_and": "Smyg +",

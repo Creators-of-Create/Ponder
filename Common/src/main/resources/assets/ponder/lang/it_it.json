@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "Testo rallentato",
   "ponder.ui.exit": "Esci",
   "ponder.ui.welcome": "È tempo di Riflettere",
-  "ponder.ui.categories": "Categorie disponibili in Create",
+  "ponder.ui.categories": "Categorie disponibili in %1$s",
   "ponder.ui.index_description": "Premi su una delle icone per imparare di più riguardo ai suoi oggetti e blocchi",
   "ponder.ui.index_title": "Catalogo di Riflessione",
   "ponder.ponder.shared.sneak_and": "Accov. +",

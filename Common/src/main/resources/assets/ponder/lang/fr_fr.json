@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "Lecture confortable",
   "ponder.ui.exit": "Sortir",
   "ponder.ui.welcome": "Bienvenue dans la réflexion",
-  "ponder.ui.categories": "Catégories disponibles dans Create",
+  "ponder.ui.categories": "Catégories disponibles dans %1$s",
   "ponder.ui.index_description": "Cliquez sur un des icônes pour en apprendre à propos de ses objets et blocs associés",
   "ponder.ui.index_title": "Index de réflexion",
   "ponder.ponder.shared.sneak_and": "S'accroupir +",

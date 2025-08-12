@@ -14,7 +14,7 @@
   "ponder.ui.slow_text": "Komfortabel lesing",
   "ponder.ui.exit": "Avslutt",
   "ponder.ui.welcome": "Velkommen til Undring",
-  "ponder.ui.categories": "Tilgjengelige kategorier i Create",
+  "ponder.ui.categories": "Tilgjengelige kategorier i %1$s",
   "ponder.ui.index_description": "Trykk på en av ikonene for å lære mer om gjenstandene og blokkene i kategorien",
   "ponder.ui.index_title": "Undringsindeks",
   "ponder.ponder.shared.sneak_and": "Snik +",
