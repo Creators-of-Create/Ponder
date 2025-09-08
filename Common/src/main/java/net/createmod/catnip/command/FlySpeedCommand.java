@@ -6,9 +6,11 @@ import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
 import net.createmod.ponder.Ponder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Abilities;
@@ -38,11 +40,7 @@ public class FlySpeedCommand {
 		abilities.setFlyingSpeed(speed);
 		player.connection.send(new ClientboundPlayerAbilitiesPacket(abilities));
 		ctx.getSource().sendSuccess(() ->
-				Ponder.lang()
-						.text("Temporarily set ")
-						.add(player.getName().copy())
-						.text("'s Flying Speed to " + speed)
-						.component(),
+			Component.literal("[Catnip]: ").withStyle(ChatFormatting.YELLOW).append(Component.translatable("catnip.util.fly_speed_set.message", player.getName().copy(), speed).withStyle(ChatFormatting.WHITE)),
 				true
 		);
 

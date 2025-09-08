@@ -60,5 +60,8 @@
   "catnip.ui.other_mods_config_button_label": "Настройки других модов",
   "catnip.ui.other_mods_config_title": "Конфигурация мода",
   "catnip.ui.search_hint": "Ctrl + F для поиска...",
-  "catnip.ui.other_mods_config_unavailable": "Этот мод не имеет зарегистрированных файлов конфигурации, либо те не поддерживают систему конфигурации Forge"
+  "catnip.ui.other_mods_config_unavailable": "Этот мод не имеет зарегистрированных файлов конфигурации, либо те не поддерживают систему конфигурации Forge",
+
+  "catnip.util.unable_to_find_config.message" : "Указанный файл конфигурации не найден",
+  "catnip.util.fly_speed_set.message": "Скорость полёта %1$s временно изменена на %2$s"
 }
