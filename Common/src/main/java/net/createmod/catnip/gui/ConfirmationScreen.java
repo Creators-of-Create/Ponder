@@ -6,6 +6,8 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.network.chat.Component;
+
 import org.lwjgl.opengl.GL30;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -134,7 +136,7 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 		int buttonX = x + textWidth / 2 - 6 - (int) (70 * (tristate ? 1.5f : 1));
 
 		TextStencilElement confirmText =
-				new TextStencilElement(font, tristate ? "Save" : "Confirm").centered(true, true);
+				new TextStencilElement(font, Component.translatable(tristate ? "catnip.ui.save_label" : "catnip.ui.confirm_label")).centered(true, true);
 		confirm = new BoxWidget(buttonX, y + textHeight + 6, 70, 16).withCallback(() -> accept(Response.Confirm));
 		confirm.showingElement(confirmText.withElementRenderer(BoxWidget.gradientFactory.apply(confirm)));
 		addRenderableWidget(confirm);
@@ -143,7 +145,7 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 
 		if (tristate) {
 			TextStencilElement confirmDontSaveText =
-					new TextStencilElement(font, "Don't Save").centered(true, true);
+					new TextStencilElement(font, Component.translatable("catnip.ui.dont_save_label")).centered(true, true);
 			confirmDontSave =
 					new BoxWidget(buttonX, y + textHeight + 6, 70, 16).withCallback(() -> accept(Response.ConfirmDontSave));
 			confirmDontSave.showingElement(
@@ -152,7 +154,7 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 			buttonX += 12 + 70;
 		}
 
-		TextStencilElement cancelText = new TextStencilElement(font, "Cancel").centered(true, true);
+		TextStencilElement cancelText = new TextStencilElement(font, Component.translatable("catnip.ui.cancel_label")).centered(true, true);
 		cancel = new BoxWidget(buttonX, y + textHeight + 6, 70, 16)
 				.withCallback(() -> accept(Response.Cancel));
 		cancel.showingElement(cancelText.withElementRenderer(BoxWidget.gradientFactory.apply(cancel)));

@@ -128,7 +128,7 @@ public class BaseConfigScreen extends ConfigScreen {
 		super.init();
 		returnOnClose = true;
 
-		TextStencilElement clientText = new TextStencilElement(font, Component.literal(clientButtonLabel)).centered(true, true);
+		TextStencilElement clientText = new TextStencilElement(font, Component.translatable("catnip.ui.client_config_button_label")).centered(true, true);
 		addRenderableWidget(clientConfigWidget = new BoxWidget(width / 2 - 100, height / 2 - 15 - 30, 200, 16).showingElement(clientText));
 
 		if (clientSpec != null) {
@@ -140,7 +140,7 @@ public class BaseConfigScreen extends ConfigScreen {
 			clientText.withElementRenderer(DISABLED_RENDERER);
 		}
 
-		TextStencilElement commonText = new TextStencilElement(font, Component.literal(commonButtonLabel)).centered(true, true);
+		TextStencilElement commonText = new TextStencilElement(font, Component.translatable("catnip.ui.common_config_button_label")).centered(true, true);
 		addRenderableWidget(commonConfigWidget = new BoxWidget(width / 2 - 100, height / 2 - 15, 200, 16).showingElement(commonText));
 
 		if (commonSpec != null) {
@@ -152,7 +152,7 @@ public class BaseConfigScreen extends ConfigScreen {
 			commonText.withElementRenderer(DISABLED_RENDERER);
 		}
 
-		TextStencilElement serverText = new TextStencilElement(font, Component.literal(serverButtonLabel)).centered(true, true);
+		TextStencilElement serverText = new TextStencilElement(font, Component.translatable("catnip.ui.server_config_button_label")).centered(true, true);
 		addRenderableWidget(serverConfigWidget = new BoxWidget(width / 2 - 100, height / 2 - 15 + 30, 200, 16).showingElement(serverText));
 
 		if (serverSpec == null) {
@@ -162,10 +162,10 @@ public class BaseConfigScreen extends ConfigScreen {
 		} else if (minecraft.level == null) {
 			serverText.withElementRenderer(DISABLED_RENDERER);
 			serverConfigWidget.getToolTip()
-					.add(Component.literal("Stored individually per World"));
+					.add(Component.translatable("catnip.ui.server_config_unavailable"));
 			serverConfigWidget.getToolTip()
 					.addAll(FontHelper.cutTextComponent(
-						Component.literal("Gameplay settings can only be accessed from the in-game menu after joining a World or Server."),
+						Component.translatable("catnip.ui.server_config_unavailable_tooltip"),
 							Palette.ALL_GRAY));
 		} else {
 			serverConfigWidget.withCallback(() -> linkTo(new SubMenuConfigScreen(this, ModConfig.Type.SERVER, serverSpec)));
@@ -199,10 +199,10 @@ public class BaseConfigScreen extends ConfigScreen {
 		goBack.showingElement(PonderGuiTextures.ICON_CONFIG_BACK.asStencil()
 				.withElementRenderer(BoxWidget.gradientFactory.apply(goBack)));
 		goBack.getToolTip()
-				.add(Component.literal("Go Back"));
+				.add(Component.translatable("catnip.ui.go_back_button"));
 		addRenderableWidget(goBack);
 
-		TextStencilElement othersText = new TextStencilElement(font, Component.literal("Access Configs of other Mods")).centered(true, true);
+		TextStencilElement othersText = new TextStencilElement(font, Component.translatable("catnip.ui.other_mods_config_button_label")).centered(true, true);
 		others = new BoxWidget(width / 2 - 100, height / 2 - 15 + 90, 200, 16).showingElement(othersText);
 		othersText.withElementRenderer(BoxWidget.gradientFactory.apply(others));
 		others.withCallback(() -> linkTo(new ConfigModListScreen(this)));
@@ -211,7 +211,7 @@ public class BaseConfigScreen extends ConfigScreen {
 
 	@Override
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		graphics.drawCenteredString(font, "Access Configs for Mod:", width / 2, height / 2 - 105, UIRenderHelper.COLOR_TEXT_STRONG_ACCENT.getFirst().getRGB());
+		graphics.drawCenteredString(font, Component.translatable("catnip.ui.other_mods_config_title"), width / 2, height / 2 - 105, UIRenderHelper.COLOR_TEXT_STRONG_ACCENT.getFirst().getRGB());
 	}
 
 	private void linkTo(@Nullable Screen screen) {
