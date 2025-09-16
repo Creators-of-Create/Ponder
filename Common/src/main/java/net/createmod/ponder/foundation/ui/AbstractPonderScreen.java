@@ -15,6 +15,7 @@ public abstract class AbstractPonderScreen extends NavigatableSimiScreen {
 	public static final String DESCRIPTION = UI_PREFIX + "index_description";
 
 	public static final String PONDERING = UI_PREFIX + "pondering";
+	public static final String PONDERING_TAG = UI_PREFIX + "pondering_tag";
 	public static final String IDENTIFY_MODE = UI_PREFIX + "identify_mode";
 	public static final String IN_CHAPTER = UI_PREFIX + "in_chapter";
 	public static final String IDENTIFY = UI_PREFIX + "identify";
