@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "Pidä [%1$s] pohjassa pohtiaksesi",
   "ponder.ui.subject": "Tämän kohtauksen aihe",
   "ponder.ui.pondering": "Pohditaan...",
+  "ponder.ui.pondering_tag": "Pohditaan...",
   "ponder.ui.identify_mode": "Tunnistustila aktiivisena.\nKeskeytä [%1$s]:lla",
   "ponder.ui.associated": "Samankaltaiset pohdinnat",
   "ponder.ui.close": "Sulje",

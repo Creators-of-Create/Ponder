@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "กด [%1$s] ค้างเพื่อดูตัวอย่างการใช้งาน",
   "ponder.ui.subject": "เนื้อหาหลักของฉากนี้",
   "ponder.ui.pondering": "ตัวอย่างการใช้งานเกี่ยวกับ...",
+  "ponder.ui.pondering_tag": "ตัวอย่างการใช้งานเกี่ยวกับ...",
   "ponder.ui.identify_mode": "โหมดระบุวัตถุในฉากเปิดอยู่\nกด [%1$s] เพื่อเล่นฉากต่อ",
   "ponder.ui.associated": "หัวข้อที่เกี่ยวข้อง",
   "ponder.ui.close": "ปิดฉาก",

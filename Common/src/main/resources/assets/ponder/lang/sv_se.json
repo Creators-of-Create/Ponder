@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "Tryck [%1$s] för att visualisera",
   "ponder.ui.subject": "Scenämne",
   "ponder.ui.pondering": "Visualiserar...",
+  "ponder.ui.pondering_tag": "Visualiserar...",
   "ponder.ui.identify_mode": "Identifieringsläge aktivt.\nÅteruppta med [%1$s]",
   "ponder.ui.associated": "Tillhörande artiklar",
   "ponder.ui.close": "Stäng",

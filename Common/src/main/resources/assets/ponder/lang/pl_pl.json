@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "Przytrzymaj [%1$s], aby przeanalizować",
   "ponder.ui.subject": "Temat tej sceny",
   "ponder.ui.pondering": "Temat analizy:",
+  "ponder.ui.pondering_tag": "Temat analizy:",
   "ponder.ui.identify_mode": "Tryb identyfikacji aktywny. Naciśnij [%1$s], aby wyłączyć",
   "ponder.ui.associated": "Powiązane hasła",
   "ponder.ui.close": "Zamknij",

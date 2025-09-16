@@ -1,6 +1,7 @@
 {
   "ponder.ui.hold_to_ponder": "Giữ [%1$s] để xem chỉ dẫn",
   "ponder.ui.pondering": "Chỉ dẫn về...",
+  "ponder.ui.pondering_tag": "Chỉ dẫn về...",
   "ponder.ui.identify_mode": "Đã bật chế độ tìm hiểu.\nTắt tạm dừng bằng [%1$s]",
   "ponder.ui.associated": "Các khối liên quan",
   "ponder.ui.close": "Đóng",

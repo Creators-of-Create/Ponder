@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "[%1$s]키를 눌러 분석하기",
   "ponder.ui.subject": "분석의 주제",
   "ponder.ui.pondering": "분석 중입니다...",
+  "ponder.ui.pondering_tag": "분석 중입니다...",
   "ponder.ui.identify_mode": "탐색모드가 활성화되어 있습니다. \n[%1$s]을(를) 눌러 중지합니다.",
   "ponder.ui.associated": "연관된 항목들",
   "ponder.ui.close": "닫기",

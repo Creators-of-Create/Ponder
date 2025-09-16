@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "押 [%1$s] 以格物",
   "ponder.ui.subject": "所格之物",
   "ponder.ui.pondering": "格物……",
+  "ponder.ui.pondering_tag": "格物……",
   "ponder.ui.identify_mode": "塊名已示\n押 [%1$s] 以继之",
   "ponder.ui.close": "畢",
   "ponder.ui.identify": "示塊名",

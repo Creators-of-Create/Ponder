@@ -1,6 +1,7 @@
 {
   "ponder.ui.hold_to_ponder": "kama sona la o awen luka e [%1$s]",
   "ponder.ui.pondering": "sina kama sona e ni:",
+  "ponder.ui.pondering_tag": "sina kama sona e ni:",
   "ponder.ui.identify_mode": "nasin sona li lon.\no open kepeken [%1$s]",
   "ponder.ui.associated": "toki poka",
   "ponder.ui.close": "pini",
