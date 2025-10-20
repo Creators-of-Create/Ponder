@@ -19,5 +19,6 @@
   "ponder.ui.index_title": "Ponder Index",
   "ponder.ponder.shared.sneak_and": "Sneak +",
   "ponder.ponder.shared.ctrl_and": "Ctrl +",
-  "ponder.keyinfo.ponder": "Ponder"
+  "key.ponder.ponder": "Ponder",
+  "key.categories.ponder": "Ponder"
 }
