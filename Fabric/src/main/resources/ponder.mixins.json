@@ -1,14 +1,15 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "net.createmod.ponder.mixin",
-    "compatibilityLevel": "JAVA_17",
-    "mixins": [],
-    "client": [
-        "client.TextureAtlasMixin"
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    },
-    "refmap": "${mod_id}.refmap.json"
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.createmod.ponder.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [],
+  "client": [
+    "client.KeyMappingMixin",
+    "client.TextureAtlasMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "${mod_id}.refmap.json"
 }

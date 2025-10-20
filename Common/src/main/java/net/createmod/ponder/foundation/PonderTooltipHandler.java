@@ -63,7 +63,7 @@ public class PonderTooltipHandler {
 
 		float value = holdKeyProgress.getValue();
 
-		if (!subject && CatnipClientServices.CLIENT_HOOKS.isKeyPressed(ponderKeybind()) && currentScreen != null) {
+		if (!subject && PonderKeybinds.PONDER.isDown() && currentScreen != null) {
 			if (value >= 1) {
 				if (currentScreen instanceof NavigatableSimiScreen)
 					((NavigatableSimiScreen) currentScreen).centerScalingOnMouse();
@@ -164,7 +164,7 @@ public class PonderTooltipHandler {
 	private static Component makeProgressBar(float progress) {
 		MutableComponent holdW = Ponder.lang()
 			.translate(HOLD_TO_PONDER,
-				ponderKeybind().getTranslatedKeyMessage().copy().withStyle(ChatFormatting.GRAY))
+				PonderKeybinds.PONDER.message().copy().withStyle(ChatFormatting.GRAY))
 				.style(ChatFormatting.DARK_GRAY)
 				.component();
 
@@ -184,10 +184,6 @@ public class PonderTooltipHandler {
 		}
 
 		return holdW;
-	}
-
-	protected static KeyMapping ponderKeybind() {
-		return PonderKeybinds.PONDER.getKeybind();
 	}
 
 	public synchronized static void registerHoveredPonderStackCallback(Consumer<ItemStack> consumer) {

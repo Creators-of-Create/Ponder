@@ -43,9 +43,8 @@ public interface ModClientHooksHelper {
 
 	Minecraft getMinecraftFromScreen(Screen screen);
 
-	default boolean isKeyPressed(KeyMapping mapping) {
-		return mapping.isDown();
-	}
+	// note: implementations don't use isDown since we need this to work inside screens
+	boolean isKeyPressed(KeyMapping mapping);
 
 	void enableStencilBuffer(RenderTarget renderTarget);
 
