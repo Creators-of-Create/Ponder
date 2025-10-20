@@ -1,10 +1,9 @@
 package net.createmod.ponder.foundation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -31,15 +30,23 @@ public class PonderIndex {
 	private static final PonderSceneRegistry SCENES = new PonderSceneRegistry(LOCALIZATION);
 	private static final PonderTagRegistry TAGS = new PonderTagRegistry(LOCALIZATION);
 
-	private static final Set<PonderPlugin> plugins = Collections.synchronizedSet(new TreeSet<>(
-		Comparator.comparing((PonderPlugin plugin) -> !plugin.getModId().equals("create"))
-			.thenComparing(PonderPlugin::getModId)
-	));
+	private static final List<PonderPlugin> plugins = new ArrayList<>();
+
+	private static final Comparator<PonderPlugin> pluginComparator = Comparator.comparing(
+		(PonderPlugin plugin) -> !plugin.getModId().equals("create")
+	).thenComparing(PonderPlugin::getModId);
 
 	private static final Logger LOGGER = LogManager.getLogger("PonderIndex");
 
 	public static void addPlugin(PonderPlugin plugin) {
-		plugins.add(plugin);
+		// synchronized since mod loading is asynchronous on Forge
+		synchronized (plugins) {
+			// we want plugins to be sorted by mod ID, but using a SortedSet would only allow 1 plugin for each mod ID.
+			// this finds the correct location to insert the plugin.
+			int index = Collections.binarySearch(plugins, plugin, pluginComparator);
+			int insertionPoint = index >= 0 ? index : -index - 1;
+			plugins.add(insertionPoint, plugin);
+		}
 	}
 
 	public static void forEachPlugin(Consumer<PonderPlugin> action) {
