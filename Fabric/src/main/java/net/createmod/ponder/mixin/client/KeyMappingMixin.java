@@ -20,7 +20,18 @@ public abstract class KeyMappingMixin {
 			ordinal = 1
 		)
 	)
-	private boolean maybeDontAddToMap(Map<?, ?> map, Object key, Object self) {
+	private boolean maybeDontAddToMapInitially(Map<?, ?> map, Object key, Object self) {
 		return !(self instanceof ConflictSafeKeyMapping);
+	}
+
+	@WrapWithCondition(
+		method = "resetMapping",
+		at = @At(
+			value = "INVOKE",
+			target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"
+		)
+	)
+	private static boolean maybeDontAddToMapOnReset(Map<?, ?> map, Object key, Object mapping) {
+		return !(mapping instanceof ConflictSafeKeyMapping);
 	}
 }
