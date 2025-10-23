@@ -125,6 +125,7 @@ public class PonderLocalization implements LangRegistryAccess {
 		addGeneral(consumer, PonderTooltipHandler.HOLD_TO_PONDER, "Hold [%1$s] to Ponder");
 		addGeneral(consumer, PonderTooltipHandler.SUBJECT, "Subject of this scene");
 		addGeneral(consumer, AbstractPonderScreen.PONDERING, "Pondering about...");
+		addGeneral(consumer, AbstractPonderScreen.PONDERING_TAG, "Pondering about...");
 		addGeneral(consumer, AbstractPonderScreen.IDENTIFY_MODE, "Identify mode active.\nUnpause with [%1$s]");
 		addGeneral(consumer, AbstractPonderScreen.ASSOCIATED, "Associated Entries");
 

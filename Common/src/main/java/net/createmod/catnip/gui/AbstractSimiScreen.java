@@ -146,17 +146,6 @@ public abstract class AbstractSimiScreen extends Screen {
 	protected abstract void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks);
 
 	protected void renderWindowForeground(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		for (Renderable widget : renderables) {
-			if (widget instanceof AbstractSimiWidget simiWidget && simiWidget.isHovered()
-				&& simiWidget.visible) {
-				List<Component> tooltip = simiWidget.getToolTip();
-				if (tooltip.isEmpty())
-					continue;
-				int ttx = simiWidget.lockedTooltipX == -1 ? mouseX : simiWidget.lockedTooltipX + simiWidget.getX();
-				int tty = simiWidget.lockedTooltipY == -1 ? mouseY : simiWidget.lockedTooltipY + simiWidget.getY();
-				graphics.renderComponentTooltip(font, tooltip, ttx, tty);
-			}
-		}
 	}
 
 	protected void endFrame() {}

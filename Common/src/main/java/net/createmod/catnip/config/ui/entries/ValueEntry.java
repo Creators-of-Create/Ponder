@@ -84,10 +84,10 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 		);
 
 		if (annotations.containsKey(ConfigAnnotations.RequiresRelog.TRUE.getName()))
-			labelTooltip.addAll(FontHelper.cutTextComponent(Component.literal("Changing this value will require a _relog_ to take full effect"), Palette.GRAY_AND_GOLD));
+			labelTooltip.addAll(FontHelper.cutTextComponent(Component.translatable("catnip.ui.value_entry.relog_required"), Palette.GRAY_AND_GOLD));
 
 		if (annotations.containsKey(ConfigAnnotations.RequiresRestart.CLIENT.getName()))
-			labelTooltip.addAll(FontHelper.cutTextComponent(Component.literal("Changing this value will require a _restart_ to take full effect"), Palette.GRAY_AND_RED));
+			labelTooltip.addAll(FontHelper.cutTextComponent(Component.translatable("catnip.ui.value_entry.restart_required"), Palette.GRAY_AND_RED));
 
 		labelTooltip.add(Component.literal(ConfigScreen.modID + ":" + path.get(path.size() - 1)).withStyle(ChatFormatting.DARK_GRAY));
 	}

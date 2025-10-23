@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "Töprengj a [%1$s] nyomva tartásával",
   "ponder.ui.subject": "A jelenet tárgya",
   "ponder.ui.pondering": "Töprengsz a...",
+  "ponder.ui.pondering_tag": "Töprengsz a...",
   "ponder.ui.identify_mode": "Azonosítási mód aktív.\n[%1$s] - Szünet feloldása",
   "ponder.ui.associated": "Kapcsolódó témák",
   "ponder.ui.close": "Bezárás",

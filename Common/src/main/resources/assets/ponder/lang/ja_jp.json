@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "[%1$s] 長押しで思案画面を開く",
   "ponder.ui.subject": "このシーンの主題",
   "ponder.ui.pondering": "思案中...",
+  "ponder.ui.pondering_tag": "思案中...",
   "ponder.ui.identify_mode": "確認モードになっています。\n [%1$s] で一時停止を解除",
   "ponder.ui.associated": "関連項目",
   "ponder.ui.close": "閉じる",

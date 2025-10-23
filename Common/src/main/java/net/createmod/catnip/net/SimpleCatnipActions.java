@@ -4,6 +4,7 @@ import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.config.ui.ConfigModListScreen;
 import net.createmod.catnip.config.ui.SubMenuConfigScreen;
 import net.createmod.catnip.gui.ScreenOpener;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -32,7 +33,7 @@ public class SimpleCatnipActions {
 		try {
 			ScreenOpener.open(SubMenuConfigScreen.find(configPath));
 		} catch (Exception e) {
-			player.displayClientMessage(Component.literal("Unable to find the specified config"), false);
+			player.displayClientMessage(Component.literal("[Catnip]: ").withStyle(ChatFormatting.YELLOW).append(Component.translatable("catnip.util.unable_to_find_config.message").withStyle(ChatFormatting.WHITE)), false);
 		}
 	}
 

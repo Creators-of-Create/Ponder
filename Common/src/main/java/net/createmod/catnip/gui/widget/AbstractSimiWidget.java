@@ -7,6 +7,8 @@ import java.util.function.BiConsumer;
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.gui.TickableGuiEventListener;
 import net.createmod.catnip.theme.Color;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -103,6 +105,7 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 		if (visible) {
 			isHovered = isMouseOver(mouseX, mouseY);
 			renderWidget(graphics, mouseX, mouseY, partialTicks);
+			renderTooltip(graphics, mouseX, mouseY, partialTicks);
 			wasHovered = isHoveredOrFocused();
 		}
 	}
@@ -112,6 +115,19 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 		beforeRender(graphics, mouseX, mouseY, partialTicks);
 		doRender(graphics, mouseX, mouseY, partialTicks);
 		afterRender(graphics, mouseX, mouseY, partialTicks);
+	}
+
+	protected void renderTooltip(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+		if (this.isHovered()) {
+			List<Component> tooltip = this.getToolTip();
+			if (tooltip.isEmpty())
+				return;
+			int ttx = this.lockedTooltipX == -1 ? mouseX : this.lockedTooltipX + this.getX();
+			int tty = this.lockedTooltipY == -1 ? mouseY : this.lockedTooltipY + this.getY();
+
+			Font font = Minecraft.getInstance().font;
+			graphics.renderComponentTooltip(font, tooltip, ttx, tty);
+		}
 	}
 
 	protected void beforeRender(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {

@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "İncelemek için [%1$s] Basılı Tut",
   "ponder.ui.subject": "Bu sahnenin konusu",
   "ponder.ui.pondering": "İnceleniyor...",
+  "ponder.ui.pondering_tag": "İnceleniyor...",
   "ponder.ui.identify_mode": "Tanımlama modu etkin.\n[%1$s] ile durdurun",
   "ponder.ui.associated": "Bağlantılı Girdiler",
   "ponder.ui.close": "Kapat",

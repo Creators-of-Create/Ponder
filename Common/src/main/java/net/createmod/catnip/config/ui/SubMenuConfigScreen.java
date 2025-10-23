@@ -190,7 +190,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 				.withCallback((x, y) ->
 						new ConfirmationScreen()
 								.centered()
-								.withText(FormattedText.of("Resetting all settings of the " + type.toString() + " config. Are you sure?"))
+								.withText(Component.translatable("catnip.ui.resetting_changes_message", type.toString()))
 								.withAction(success -> {
 									if (success)
 										resetConfig(spec.getValues());
@@ -199,8 +199,8 @@ public class SubMenuConfigScreen extends ConfigScreen {
 				);
 
 		resetAll.showingElement(PonderGuiTextures.ICON_CONFIG_RESET.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(resetAll)));
-		resetAll.getToolTip().add(Component.literal("Reset All"));
-		resetAll.getToolTip().addAll(FontHelper.cutStringTextComponent("Click here to reset all settings to their default value.", Palette.ALL_GRAY));
+		resetAll.getToolTip().add(Component.translatable("catnip.ui.reset_all_button"));
+		resetAll.getToolTip().addAll(FontHelper.cutTextComponent(Component.translatable("catnip.ui.reset_all_button_tooltip"), Palette.ALL_GRAY));
 
 		saveChanges = new BoxWidget(listL - 30, yCenter - 25, 20, 20)
 				.withPadding(2, 2)
@@ -210,7 +210,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 					ConfirmationScreen confirm = new ConfirmationScreen()
 							.centered()
-							.withText(FormattedText.of("Saving " + ConfigHelper.changes.size() + " changed value" + (ConfigHelper.changes.size() != 1 ? "s" : "") + ""))
+							.withText(Component.translatable("catnip.ui.saving_changes_message", ConfigHelper.changes.size(), Component.translatable(ConfigHelper.changes.size() != 1 ? "catnip.ui.changed_values_plural" : "catnip.ui.changed_values_singular")))
 							.withAction(success -> {
 								if (success)
 									saveChanges();
@@ -219,8 +219,8 @@ public class SubMenuConfigScreen extends ConfigScreen {
 					addAnnotationsToConfirm(confirm).open(this);
 				});
 		saveChanges.showingElement(PonderGuiTextures.ICON_CONFIG_SAVE.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(saveChanges)));
-		saveChanges.getToolTip().add(Component.literal("Save Changes"));
-		saveChanges.getToolTip().addAll(FontHelper.cutStringTextComponent("Click here to save your current changes.", Palette.ALL_GRAY));
+		saveChanges.getToolTip().add(Component.translatable("catnip.ui.save_changes_button"));
+		saveChanges.getToolTip().addAll(FontHelper.cutTextComponent(Component.translatable("catnip.ui.save_changes_button_tooltip"), Palette.ALL_GRAY));
 
 		discardChanges = new BoxWidget(listL - 30, yCenter + 5, 20, 20)
 				.withPadding(2, 2)
@@ -230,7 +230,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 					new ConfirmationScreen()
 							.centered()
-							.withText(FormattedText.of("Discarding " + ConfigHelper.changes.size() + " unsaved change" + (ConfigHelper.changes.size() != 1 ? "s" : "") + ""))
+						.withText(Component.translatable("catnip.ui.discarding_changes_message", ConfigHelper.changes.size(), Component.translatable(ConfigHelper.changes.size() != 1 ? "catnip.ui.value_changes_plural" : "catnip.ui.value_changes_singular")))
 							.withAction(success -> {
 								if (success)
 									clearChanges();
@@ -238,14 +238,14 @@ public class SubMenuConfigScreen extends ConfigScreen {
 							.open(this);
 				});
 		discardChanges.showingElement(PonderGuiTextures.ICON_CONFIG_DISCARD.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(discardChanges)));
-		discardChanges.getToolTip().add(Component.literal("Discard Changes"));
-		discardChanges.getToolTip().addAll(FontHelper.cutStringTextComponent("Click here to discard all the changes you made.", Palette.ALL_GRAY));
+		discardChanges.getToolTip().add(Component.translatable("catnip.ui.discard_changes_button"));
+		discardChanges.getToolTip().addAll(FontHelper.cutTextComponent(Component.translatable("catnip.ui.discard_changes_button_tooltip"), Palette.ALL_GRAY));
 
 		goBack = new BoxWidget(listL - 30, yCenter + 65, 20, 20)
 				.withPadding(2, 2)
 				.withCallback(this::attemptBackstep);
 		goBack.showingElement(PonderGuiTextures.ICON_CONFIG_BACK.asStencil().withElementRenderer(BoxWidget.gradientFactory.apply(goBack)));
-		goBack.getToolTip().add(Component.literal("Go Back"));
+		goBack.getToolTip().add(Component.translatable("catnip.ui.go_back_button"));
 
 		addRenderableWidget(resetAll);
 		addRenderableWidget(saveChanges);
@@ -259,7 +259,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 		search = new ConfigTextField(font, width / 2 - listWidth / 2, height - 35, listWidth, 20);
 		search.setResponder(this::updateFilter);
-		search.setHint("Ctrl + F to Search...");
+		search.setHint(Component.translatable("catnip.ui.search_hint"));
 		search.moveCursorToStart();
 		addRenderableWidget(search);
 
@@ -335,14 +335,14 @@ public class SubMenuConfigScreen extends ConfigScreen {
 			stencil.withStencilRenderer((ms, w, h, alpha) -> PonderGuiTextures.ICON_CONFIG_LOCKED.render(ms, 0, 0));
 			stencil.withElementRenderer((ms, w, h, alpha) -> UIRenderHelper.angledGradient(ms, 90, 8, 0, 16, 16, red));
 			serverLocked.withBorderColors(red);
-			serverLocked.getToolTip().add(Component.literal("Locked").withStyle(ChatFormatting.BOLD));
-			serverLocked.getToolTip().addAll(FontHelper.cutStringTextComponent("You do not have enough permissions to edit the server config. You can still look at the current values here though.", Palette.ALL_GRAY));
+			serverLocked.getToolTip().add(Component.translatable("catnip.ui.server_config_locked").withStyle(ChatFormatting.BOLD));
+			serverLocked.getToolTip().addAll(FontHelper.cutTextComponent(Component.translatable("catnip.ui.server_config_locked_tooltip"), Palette.ALL_GRAY));
 		} else {
 			stencil.withStencilRenderer((ms, w, h, alpha) -> PonderGuiTextures.ICON_CONFIG_UNLOCKED.render(ms, 0, 0));
 			stencil.withElementRenderer((ms, w, h, alpha) -> UIRenderHelper.angledGradient(ms, 90, 8, 0, 16, 16, green));
 			serverLocked.withBorderColors(green);
-			serverLocked.getToolTip().add(Component.literal("Unlocked").withStyle(ChatFormatting.BOLD));
-			serverLocked.getToolTip().addAll(FontHelper.cutStringTextComponent("You have enough permissions to edit the server config. Changes you make here will be synced with the server when you save them.", Palette.ALL_GRAY));
+			serverLocked.getToolTip().add(Component.translatable("catnip.ui.server_config_unlocked").withStyle(ChatFormatting.BOLD));
+			serverLocked.getToolTip().addAll(FontHelper.cutTextComponent(Component.translatable("catnip.ui.server_config_unlocked_tooltip"), Palette.ALL_GRAY));
 		}
 
 		addRenderableWidget(serverLocked);
@@ -440,8 +440,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		ConfirmationScreen screen = new ConfirmationScreen()
 				.centered()
 				.withThreeActions(action)
-				.addText(FormattedText.of("Leaving with " + ConfigHelper.changes.size() + " unsaved change"
-						+ (ConfigHelper.changes.size() != 1 ? "s" : "") + " for this config"));
+				.addText(Component.translatable("catnip.ui.leaving_with_changes_message", ConfigHelper.changes.size(), Component.translatable(ConfigHelper.changes.size() != 1 ? "catnip.ui.value_changes_plural" : "catnip.ui.value_changes_singular")));
 
 		addAnnotationsToConfirm(screen).open(this);
 	}
@@ -459,12 +458,12 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 		if (relog.get()) {
 			screen.addText(FormattedText.of(" "));
-			screen.addText(FormattedText.of("At least one changed value will require you to relog to take full effect"));
+			screen.addText(Component.translatable("catnip.ui.relog_required_message"));
 		}
 
 		if (restart.get()) {
 			screen.addText(FormattedText.of(" "));
-			screen.addText(FormattedText.of("At least one changed value will require you to restart your game to take full effect"));
+			screen.addText(Component.translatable("catnip.ui.restart_required_message"));
 		}
 
 		return screen;

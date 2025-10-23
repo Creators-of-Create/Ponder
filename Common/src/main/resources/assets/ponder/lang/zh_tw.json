@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "按住 [%1$s] 來查看此物品的教學",
   "ponder.ui.subject": "本場景的主題",
   "ponder.ui.pondering": "有關於…",
+  "ponder.ui.pondering_tag": "有關於…",
   "ponder.ui.identify_mode": "暫停模式已啟動\n按 [%1$s] 來取消暫停模式",
   "ponder.ui.associated": "相關物品",
   "ponder.ui.close": "關閉",

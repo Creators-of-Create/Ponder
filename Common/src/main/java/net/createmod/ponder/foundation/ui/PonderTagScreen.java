@@ -171,7 +171,7 @@ public class PonderTagScreen extends AbstractPonderScreen {
 				.withBounds(30, 30)
 				.render(graphics);
 
-		graphics.drawString(font, Ponder.lang().translate(AbstractPonderScreen.PONDERING).component(), x, y - 6, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB(), false);
+		graphics.drawString(font, Ponder.lang().translate(AbstractPonderScreen.PONDERING_TAG).component(), x, y - 6, UIRenderHelper.COLOR_TEXT_DARKER.getFirst().getRGB(), false);
 		y += 8;
 		x += 0;
 		poseStack.translate(x, y, 0);

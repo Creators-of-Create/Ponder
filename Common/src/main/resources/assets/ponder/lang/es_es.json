@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "Mantén [%1$s] para considerar",
   "ponder.ui.subject": "Tema de esta escena",
   "ponder.ui.pondering": "Considerando sobre...",
+  "ponder.ui.pondering_tag": "Considerando sobre...",
   "ponder.ui.identify_mode": "Identificando modo activo.\nReanuda con [%1$s]",
   "ponder.ui.associated": "Entradas asociadas",
   "ponder.ui.close": "Cerrar",

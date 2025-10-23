@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "按住 [%1$s] 开始思索",
   "ponder.ui.subject": "情景主题",
   "ponder.ui.pondering": "思索……",
+  "ponder.ui.pondering_tag": "思索……",
   "ponder.ui.identify_mode": "显示方块名称已启用\n按 [%1$s] 继续思索",
   "ponder.ui.associated": "关联词条",
   "ponder.ui.close": "思索结束",

@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "Утримуйте [%1$s], щоб обдумати",
   "ponder.ui.subject": "Об’єкт цієї сцени",
   "ponder.ui.pondering": "Тема роздуму",
+  "ponder.ui.pondering_tag": "Тема роздуму",
   "ponder.ui.identify_mode": "Режим розпізнавання увімкнено.\nНатисніть [%1$s], щоби продовжити",
   "ponder.ui.associated": "Пов’язані записи",
   "ponder.ui.close": "Закрити",

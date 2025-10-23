@@ -2,6 +2,7 @@
   "ponder.ui.hold_to_ponder": "Tieni premuto [%1$s] per Riflettere",
   "ponder.ui.subject": "Soggetto della scena",
   "ponder.ui.pondering": "Riflessione riguardante...",
+  "ponder.ui.pondering_tag": "Riflessione riguardante...",
   "ponder.ui.identify_mode": "Modalità Approfondimento attiva.\nRiprendi con [%1$s]",
   "ponder.ui.associated": "Voci correlate",
   "ponder.ui.close": "Chiudi",

@@ -59,12 +59,12 @@ public class ConfigModListScreen extends ConfigScreen {
 		goBack.showingElement(PonderGuiTextures.ICON_CONFIG_BACK.asStencil()
 				.withElementRenderer(BoxWidget.gradientFactory.apply(goBack)));
 		goBack.getToolTip()
-				.add(Component.literal("Go Back"));
+				.add(Component.translatable("catnip.ui.go_back_button"));
 		addRenderableWidget(goBack);
 
 		search = new HintableTextFieldWidget(font, width / 2 - listWidth / 2, height - 35, listWidth, 20);
 		search.setResponder(this::updateFilter);
-		search.setHint("Ctrl + F to Search...");
+		search.setHint(Component.translatable("catnip.ui.search_hint"));
 		search.moveCursorToStart();
 		addRenderableWidget(search);
 	}
@@ -134,7 +134,7 @@ public class ConfigModListScreen extends ConfigScreen {
 				button.updateGradientFromState();
 				button.modifyElement(e -> ((DelegatedStencilElement) e).withElementRenderer(BaseConfigScreen.DISABLED_RENDERER));
 				labelTooltip.add(Component.literal(CatnipServices.PLATFORM.getModDisplayName(id)));
-				labelTooltip.addAll(FontHelper.cutTextComponent(Component.literal("This Mod does not have any configs registered or is not using Forge's config system"), Palette.ALL_GRAY));
+				labelTooltip.addAll(FontHelper.cutTextComponent(Component.translatable("catnip.ui.other_mods_config_unavailable"), Palette.ALL_GRAY));
 			}
 
 			listeners.add(button);

@@ -1,14 +1,11 @@
 package net.createmod.ponder;
 
-import java.util.Optional;
-
 import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.OverlayRenderCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.RenderTooltipBorderColorCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.RenderTooltipBorderColorCallback.BorderColorEntry;
 import net.createmod.catnip.config.ui.BaseConfigScreen;
-import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.placement.PlacementClient;
-import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.enums.PonderConfig;
 import net.createmod.ponder.enums.PonderKeybinds;
 import net.createmod.ponder.foundation.PonderTooltipHandler;
@@ -23,6 +20,8 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.ItemStack;
+
+import org.jetbrains.annotations.Nullable;
 
 public class FabricPonderClient implements ClientModInitializer {
 
@@ -72,11 +71,10 @@ public class FabricPonderClient implements ClientModInitializer {
 		PonderClient.modLoadCompleted();
 	}
 
-	public static RenderTooltipBorderColorCallback.BorderColorEntry getItemTooltipColor(ItemStack stack, int originalBorderColorStart, int originalBorderColorEnd) {
-		Optional<Couple<Color>> colors = PonderTooltipHandler.handleTooltipColor(stack);
-		return new RenderTooltipBorderColorCallback.BorderColorEntry(
-				colors.map(c -> c.getFirst().getRGB()).orElse(originalBorderColorStart),
-				colors.map(c -> c.getSecond().getRGB()).orElse(originalBorderColorEnd)
-		);
+	@Nullable
+	public static BorderColorEntry getItemTooltipColor(ItemStack stack, int originalBorderColorStart, int originalBorderColorEnd) {
+		return PonderTooltipHandler.handleTooltipColor(stack).map(colors -> new BorderColorEntry(
+			colors.getFirst().getRGB(), colors.getSecond().getRGB()
+		)).orElse(null);
 	}
 }
