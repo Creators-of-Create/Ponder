@@ -16,6 +16,7 @@ import net.minecraft.client.KeyMapping;
  * <p>
  * This workaround will be fully obsolete on 1.21.9 or newer.
  */
+// TODO: Port - Remove in 1.21.9+
 @SuppressWarnings("JavadocReference")
 public class ConflictSafeKeyMapping extends KeyMapping {
 	public ConflictSafeKeyMapping(String description, int defaultKey, String category) {
