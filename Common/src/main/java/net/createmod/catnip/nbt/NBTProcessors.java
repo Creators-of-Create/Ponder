@@ -2,16 +2,17 @@ package net.createmod.catnip.nbt;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
@@ -35,21 +36,45 @@ public final class NBTProcessors {
 	}
 
 	// Triggered by block tag, not BE type
+
+	// Remove commands while preserving the styles.
 	private static final UnaryOperator<CompoundTag> signProcessor = data -> {
-		for (String key : List.of("front_text", "back_text")) {
-			CompoundTag textTag = data.getCompound(key);
-			if (!textTag.contains("messages", Tag.TAG_LIST))
-				continue;
-			for (Tag tag : textTag.getList("messages", Tag.TAG_STRING))
-				if (tag instanceof StringTag stringTag)
-					if (textComponentHasClickEvent(stringTag.getAsString()))
-						return null;
-		}
-		if (data.contains("front_item") || data.contains("back_item"))
-			return null; // "Amendments" compat: sign data contains itemstacks
+		var front_text = data.getCompound("front_text").getList("messages", Tag.TAG_STRING);
+		var back_text = data.getCompound("back_text").getList("messages", Tag.TAG_STRING);
+		ListTag front_text2 = removeCommands(front_text);
+		ListTag back_text2 = removeCommands(back_text);
+		data.getCompound("front_text").put("messages",front_text2);
+		data.getCompound("back_text").put("messages",back_text2);
 		return data;
 	};
 
+	private static ListTag removeCommands(ListTag inList) {
+		ListTag result = new ListTag();
+		inList.stream()
+			.map(t->
+				{
+					var component = Component.Serializer.fromJson(t.getAsString());
+					if(component != null) {
+						return StringTag.valueOf(Component.Serializer.toJson(
+							removeCommand(component)
+						));
+					}
+					return StringTag.valueOf("");
+				}
+			)
+			.forEach(result::add);
+		return result;
+	}
+
+	private static MutableComponent removeCommand(MutableComponent textComponent){
+		textComponent.setStyle(textComponent.getStyle().withClickEvent(null));
+		for(Component component : textComponent.getSiblings())
+		{
+			if(component instanceof MutableComponent textComponent2)
+				removeCommand(textComponent2);
+		}
+		return textComponent;
+	}
 	public static UnaryOperator<CompoundTag> itemProcessor(String tagKey) {
 		return data -> {
 			CompoundTag compound = data.getCompound(tagKey);
