@@ -16,7 +16,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.common.EventBusSubscriber.Bus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -61,7 +60,7 @@ public class NeoForgePonder {
 		}
 	}
 
-	@EventBusSubscriber(bus = Bus.MOD)
+	@EventBusSubscriber
 	public static class ModBusEvents {
 		@SubscribeEvent
 		public static void onLoad(ModConfigEvent.Loading event) {
