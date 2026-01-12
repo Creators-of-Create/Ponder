@@ -171,8 +171,12 @@ public class WrappedLevel extends Level {
 		return null;
 	}
 
+	//NeoForge and vanilla disagree on what type this should be.
+	//NeoForge says Collection<PartEntity<?>> (a class which doesn't exist in vanilla),
+	//whereas vanilla says Collection<EnderDragonPart>
+	//TODO this sucks. Send a PR to NeoForge
 	@Override
-	public Collection<EnderDragonPart> dragonParts() {
+	public Collection dragonParts() {
 		return List.of();
 	}
 
