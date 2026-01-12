@@ -20,7 +20,9 @@ public class StitchedSprite {
 	public StitchedSprite(ResourceLocation atlas, ResourceLocation location) {
 		atlasLocation = atlas;
 		this.location = location;
-		ALL.computeIfAbsent(atlasLocation, $ -> new ArrayList<>()).add(this);
+		synchronized (ALL) {
+			ALL.computeIfAbsent(atlasLocation, $ -> new ArrayList<>()).add(this);
+		}
 	}
 
 	public StitchedSprite(ResourceLocation location) {
@@ -28,11 +30,13 @@ public class StitchedSprite {
 	}
 
 	public static void onTextureStitchPost(TextureAtlas atlas) {
-		ResourceLocation atlasLocation = atlas.location();
-		List<StitchedSprite> sprites = ALL.get(atlasLocation);
-		if (sprites != null) {
-			for (StitchedSprite sprite : sprites) {
-				sprite.loadSprite(atlas);
+		synchronized (ALL) {
+			ResourceLocation atlasLocation = atlas.location();
+			List<StitchedSprite> sprites = ALL.get(atlasLocation);
+			if (sprites != null) {
+				for (StitchedSprite sprite : sprites) {
+					sprite.loadSprite(atlas);
+				}
 			}
 		}
 	}
