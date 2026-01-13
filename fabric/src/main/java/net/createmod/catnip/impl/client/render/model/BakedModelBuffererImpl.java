@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.renderer.v1.Renderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 
@@ -50,7 +51,7 @@ public final class BakedModelBuffererImpl {
 		poseStack.pushPose();
 		submitNodeCollector.submitBlockStateModel(
 			poseStack,
-			layer -> bufferSource.getBuffer(layer, false),
+			layer -> layer == ChunkSectionLayer.TRANSLUCENT ? Sheets.translucentBlockItemSheet() : Sheets.cutoutBlockSheet(),
 			model,
 			1,
 			1,
