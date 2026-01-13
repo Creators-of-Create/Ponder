@@ -3,6 +3,7 @@ package net.createmod.catnip.impl.client.render.model;
 import java.util.Iterator;
 
 import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderLayerHelper;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
@@ -51,7 +52,7 @@ public final class BakedModelBuffererImpl {
 		poseStack.pushPose();
 		submitNodeCollector.submitBlockStateModel(
 			poseStack,
-			layer -> layer == ChunkSectionLayer.TRANSLUCENT ? Sheets.translucentBlockItemSheet() : Sheets.cutoutBlockSheet(),
+			RenderLayerHelper::getEntityBlockLayer,
 			model,
 			1,
 			1,
