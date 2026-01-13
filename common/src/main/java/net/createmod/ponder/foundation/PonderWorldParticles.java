@@ -7,6 +7,11 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.Queue;
 
+import net.minecraft.client.particle.ElderGuardianParticleGroup;
+import net.minecraft.client.particle.ItemPickupParticleGroup;
+import net.minecraft.client.particle.NoRenderParticleGroup;
+import net.minecraft.client.particle.QuadParticleGroup;
+
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 
@@ -68,8 +73,19 @@ public class PonderWorldParticles {
 		Particle particle;
 		if (!this.particlesToAdd.isEmpty()) {
 			while ((particle = this.particlesToAdd.poll()) != null) {
-				this.particles.computeIfAbsent(particle.getGroup(), particleEngine::createParticleGroup).add(particle);
+				this.particles.computeIfAbsent(particle.getGroup(), this::createParticleGroup).add(particle);
 			}
+		}
+	}
+
+	//TODO basically lifted straight from ParticleEngine. Ideally would not duplicate code like this
+	private ParticleGroup<?> createParticleGroup(ParticleRenderType renderType) {
+		if (renderType == ParticleRenderType.ITEM_PICKUP) {
+			return new ItemPickupParticleGroup(particleEngine);
+		} else if (renderType == ParticleRenderType.ELDER_GUARDIANS) {
+			return new ElderGuardianParticleGroup(particleEngine);
+		} else {
+			return (renderType == ParticleRenderType.NO_RENDER ? new NoRenderParticleGroup(particleEngine) : new QuadParticleGroup(particleEngine, renderType));
 		}
 	}
 
