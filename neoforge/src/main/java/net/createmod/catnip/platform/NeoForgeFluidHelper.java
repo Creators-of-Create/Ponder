@@ -41,7 +41,7 @@ public class NeoForgeFluidHelper implements ModFluidHelper<FluidStack> {
 	@Nullable
 	public TextureAtlasSprite getStillTexture(FluidStack fluid) {
 		Identifier id = IClientFluidTypeExtensions.of(fluid.getFluid()).getStillTexture(fluid);
-		return id == null ? null : Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(id);
+		return id == null ? null : Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(id);
 	}
 
 	@Override
