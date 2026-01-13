@@ -47,6 +47,10 @@ dependencies {
     modApi(include("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${"forgeconfigapiport_version"()}")!!)
 }
 
+tasks.named("sourcesJar") {
+    mustRunAfter(project(":common").tasks.named("generatePackageInfos"))
+}
+
 operator fun String.invoke(): String {
     return rootProject.ext[this] as? String
         ?: throw IllegalStateException("Property $this is not defined")
