@@ -16,7 +16,7 @@ public abstract class AbstractBuilder<R, T extends R, H extends BaseHolder<T>> {
 	protected final ResourceLocation id;
 	protected final Registry<R> registry;
 	protected H holder;
-	private Consumer<H> afterRegisterCallback = $ -> {};
+	private Consumer<H> afterRegisterCallback = h -> h.getInternalRegistrationListener().accept(h.value());
 
 	public AbstractBuilder(CatnipRegistry owner, String name, Registry<R> registry) {
 		this.owner = owner;
