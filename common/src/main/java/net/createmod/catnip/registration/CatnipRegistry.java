@@ -1,5 +1,6 @@
 package net.createmod.catnip.registration;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -21,7 +22,8 @@ import java.util.function.Function;
 public class CatnipRegistry {
 	public final String modId;
 
-	private static final Multimap<Registry<?>, Registration<?, ?, ?>> REGISTRATIONS = HashMultimap.create();
+	// registration order must be preserved so that delayed NeoForge registrations match Fabric's eager registration behaviour
+	private static final Multimap<Registry<?>, Registration<?, ?, ?>> REGISTRATIONS = ArrayListMultimap.create();
 	public static final Multimap<Registry<?>, Registration<?, ?, ?>> REGISTRATIONS_VIEW = Multimaps.unmodifiableMultimap(REGISTRATIONS);
 
 	public CatnipRegistry(String modId) {
