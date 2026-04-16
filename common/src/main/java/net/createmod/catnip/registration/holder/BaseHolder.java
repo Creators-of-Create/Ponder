@@ -12,4 +12,13 @@ public class BaseHolder<T> extends Holder.Reference<T> {
 	public <V> boolean is(V value) {
 		return value() == value;
 	}
+
+	public static <T> Holder<T> downcast(Holder<? extends T> holder) {
+		//noinspection unchecked
+		return (Holder<T>) holder;
+	}
+
+	public String getRegisteredNamePath() {
+		return this.unwrapKey().map((resourceKey) -> resourceKey.location().getPath()).orElse("[unregistered]");
+	}
 }
