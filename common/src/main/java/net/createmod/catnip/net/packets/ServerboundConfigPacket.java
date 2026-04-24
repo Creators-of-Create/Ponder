@@ -65,6 +65,8 @@ public class ServerboundConfigPacket<T> implements ServerboundPacketPayload {
 	}
 
 	public String serialize(T value) {
+		if(value instanceof String str)
+			return str;
 		if (value instanceof Boolean)
 			return Boolean.toString((Boolean) value);
 		if (value instanceof Enum<?>)
@@ -80,6 +82,8 @@ public class ServerboundConfigPacket<T> implements ServerboundPacketPayload {
 	}
 
 	public static Object deserialize(Object type, String sValue) {
+		if(type instanceof String)
+			return sValue;
 		if (type instanceof Boolean)
 			return Boolean.parseBoolean(sValue);
 		if (type instanceof Enum<?>)
