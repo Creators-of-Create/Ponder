@@ -100,34 +100,73 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 	public boolean search(String query) {
 		children().clear();
 		
+		setScrollAmount(0);
+
 		if (query == null || query.isEmpty()) {
 			if (allEntries != null)
 				children().addAll(allEntries);
-			setScrollAmount(0);
 			return true;
 		}
 		
-		String q = query.toLowerCase(Locale.ROOT);
 		List<Entry> source = deepEntries != null ? deepEntries : children();
-		List<Entry> searchResults = source.stream().filter(entry -> {
-			if (entry.path == null)
-				return false;
-			
-			String[] split = entry.path.split("\\.");
-			String key = split[split.length - 1].toLowerCase(Locale.ROOT);
-			return key.contains(q);
-		}).collect(Collectors.toList());
 		
-		setScrollAmount(0);
+		String q = query.toLowerCase(Locale.ROOT).replaceAll("\\s+", "");
+		List<Entry> searchResults = source.stream()
+			.filter(entry -> {
+				return entry.path != null;
+			})
+			.map(entry -> {
+				String[] parts = entry.path.split("\\.");
+				String key = parts[parts.length - 1].toLowerCase(Locale.ROOT);
+				float distance = relevanceScore(q, key);
+				return Map.entry(entry, distance);
+			})
+			.filter(map -> map.getValue() <= 0.8)
+			.sorted(Map.Entry.comparingByValue())
+			.map(Map.Entry::getKey)
+			.collect(Collectors.toList());
 		
 		if (searchResults.isEmpty()) {
-			children().addAll(allEntries);
 			return false;
 		}
 		
 		children().addAll(searchResults);
 
 		return true;
+	}
+
+	private static float relevanceScore(String query, String target) {
+		int[][] table = new int[query.length() + 1][target.length() + 1];
+
+		// Levenshtein Distance Algorithm
+		
+		for (int i = 0; i <= query.length(); i++) table[i][0] = i;
+		for (int j = 0; j <= target.length(); j++) table[0][j] = j;
+
+		for (int i = 1; i <= query.length(); i++) {
+			for (int j = 1; j <= target.length(); j++) {
+				if (query.charAt(i - 1) == target.charAt(j - 1)){
+					table[i][j] = table[i - 1][j - 1];
+				}
+				else {
+					table[i][j] = Math.min(table[i - 1][j - 1], Math.min(
+						table[i][j - 1],
+						table[i - 1] [j]
+					)) + 1;
+				}
+			}
+		}
+
+		float result = table[query.length()][target.length()];
+		
+		// Normalization
+		int maxLength = Math.max(query.length(), target.length());
+		result /= maxLength;
+
+		// Match boosting
+		result = target.contains(query) ? result * 0.5f : result;
+
+		return result;
 	}
 
 	public void bumpCog(float force) {

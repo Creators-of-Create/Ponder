@@ -308,7 +308,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		recursiveCollect(configGroup, "", deepResults);
 		list.deepEntries = deepResults;
 
-		// list.search(highlights.stream().findFirst().orElse(""));
+		list.search(highlights.stream().findFirst().orElse(""));
 
 		//extras for server configs
 		if (type != ModConfig.Type.SERVER)
