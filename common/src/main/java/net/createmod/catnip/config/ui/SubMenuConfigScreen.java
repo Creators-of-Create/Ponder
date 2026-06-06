@@ -281,21 +281,9 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 			} else if (obj instanceof ModConfigSpec.ConfigValue<?> configValue) {
 				ModConfigSpec.ValueSpec valueSpec = spec.getSpec().getRaw(configValue.getPath());
-				Object value = configValue.get();
 				ConfigScreenList.Entry entry = null;
 
-				if (value instanceof Boolean) {
-					entry = new BooleanEntry(humanKey, (ModConfigSpec.ConfigValue<Boolean>) configValue, valueSpec);
-				} else if (value instanceof Enum) {
-					entry = new EnumEntry(humanKey, (ModConfigSpec.ConfigValue<Enum<?>>) configValue, valueSpec);
-				} else if (value instanceof Number) {
-					entry = NumberEntry.create(value, humanKey, configValue, valueSpec);
-				} else if (value instanceof String) {
-					entry = new StringEntry(humanKey, (ModConfigSpec.ConfigValue<String>) configValue, valueSpec);
-				}
-
-				if (entry == null)
-					entry = new LabeledEntry("Impl missing - " + configValue.get().getClass().getSimpleName() + "  " + humanKey + " : " + value);
+				entry = createEntry(humanKey, configValue, valueSpec);
 
 				if (highlights.contains(key))
 					entry.annotations.put("highlight", ":)");
@@ -314,7 +302,13 @@ public class SubMenuConfigScreen extends ConfigScreen {
 			return group;
 		});
 
-		list.search(highlights.stream().findFirst().orElse(""));
+		list.allEntries = new ArrayList<>(list.children());
+
+		List<ConfigScreenList.Entry> deepResults = new ArrayList<>();
+		recursiveCollect(configGroup, "", deepResults);
+		list.deepEntries = deepResults;
+
+		// list.search(highlights.stream().findFirst().orElse(""));
 
 		//extras for server configs
 		if (type != ModConfig.Type.SERVER)
@@ -350,6 +344,42 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		}
 
 		addRenderableWidget(serverLocked);
+	}
+
+	private ConfigScreenList.Entry createEntry(String humanKey, ModConfigSpec.ConfigValue<?> configValue, ModConfigSpec.ValueSpec valueSpec) {
+		Object value = configValue.get();
+
+		if (value instanceof Boolean) {
+			return new BooleanEntry(humanKey, (ModConfigSpec.ConfigValue<Boolean>) configValue, valueSpec);
+		} else if (value instanceof Enum) {
+			return new EnumEntry(humanKey, (ModConfigSpec.ConfigValue<Enum<?>>) configValue, valueSpec);
+		} else if (value instanceof Number) {
+			return NumberEntry.create(value, humanKey, configValue, valueSpec);
+		} else if (value instanceof String) {
+			return new StringEntry(humanKey, (ModConfigSpec.ConfigValue<String>) configValue, valueSpec);
+		}
+
+		return new LabeledEntry("Impl missing - " + configValue.get().getClass().getSimpleName() + "  " + humanKey + " : " + value);
+	}
+
+	private List<ConfigScreenList.Entry> recursiveCollect(UnmodifiableConfig config, String prefix, List<ConfigScreenList.Entry> results) {
+		config.valueMap().forEach((key, obj) -> {
+			String fullPath = prefix.isEmpty() ? key : prefix + "." + key;
+			if (obj instanceof AbstractConfig) {
+				recursiveCollect((UnmodifiableConfig) obj, fullPath, results);
+			}
+			else if (obj instanceof ModConfigSpec.ConfigValue) {
+				String humanKey = toHumanReadable(key);
+				ModConfigSpec.ValueSpec valueSpec = spec.getSpec().getRaw(((ModConfigSpec.ConfigValue<?>) obj).getPath());
+				ConfigScreenList.Entry le = createEntry(humanKey, (ModConfigSpec.ConfigValue<?>) obj, valueSpec);
+
+				le.path = fullPath;
+
+				results.add(le);
+			}
+		});
+		return results;
+
 	}
 
 	@Override

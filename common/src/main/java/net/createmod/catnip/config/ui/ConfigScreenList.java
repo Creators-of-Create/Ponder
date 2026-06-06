@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -32,6 +32,10 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 
 	@Nullable
 	public static EditBox currentText;
+
+	public List<Entry> allEntries;
+
+	public List<Entry> deepEntries;
 
 	public ConfigScreenList(Minecraft client, int width, int height, int top, int elementHeight) {
 		super(client, width, height, top, elementHeight);
@@ -94,29 +98,35 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 	}
 
 	public boolean search(String query) {
+		children().clear();
+		
 		if (query == null || query.isEmpty()) {
+			if (allEntries != null)
+				children().addAll(allEntries);
 			setScrollAmount(0);
 			return true;
 		}
-
+		
 		String q = query.toLowerCase(Locale.ROOT);
-		Optional<Entry> first = children().stream().filter(entry -> {
+		List<Entry> source = deepEntries != null ? deepEntries : children();
+		List<Entry> searchResults = source.stream().filter(entry -> {
 			if (entry.path == null)
 				return false;
-
+			
 			String[] split = entry.path.split("\\.");
 			String key = split[split.length - 1].toLowerCase(Locale.ROOT);
 			return key.contains(q);
-		}).findFirst();
-
-		if (first.isEmpty()) {
-			setScrollAmount(0);
+		}).collect(Collectors.toList());
+		
+		setScrollAmount(0);
+		
+		if (searchResults.isEmpty()) {
+			children().addAll(allEntries);
 			return false;
 		}
+		
+		children().addAll(searchResults);
 
-		Entry e = first.get();
-		e.annotations.put("highlight", "(:");
-		centerScrollOn(e);
 		return true;
 	}
 
