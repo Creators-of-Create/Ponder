@@ -74,6 +74,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 	protected String title;
 	@Nullable
 	protected String searchText;
+	protected boolean canEdit = true;
 
 	public static SubMenuConfigScreen find(ConfigHelper.ConfigPath path) {
 		ModConfigSpec spec = ConfigHelper.findModConfigSpecFor(path.getType(), path.getModID());
@@ -317,7 +318,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		if (minecraft.hasSingleplayerServer())
 			return;
 
-		boolean canEdit = minecraft != null && minecraft.player != null && minecraft.player.hasPermissions(2);
+		canEdit = minecraft != null && minecraft.player != null && minecraft.player.hasPermissions(2);
 
 		Couple<Color> red = AbstractSimiWidget.COLOR_FAIL;
 		Couple<Color> green = AbstractSimiWidget.COLOR_SUCCESS;
@@ -436,6 +437,8 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		} else {
 			this.search.setTextColor(AbstractSimiWidget.COLOR_FAIL.getFirst().getRGB());
 		}
+		if (!canEdit)
+			list.children().forEach(e -> e.setEditable(false));
 	}
 
 	private void attemptBackstep() {
