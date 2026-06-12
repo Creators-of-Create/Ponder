@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -103,7 +102,7 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 
 		setScrollAmount(0);
 
-		if (query == null || query.isEmpty()) {
+		if (query == null || query.trim().isEmpty()) {
 			if (allEntries != null)
 				children().addAll(allEntries);
 			return true;
