@@ -72,7 +72,8 @@ public class SubMenuConfigScreen extends ConfigScreen {
 	protected HintableTextFieldWidget search;
 	protected int listWidth;
 	protected String title;
-	protected Set<String> highlights = new HashSet<>();
+	@Nullable
+	protected String searchText;
 
 	public static SubMenuConfigScreen find(ConfigHelper.ConfigPath path) {
 		ModConfigSpec spec = ConfigHelper.findModConfigSpecFor(path.getType(), path.getModID());
@@ -83,7 +84,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 		path:
 		while (!remainingPath.isEmpty()) {
-			String next = remainingPath.remove(0);
+			String next = remainingPath.removeFirst();
 			for (Map.Entry<String, Object> entry : values.valueMap().entrySet()) {
 				String key = entry.getKey();
 				Object obj = entry.getValue();
@@ -91,8 +92,8 @@ public class SubMenuConfigScreen extends ConfigScreen {
 					continue;
 
 				if (!(obj instanceof AbstractConfig)) {
-					//highlight entry
-					screen.highlights.add(path.getPath()[path.getPath().length - 1]);
+					// search for entry
+					screen.searchText = path.getPath()[path.getPath().length - 1];
 					continue;
 				}
 
@@ -285,9 +286,6 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 				entry = createEntry(humanKey, configValue, valueSpec);
 
-				if (highlights.contains(key))
-					entry.annotations.put("highlight", ":)");
-
 				list.children().add(entry);
 			}
 		});
@@ -308,7 +306,10 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		recursiveCollect(configGroup, "", deepResults);
 		list.deepEntries = deepResults;
 
-		list.search(highlights.stream().findFirst().orElse(""));
+		if (searchText != null) {
+			search.setValue(searchText);
+			searchText = null;
+		}
 
 		//extras for server configs
 		if (type != ModConfig.Type.SERVER)
@@ -350,13 +351,13 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		Object value = configValue.get();
 
 		if (value instanceof Boolean) {
-			return new BooleanEntry(humanKey, (ModConfigSpec.ConfigValue<Boolean>) configValue, valueSpec);
+			return new BooleanEntry(humanKey, (ModConfigSpec.ConfigValue<Boolean>) configValue, valueSpec, this.type);
 		} else if (value instanceof Enum) {
-			return new EnumEntry(humanKey, (ModConfigSpec.ConfigValue<Enum<?>>) configValue, valueSpec);
+			return new EnumEntry(humanKey, (ModConfigSpec.ConfigValue<Enum<?>>) configValue, valueSpec, this.type);
 		} else if (value instanceof Number) {
-			return NumberEntry.create(value, humanKey, configValue, valueSpec);
+			return NumberEntry.create(value, humanKey, configValue, valueSpec, this.type);
 		} else if (value instanceof String) {
-			return new StringEntry(humanKey, (ModConfigSpec.ConfigValue<String>) configValue, valueSpec);
+			return new StringEntry(humanKey, (ModConfigSpec.ConfigValue<String>) configValue, valueSpec, this.type);
 		}
 
 		return new LabeledEntry("Impl missing - " + configValue.get().getClass().getSimpleName() + "  " + humanKey + " : " + value);
@@ -433,7 +434,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		if (list.search(search)) {
 			this.search.setTextColor(UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		} else {
-			this.search.setTextColor(AbstractSimiWidget.COLOR_SUCCESS.getFirst().getRGB());
+			this.search.setTextColor(AbstractSimiWidget.COLOR_FAIL.getFirst().getRGB());
 		}
 	}
 

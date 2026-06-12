@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 public class SimpleCatnipActions {
 
 	public static void configScreen(String value) {
-		if (value.equals("")) {
+		if (value.isEmpty()) {
 			ScreenOpener.open(new ConfigModListScreen(null));
 			return;
 		}

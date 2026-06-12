@@ -16,7 +16,6 @@ import net.createmod.catnip.config.ui.ConfigAnnotations;
 import net.createmod.catnip.config.ui.ConfigHelper;
 import net.createmod.catnip.config.ui.ConfigScreen;
 import net.createmod.catnip.config.ui.ConfigScreenList;
-import net.createmod.catnip.config.ui.SubMenuConfigScreen;
 import net.createmod.catnip.data.Pair;
 import net.createmod.catnip.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.gui.widget.BoxWidget;
@@ -25,8 +24,8 @@ import net.createmod.catnip.lang.FontHelper.Palette;
 import net.createmod.ponder.enums.PonderGuiTextures;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -41,11 +40,13 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 	protected ModConfigSpec.ValueSpec spec;
 	protected BoxWidget resetButton;
 	protected boolean editable = true;
+	protected final ModConfig.Type type;
 
-	public ValueEntry(String label, ModConfigSpec.ConfigValue<T> value, ModConfigSpec.ValueSpec spec) {
+	public ValueEntry(String label, ModConfigSpec.ConfigValue<T> value, ModConfigSpec.ValueSpec spec, ModConfig.Type type) {
 		super(label);
 		this.value = value;
 		this.spec = spec;
+		this.type = type;
 		this.path = String.join(".", value.getPath());
 
 		resetButton = new BoxWidget(0, 0, resetWidth - 12, 16)
@@ -89,7 +90,15 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 		if (annotations.containsKey(ConfigAnnotations.RequiresRestart.CLIENT.getName()))
 			labelTooltip.addAll(FontHelper.cutTextComponent(Component.translatable("catnip.ui.value_entry.restart_required"), Palette.GRAY_AND_RED));
 
-		labelTooltip.add(Component.literal(ConfigScreen.modID + ":" + path.get(path.size() - 1)).withStyle(ChatFormatting.DARK_GRAY));
+		String fullPath = ConfigScreen.modID + ":" + type.extension() + "." + String.join(".", path);
+		Font font = Minecraft.getInstance().font;
+		if (font.width(fullPath) > FontHelper.MAX_WIDTH_PER_LINE) {
+			int trimPos = 0;
+			while (trimPos < fullPath.length() && font.width("..." + fullPath.substring(trimPos)) > FontHelper.MAX_WIDTH_PER_LINE)
+				trimPos++;
+			fullPath = "..." + fullPath.substring(trimPos);
+		}
+		labelTooltip.add(Component.literal(fullPath).withStyle(ChatFormatting.DARK_GRAY));
 	}
 
 	@Override
@@ -119,17 +128,9 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 			return false;
 		}
 
-		// workaround while config type isn't available here yet.
-		ModConfig.Type configType = ModConfig.Type.CLIENT;
-		Screen screen = Minecraft.getInstance().screen;
-		if (screen instanceof SubMenuConfigScreen subMenuScreen) {
-			configType = subMenuScreen.type;
-		}
-
-
 		// ctrl-click to copy the full path to clipboard
 		this.annotations.put("highlight", ":)");
-		clipboardHelper.setClipboard(handle, ConfigScreen.modID + ":" + configType.extension() + "." + path);
+		clipboardHelper.setClipboard(handle, ConfigScreen.modID + ":" + type.extension() + "." + path);
 
 		return true;
 	}

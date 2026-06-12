@@ -4,14 +4,15 @@ import net.createmod.catnip.config.ui.ConfigTextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class StringEntry extends ValueEntry<String> {
 
 	protected EditBox textField;
 
-	public StringEntry(String label, ModConfigSpec.ConfigValue<String> value, ModConfigSpec.ValueSpec spec) {
-		super(label, value, spec);
+	public StringEntry(String label, ModConfigSpec.ConfigValue<String> value, ModConfigSpec.ValueSpec spec, ModConfig.Type configType) {
+		super(label, value, spec, configType);
 		textField = new ConfigTextField(Minecraft.getInstance().font, 0, 0, 200, 20);
 		textField.setValue(value.get());
 

@@ -16,6 +16,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
@@ -26,20 +27,20 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 	protected HintableTextFieldWidget textField;
 
 	@Nullable
-	public static NumberEntry<? extends Number> create(Object type, String label, ModConfigSpec.ConfigValue<?> value, ModConfigSpec.ValueSpec spec) {
+	public static NumberEntry<? extends Number> create(Object type, String label, ModConfigSpec.ConfigValue<?> value, ModConfigSpec.ValueSpec spec, ModConfig.Type configType) {
 		if (type instanceof Integer) {
-			return new IntegerEntry(label, (ModConfigSpec.ConfigValue<Integer>) value, spec);
+			return new IntegerEntry(label, (ModConfigSpec.ConfigValue<Integer>) value, spec, configType);
 		} else if (type instanceof Float) {
-			return new FloatEntry(label, (ModConfigSpec.ConfigValue<Float>) value, spec);
+			return new FloatEntry(label, (ModConfigSpec.ConfigValue<Float>) value, spec, configType);
 		} else if (type instanceof Double) {
-			return new DoubleEntry(label, (ModConfigSpec.ConfigValue<Double>) value, spec);
+			return new DoubleEntry(label, (ModConfigSpec.ConfigValue<Double>) value, spec, configType);
 		}
 
 		return null;
 	}
 
-	public NumberEntry(String label, ModConfigSpec.ConfigValue<T> value, ModConfigSpec.ValueSpec spec) {
-		super(label, value, spec);
+	public NumberEntry(String label, ModConfigSpec.ConfigValue<T> value, ModConfigSpec.ValueSpec spec, ModConfig.Type configType) {
+		super(label, value, spec, configType);
 		textField = new ConfigTextField(Minecraft.getInstance().font, 0, 0, 200, 20);
 		if (this instanceof IntegerEntry && annotations.containsKey("IntDisplay")) {
 			String intDisplay = annotations.get("IntDisplay");
@@ -162,8 +163,8 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
 	public static class IntegerEntry extends NumberEntry<Integer> {
 
-		public IntegerEntry(String label, ModConfigSpec.ConfigValue<Integer> value, ModConfigSpec.ValueSpec spec) {
-			super(label, value, spec);
+		public IntegerEntry(String label, ModConfigSpec.ConfigValue<Integer> value, ModConfigSpec.ValueSpec spec, ModConfig.Type configType) {
+			super(label, value, spec, configType);
 		}
 
 		@Override
@@ -194,8 +195,8 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
 	public static class FloatEntry extends NumberEntry<Float> {
 
-		public FloatEntry(String label, ModConfigSpec.ConfigValue<Float> value, ModConfigSpec.ValueSpec spec) {
-			super(label, value, spec);
+		public FloatEntry(String label, ModConfigSpec.ConfigValue<Float> value, ModConfigSpec.ValueSpec spec, ModConfig.Type configType) {
+			super(label, value, spec, configType);
 		}
 
 		@Override
@@ -216,8 +217,8 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 
 	public static class DoubleEntry extends NumberEntry<Double> {
 
-		public DoubleEntry(String label, ModConfigSpec.ConfigValue<Double> value, ModConfigSpec.ValueSpec spec) {
-			super(label, value, spec);
+		public DoubleEntry(String label, ModConfigSpec.ConfigValue<Double> value, ModConfigSpec.ValueSpec spec, ModConfig.Type configType) {
+			super(label, value, spec, configType);
 		}
 
 		@Override
