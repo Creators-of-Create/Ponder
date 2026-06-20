@@ -2,11 +2,9 @@ package net.createmod.catnip.config.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -283,11 +281,8 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 			} else if (obj instanceof ModConfigSpec.ConfigValue<?> configValue) {
 				ModConfigSpec.ValueSpec valueSpec = spec.getSpec().getRaw(configValue.getPath());
-				ConfigScreenList.Entry entry = null;
 
-				entry = createEntry(humanKey, configValue, valueSpec);
-
-				list.children().add(entry);
+				list.children().add(createEntry(humanKey, configValue, valueSpec));
 			}
 		});
 
@@ -369,15 +364,10 @@ public class SubMenuConfigScreen extends ConfigScreen {
 			String fullPath = prefix.isEmpty() ? key : prefix + "." + key;
 			if (obj instanceof AbstractConfig) {
 				recursiveCollect((UnmodifiableConfig) obj, fullPath, results);
-			}
-			else if (obj instanceof ModConfigSpec.ConfigValue) {
+			} else if (obj instanceof ModConfigSpec.ConfigValue) {
 				String humanKey = toHumanReadable(key);
 				ModConfigSpec.ValueSpec valueSpec = spec.getSpec().getRaw(((ModConfigSpec.ConfigValue<?>) obj).getPath());
-				ConfigScreenList.Entry le = createEntry(humanKey, (ModConfigSpec.ConfigValue<?>) obj, valueSpec);
-
-				le.path = fullPath;
-
-				results.add(le);
+				results.add(createEntry(humanKey, (ModConfigSpec.ConfigValue<?>) obj, valueSpec));
 			}
 		});
 		return results;

@@ -108,7 +108,10 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 			return true;
 		}
 
-		List<Entry> source = deepEntries != null ? deepEntries : children();
+		List<Entry> source =
+			deepEntries != null ? deepEntries
+			: allEntries != null ? allEntries
+			: List.of();
 
 		String q = query.toLowerCase(Locale.ROOT).replaceAll("\\s+", "");
 		List<Entry> searchResults = source.stream()

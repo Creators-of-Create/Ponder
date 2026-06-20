@@ -21,6 +21,7 @@ public class HintableTextFieldWidget extends EditBox {
 	public HintableTextFieldWidget(Font font, int x, int y, int width, int height) {
 		super(font, x, y, width, height, CommonComponents.EMPTY);
 		this.font = font;
+		this.setMaxLength(128);
 	}
 
 	@Override
