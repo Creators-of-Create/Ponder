@@ -167,6 +167,19 @@ public class LangBuilder {
 		tooltip.add(component());
 	}
 
+	public void forGoggles(List<Component> tooltip) {
+		forGoggles(tooltip, 0);
+	}
+
+	public void forGoggles(List<Component> tooltip, int indents) {
+		MutableComponent component = component();
+		if (indents <= 0) {
+			tooltip.add(component);
+			return;
+		}
+		tooltip.add(Component.literal("  ".repeat(indents)).append(component));
+	}
+
 	//
 
 	private void assertComponent() {

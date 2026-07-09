@@ -16,7 +16,7 @@ public class CatnipCommands {
 
 		LiteralCommandNode<CommandSourceStack> catnipRoot = Commands.literal("catnip")
 			.requires(Commands.hasPermission(Commands.LEVEL_ALL))
-			//.then(ConfigCommand.register()) FIXME: config
+			.then(ConfigCommand.register())
 			.then(util)
 			.build();
 

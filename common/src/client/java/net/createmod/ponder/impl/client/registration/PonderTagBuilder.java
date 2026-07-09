@@ -6,7 +6,6 @@ import org.jspecify.annotations.Nullable;
 
 import net.createmod.ponder.api.client.registration.TagBuilder;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
 public class PonderTagBuilder implements TagBuilder {
@@ -18,8 +17,10 @@ public class PonderTagBuilder implements TagBuilder {
 	boolean addToIndex = false;
 	@Nullable
 	Identifier textureIconIdentifier;
-	ItemStack itemIcon = ItemStack.EMPTY;
-	ItemStack mainItem = ItemStack.EMPTY;
+	@Nullable
+	ItemLike itemIcon;
+	@Nullable
+	ItemLike mainItem;
 
 	public PonderTagBuilder(Identifier id, Consumer<PonderTagBuilder> onFinish) {
 		this.id = id;
@@ -64,9 +65,9 @@ public class PonderTagBuilder implements TagBuilder {
 	@Override
 	public TagBuilder item(ItemLike item, boolean useAsIcon, boolean useAsMainItem) {
 		if (useAsIcon)
-			this.itemIcon = new ItemStack(item);
+			this.itemIcon = item;
 		if (useAsMainItem)
-			this.mainItem = new ItemStack(item);
+			this.mainItem = item;
 		return this;
 	}
 

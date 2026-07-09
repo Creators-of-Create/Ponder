@@ -11,7 +11,7 @@ import net.createmod.catnip.api.client.network.ClientNetworkHelper;
 import net.createmod.catnip.impl.network.CatnipPayloads;
 import net.createmod.catnip.impl.network.ClientboundConfigPacket;
 import net.createmod.catnip.impl.network.ClientboundSimpleActionPacket;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
 
 public final class CatnipClientPayloadHandlers {
 	private static final Logger logger = LogUtils.getLogger();
@@ -21,7 +21,7 @@ public final class CatnipClientPayloadHandlers {
 		ClientNetworkHelper.INSTANCE.registerPayloadHandler(CatnipPayloads.SIMPLE_ACTION, CatnipClientPayloadHandlers::action);
 	}
 
-	private static void config(ClientboundConfigPacket payload, LocalPlayer player) {/*
+	private static void config(ClientboundConfigPacket payload, Player player) {/*
 		if (Minecraft.getInstance().player == null) {
 			return;
 		}
@@ -52,7 +52,7 @@ public final class CatnipClientPayloadHandlers {
 
 	*/}
 
-	private static void action(ClientboundSimpleActionPacket payload, LocalPlayer player) {
+	private static void action(ClientboundSimpleActionPacket payload, Player player) {
 		String name = payload.action();
 		Supplier<Consumer<String>> action = ClientboundSimpleActionPacket.ACTIONS.get(name);
 

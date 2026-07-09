@@ -13,7 +13,7 @@ import net.createmod.ponder.api.client.level.PonderLevel;
 import net.createmod.ponder.api.client.scene.PonderScene;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.createmod.catnip.api.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;

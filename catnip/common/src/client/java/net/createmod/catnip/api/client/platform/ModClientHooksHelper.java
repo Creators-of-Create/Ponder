@@ -2,7 +2,7 @@ package net.createmod.catnip.api.client.platform;
 
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
@@ -21,8 +21,7 @@ import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.createmod.catnip.api.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
@@ -45,7 +44,7 @@ public interface ModClientHooksHelper {
 	// note: implementations don't use isDown since we need this to work inside screens
 	boolean isKeyPressed(KeyMapping mapping);
 
-	void registerPictureInPictureRenderer(Class<?> stateClass,Function<BufferSource, PictureInPictureRenderer<?>> factory);
+	void registerPictureInPictureRenderer(Class<?> stateClass, Supplier<PictureInPictureRenderer<?>> factory);
 
 	RenderPipeline.Builder useDrawModeInGui(RenderPipeline.Builder builder);
 

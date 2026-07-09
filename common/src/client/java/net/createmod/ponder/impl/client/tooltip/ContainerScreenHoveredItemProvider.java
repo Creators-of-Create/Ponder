@@ -12,10 +12,10 @@ enum ContainerScreenHoveredItemProvider implements HoveredItemProvider {
 
 	@Override
 	public Item determineHoveredItem() {
-		if (!(Minecraft.getInstance().screen instanceof AbstractContainerScreenAccessor screen))
+		if (!(Minecraft.getInstance().gui.screen() instanceof AbstractContainerScreenAccessor screen))
 			return Items.AIR;
 
-		Slot slot = screen.getHoveredSlot();
+		Slot slot = screen.ponder$getHoveredSlot();
 		return slot == null ? Items.AIR : slot.getItem().getItem();
 	}
 

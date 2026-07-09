@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
-import net.createmod.catnip.impl.client.mixin.ClientPacketListenerAccessor;
 import net.createmod.catnip.impl.mixin.BiomeManagerAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -30,13 +29,13 @@ public class WrappedClientLevel extends ClientLevel {
 	private WrappedClientLevel(Level level) {
 		// shouldn't be null, given level should have the same instance
 		ClientPacketListener connection = Objects.requireNonNull(mc.getConnection(), "connection");
-		int chunkRadius = ((ClientPacketListenerAccessor) connection).catnip$getServerChunkRadius();
+		int chunkRadius = mc.options.getEffectiveRenderDistance();
 		long seed = ((BiomeManagerAccessor) level.getBiomeManager()).catnip$getBiomeZoomSeed();
 		int simDistance = Objects.requireNonNull(mc.level).getServerSimulationDistance();
 
 		super(
 			connection, mc.level.getLevelData(), level.dimension(), level.dimensionTypeRegistration(),
-			chunkRadius, simDistance, mc.levelRenderer, level.isDebug(), seed, level.getSeaLevel()
+			chunkRadius, simDistance, mc.levelExtractor, level.isDebug(), seed, level.getSeaLevel()
 		);
 
 		this.level = level;

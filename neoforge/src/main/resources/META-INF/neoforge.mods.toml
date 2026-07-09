@@ -18,6 +18,9 @@ config="ponder.mixins.json"
 [[mixins]]
 config="ponder-common.mixins.json"
 
+[[mixins]]
+config="ponder-common-client.mixins.json"
+
 [[dependencies.ponder]]
 modId = "neoforge"
 type="required"

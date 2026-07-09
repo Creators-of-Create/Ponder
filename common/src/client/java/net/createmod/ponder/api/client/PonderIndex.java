@@ -22,6 +22,7 @@ import net.createmod.ponder.impl.client.registration.DefaultSharedTextRegistrati
 import net.createmod.ponder.impl.client.registration.PonderLocalization;
 import net.createmod.ponder.impl.client.registration.PonderSceneRegistry;
 import net.createmod.ponder.impl.client.registration.PonderTagRegistry;
+import net.createmod.ponder.impl.config.PonderConfig;
 
 public class PonderIndex {
 
@@ -97,7 +98,6 @@ public class PonderIndex {
 	}
 
 	public static boolean editingModeActive() {
-		// FIXME: config
-		return true;//PonderConfig.client().editingMode.get();
+		return PonderConfig.client().editingMode.get();
 	}
 }

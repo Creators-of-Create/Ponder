@@ -7,8 +7,8 @@ import net.createmod.catnip.api.client.gui.element.BoxElement;
 import net.createmod.catnip.api.client.gui.element.DelegatedStencilElement;
 import net.createmod.catnip.api.client.gui.element.TextStencilElement;
 import net.createmod.catnip.api.client.gui.widget.BoxWidget;
-import net.createmod.catnip.config.ui.ConfigScreen;
-import net.createmod.ponder.enums.PonderGuiTextures;
+import net.createmod.catnip.api.client.config.ConfigScreen;
+import net.createmod.catnip.api.client.gui.texture.CatnipGuiTextures;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
@@ -29,14 +29,14 @@ public class EnumEntry extends ValueEntry<Enum<?>> {
 		valueText.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2,
 			height, width, UIRenderHelper.COLOR_TEXT));
 
-		DelegatedStencilElement l = PonderGuiTextures.ICON_CONFIG_PREV.asStencil();
+		DelegatedStencilElement l = CatnipGuiTextures.ICON_CONFIG_PREV.asStencil();
 		cycleLeft = new BoxWidget(0, 0, cycleWidth + 8, 16)
 			.withCustomBackground(BoxElement.COLOR_BACKGROUND_FLAT)
 			.showingElement(l)
 			.withCallback(() -> cycleValue(-1));
 		l.withElementRenderer(BoxWidget.gradientFactory.apply(cycleLeft));
 
-		DelegatedStencilElement r = PonderGuiTextures.ICON_CONFIG_NEXT.asStencil();
+		DelegatedStencilElement r = CatnipGuiTextures.ICON_CONFIG_NEXT.asStencil();
 		cycleRight = new BoxWidget(0, 0, cycleWidth + 8, 16)
 			.withCustomBackground(BoxElement.COLOR_BACKGROUND_FLAT)
 			.showingElement(r)

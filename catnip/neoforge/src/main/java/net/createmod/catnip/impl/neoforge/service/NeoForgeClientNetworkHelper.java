@@ -9,7 +9,6 @@ import java.util.Set;
 import net.createmod.catnip.api.client.network.ClientNetworkHelper;
 import net.createmod.catnip.api.client.network.ClientboundPayloadHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type;
 
@@ -38,7 +37,7 @@ public class NeoForgeClientNetworkHelper implements ClientNetworkHelper {
 				return;
 
 			e.register(type, ((payload, context) -> {
-				((ClientboundPayloadHandler) handler).handle(payload, (LocalPlayer) context.player());
+				((ClientboundPayloadHandler) handler).handle(payload, context.player());
 			}));
 		});
 	}

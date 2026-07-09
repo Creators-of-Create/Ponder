@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.createmod.ponder.api.client.level.PonderLevel;
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.createmod.catnip.api.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;

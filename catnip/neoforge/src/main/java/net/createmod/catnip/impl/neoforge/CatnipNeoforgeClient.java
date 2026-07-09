@@ -1,7 +1,5 @@
 package net.createmod.catnip.impl.neoforge;
 
-import java.util.function.Function;
-
 import net.createmod.catnip.api.Catnip;
 import net.createmod.catnip.api.client.command.ClientCommands;
 import net.createmod.catnip.api.client.event.AtlasStitchedCallback;
@@ -45,7 +43,7 @@ public final class CatnipNeoforgeClient {
 	private static void registerPictureInPictureRenderers(RegisterPictureInPictureRenderersEvent event) {
 		NeoForgeClientHooksHelper.PIP_RENDERERS.forEach((state, factory) -> {
 			//noinspection unchecked,rawtypes
-			event.register((Class<PictureInPictureRenderState>) state, (Function) factory);
+			event.register((Class<PictureInPictureRenderState>) state, (java.util.function.Supplier) factory);
 		});
 	}
 

@@ -1,15 +1,17 @@
 [versions]
-minecraft = "26.1.2"
-flywheel = "1.0.6-beta"
+minecraft = "26.2"
+flywheel = "1.0.7"
 
 # https://neoforged.net/
-neoforge = "26.1.2.75"
+neoforge = "26.2.0.8-beta"
+fml-loader = "11.0.13"
+night-config = "3.8.3"
 mdg = "2.0.+"
 
 # https://fabricmc.net/develop/
 loom = "1.16.+"
 fabric-loader = "0.19.3"
-fabric-api = "0.150.0+26.1.2"
+fabric-api = "0.154.2+26.2"
 
 # we need to manually depend on mixin (+extras) in common
 mixin = "0.17.3+mixin.0.8.7"
@@ -19,17 +21,22 @@ mixin-extras = "0.5.4"
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
+fml-loader = { module = "net.neoforged.fancymodloader:loader", version.ref = "fml-loader" }
+night-config-core = { module = "com.electronwill.night-config:core", version.ref = "night-config" }
+night-config-toml = { module = "com.electronwill.night-config:toml", version.ref = "night-config" }
 mixin = { module = "net.fabricmc:sponge-mixin", version.ref = "mixin" }
 mixin-extras = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixin-extras" }
 
-flywheel-neoforge-api = { module = "dev.engine-room.flywheel:flywheel-neoforge-api-26.1", version.ref = "flywheel" }
-flywheel-neoforge = { module = "dev.engine-room.flywheel:flywheel-neoforge-26.1", version.ref = "flywheel" }
-flywheel-fabric-api = { module = "dev.engine-room.flywheel:flywheel-fabric-api-26.1", version.ref = "flywheel" }
-flywheel-fabric = { module = "dev.engine-room.flywheel:flywheel-fabric-26.1", version.ref = "flywheel" }
+flywheel-neoforge-api = { module = "dev.engine-room.flywheel:flywheel-neoforge-api-26.2", version.ref = "flywheel" }
+flywheel-neoforge = { module = "dev.engine-room.flywheel:flywheel-neoforge-26.2", version.ref = "flywheel" }
+flywheel-fabric-api = { module = "dev.engine-room.flywheel:flywheel-fabric-api-26.2", version.ref = "flywheel" }
+flywheel-fabric = { module = "dev.engine-room.flywheel:flywheel-fabric-26.2", version.ref = "flywheel" }
 
 [bundles]
 fabric = [ "fabric-loader", "fabric-api" ]
 mixin = [ "mixin", "mixin-extras" ]
+neoforge-config = [ "neoforge", "fml-loader", "night-config-core", "night-config-toml" ]
 
 [plugins]
 mdg = { id = "net.neoforged.moddev", version.ref = "mdg" }

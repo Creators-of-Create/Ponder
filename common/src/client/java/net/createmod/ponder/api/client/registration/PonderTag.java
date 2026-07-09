@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 
 public class PonderTag implements ScreenElement {
 	/**
@@ -24,6 +25,10 @@ public class PonderTag implements ScreenElement {
 	private final Identifier id;
 	@Nullable
 	private final Identifier textureIconLocation;
+	@Nullable
+	private final ItemLike itemIconSource;
+	@Nullable
+	private final ItemLike mainItemSource;
 	private final ItemStack itemIcon;
 	private final ItemStack mainItem;
 
@@ -32,8 +37,20 @@ public class PonderTag implements ScreenElement {
 					 ItemStack mainItem) {
 		this.id = id;
 		this.textureIconLocation = textureIconLocation;
+		this.itemIconSource = null;
+		this.mainItemSource = null;
 		this.itemIcon = itemIcon;
 		this.mainItem = mainItem;
+	}
+
+	public PonderTag(Identifier id, @Nullable Identifier textureIconLocation, @Nullable ItemLike itemIcon,
+					 @Nullable ItemLike mainItem) {
+		this.id = id;
+		this.textureIconLocation = textureIconLocation;
+		this.itemIconSource = itemIcon;
+		this.mainItemSource = mainItem;
+		this.itemIcon = ItemStack.EMPTY;
+		this.mainItem = ItemStack.EMPTY;
 	}
 
 	public Identifier getId() {
@@ -41,6 +58,8 @@ public class PonderTag implements ScreenElement {
 	}
 
 	public ItemStack getMainItem() {
+		if (mainItemSource != null)
+			return new ItemStack(mainItemSource);
 		return mainItem;
 	}
 
@@ -59,8 +78,11 @@ public class PonderTag implements ScreenElement {
 		if (textureIconLocation != null) {
 			poseStack.scale(0.25f, 0.25f);
 			graphics.blit(RenderPipelines.GUI_TEXTURED, textureIconLocation, 0, 0, 0, 0, 0, 64, 64, 64, 64);
-		} else if (!itemIcon.isEmpty()) {
-			GuiGameElement.of(itemIcon)
+		} else {
+			ItemStack stack = itemIconSource != null ? new ItemStack(itemIconSource) : itemIcon;
+			if (stack.isEmpty())
+				return;
+			GuiGameElement.of(stack)
 				.scale(1.25f)
 				.at(-2, -2)
 				.submit(graphics);

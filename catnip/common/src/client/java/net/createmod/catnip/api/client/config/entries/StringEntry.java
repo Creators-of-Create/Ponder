@@ -1,6 +1,6 @@
 package net.createmod.catnip.api.client.config.entries;
 
-import net.createmod.catnip.config.ui.ConfigTextField;
+import net.createmod.catnip.api.client.config.ConfigTextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
@@ -30,7 +30,7 @@ public class StringEntry extends ValueEntry<String> {
 		textField.setX(getX() + getWidth() - 82 - resetWidth);
 		textField.setY(getY() + 8);
 		textField.setWidth(Math.min(getWidth() - getLabelWidth(getWidth()) - resetWidth, 60));
-		textField.render(graphics, mouseX, mouseY, partialTick);
+		textField.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
 	}
 

@@ -7,11 +7,10 @@ import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.QuadInstance;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.PrimitiveTopology;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.createmod.catnip.impl.client.mixin.BufferBuilderAccessor;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 
 @Deprecated(forRemoval = true)
@@ -33,7 +32,7 @@ public class ShadedBlockSbbBuilder implements VertexConsumer {
 	}
 
 	public void begin() {
-		bufferBuilder = new BufferBuilder(BYTE_BUFFER_BUILDER, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+		bufferBuilder = new BufferBuilder(BYTE_BUFFER_BUILDER, PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK);
 		shadeSwapVertices.clear();
 		currentShade = true;
 	}
@@ -59,7 +58,7 @@ public class ShadedBlockSbbBuilder implements VertexConsumer {
 
 	protected void prepareForGeometry(boolean shade) {
 		if (shade != currentShade) {
-			shadeSwapVertices.add(((BufferBuilderAccessor) bufferBuilder).catnip$getVertices());
+			shadeSwapVertices.add(0);
 			currentShade = shade;
 		}
 	}

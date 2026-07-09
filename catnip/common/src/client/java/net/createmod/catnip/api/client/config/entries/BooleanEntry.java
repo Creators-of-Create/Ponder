@@ -4,7 +4,7 @@ import net.createmod.catnip.api.client.gui.UIRenderHelper;
 import net.createmod.catnip.api.client.gui.element.RenderElement;
 import net.createmod.catnip.api.client.gui.widget.AbstractSimiWidget;
 import net.createmod.catnip.api.client.gui.widget.BoxWidget;
-import net.createmod.ponder.enums.PonderGuiTextures;
+import net.createmod.catnip.api.client.gui.texture.CatnipGuiTextures;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -18,11 +18,11 @@ public class BooleanEntry extends ValueEntry<Boolean> {
 	public BooleanEntry(String label, ModConfigSpec.ConfigValue<Boolean> value, ModConfigSpec.ValueSpec spec) {
 		super(label, value, spec);
 
-		enabled = PonderGuiTextures.ICON_CONFIRM.asStencil()
+		enabled = CatnipGuiTextures.ICON_CONFIRM.asStencil()
 			.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2, height, width, AbstractSimiWidget.COLOR_SUCCESS))
 			.at(10, 0);
 
-		disabled = PonderGuiTextures.ICON_DISABLE.asStencil()
+		disabled = CatnipGuiTextures.ICON_DISABLE.asStencil()
 			.withElementRenderer((ms, width, height, alpha) -> UIRenderHelper.angledGradient(ms, 0, 0, height / 2, height, width, AbstractSimiWidget.COLOR_FAIL))
 			.at(10, 0);
 

@@ -73,7 +73,7 @@ public final class PonderTooltipHandler {
 	}
 
 	private static void openPonder(Item item) {
-		Screen currentScreen = Minecraft.getInstance().screen;
+		Screen currentScreen = Minecraft.getInstance().gui.screen();
 		if (currentScreen instanceof NavigatableSimiScreen simiScreen) {
 			simiScreen.centerScalingOnMouse();
 		}
@@ -139,7 +139,7 @@ public final class PonderTooltipHandler {
 	}
 
 	private static Item determineHoveredItem() {
-		if (Minecraft.getInstance().screen == null)
+		if (Minecraft.getInstance().gui.screen() == null)
 			return Items.AIR;
 
 		for (HoveredItemProvider provider : hoveredItemProviders) {
@@ -170,7 +170,7 @@ public final class PonderTooltipHandler {
 	// when the hovered block is the current subject, we don't want to do this, since that would just
 	// open the same scene again. instead, replace it with a 'Subject of this scene' message.
 	private static boolean isCurrentPonderSubject(Item item) {
-		if (Minecraft.getInstance().screen instanceof PonderUI ponder) {
+		if (Minecraft.getInstance().gui.screen() instanceof PonderUI ponder) {
 			return ponder.getSubject().getItem() == item;
 		}
 

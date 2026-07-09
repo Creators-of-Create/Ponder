@@ -1,3 +1,5 @@
+import org.gradle.api.file.DuplicatesStrategy
+
 val compileOnly: Configuration by configurations.getting
 val commonJava: Configuration by configurations.dependencyScope("commonJava")
 val commonResources: Configuration by configurations.dependencyScope("commonResources")
@@ -21,9 +23,18 @@ val resolvableCommonResources: Configuration by configurations.resolvable("resol
     extendsFrom(commonResources)
 }
 
+val filteredCommonJava = resolvableCommonJava.asFileTree.matching {
+    exclude("**/generatedPackageInfos/net/createmod/catnip/net/base/package-info.java")
+    exclude("**/generatedPackageInfos/net/createmod/catnip/api/platform/package-info.java")
+    exclude("**/generatedPackageInfos/net/createmod/catnip/api/client/package-info.java")
+    exclude("net/createmod/catnip/net/base/package-info.java")
+    exclude("net/createmod/catnip/api/platform/package-info.java")
+    exclude("net/createmod/catnip/api/client/package-info.java")
+}
+
 tasks.named<JavaCompile>("compileJava") {
     dependsOn(resolvableCommonJava)
-    source(resolvableCommonJava)
+    source(filteredCommonJava)
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -32,6 +43,7 @@ tasks.named<ProcessResources>("processResources") {
 }
 
 tasks.named<Jar>("sourcesJar") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(resolvableCommonJava, resolvableCommonResources)
-    from(resolvableCommonJava, resolvableCommonResources)
+    from(filteredCommonJava, resolvableCommonResources)
 }

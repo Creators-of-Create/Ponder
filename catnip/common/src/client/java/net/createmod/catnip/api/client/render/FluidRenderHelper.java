@@ -7,7 +7,7 @@ import com.mojang.math.Axis;
 import net.createmod.catnip.api.client.platform.ClientFluidHelper;
 import net.createmod.catnip.api.data.Iterate;
 import net.createmod.catnip.api.platform.services.ModFluidHelper;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.createmod.catnip.api.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

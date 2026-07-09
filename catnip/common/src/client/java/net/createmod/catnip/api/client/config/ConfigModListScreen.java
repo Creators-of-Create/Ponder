@@ -56,8 +56,7 @@ public class ConfigModListScreen extends ConfigScreen {
 
 			return e1.id.compareToIgnoreCase(e2.id);
 		});
-		list.children().clear();
-		list.children().addAll(allEntries);
+		list.setEntries(allEntries);
 
 		goBack = new BoxWidget(width / 2 - listWidth / 2 - 30, height / 2 + 65, 20, 20).withPadding(2, 2)
 			.withCallback(() -> ScreenOpener.open(parent));
@@ -103,11 +102,11 @@ public class ConfigModListScreen extends ConfigScreen {
 		assert list != null;
 		assert this.search != null;
 
-		list.children().clear();
+		list.clearConfigEntries();
 		//todo include display names in search
 		for (ModEntry modEntry : allEntries) {
 			if (modEntry.id.contains(search.toLowerCase(Locale.ROOT))) {
-				list.children().add(modEntry);
+				list.addConfigEntry(modEntry);
 			}
 		}
 

@@ -2,7 +2,7 @@ package net.createmod.catnip.api.client.render;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.createmod.catnip.api.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 

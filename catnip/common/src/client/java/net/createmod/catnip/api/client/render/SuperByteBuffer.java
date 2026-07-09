@@ -1,14 +1,22 @@
 package net.createmod.catnip.api.client.render;
 
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.world.level.Level;
 
 import org.joml.Matrix4f;
+import org.joml.Matrix3fc;
+import org.joml.Matrix4fc;
+import org.joml.Quaternionfc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 
+import net.createmod.catnip.api.math.AngleHelper;
 import net.createmod.catnip.api.theme.Color;
+import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.world.phys.Vec3;
 
 public interface SuperByteBuffer {
 	static int maxLight(int packedLight1, int packedLight2) {
@@ -56,6 +64,14 @@ public interface SuperByteBuffer {
 
 	//
 
+	default <Self extends SuperByteBuffer> Self useLevelLight(Level level) {
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self useLevelLight(Level level, Matrix4f lightTransform) {
+		return self();
+	}
+
 	default void delete() {
 	}
 
@@ -70,6 +86,156 @@ public interface SuperByteBuffer {
 
 	default <Self extends SuperByteBuffer> Self shiftUVScrolling(SpriteShiftEntry entry, float scrollV) {
 		return this.shiftUVScrolling(entry, 0, scrollV);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <Self extends SuperByteBuffer> Self self() {
+		return (Self) this;
+	}
+
+	default <Self extends SuperByteBuffer> Self transform(PoseStack poseStack) {
+		getTransforms().mulPose(poseStack.last().pose());
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self mulPose(Matrix4fc pose) {
+		getTransforms().mulPose(pose);
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self mulNormal(Matrix3fc normal) {
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self translate(Vec3 vec) {
+		getTransforms().translate(vec);
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self translate(double x, double y, double z) {
+		getTransforms().translate(x, y, z);
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self translateBack(double x, double y, double z) {
+		return translate(-x, -y, -z);
+	}
+
+	default <Self extends SuperByteBuffer> Self translateBack(float x, float y, float z) {
+		return translate(-x, -y, -z);
+	}
+
+	default <Self extends SuperByteBuffer> Self translateBack(Vec3 vec) {
+		return translate(-vec.x, -vec.y, -vec.z);
+	}
+
+	default <Self extends SuperByteBuffer> Self nudge(int seed) {
+		double nudge = ((seed * 31L) & 0xFFFF) / 65535.0 * 1e-4;
+		return translate(nudge, nudge, nudge);
+	}
+
+	default <Self extends SuperByteBuffer> Self nudge(double x, double y, double z) {
+		return translate(x, y, z);
+	}
+
+	default <Self extends SuperByteBuffer> Self scale(float scale) {
+		return scale(scale, scale, scale);
+	}
+
+	default <Self extends SuperByteBuffer> Self scale(float x, float y, float z) {
+		getTransforms().scale(x, y, z);
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self center() {
+		return translate(.5, .5, .5);
+	}
+
+	default <Self extends SuperByteBuffer> Self uncenter() {
+		return translate(-.5, -.5, -.5);
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateXDegrees(float degrees) {
+		getTransforms().mulPose(Axis.XP.rotationDegrees(degrees));
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateYDegrees(float degrees) {
+		getTransforms().mulPose(Axis.YP.rotationDegrees(degrees));
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateZDegrees(float degrees) {
+		getTransforms().mulPose(Axis.ZP.rotationDegrees(degrees));
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self rotate(float radians, Direction axis) {
+		getTransforms().mulPose(axisFor(axis).rotation(radians * axis.getAxisDirection()
+			.getStep()));
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self rotate(double radians, Direction axis) {
+		return rotate((float) radians, axis);
+	}
+
+	default <Self extends SuperByteBuffer> Self rotate(Quaternionfc rotation) {
+		getTransforms().mulPose(rotation);
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateCentered(float radians, Direction axis) {
+		center();
+		rotate(radians, axis);
+		uncenter();
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateCentered(float radians, Axis axis) {
+		center();
+		getTransforms().mulPose(axis.rotation(radians));
+		uncenter();
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateCentered(double radians, Direction axis) {
+		return rotateCentered((float) radians, axis);
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateYCenteredDegrees(float degrees) {
+		return rotateCentered(com.mojang.math.Axis.YP.rotationDegrees(degrees));
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateXCenteredDegrees(float degrees) {
+		return rotateCentered(com.mojang.math.Axis.XP.rotationDegrees(degrees));
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateZCenteredDegrees(float degrees) {
+		return rotateCentered(com.mojang.math.Axis.ZP.rotationDegrees(degrees));
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateCentered(Quaternionfc rotation) {
+		center();
+		rotate(rotation);
+		uncenter();
+		return self();
+	}
+
+	default <Self extends SuperByteBuffer> Self rotateToFace(Direction facing) {
+		center();
+		rotateYDegrees(AngleHelper.horizontalAngle(facing));
+		rotateXDegrees(AngleHelper.verticalAngle(facing));
+		uncenter();
+		return self();
+	}
+
+	private static Axis axisFor(Direction direction) {
+		return switch (direction.getAxis()) {
+			case X -> Axis.XP;
+			case Y -> Axis.YP;
+			case Z -> Axis.ZP;
+		};
 	}
 
 	@FunctionalInterface

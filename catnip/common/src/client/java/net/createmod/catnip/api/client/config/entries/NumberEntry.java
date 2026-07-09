@@ -9,8 +9,8 @@ import org.jspecify.annotations.Nullable;
 import net.createmod.catnip.api.client.gui.UIRenderHelper;
 import net.createmod.catnip.api.client.gui.element.TextStencilElement;
 import net.createmod.catnip.api.client.gui.widget.AbstractSimiWidget;
-import net.createmod.catnip.config.ui.ConfigTextField;
-import net.createmod.catnip.config.ui.HintableTextFieldWidget;
+import net.createmod.catnip.api.client.config.ConfigTextField;
+import net.createmod.catnip.api.client.config.HintableTextFieldWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -144,7 +144,7 @@ public abstract class NumberEntry<T extends Number> extends ValueEntry<T> {
 		textField.setY(getY() + 8);
 		textField.setWidth(Math.min(getWidth() - getLabelWidth(getWidth()) - resetWidth - minOffset - maxOffset, 40));
 		textField.setHeight(20);
-		textField.render(graphics, mouseX, mouseY, partialTick);
+		textField.extractRenderState(graphics, mouseX, mouseY, partialTick);
 
 		if (minText != null)
 			minText

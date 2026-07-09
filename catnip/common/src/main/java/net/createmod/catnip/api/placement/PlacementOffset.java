@@ -5,7 +5,7 @@ import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
 
 import net.createmod.catnip.api.platform.services.ModHooksHelper;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerPlayer;

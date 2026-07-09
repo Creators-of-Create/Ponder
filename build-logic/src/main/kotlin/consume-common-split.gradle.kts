@@ -1,3 +1,5 @@
+import org.gradle.api.file.DuplicatesStrategy
+
 val compileOnly: Configuration by configurations.getting
 val clientCompileOnly: Configuration by configurations.getting
 
@@ -36,14 +38,32 @@ val resolvableCommonClientResources: Configuration by configurations.resolvable(
     extendsFrom(commonClientResources)
 }
 
+val filteredCommonMainJava = resolvableCommonMainJava.asFileTree.matching {
+    exclude("**/generatedPackageInfos/net/createmod/catnip/net/base/package-info.java")
+    exclude("**/generatedPackageInfos/net/createmod/catnip/api/platform/package-info.java")
+    exclude("**/generatedPackageInfos/net/createmod/catnip/api/client/package-info.java")
+    exclude("net/createmod/catnip/net/base/package-info.java")
+    exclude("net/createmod/catnip/api/platform/package-info.java")
+    exclude("net/createmod/catnip/api/client/package-info.java")
+}
+
+val filteredCommonClientJava = resolvableCommonClientJava.asFileTree.matching {
+    exclude("**/generatedPackageInfos/net/createmod/catnip/net/base/package-info.java")
+    exclude("**/generatedPackageInfos/net/createmod/catnip/api/platform/package-info.java")
+    exclude("**/generatedPackageInfos/net/createmod/catnip/api/client/package-info.java")
+    exclude("net/createmod/catnip/net/base/package-info.java")
+    exclude("net/createmod/catnip/api/platform/package-info.java")
+    exclude("net/createmod/catnip/api/client/package-info.java")
+}
+
 tasks.named<JavaCompile>("compileJava") {
     dependsOn(resolvableCommonMainJava)
-    source(resolvableCommonMainJava)
+    source(filteredCommonMainJava)
 }
 
 tasks.named<JavaCompile>("compileClientJava") {
     dependsOn(resolvableCommonClientJava)
-    source(resolvableCommonClientJava)
+    source(filteredCommonClientJava)
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -57,6 +77,7 @@ tasks.named<ProcessResources>("processClientResources") {
 }
 
 tasks.named<Jar>("sourcesJar") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(resolvableCommonMainJava, resolvableCommonMainResources)
-    from(resolvableCommonMainJava, resolvableCommonMainResources)
+    from(filteredCommonMainJava, resolvableCommonMainResources)
 }

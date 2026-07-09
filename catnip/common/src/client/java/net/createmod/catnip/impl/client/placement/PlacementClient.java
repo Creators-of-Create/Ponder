@@ -15,6 +15,7 @@ import net.createmod.catnip.api.animation.LerpedFloat;
 import net.createmod.catnip.api.client.gui.render.FadedArrowRenderState;
 import net.createmod.catnip.api.client.gui.render.TexturedArrowRenderState;
 import net.createmod.catnip.api.client.gui.texture.CatnipGuiTextures;
+import net.createmod.catnip.api.client.placement.PlacementAssistConfig;
 import net.createmod.catnip.api.client.placement.PlacementHelperRenderer;
 import net.createmod.catnip.api.math.AngleHelper;
 import net.createmod.catnip.api.math.VecHelper;
@@ -188,13 +189,12 @@ public class PlacementClient {
 
 		float length = 10;
 
-		// FIXME: config
-		// CClient.PlacementIndicatorSetting mode = PonderConfig.client().placementIndicator.get();
-		// if (mode == CClient.PlacementIndicatorSetting.TRIANGLE) {
-			// fadedArrow(graphics, centerX, centerY, r, g, b, a, length);
-		// } else if (mode == CClient.PlacementIndicatorSetting.TEXTURE) {
+		PlacementAssistConfig.IndicatorSetting mode = PlacementAssistConfig.get().placementIndicator();
+		if (mode == PlacementAssistConfig.IndicatorSetting.TRIANGLE) {
+			fadedArrow(graphics, centerX, centerY, r, g, b, a, length);
+		} else if (mode == PlacementAssistConfig.IndicatorSetting.TEXTURE) {
 			textured(graphics, centerX, centerY, a, snappedAngle);
-		// }
+		}
 	}
 
 	private static void fadedArrow(GuiGraphicsExtractor graphics, float centerX, float centerY, float r, float g, float b, float a, float length) {
@@ -202,8 +202,7 @@ public class PlacementClient {
 		poseStack.pushMatrix();
 		poseStack.translate(centerX, centerY);
 		poseStack.rotate(angle.getValue(0) * Constants.DEG_TO_RAD);
-		// FIXME: config
-		double scale = 1;//PonderConfig.client().indicatorScale.get();
+		double scale = PlacementAssistConfig.get().indicatorScale();
 		poseStack.scale((float) scale, (float) scale);
 
 		int size = (int) ((10 + length) * scale);
@@ -218,8 +217,7 @@ public class PlacementClient {
 		Matrix3x2fStack poseStack = graphics.pose();
 		poseStack.pushMatrix();
 		poseStack.translate(centerX, centerY);
-		// FIXME: config
-		float scale = /*PonderConfig.client().indicatorScale.get().floatValue()*/ 1 * .75f;
+		float scale = PlacementAssistConfig.get().indicatorScale() * .75f;
 		poseStack.scale(scale, scale);
 		poseStack.scale(12, 12);
 
@@ -254,7 +252,7 @@ public class PlacementClient {
 		 * Result is (dist right of center screen, dist up from center screen, if < 0,
 		 * then in front of view plane)
 		 */
-		Camera ari = Minecraft.getInstance().gameRenderer.getMainCamera();
+		Camera ari = Minecraft.getInstance().gameRenderer.mainCamera();
 		Vec3 cameraPos = ari.position();
 		Quaternionf cameraRotationConj = new Quaternionf(ari.rotation());
 		cameraRotationConj.conjugate();

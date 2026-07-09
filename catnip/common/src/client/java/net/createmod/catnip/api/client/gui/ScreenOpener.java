@@ -17,7 +17,7 @@ public class ScreenOpener {
 	private static Screen backSteppedFrom = null;
 
 	public static void open(@Nullable Screen screen) {
-		open(Minecraft.getInstance().screen, screen);
+		open(Minecraft.getInstance().gui.screen(), screen);
 	}
 
 	public static void open(@Nullable Screen current, @Nullable Screen toOpen) {
@@ -73,7 +73,7 @@ public class ScreenOpener {
 		if (!screen.isEquivalentTo((NavigatableSimiScreen) previouslyRenderedScreen))
 			return false;
 
-		openPreviousScreen(Minecraft.getInstance().screen, screen);
+		openPreviousScreen(Minecraft.getInstance().gui.screen(), screen);
 		return true;
 	}
 
@@ -97,8 +97,7 @@ public class ScreenOpener {
 
 	private static void openScreen(@Nullable Screen screen) {
 		Minecraft.getInstance().schedule(() -> {
-			Minecraft.getInstance()
-				.setScreen(screen);
+			Minecraft.getInstance().gui.setScreen(screen);
 			Screen previouslyRenderedScreen = getPreviouslyRenderedScreen();
 			if (previouslyRenderedScreen != null && screen instanceof NavigatableSimiScreen)
 				previouslyRenderedScreen.init(screen.width, screen.height);

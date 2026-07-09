@@ -10,7 +10,7 @@ import net.createmod.catnip.api.animation.LerpedFloat;
 import net.createmod.ponder.api.client.element.AnimatedSceneElement;
 import net.createmod.ponder.api.client.level.PonderLevel;
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.createmod.catnip.api.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.util.LightCoordsUtil;

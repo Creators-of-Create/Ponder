@@ -5,8 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.createmod.catnip.api.client.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.api.client.render.model.BakedModelBufferer;
-import net.createmod.catnip.impl.client.placement.PlacementClient;
-import net.createmod.catnip.impl.client.render.ColoringVertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
@@ -49,8 +47,7 @@ public abstract class GhostBlockRenderer {
 			BlockState state = params.state;
 			BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
 			BlockPos pos = params.pos;
-			float alpha = params.alphaSupplier.get() * .75f * PlacementClient.getCurrentAlpha();
-			VertexConsumer vb = new ColoringVertexConsumer(buffer.getEarlyBuffer(ChunkSectionLayer.TRANSLUCENT), 1, 1, 1, alpha);
+			VertexConsumer vb = buffer.getEarlyBuffer(ChunkSectionLayer.TRANSLUCENT);
 
 			ms.pushPose();
 			ms.translate(pos.getX() - camera.x, pos.getY() - camera.y, pos.getZ() - camera.z);

@@ -6,6 +6,8 @@ plugins {
 dependencies {
     minecraft(libs.minecraft)
     compileOnly(libs.bundles.mixin)
+    compileOnlyApi(libs.bundles.neoforge.config)
+    clientCompileOnly(libs.bundles.neoforge.config)
 }
 
 loom {

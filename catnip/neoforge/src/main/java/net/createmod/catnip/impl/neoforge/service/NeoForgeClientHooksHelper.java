@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -31,8 +30,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
+import net.createmod.catnip.api.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
@@ -47,7 +45,7 @@ public class NeoForgeClientHooksHelper implements ModClientHooksHelper {
 	private static final Supplier<Map<Identifier, ParticleProvider<?>>> particleProviders = () -> Minecraft.getInstance().particleEngine.resourceManager.getProviders();
 
 	@Internal
-	public static final Map<Class<?>, Function<BufferSource, PictureInPictureRenderer<?>>> PIP_RENDERERS = new HashMap<>();
+	public static final Map<Class<?>, Supplier<PictureInPictureRenderer<?>>> PIP_RENDERERS = new HashMap<>();
 
 	@Override
 	public Locale getCurrentLocale() {
@@ -77,7 +75,7 @@ public class NeoForgeClientHooksHelper implements ModClientHooksHelper {
 	}
 
 	@Override
-	public void registerPictureInPictureRenderer(Class<?> stateClass, Function<BufferSource, PictureInPictureRenderer<?>> factory) {
+	public void registerPictureInPictureRenderer(Class<?> stateClass, Supplier<PictureInPictureRenderer<?>> factory) {
 		PIP_RENDERERS.put(stateClass, factory);
 	}
 

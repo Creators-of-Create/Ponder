@@ -1,6 +1,8 @@
 package net.createmod.catnip.api.client.config;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -10,7 +12,6 @@ import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.createmod.catnip.api.animation.LerpedFloat;
@@ -45,24 +46,31 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 	}
 
 	@Override
-	public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+	public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
 		Color c = new Color(0x60_000000);
 		UIRenderHelper.angledGradient(graphics, 90, getX() + width / 2, getY(), width, 5, c, Color.TRANSPARENT_BLACK);
 		UIRenderHelper.angledGradient(graphics, -90, getX() + width / 2, getBottom(), width, 5, c, Color.TRANSPARENT_BLACK);
 		UIRenderHelper.angledGradient(graphics, 0, getX(), getY() + height / 2, height, 5, c, Color.TRANSPARENT_BLACK);
 		UIRenderHelper.angledGradient(graphics, 180, getRight(), getY() + height / 2, height, 5, c, Color.TRANSPARENT_BLACK);
 
-		super.render(graphics, mouseX, mouseY, partialTicks);
+		super.extractWidgetRenderState(graphics, mouseX, mouseY, partialTicks);
 	}
 
-	@Override
-	protected void renderListItems(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-		Window window = minecraft.getWindow();
-		double d0 = window.getGuiScale();
-		// TODO - Check is this still works here
-		RenderSystem.enableScissorForRenderTypeDraws((int) (getX() * d0), (int) (window.getHeight() - (getBottom() * d0)), (int) (this.width * d0), (int) (this.height * d0));
-		super.renderListItems(graphics, mouseX, mouseY, partialTick);
-		RenderSystem.disableScissorForRenderTypeDraws();
+	public void setEntries(Collection<? extends Entry> entries) {
+		clearEntries();
+		entries.forEach(this::addConfigEntry);
+	}
+
+	public void clearConfigEntries() {
+		clearEntries();
+	}
+
+	public void addConfigEntry(Entry entry) {
+		addEntry(entry);
+	}
+
+	public void sortEntries(Comparator<Entry> comparator) {
+		sort(comparator);
 	}
 
 	@Override
@@ -174,6 +182,14 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 				return false;
 			}
 			return net.createmod.catnip.api.config.ConfigHelper.changes.containsKey(path);
+		}
+
+		@Override
+		public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
+			renderContent(graphics, mouseX, mouseY, hovered, partialTick);
+		}
+
+		public void renderContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float partialTick) {
 		}
 	}
 

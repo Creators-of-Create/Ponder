@@ -203,8 +203,8 @@ public class ConfigHelper {
 	}
 
 	public static class ConfigChange {
-		Object value;
-		Map<String, String> annotations = new HashMap<>();
+		public final Object value;
+		public final Map<String, String> annotations = new HashMap<>();
 
 		ConfigChange(Object value) {
 			this.value = value;

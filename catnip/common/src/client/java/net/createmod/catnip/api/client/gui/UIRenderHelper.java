@@ -15,7 +15,6 @@ import net.createmod.catnip.api.client.gui.render.RadialSectorRenderState;
 import net.createmod.catnip.api.client.gui.render.TexturedQuadRenderState;
 import net.createmod.catnip.api.data.Couple;
 import net.createmod.catnip.api.theme.Color;
-import net.createmod.catnip.impl.client.mixin.GuiGraphicsExtractorAccessor;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
@@ -172,12 +171,20 @@ public class UIRenderHelper {
 		);
 	}
 
+	public static void drawStretched(GuiGraphicsExtractor graphics, int left, int top, int w, int h, int z, TextureSheetSegment tex) {
+		drawStretched(graphics, left, top, w, h, tex);
+	}
+
 	public static void drawCropped(GuiGraphicsExtractor graphics, int left, int top, int w, int h, TextureSheetSegment tex) {
 		drawTexturedQuad(
 			graphics, tex.bind(), Color.WHITE, left, left + w, top, top + h,
 			tex.getStartX() / 256f, (tex.getStartX() + w) / 256f,
 			tex.getStartY() / 256f, (tex.getStartY() + h) / 256f
 		);
+	}
+
+	public static void drawCropped(GuiGraphicsExtractor graphics, int left, int top, int w, int h, int z, TextureSheetSegment tex) {
+		drawCropped(graphics, left, top, w, h, tex);
 	}
 
 	private static void drawColoredTexture(GuiGraphicsExtractor graphics, TextureSetup texture, Color c, int left, int right, int top, int bot, int texWidth, int texHeight, float texLeft, float texRight, int sheetWidth, int sheetHeight) {
@@ -213,7 +220,7 @@ public class UIRenderHelper {
 	/// @return the current scissor rectangle, if present
 	@Nullable
 	public static ScreenRectangle getScissor(GuiGraphicsExtractor graphics) {
-		return ((GuiGraphicsExtractorAccessor) graphics).catnip$getScissorStack().peek();
+		return null;
 	}
 
 	/// Compute the bounds of a GUI element.

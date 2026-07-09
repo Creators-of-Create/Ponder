@@ -15,12 +15,6 @@ credits = "${contributors}"
 [[mixins]]
 config = "catnip-common.mixins.json"
 
-[[mixins]]
-config = "catnip-common-client.mixins.json"
-
-[[mixins]]
-config = "catnip-neoforge.mixins.json"
-
 [[dependencies.catnip]]
 modId = "neoforge"
 type="required"

@@ -34,9 +34,10 @@ import net.createmod.ponder.api.client.scene.PonderScene;
 import net.createmod.ponder.api.client.scene.Selection;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.createmod.catnip.api.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -45,6 +46,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -355,7 +357,9 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 			poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
 			BlockState state = level.getBlockState(pos);
 			BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state);
-			queue.submitBreakingBlockModel(poseStack, model, state.getSeed(pos), progress);
+			List<BlockStateModelPart> parts = new ArrayList<>();
+			model.collectParts(RandomSource.create(state.getSeed(pos)), parts);
+			queue.submitBreakingBlockModel(poseStack, parts, progress);
 			poseStack.popPose();
 		}
 

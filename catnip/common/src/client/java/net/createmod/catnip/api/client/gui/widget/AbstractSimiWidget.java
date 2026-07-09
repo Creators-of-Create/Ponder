@@ -106,6 +106,10 @@ public abstract class AbstractSimiWidget extends AbstractWidget implements Ticka
 		this.wasHovered = this.isHoveredOrFocused();
 	}
 
+	public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+		extractRenderState(graphics, mouseX, mouseY, partialTicks);
+	}
+
 	protected void renderTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
 		if (this.isHovered()) {
 			List<Component> tooltip = this.getToolTip();

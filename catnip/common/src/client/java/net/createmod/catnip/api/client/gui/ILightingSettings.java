@@ -19,6 +19,6 @@ public interface ILightingSettings {
 	}
 
 	static ILightingSettings setupFor(Entry entry) {
-		return () -> Minecraft.getInstance().gameRenderer.getLighting().setupFor(entry);
+		return () -> Minecraft.getInstance().gameRenderer.lighting().setupFor(entry);
 	}
 }

@@ -11,7 +11,14 @@ plugins {
 
 rootProject.name = "ponder"
 
-for (platform in listOf("common", "fabric", "neoforge")) {
+val platforms = providers.gradleProperty("ponder.platforms")
+    .orNull
+    ?.split(",")
+    ?.map(String::trim)
+    ?.filter(String::isNotEmpty)
+    ?: listOf("common", "fabric", "neoforge")
+
+for (platform in platforms) {
     include(platform)
 
     include(":catnip:$platform")

@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.createmod.catnip.api.client.render.MultiBufferSource;
 import net.minecraft.client.renderer.SectionBufferBuilderPack;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -65,7 +65,7 @@ public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
 		private final SectionBufferBuilderPack fixedBufferPack = new SectionBufferBuilderPack();
 		private final SortedMap<RenderType, ByteBufferBuilder> fixedBuffers = Util.make(new Object2ObjectLinkedOpenHashMap<>(), map -> {
 			// map.put(Sheets.solidBlockSheet(), fixedBufferPack.buffer(ChunkSectionLayer.SOLID));
-			map.put(Sheets.cutoutBlockSheet(), fixedBufferPack.buffer(ChunkSectionLayer.CUTOUT));
+			map.put(Sheets.cutoutBlockItemSheet(), fixedBufferPack.buffer(ChunkSectionLayer.CUTOUT));
 			map.put(Sheets.translucentItemSheet(), fixedBufferPack.buffer(ChunkSectionLayer.TRANSLUCENT));
 			put(map, Sheets.translucentBlockItemSheet());
 			// put(map, Sheets.shieldSheet());
@@ -86,7 +86,7 @@ public class DefaultSuperRenderTypeBuffer implements SuperRenderTypeBuffer {
 		private final BufferSource bufferSource = MultiBufferSource.immediateWithBuffers(fixedBuffers, new ByteBufferBuilder(256));
 
 		private static void put(Object2ObjectLinkedOpenHashMap<RenderType, ByteBufferBuilder> map, RenderType type) {
-			map.put(type, new ByteBufferBuilder(type.bufferSize()));
+			map.put(type, new ByteBufferBuilder(RenderType.SMALL_BUFFER_SIZE));
 		}
 	}
 }

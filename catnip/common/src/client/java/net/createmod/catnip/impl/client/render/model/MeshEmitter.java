@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.ByteBufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.PrimitiveTopology;
 
 import net.createmod.catnip.api.client.render.model.ShadeSeparatedResultConsumer;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
@@ -45,10 +46,10 @@ class MeshEmitter {
 
 	private void prepareForGeometry(boolean shade) {
 		if (bufferBuilder == null) {
-			bufferBuilder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+			bufferBuilder = new BufferBuilder(byteBufferBuilder, PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK);
 		} else if (shade != currentShade) {
 			emit();
-			bufferBuilder = new BufferBuilder(byteBufferBuilder, VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
+			bufferBuilder = new BufferBuilder(byteBufferBuilder, PrimitiveTopology.QUADS, DefaultVertexFormat.BLOCK);
 		}
 
 		currentShade = shade;

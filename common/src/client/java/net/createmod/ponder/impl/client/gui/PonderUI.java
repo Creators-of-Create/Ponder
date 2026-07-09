@@ -54,6 +54,7 @@ import net.createmod.ponder.impl.client.element.TextWindowElement;
 import net.createmod.ponder.impl.client.gui.element.PonderButton;
 import net.createmod.ponder.impl.client.gui.element.PonderProgressBar;
 import net.createmod.ponder.impl.client.plugin.DebugScenes;
+import net.createmod.ponder.impl.config.PonderConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -616,7 +617,7 @@ public class PonderUI extends AbstractPonderScreen {
 			slide,
 			finishingFlash,
 			partialTicks,
-			Minecraft.getInstance().gameRenderer.getGameRenderState().windowRenderState
+			Minecraft.getInstance().gameRenderer.gameRenderState().windowRenderState
 		));
 
 		RenderSystem.restoreProjectionMatrix();
@@ -1058,7 +1059,7 @@ public class PonderUI extends AbstractPonderScreen {
 	public static float getPartialTicks() {
 		float renderPartialTicks = AnimationTickHolder.getGuiPartialTicks();
 
-		if (Minecraft.getInstance().screen instanceof PonderUI ui) {
+		if (Minecraft.getInstance().gui.screen() instanceof PonderUI ui) {
 			if (ui.identifyMode)
 				return ponderPartialTicksPaused;
 
@@ -1084,12 +1085,10 @@ public class PonderUI extends AbstractPonderScreen {
 	}
 
 	public boolean isComfyReadingEnabled() {
-		// FIXME: config
-		return false;//PonderConfig.client().comfyReading.get();
+		return PonderConfig.client().comfyReading.get();
 	}
 
 	public void setComfyReadingEnabled(boolean slowTextMode) {
-		// FIXME: config
-		//PonderConfig.client().comfyReading.set(slowTextMode);
+		PonderConfig.client().comfyReading.set(slowTextMode);
 	}
 }

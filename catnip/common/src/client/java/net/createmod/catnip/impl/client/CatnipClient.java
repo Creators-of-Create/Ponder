@@ -71,7 +71,7 @@ public final class CatnipClient {
 	}
 
 	public static void onLevelRender(LevelRenderer renderer, LevelRenderState state, PoseStack transforms) {
-		Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+		Vec3 cameraPos = Minecraft.getInstance().gameRenderer.mainCamera().position();
 		float partialTicks = AnimationTickHolder.getPartialTicks();
 
 		transforms.pushPose();

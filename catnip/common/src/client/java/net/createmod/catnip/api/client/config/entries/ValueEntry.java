@@ -20,9 +20,9 @@ import net.createmod.catnip.api.client.lang.FontHelper;
 import net.createmod.catnip.api.client.lang.FontHelper.Palette;
 import net.createmod.catnip.api.config.ConfigHelper;
 import net.createmod.catnip.api.data.Pair;
-import net.createmod.catnip.config.ui.ConfigScreenList;
-import net.createmod.catnip.config.ui.SubMenuConfigScreen;
-import net.createmod.ponder.enums.PonderGuiTextures;
+import net.createmod.catnip.api.client.config.ConfigScreenList;
+import net.createmod.catnip.api.client.config.SubMenuConfigScreen;
+import net.createmod.catnip.api.client.gui.texture.CatnipGuiTextures;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -51,7 +51,7 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 		this.path = String.join(".", value.getPath());
 
 		resetButton = new BoxWidget(0, 0, resetWidth - 12, 16)
-			.showingElement(PonderGuiTextures.ICON_CONFIG_RESET.asStencil())
+			.showingElement(CatnipGuiTextures.ICON_CONFIG_RESET.asStencil())
 			.withCallback(() -> {
 				setValue((T) spec.getDefault());
 				this.onReset();
@@ -123,7 +123,7 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 
 		// workaround while config type isn't available here yet.
 		ModConfig.Type configType = ModConfig.Type.CLIENT;
-		Screen screen = Minecraft.getInstance().screen;
+		Screen screen = Minecraft.getInstance().gui.screen();
 		if (screen instanceof SubMenuConfigScreen subMenuScreen) {
 			configType = subMenuScreen.type;
 		}
@@ -141,7 +141,7 @@ public class ValueEntry<T> extends ConfigScreenList.LabeledEntry {
 		super.renderContent(graphics, mouseX, mouseY, isHovering, partialTick);
 
 		resetButton.setX(getX() + getWidth() - resetWidth + 6);
-		resetButton.setX(getY() + 10);
+		resetButton.setY(getY() + 10);
 		resetButton.render(graphics, mouseX, mouseY, partialTick);
 	}
 

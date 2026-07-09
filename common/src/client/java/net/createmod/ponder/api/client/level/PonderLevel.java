@@ -27,7 +27,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.SubmitNodeStorage;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -40,6 +39,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.BlockGetter;
@@ -97,7 +97,7 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 				TagValueOutput output = TagValueOutput.createWithContext(reporter, registryAccess());
 				e.save(output);
 				ValueInput input = TagValueInput.create(reporter, registryAccess(), output.buildResult());
-				EntityType.create(input, this, EntitySpawnReason.LOAD).ifPresent(originalEntities::add);
+				EntityType.create(input, this, new EntitySpawnRequest(EntitySpawnReason.LOAD, false)).ifPresent(originalEntities::add);
 			}
 		});
 	}
@@ -120,7 +120,7 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 				TagValueOutput output = TagValueOutput.createWithContext(reporter, registryAccess());
 				e.save(output);
 				ValueInput input = TagValueInput.create(reporter, registryAccess(), output.buildResult());
-				EntityType.create(input, this, EntitySpawnReason.LOAD).ifPresent(originalEntities::add);
+				EntityType.create(input, this, new EntitySpawnRequest(EntitySpawnReason.LOAD, false)).ifPresent(entities::add);
 			}
 		});
 		particles.clearEffects();
@@ -233,7 +233,7 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 		}
 	}
 
-	public void renderParticles(PoseStack ms, SubmitNodeStorage queue, Camera camera,
+	public void renderParticles(PoseStack ms, SubmitNodeCollector queue, Camera camera,
 								CameraRenderState cameraRenderState, float pt) {
 		particles.renderParticles(ms, queue, camera, cameraRenderState, pt);
 	}
