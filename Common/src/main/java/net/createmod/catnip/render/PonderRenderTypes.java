@@ -17,7 +17,7 @@ public abstract class PonderRenderTypes extends RenderType {
 
 	private static final RenderType OUTLINE_SOLID =
 		RenderTypeAccessor.catnip$create(createLayerName("outline_solid"), DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, false, RenderType.CompositeState.builder()
-			.setShaderState(RENDERTYPE_ENTITY_SOLID_SHADER)
+			.setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_CULL_SHADER)
 			.setTextureState(new RenderStateShard.TextureStateShard(PonderSpecialTextures.BLANK.getLocation(), false, false))
 			.setCullState(CULL)
 			.setLightmapState(LIGHTMAP)
