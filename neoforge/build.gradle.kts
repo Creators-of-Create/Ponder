@@ -33,7 +33,7 @@ neoForge {
 
 dependencies {
     api(project(":catnip:neoforge"))
-    api(libs.flywheel.neoforge) {
+    compileOnly(libs.flywheel.neoforge) {
         capabilities {
             requireFeature("api")
         }

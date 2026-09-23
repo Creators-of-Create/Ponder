@@ -30,7 +30,7 @@ neoForge {
 }
 
 dependencies {
-    api(libs.flywheel.neoforge) {
+    compileOnly(libs.flywheel.neoforge) {
         capabilities {
             requireFeature("api")
         }

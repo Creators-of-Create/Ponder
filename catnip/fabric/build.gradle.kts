@@ -29,7 +29,7 @@ dependencies {
     minecraft(libs.minecraft)
     implementation(libs.bundles.fabric)
 
-    api(libs.flywheel.fabric) {
+    compileOnly(libs.flywheel.fabric) {
         capabilities {
             requireFeature("api")
         }
