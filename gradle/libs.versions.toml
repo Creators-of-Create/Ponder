@@ -1,6 +1,6 @@
 [versions]
 minecraft = "26.1.2"
-flywheel = "1.0.6-beta"
+flywheel = "1.0.6-mc26.1-7"
 
 # https://neoforged.net/
 neoforge = "26.1.2.75"
@@ -22,10 +22,8 @@ fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fab
 mixin = { module = "net.fabricmc:sponge-mixin", version.ref = "mixin" }
 mixin-extras = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixin-extras" }
 
-flywheel-neoforge-api = { module = "dev.engine-room.flywheel:flywheel-neoforge-api-26.1", version.ref = "flywheel" }
-flywheel-neoforge = { module = "dev.engine-room.flywheel:flywheel-neoforge-26.1", version.ref = "flywheel" }
-flywheel-fabric-api = { module = "dev.engine-room.flywheel:flywheel-fabric-api-26.1", version.ref = "flywheel" }
-flywheel-fabric = { module = "dev.engine-room.flywheel:flywheel-fabric-26.1", version.ref = "flywheel" }
+flywheel-neoforge = { module = "dev.engine-room.flywheel:flywheel-neoforge", version.ref = "flywheel" }
+flywheel-fabric = { module = "dev.engine-room.flywheel:flywheel-fabric", version.ref = "flywheel" }
 
 [bundles]
 fabric = [ "fabric-loader", "fabric-api" ]

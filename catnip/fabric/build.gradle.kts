@@ -29,6 +29,10 @@ dependencies {
     minecraft(libs.minecraft)
     implementation(libs.bundles.fabric)
 
-    api(libs.flywheel.fabric.api)
-    runtimeOnly(libs.flywheel.fabric.asProvider())
+    api(libs.flywheel.fabric) {
+        capabilities {
+            requireFeature("api")
+        }
+    }
+    runtimeOnly(libs.flywheel.fabric)
 }

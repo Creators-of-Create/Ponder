@@ -23,9 +23,10 @@ loom {
     }
 }
 
-tasks.runClientRenderDoc {
-    renderDocExecutable = file("/usr/bin/renderdoccmd")
-}
+// runClientRenderDoc doesn't exist on MacOS
+//tasks.runClientRenderDoc {
+//    renderDocExecutable = file("/usr/bin/renderdoccmd")
+//}
 
 dependencies {
     minecraft(libs.minecraft)

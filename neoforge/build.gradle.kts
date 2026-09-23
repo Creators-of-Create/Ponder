@@ -33,6 +33,10 @@ neoForge {
 
 dependencies {
     api(project(":catnip:neoforge"))
-    api(libs.flywheel.neoforge.api)
-    runtimeOnly(libs.flywheel.neoforge.asProvider())
+    api(libs.flywheel.neoforge) {
+        capabilities {
+            requireFeature("api")
+        }
+    }
+    runtimeOnly(libs.flywheel.neoforge)
 }
