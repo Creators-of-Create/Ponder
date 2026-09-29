@@ -13,14 +13,14 @@ loom {
 
     runs {
         named("server") {
-            runDir = "run/server"
+            runDirectory = file("run/server")
         }
 
         configureEach {
-            ideConfigGenerated(true)
-            vmArg("-Dmixin.debug.export=true")
-            vmArg("-XX:+IgnoreUnrecognizedVMOptions")
-            vmArg("-XX:+AllowEnhancedClassRedefinition")
+            generateRunConfig = true
+            jvmArguments.add("-Dmixin.debug.export=true")
+            jvmArguments.add("-XX:+IgnoreUnrecognizedVMOptions")
+            jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
         }
     }
 }

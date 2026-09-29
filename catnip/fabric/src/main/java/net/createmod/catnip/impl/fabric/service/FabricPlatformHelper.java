@@ -1,15 +1,16 @@
 package net.createmod.catnip.impl.fabric.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.SequencedSet;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
+import net.createmod.catnip.impl.config.ConfigHelper;
 import net.createmod.catnip.api.platform.Env;
 import net.createmod.catnip.api.platform.Loader;
 import net.createmod.catnip.api.platform.services.PlatformHelper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 
 public class FabricPlatformHelper implements PlatformHelper {
 	@Override
@@ -33,19 +34,17 @@ public class FabricPlatformHelper implements PlatformHelper {
 	}
 
 	@Override
-	public List<String> getLoadedMods() {
-		List<String> modIds = new ArrayList<>();
-		for (ModContainer mod : FabricLoader.getInstance().getAllMods())
-			modIds.add(mod.getMetadata().getId());
-		return modIds;
+	public SequencedSet<String> getLoadedModIds() {
+		return FabricLoader.getInstance().getAllMods().stream()
+			.map(mod -> mod.getMetadata().getId())
+			.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 	@Override
 	public String getModDisplayName(String modId) {
 		return FabricLoader.getInstance().getModContainer(modId)
 				.map(mod -> mod.getMetadata().getName())
-				.orElse("h"); // FIXME: config
-				// .orElse(ConfigScreen.toHumanReadable(modId));
+				.orElse(ConfigHelper.toHumanReadable(modId));
 	}
 
 	@Override

@@ -3,6 +3,8 @@ package net.createmod.catnip.impl.client.placement;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.createmod.catnip.impl.config.CatnipModConfig;
+
 import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fStack;
 import org.joml.Quaternionf;
@@ -188,13 +190,11 @@ public class PlacementClient {
 
 		float length = 10;
 
-		// FIXME: config
-		// CClient.PlacementIndicatorSetting mode = PonderConfig.client().placementIndicator.get();
-		// if (mode == CClient.PlacementIndicatorSetting.TRIANGLE) {
-			// fadedArrow(graphics, centerX, centerY, r, g, b, a, length);
-		// } else if (mode == CClient.PlacementIndicatorSetting.TEXTURE) {
-			textured(graphics, centerX, centerY, a, snappedAngle);
-		// }
+		switch (CatnipModConfig.INSTANCE.placementIndicator.get()) {
+			case TEXTURE -> textured(graphics, centerX, centerY, a, snappedAngle);
+			case TRIANGLE -> fadedArrow(graphics, centerX, centerY, r, g, b, a, length);
+			case NONE -> {}
+		}
 	}
 
 	private static void fadedArrow(GuiGraphicsExtractor graphics, float centerX, float centerY, float r, float g, float b, float a, float length) {
@@ -202,9 +202,8 @@ public class PlacementClient {
 		poseStack.pushMatrix();
 		poseStack.translate(centerX, centerY);
 		poseStack.rotate(angle.getValue(0) * Constants.DEG_TO_RAD);
-		// FIXME: config
-		double scale = 1;//PonderConfig.client().indicatorScale.get();
-		poseStack.scale((float) scale, (float) scale);
+		float scale = CatnipModConfig.INSTANCE.indicatorScale.get();
+		poseStack.scale(scale, scale);
 
 		int size = (int) ((10 + length) * scale);
 		graphics.guiRenderState.addGuiElement(new FadedArrowRenderState(
@@ -218,8 +217,7 @@ public class PlacementClient {
 		Matrix3x2fStack poseStack = graphics.pose();
 		poseStack.pushMatrix();
 		poseStack.translate(centerX, centerY);
-		// FIXME: config
-		float scale = /*PonderConfig.client().indicatorScale.get().floatValue()*/ 1 * .75f;
+		float scale = CatnipModConfig.INSTANCE.indicatorScale.get() * .75f;
 		poseStack.scale(scale, scale);
 		poseStack.scale(12, 12);
 

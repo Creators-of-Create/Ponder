@@ -1,6 +1,7 @@
 package net.createmod.catnip.api.platform.services;
 
 import java.util.List;
+import java.util.SequencedSet;
 import java.util.function.Supplier;
 
 import net.createmod.catnip.api.platform.Env;
@@ -39,7 +40,8 @@ public interface PlatformHelper {
 	 */
 	boolean isDevelopmentEnvironment();
 
-	List<String> getLoadedMods();
+	/// @return the set of IDs for each loaded mod, in the order provided by the loader
+	SequencedSet<String> getLoadedModIds();
 
 	String getModDisplayName(String modId);
 

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import net.createmod.ponder.impl.client.PonderClientConfig;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -97,7 +99,6 @@ public class PonderIndex {
 	}
 
 	public static boolean editingModeActive() {
-		// FIXME: config
-		return true;//PonderConfig.client().editingMode.get();
+		PonderClientConfig.INSTANCE.editingMode.get();
 	}
 }

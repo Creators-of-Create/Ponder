@@ -14,7 +14,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 
 public class BoxWidget extends ElementWidget {
-	public static final Function<BoxWidget, FadableScreenElement> gradientFactory = (box) -> (ms, w, h, alpha) -> UIRenderHelper.angledGradient(ms, 90, w / 2, -2, w + 4, h + 4, box.gradientColor);
+	public static final Function<BoxWidget, FadableScreenElement> GRADIENT_FACTORY = (box) -> (ms, w, h, _) -> UIRenderHelper.angledGradient(ms, 90, w / 2, -2, w + 4, h + 4, box.gradientColor);
 
 	protected BoxElement box;
 

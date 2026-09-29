@@ -1,8 +1,8 @@
-val compileOnly: Configuration by configurations.getting
-val commonJava: Configuration by configurations.dependencyScope("commonJava")
-val commonResources: Configuration by configurations.dependencyScope("commonResources")
+val compileOnly: Configuration = configurations["compileOnly"]
+val commonJava: Configuration = configurations.dependencyScope("commonJava").get()
+val commonResources: Configuration = configurations.dependencyScope("commonResources").get()
 
-val commonPath = project.parent!!.path + ":common"
+val commonPath = ":${project.name.substringBeforeLast("-")}-common"
 
 dependencies {
     compileOnly(project(commonPath))
@@ -13,11 +13,11 @@ dependencies {
     commonResources(project(path = commonPath, configuration = "commonClientResources"))
 }
 
-val resolvableCommonJava: Configuration by configurations.resolvable("resolvableCommonJava") {
+val resolvableCommonJava = configurations.resolvable("resolvableCommonJava") {
     extendsFrom(commonJava)
 }
 
-val resolvableCommonResources: Configuration by configurations.resolvable("resolvableCommonResources") {
+val resolvableCommonResources = configurations.resolvable("resolvableCommonResources") {
     extendsFrom(commonResources)
 }
 

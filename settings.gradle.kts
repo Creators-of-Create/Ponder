@@ -5,17 +5,17 @@ pluginManagement {
     }
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
-}
-
 rootProject.name = "ponder"
 
 for (platform in listOf("common", "fabric", "neoforge")) {
     include(platform)
+    project(":$platform").name = "ponder-$platform"
 
-    include(":catnip:$platform")
-    include(":testmod:$platform")
+    include(":catnip-$platform")
+    project(":catnip-$platform").projectDir = file("catnip/$platform")
+
+    include(":testmod-$platform")
+    project(":testmod-$platform").projectDir = file("testmod/$platform")
 }
 
 includeBuild("build-logic")

@@ -1,10 +1,11 @@
 package net.createmod.catnip.impl.neoforge.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.SequencedSet;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-//import net.createmod.catnip.api.client.config.ConfigScreen;
+import net.createmod.catnip.impl.config.ConfigHelper;
 import net.createmod.catnip.api.platform.Env;
 import net.createmod.catnip.api.platform.Loader;
 import net.createmod.catnip.api.platform.services.PlatformHelper;
@@ -36,18 +37,17 @@ public class NeoForgePlatformHelper implements PlatformHelper {
 	}
 
 	@Override
-	public List<String> getLoadedMods() {
-		List<String> modIds = new ArrayList<>();
-		for (IModInfo mod : ModList.get().getMods())
-			modIds.add(mod.getModId());
-		return modIds;
+	public SequencedSet<String> getLoadedModIds() {
+		return ModList.get().getMods().stream()
+			.map(IModInfo::getModId)
+			.collect(Collectors.toCollection(LinkedHashSet::new));
 	}
 
 	@Override
 	public String getModDisplayName(String modId) {
 		return ModList.get().getModContainerById(modId)
-			.map(mod -> mod.getModInfo().getDisplayName())
-			.orElse(""); //.orElse(ConfigScreen.toHumanReadable(modId)); // FIXME: config
+				.map(mod -> mod.getModInfo().getDisplayName())
+				.orElse(ConfigHelper.toHumanReadable(modId));
 	}
 
 	@Override

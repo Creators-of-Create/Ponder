@@ -1,7 +1,6 @@
 package net.createmod.catnip.api.network;
 
 import net.createmod.catnip.api.platform.ServiceHelper;
-import net.createmod.catnip.impl.network.ClientboundSimpleActionPacket;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
@@ -46,9 +45,5 @@ public interface NetworkHelper {
 
 	default void sendToClientsAround(ServerLevel serverLevel, Vec3i pos, double radius, CustomPacketPayload payload) {
 		sendToClientsAround(serverLevel, new Vec3(pos.getX(), pos.getY(), pos.getZ()), radius, payload);
-	}
-
-	default void simpleActionToClient(ServerPlayer player, String action, String value) {
-		sendToClient(player, new ClientboundSimpleActionPacket(action, value));
 	}
 }

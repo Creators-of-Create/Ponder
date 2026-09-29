@@ -1,13 +1,13 @@
-val compileOnly: Configuration by configurations.getting
-val clientCompileOnly: Configuration by configurations.getting
+val compileOnly: Configuration = configurations["compileOnly"]
+val clientCompileOnly: Configuration = configurations["clientCompileOnly"]
 
-val commonMainJava: Configuration by configurations.dependencyScope("commonMainJava")
-val commonMainResources: Configuration by configurations.dependencyScope("commonMainResources")
+val commonMainJava: Configuration = configurations.dependencyScope("commonMainJava").get()
+val commonMainResources: Configuration = configurations.dependencyScope("commonMainResources").get()
 
-val commonClientJava: Configuration by configurations.dependencyScope("commonClientJava")
-val commonClientResources: Configuration by configurations.dependencyScope("commonClientResources")
+val commonClientJava: Configuration = configurations.dependencyScope("commonClientJava").get()
+val commonClientResources: Configuration = configurations.dependencyScope("commonClientResources").get()
 
-val commonPath = project.parent!!.path + ":common"
+val commonPath = ":${project.name.substringBeforeLast("-")}-common"
 
 dependencies {
     compileOnly(project(commonPath))
@@ -20,19 +20,19 @@ dependencies {
     commonClientResources(project(path = commonPath, configuration = "commonClientResources"))
 }
 
-val resolvableCommonMainJava: Configuration by configurations.resolvable("resolvableCommonMainJava") {
+val resolvableCommonMainJava = configurations.resolvable("resolvableCommonMainJava") {
     extendsFrom(commonMainJava)
 }
 
-val resolvableCommonMainResources: Configuration by configurations.resolvable("resolvableCommonMainResources") {
+val resolvableCommonMainResources = configurations.resolvable("resolvableCommonMainResources") {
     extendsFrom(commonMainResources)
 }
 
-val resolvableCommonClientJava: Configuration by configurations.resolvable("resolvableCommonClientJava") {
+val resolvableCommonClientJava = configurations.resolvable("resolvableCommonClientJava") {
     extendsFrom(commonClientJava)
 }
 
-val resolvableCommonClientResources: Configuration by configurations.resolvable("resolvableCommonClientResources") {
+val resolvableCommonClientResources = configurations.resolvable("resolvableCommonClientResources") {
     extendsFrom(commonClientResources)
 }
 

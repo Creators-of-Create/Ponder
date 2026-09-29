@@ -11,26 +11,21 @@ loom {
 
     runs {
         named("server") {
-            runDir = "run/server"
+            runDirectory = file("run/server")
         }
 
         configureEach {
-            ideConfigGenerated(true)
-            vmArg("-Dmixin.debug.export=true")
-            vmArg("-XX:+IgnoreUnrecognizedVMOptions")
-            vmArg("-XX:+AllowEnhancedClassRedefinition")
+            generateRunConfig = true
+            jvmArguments.add("-Dmixin.debug.export=true")
+            jvmArguments.add("-XX:+IgnoreUnrecognizedVMOptions")
+            jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
         }
     }
 }
 
-// runClientRenderDoc doesn't exist on MacOS
-//tasks.runClientRenderDoc {
-//    renderDocExecutable = file("/usr/bin/renderdoccmd")
-//}
-
 dependencies {
     minecraft(libs.minecraft)
     api(libs.bundles.fabric)
-    api(project(":catnip:fabric"))
-    clientCompileOnly(project(":catnip:fabric", configuration = "clientJar"))
+    api(project(":catnip-fabric"))
+    clientCompileOnly(project(":catnip-fabric", configuration = "clientJar"))
 }

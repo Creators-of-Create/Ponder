@@ -22,10 +22,12 @@ import net.createmod.catnip.api.client.render.StitchedSprite;
 import net.createmod.catnip.api.client.render.SuperByteBufferCache;
 import net.createmod.catnip.api.client.render.SuperRenderTypeBuffer;
 import net.createmod.catnip.api.data.ReloadListenerRegistries;
+import net.createmod.catnip.impl.client.gui.config.AbstractConfigScreen;
 import net.createmod.catnip.impl.client.gui.element.pip.GuiBlockEntityRenderer;
 import net.createmod.catnip.impl.client.gui.element.pip.GuiBlockModelRenderer;
 import net.createmod.catnip.impl.client.gui.element.pip.GuiFluidStateRenderer;
 import net.createmod.catnip.impl.client.placement.PlacementClient;
+import net.createmod.catnip.impl.config.CatnipModConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
@@ -39,6 +41,7 @@ public final class CatnipClient {
 	public static void init() {
 		SuperByteBufferCache.getInstance().registerCompartment(CachedBuffers.GENERIC_BLOCK);
 	    CatnipClientPayloadHandlers.register();
+		CatnipModConfig.register();
 
 		ClientTickCallback.EVENT.pre().subscribe(CatnipClient::beforeClientTick);
 		LevelRendererReloadCallback.EVENT.subscribe(CatnipClient::onRendererReload);
@@ -55,6 +58,7 @@ public final class CatnipClient {
 
 	private static void beforeClientTick() {
 		AnimationTickHolder.tick();
+		AbstractConfigScreen.tickCog();
 
 		if (!isGameActive())
 			return;

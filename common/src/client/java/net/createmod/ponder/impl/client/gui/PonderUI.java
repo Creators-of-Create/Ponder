@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import net.createmod.ponder.impl.client.PonderClientConfig;
+
 import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fStack;
 import org.joml.Vector3f;
@@ -1084,12 +1086,10 @@ public class PonderUI extends AbstractPonderScreen {
 	}
 
 	public boolean isComfyReadingEnabled() {
-		// FIXME: config
-		return false;//PonderConfig.client().comfyReading.get();
+		return PonderClientConfig.INSTANCE.comfyReading.get();
 	}
 
 	public void setComfyReadingEnabled(boolean slowTextMode) {
-		// FIXME: config
-		//PonderConfig.client().comfyReading.set(slowTextMode);
+		PonderClientConfig.INSTANCE.comfyReading.set(slowTextMode);
 	}
 }

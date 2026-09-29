@@ -16,7 +16,7 @@ neoForge {
         create("server") {
             server()
 
-            gameDirectory = project.file("run/server")
+            gameDirectory = file("run/server")
         }
 
         configureEach {
@@ -32,7 +32,7 @@ neoForge {
 }
 
 dependencies {
-    api(project(":catnip:neoforge"))
+    api(project(":catnip-neoforge"))
     compileOnly(libs.flywheel.neoforge) {
         capabilities {
             requireFeature("api")

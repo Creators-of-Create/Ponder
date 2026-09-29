@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import net.minecraft.network.chat.CommonComponents;
+
 import org.lwjgl.opengl.GL30;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
@@ -20,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 
+// FIXME: probably rewrite this, see what mechanisms vanilla has
 public class ConfirmationScreen extends AbstractSimiScreen {
 	private Screen source;
 	private Consumer<Response> action = _success -> {
@@ -36,6 +39,11 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 	private BoxWidget confirmDontSave;
 	private BoxWidget cancel;
 	private BoxElement textBackground;
+
+	public ConfirmationScreen() {
+		// FIXME: translation
+		super(CommonComponents.EMPTY);
+	}
 
 	public enum Response {
 		Confirm, ConfirmDontSave, Cancel
@@ -134,7 +142,7 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 		TextStencilElement confirmText =
 			new TextStencilElement(font, Component.translatable(tristate ? "catnip.ui.save_label" : "catnip.ui.confirm_label")).centered(true, true);
 		confirm = new BoxWidget(buttonX, y + textHeight + 6, 70, 16).withCallback(() -> accept(Response.Confirm));
-		confirm.showingElement(confirmText.withElementRenderer(BoxWidget.gradientFactory.apply(confirm)));
+		confirm.showingElement(confirmText.withElementRenderer(BoxWidget.GRADIENT_FACTORY.apply(confirm)));
 		addRenderableWidget(confirm);
 
 		buttonX += 12 + 70;
@@ -145,7 +153,7 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 			confirmDontSave =
 				new BoxWidget(buttonX, y + textHeight + 6, 70, 16).withCallback(() -> accept(Response.ConfirmDontSave));
 			confirmDontSave.showingElement(
-				confirmDontSaveText.withElementRenderer(BoxWidget.gradientFactory.apply(confirmDontSave)));
+				confirmDontSaveText.withElementRenderer(BoxWidget.GRADIENT_FACTORY.apply(confirmDontSave)));
 			addRenderableWidget(confirmDontSave);
 			buttonX += 12 + 70;
 		}
@@ -153,7 +161,7 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 		TextStencilElement cancelText = new TextStencilElement(font, Component.translatable("catnip.ui.cancel_label")).centered(true, true);
 		cancel = new BoxWidget(buttonX, y + textHeight + 6, 70, 16)
 			.withCallback(() -> accept(Response.Cancel));
-		cancel.showingElement(cancelText.withElementRenderer(BoxWidget.gradientFactory.apply(cancel)));
+		cancel.showingElement(cancelText.withElementRenderer(BoxWidget.GRADIENT_FACTORY.apply(cancel)));
 		addRenderableWidget(cancel);
 
 		textBackground = new BoxElement()
@@ -177,7 +185,9 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 	}
 
 	@Override
-	protected void renderWindow(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+		super.extractRenderState(graphics, mouseX, mouseY, a);
+
 		textBackground.submit(graphics);
 		int offset = font.lineHeight + 1;
 		int lineY = y - offset;
@@ -190,11 +200,11 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 		}
 	}
 
-	@Override
+	//@Override
 	protected void renderWindowBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-		endFrame();
+		//endFrame();
 
-		source.render(graphics, 0, 0, 10); // zero mouse coords to prevent further tooltips
+		//source.render(graphics, 0, 0, 10); // zero mouse coords to prevent further tooltips
 
 		prepareFrame();
 
@@ -202,7 +212,7 @@ public class ConfirmationScreen extends AbstractSimiScreen {
 	}
 
 
-	@Override
+	//@Override
 	protected void prepareFrame() {
 		GlStateManager._clear(GL30.GL_STENCIL_BUFFER_BIT | GL30.GL_DEPTH_BUFFER_BIT);
 	}

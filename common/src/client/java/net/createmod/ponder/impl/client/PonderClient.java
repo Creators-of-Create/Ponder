@@ -3,7 +3,6 @@ package net.createmod.ponder.impl.client;
 import net.createmod.catnip.api.client.platform.ModClientHooksHelper;
 import net.createmod.catnip.api.client.render.SuperByteBufferCache;
 import net.createmod.catnip.api.platform.services.PlatformHelper;
-import net.createmod.catnip.impl.network.ClientboundSimpleActionPacket;
 import net.createmod.ponder.api.client.PonderIndex;
 import net.createmod.ponder.impl.client.element.WorldSectionElementImpl;
 import net.createmod.ponder.impl.client.gui.PonderSceneRenderState;
@@ -15,6 +14,7 @@ import net.createmod.ponder.impl.client.tooltip.PonderTooltipHandler;
 public class PonderClient {
 	public static void init() {
 		SuperByteBufferCache.getInstance().registerCompartment(WorldSectionElementImpl.PONDER_WORLD_SECTION);
+		PonderClientConfig.register();
 
 		ClientboundSimpleActionPacket.addAction("openPonder", () -> SimplePonderActions::openPonder);
 		ClientboundSimpleActionPacket.addAction("reloadPonder", () -> SimplePonderActions::reloadPonder);

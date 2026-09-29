@@ -23,6 +23,7 @@ open class PackageInfosExtension(private val project: Project) {
         // We have to capture the source set name for the lazy string literals,
         // otherwise it'll just be whatever the last source set is in the list.
         val sourceSetName = sourceSet.name
+        val output = project.layout.buildDirectory.dir("generatedPackageInfos/$sourceSetName")
         val taskName = sourceSet.getTaskName("generate", "PackageInfos")
         val task = project.tasks.register<GeneratePackageInfosTask>(taskName) {
             group = "ponder"
@@ -31,8 +32,9 @@ open class PackageInfosExtension(private val project: Project) {
             // Only apply to default source directory since we also add the generated
             // sources to the source set.
             sourceRoot.set(project.file("src/$sourceSetName/java"))
-            outputDir.set(project.file("src/$sourceSetName/generatedPackageInfos"))
+            outputDir.set(output)
         }
+
         sourceSet.java.srcDir(task)
 
         project.tasks.matching { it.name == "ideaSyncTask" || it.name == "neoForgeIdeSync" }.configureEach {
@@ -41,8 +43,9 @@ open class PackageInfosExtension(private val project: Project) {
 
         val cleanTask = project.tasks.register<Delete>(sourceSet.getTaskName("clean", "PackageInfos")) {
             group = "ponder"
-            delete(project.file("src/$sourceSetName/generatedPackageInfos"))
+            delete(output)
         }
+
         project.tasks.named("clean").configure {
             dependsOn(cleanTask)
         }

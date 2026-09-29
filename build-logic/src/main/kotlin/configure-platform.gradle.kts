@@ -11,16 +11,15 @@ plugins {
 plugins.apply("net.createmod.ponder.gradle")
 plugins.apply("setup-git-hash")
 
-// set up name and group based on parent project, ex. net.createmod.ponder:ponder-fabric
-val modName: String = parent!!.name
-base.archivesName = "$modName-$name"
+// set coordinates based on parent project, ex. net.createmod.ponder:ponder-fabric
+val modName: String = project.name.substringBeforeLast("-")
+val platform: String = project.name.substringAfterLast("-")
 group = "net.createmod.$modName"
 
 // keep version synchronized with the root project
 version = rootProject.version
 
 repositories {
-    mavenLocal() // TODO: remove when Flywheel is pushed
     maven("https://maven.createmod.net") // Flywheel
     maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // Forge Config API Port
 }
@@ -104,23 +103,7 @@ loom?.javaClass?.getMethod("splitEnvironmentSourceSets")?.run {
 // generate package-infos for the main (and client, if present) sourceSet(s)
 extensions.getByType<PackageInfosExtension>().sources(sourceSets.named { it == "main" || it == "client" })
 
-if (name != "common") {
-    tasks.withType<Jar> {
-        dependsOn(project(":common").tasks.named("generatePackageInfos"))
-    }
-}
-
-// FIXME: temporary hack - disable everything config-related
-tasks.withType<JavaCompile> {
-    exclude("**/config")
-    exclude("**/ConfigCommand.java")
-    exclude("**/ConfigPathArgument.java")
-    exclude("**/CClient.java")
-    exclude("**/PonderConfig.java")
-    exclude("**/ConfirmationScreen.java")
-}
-
-when (name) {
+when (platform) {
     "common" -> plugins.apply("provide-common")
     "fabric" -> plugins.apply("consume-common-split")
     else -> plugins.apply("consume-common-merged")

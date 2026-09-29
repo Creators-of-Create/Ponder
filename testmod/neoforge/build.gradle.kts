@@ -14,7 +14,7 @@ neoForge {
         create("server") {
             server()
 
-            gameDirectory = project.file("run/server")
+            gameDirectory = file("run/server")
         }
 
         configureEach {
@@ -30,5 +30,5 @@ neoForge {
 }
 
 dependencies {
-    api(project(":neoforge"))
+    api(project(":ponder-neoforge"))
 }

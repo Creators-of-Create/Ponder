@@ -14,7 +14,7 @@ neoForge {
         create("server") {
             server()
 
-            gameDirectory = project.file("run/server")
+            gameDirectory = file("run/server")
         }
 
         configureEach {
