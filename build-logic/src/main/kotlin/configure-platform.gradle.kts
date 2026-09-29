@@ -82,9 +82,16 @@ if (parent!!.name != "testmod") {
         }
 
         repositories {
-            maven("https://maven.createmod.net") {
-                name = "create"
-                credentials(PasswordCredentials::class)
+            val mavenUsername = providers.environmentVariable("MAVEN_USERNAME")
+            val mavenPassword = providers.environmentVariable("MAVEN_PASSWORD")
+            if (mavenUsername.isPresent && mavenPassword.isPresent) {
+                maven {
+                    url = uri("https://maven.createmod.net")
+                    credentials {
+                        username = mavenUsername.get()
+                        password = mavenPassword.get()
+                    }
+                }
             }
         }
     }
