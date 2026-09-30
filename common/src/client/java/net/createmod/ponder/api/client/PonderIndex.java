@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import net.createmod.ponder.impl.client.PonderClientConfig;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +16,7 @@ import net.createmod.ponder.api.client.registration.LangRegistryAccess;
 import net.createmod.ponder.api.client.registration.PonderPlugin;
 import net.createmod.ponder.api.client.registration.SceneRegistryAccess;
 import net.createmod.ponder.api.client.registration.TagRegistryAccess;
+import net.createmod.ponder.impl.client.PonderClientConfig;
 import net.createmod.ponder.impl.client.registration.DefaultPonderSceneRegistrationHelper;
 import net.createmod.ponder.impl.client.registration.DefaultPonderTagRegistrationHelper;
 import net.createmod.ponder.impl.client.registration.DefaultSharedTextRegistrationHelper;
@@ -99,6 +98,6 @@ public class PonderIndex {
 	}
 
 	public static boolean editingModeActive() {
-		PonderClientConfig.INSTANCE.editingMode.get();
+		return PonderClientConfig.INSTANCE.editingMode.get();
 	}
 }

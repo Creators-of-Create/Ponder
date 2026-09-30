@@ -2,10 +2,14 @@ package net.createmod.ponder.api;
 
 import java.util.Random;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.createmod.catnip.api.event.ServerCommandRegistrationCallback;
 import net.createmod.catnip.api.lang.LangBuilder;
+import net.createmod.ponder.impl.command.PonderCommands;
+import net.createmod.ponder.impl.packet.PonderPayloads;
 import net.minecraft.resources.Identifier;
 
 public class Ponder {
@@ -20,5 +24,11 @@ public class Ponder {
 
 	public static Identifier id(String path) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, path);
+	}
+
+	@Internal
+	public static void init() {
+		PonderPayloads.register();
+		ServerCommandRegistrationCallback.EVENT.subscribe((dispatcher, _, _) -> PonderCommands.register(dispatcher));
 	}
 }

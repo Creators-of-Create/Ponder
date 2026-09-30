@@ -15,9 +15,7 @@ public class PonderClient {
 	public static void init() {
 		SuperByteBufferCache.getInstance().registerCompartment(WorldSectionElementImpl.PONDER_WORLD_SECTION);
 		PonderClientConfig.register();
-
-		ClientboundSimpleActionPacket.addAction("openPonder", () -> SimplePonderActions::openPonder);
-		ClientboundSimpleActionPacket.addAction("reloadPonder", () -> SimplePonderActions::reloadPonder);
+		PonderClientPayloadHandlers.register();
 
 		ModClientHooksHelper.INSTANCE.registerPictureInPictureRenderer(PonderSceneRenderState.class, PonderSceneRenderer::new);
 

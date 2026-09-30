@@ -3,8 +3,8 @@ package net.createmod.ponder.impl.client;
 import net.createmod.catnip.api.config.CatnipConfigRegistry;
 import net.createmod.catnip.api.config.ConfigId;
 import net.createmod.catnip.api.config.ConfigSide;
-import net.createmod.catnip.api.config.definition.ConfigValue;
 import net.createmod.catnip.api.config.definition.CatnipConfig;
+import net.createmod.catnip.api.config.definition.ConfigValue;
 import net.createmod.ponder.api.Ponder;
 
 public final class PonderClientConfig extends CatnipConfig.Root {
@@ -17,7 +17,7 @@ public final class PonderClientConfig extends CatnipConfig.Root {
 		Show additional info in the ponder view and reload scene scripts more frequently.
 		""");
 
-	public static void register() {
+	static void register() {
 		CatnipConfigRegistry.INSTANCE.register(new ConfigId(Ponder.MOD_ID, ConfigSide.CLIENT), INSTANCE);
 	}
 }

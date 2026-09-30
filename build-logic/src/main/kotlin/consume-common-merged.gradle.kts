@@ -7,8 +7,10 @@ val commonPath = ":${project.name.substringBeforeLast("-")}-common"
 dependencies {
     compileOnly(project(commonPath))
     compileOnly(project(commonPath, configuration = "commonClientOutput"))
+
     commonJava(project(path = commonPath, configuration = "commonMainJava"))
     commonJava(project(path = commonPath, configuration = "commonClientJava"))
+
     commonResources(project(path = commonPath, configuration = "commonMainResources"))
     commonResources(project(path = commonPath, configuration = "commonClientResources"))
 }

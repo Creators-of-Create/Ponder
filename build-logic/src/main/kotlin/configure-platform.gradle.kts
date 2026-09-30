@@ -1,5 +1,3 @@
-import net.createmod.pondergradle.nullability.PackageInfosExtension
-
 // convention plugin to apply to platform subprojects.
 
 plugins {
@@ -38,8 +36,7 @@ val libs: VersionCatalog = versionCatalogs.named("libs")
 fun versionOf(name: String): String {
     val version = libs.findVersion(name).get().toString()
 
-    // thank you fabric loader for mangling all non-release versions
-    // FIXME remove when on full 26.1
+    // normalize minecraft versions to semver on fabric because they still do that for some reason
     if (name == "minecraft" && project.name == "fabric")
         return version
             .replace("snapshot-", "alpha.")
@@ -108,7 +105,7 @@ loom?.javaClass?.getMethod("splitEnvironmentSourceSets")?.run {
 }
 
 // generate package-infos for the main (and client, if present) sourceSet(s)
-extensions.getByType<PackageInfosExtension>().sources(sourceSets.named { it == "main" || it == "client" })
+//extensions.getByType<PackageInfosExtension>().sources(sourceSets.named { it == "main" || it == "client" })
 
 when (platform) {
     "common" -> plugins.apply("provide-common")

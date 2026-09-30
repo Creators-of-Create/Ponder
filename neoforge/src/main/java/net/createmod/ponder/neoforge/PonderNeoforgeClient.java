@@ -16,13 +16,13 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @Mod(value = Ponder.MOD_ID, dist = Dist.CLIENT)
-public class NeoForgePonderClient {
-	public NeoForgePonderClient(IEventBus modEventBus) {
-		PonderClient.init();
-		modEventBus.addListener(NeoForgePonderClient::init);
+public class PonderNeoforgeClient {
+	public PonderNeoforgeClient(IEventBus modEventBus) {
+		modEventBus.addListener(PonderNeoforgeClient::init);
 	}
 
 	public static void init(FMLClientSetupEvent event) {
+		PonderClient.init();
 	}
 
 	@EventBusSubscriber(Dist.CLIENT)

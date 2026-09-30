@@ -1,4 +1,4 @@
-package net.createmod.ponder.fabric;
+package net.createmod.ponder.fabric.client;
 
 import net.createmod.ponder.api.client.event.TooltipQueryCallback;
 import net.createmod.ponder.impl.client.PonderClient;
@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.Minecraft;
 
-public class FabricPonderClient implements ClientModInitializer {
+public class PonderFabricClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		PonderClient.init();
@@ -17,17 +17,7 @@ public class FabricPonderClient implements ClientModInitializer {
 		ItemTooltipCallback.EVENT.register(TooltipQueryCallback.EVENT.invoker()::onTooltipQuery);
 		PonderKeybinds.register(KeyMappingHelper::registerKeyMapping);
 
-		ClientLifecycleEvents.CLIENT_STARTED.register(FabricPonderClient::onClientStarted);
-
-		prepareConfigUI();
-	}
-
-	private void prepareConfigUI() {
-		// FIXME: config
-		// BaseConfigScreen.setDefaultActionFor(Ponder.MOD_ID, base -> base
-		// 		.withButtonLabels("Client Settings", null, null)
-		// 		.withSpecs(PonderConfig.client().specification, null, null)
-		// );
+		ClientLifecycleEvents.CLIENT_STARTED.register(PonderFabricClient::onClientStarted);
 	}
 
 	private static void onClientStarted(Minecraft client) {
