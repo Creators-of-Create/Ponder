@@ -7,7 +7,7 @@ dependencies {
     minecraft(libs.minecraft)
     compileOnly(libs.bundles.mixin)
     compileOnlyApi(project(":catnip-common"))
-    clientCompileOnly(project(":catnip-common", configuration = "clientJar"))
+    clientCompileOnly(project(":catnip-common", configuration = "client"))
 }
 
 loom {

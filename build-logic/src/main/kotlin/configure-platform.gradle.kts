@@ -101,7 +101,15 @@ val loom: Any? = extensions.findByName("loom")
 // I don't even know where to begin with compiling against loom here.
 loom?.javaClass?.getMethod("splitEnvironmentSourceSets")?.run {
     invoke(loom)
-    plugins.apply("register-client-jar")
+
+    // add an extra consumable sourceset for other client sourcesets to depend on
+    configurations.consumable("client")
+    sourceSets["client"].output.forEach {
+        artifacts.add("client", it) {
+            // this one doesn't preserve task dependencies for some reason, add them manually
+            builtBy(tasks.named("compileClientJava"), tasks.named("processClientResources"))
+        }
+    }
 }
 
 // generate package-infos for the main (and client, if present) sourceSet(s)

@@ -27,6 +27,6 @@ dependencies {
     minecraft(libs.minecraft)
     implementation(libs.bundles.fabric)
     api(project(":ponder-fabric"))
-    clientCompileOnly(project(":ponder-fabric", configuration = "clientJar"))
-    clientCompileOnly(project(":catnip-fabric", configuration = "clientJar"))
+    clientCompileOnly(project(":ponder-fabric", configuration = "client"))
+    clientCompileOnly(project(":catnip-fabric", configuration = "client"))
 }

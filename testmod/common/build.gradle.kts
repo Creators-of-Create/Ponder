@@ -7,7 +7,8 @@ dependencies {
     minecraft(libs.minecraft)
     compileOnly(libs.bundles.mixin)
     compileOnlyApi(project(":ponder-common"))
-    clientCompileOnly(project(":ponder-common", configuration = "clientJar"))
+    clientCompileOnly(project(":ponder-common", configuration = "client"))
+    clientCompileOnly(project(":catnip-common", configuration = "client"))
 }
 
 loom {
