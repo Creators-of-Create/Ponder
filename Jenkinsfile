@@ -19,9 +19,7 @@ pipeline {
         stage('Build') {
             steps {
                 withCredentials([
-                    file(credentialsId: 'build_secrets', variable: 'ORG_GRADLE_PROJECT_secretFile'),
-                    //file(credentialsId: 'java_keystore', variable: 'ORG_GRADLE_PROJECT_keyStore'),
-                    file(credentialsId: 'gpg_key', variable: 'ORG_GRADLE_PROJECT_pgpKeyRing')
+                    usernamePassword(credentialsId: 'maven_secrets', usernameVariable: 'MAVEN_USERNAME', passwordVariable: 'MAVEN_PASSWORD')
                 ]) {
 
                     echo 'Building project.'
