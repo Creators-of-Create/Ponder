@@ -17,6 +17,12 @@ artifacts {
     sourceSets["client"].run {
         java.sourceDirectories.forEach { add("commonClientJava", it) }
         resources.sourceDirectories.forEach { add("commonClientResources", it) }
-        output.forEach { add("commonClientOutput", it) }
+
+        output.forEach {
+            add("commonClientOutput", it) {
+                // this one doesn't preserve task dependencies for some reason, add them manually
+                builtBy(tasks.named("compileClientJava"), tasks.named("processClientResources"))
+            }
+        }
     }
 }
