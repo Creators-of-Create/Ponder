@@ -7,11 +7,13 @@ import com.mojang.math.Axis;
 
 import net.createmod.catnip.api.client.render.SuperByteBufferCache.Compartment;
 import net.createmod.catnip.api.math.AngleHelper;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class CachedBuffers {
 	public static final Compartment<BlockState> GENERIC_BLOCK = new Compartment<>();
+	public static final Compartment<BlockStateModel> BLOCK_STATE_MODEL = new Compartment<>();
 
 	/**
 	 * Creates and caches a SuperByteBuffer that has the model of a BlockState baked into it
@@ -33,6 +35,30 @@ public class CachedBuffers {
 	 */
 	public static SuperByteBuffer block(Compartment<BlockState> compartment, BlockState toRender) {
 		return SuperByteBufferCache.getInstance().get(compartment, toRender, () -> SuperBufferFactory.getInstance().createForBlock(toRender));
+	}
+
+	/**
+	 * Creates and caches a SuperByteBuffer that has a BlockStateModel baked into it
+	 *
+	 * @param toRender the BlockStateModel to be rendered
+	 * @param referenceState the BlockState associated with this model
+	 * @return the cached SuperByteBuffer
+	 */
+	public static SuperByteBuffer blockStateModel(BlockStateModel toRender, BlockState referenceState) {
+		return blockStateModel(BLOCK_STATE_MODEL, toRender, referenceState);
+	}
+
+	/**
+	 * Creates a SuperByteBuffer that has a BlockStateModel baked into it <br />
+	 * and caches it in the given Compartment
+	 *
+	 * @param compartment the Compartment the Buffer should be cached in
+	 * @param toRender    the BlockStateModel to be rendered
+	 * @param referenceState the BlockState associated with this model
+	 * @return the cached SuperByteBuffer
+	 */
+	public static SuperByteBuffer blockStateModel(Compartment<BlockStateModel> compartment, BlockStateModel toRender, BlockState referenceState) {
+		return SuperByteBufferCache.getInstance().get(compartment, toRender, () -> SuperBufferFactory.getInstance().createForBlock(toRender, referenceState));
 	}
 
 	public static Supplier<PoseStack> rotateToFace(Direction facing) {

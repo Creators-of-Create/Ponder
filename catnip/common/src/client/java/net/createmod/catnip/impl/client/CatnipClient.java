@@ -40,6 +40,7 @@ public final class CatnipClient {
 
 	public static void init() {
 		SuperByteBufferCache.getInstance().registerCompartment(CachedBuffers.GENERIC_BLOCK);
+		SuperByteBufferCache.getInstance().registerCompartment(CachedBuffers.BLOCK_STATE_MODEL);
 	    CatnipClientPayloadHandlers.register();
 		CatnipModConfig.register();
 
