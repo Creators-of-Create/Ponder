@@ -169,14 +169,14 @@ public class PonderTooltipHandler {
 			.style(ChatFormatting.DARK_GRAY)
 			.component();
 
-		Font fontRenderer = Minecraft.getInstance().font;
-		float charWidth = fontRenderer.width("|");
-		float tipWidth = fontRenderer.width(holdW);
+		if (progress > 0 && RenderSystem.isOnRenderThread()) {
+			Font font = Minecraft.getInstance().font;
+			float charWidth = font.width("|");
+			float tipWidth = font.width(holdW);
 
-		int total = (int) (tipWidth / charWidth);
-		int current = (int) (progress * total);
+			int total = (int) (tipWidth / charWidth);
+			int current = (int) (progress * total);
 
-		if (progress > 0) {
 			String bars = "";
 			bars += ChatFormatting.GRAY + Strings.repeat("|", current);
 			if (progress < 1)
