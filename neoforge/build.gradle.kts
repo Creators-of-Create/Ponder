@@ -5,7 +5,7 @@ plugins {
 neoForge {
     version = "neo_version"()
 
-    accessTransformers.from(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
+    accessTransformers.from(project(":ponder-common").file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     parchment {
         minecraftVersion = "minecraft_version"()

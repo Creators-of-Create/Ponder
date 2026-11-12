@@ -3,7 +3,7 @@ plugins {
 }
 
 loom {
-    accessWidenerPath = project(":common").file("src/main/resources/META-INF/${"mod_id"()}.accesswidener")
+    accessWidenerPath = project(":ponder-common").file("src/main/resources/META-INF/${"mod_id"()}.accesswidener")
 
     mixin.defaultRefmapName.set("${"mod_id"()}.refmap.json")
 

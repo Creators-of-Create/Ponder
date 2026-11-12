@@ -1,5 +1,7 @@
 package net.createmod.catnip.config.ui;
 
+import javax.annotation.Nullable;
+
 import org.lwjgl.glfw.GLFW;
 
 import net.createmod.catnip.gui.UIRenderHelper;
@@ -8,18 +10,22 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 public class HintableTextFieldWidget extends EditBox {
 
 	protected Font font;
-	protected String hint;
+	@Nullable
+	private Component hint;
 
 	public HintableTextFieldWidget(Font font, int x, int y, int width, int height) {
 		super(font, x, y, width, height, CommonComponents.EMPTY);
 		this.font = font;
+		this.setMaxLength(128);
 	}
 
-	public void setHint(String hint) {
+	@Override
+	public void setHint(Component hint) {
 		this.hint = hint;
 	}
 
@@ -31,13 +37,13 @@ public class HintableTextFieldWidget extends EditBox {
 	public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		super.renderWidget(graphics, mouseX, mouseY, partialTicks);
 
-		if (hint == null || hint.isEmpty())
+		if (hint == null || hint.getString().isEmpty())
 			return;
 
 		if (!getValue().isEmpty())
 			return;
 
-		graphics.drawString(font, hint, getX() + 5, this.getY() + (this.height - 8) / 2, UIRenderHelper.COLOR_TEXT.getFirst().scaleAlpha(.75f).getRGB());
+		graphics.drawString(font, hint, getX() + 5, this.getY() + (this.height - 8) / 2, UIRenderHelper.COLOR_TEXT.getFirst().scaleAlpha(.6f).getRGB());
 	}
 
 	@Override

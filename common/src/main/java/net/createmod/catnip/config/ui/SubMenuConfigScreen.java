@@ -2,11 +2,9 @@ package net.createmod.catnip.config.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -72,7 +70,9 @@ public class SubMenuConfigScreen extends ConfigScreen {
 	protected HintableTextFieldWidget search;
 	protected int listWidth;
 	protected String title;
-	protected Set<String> highlights = new HashSet<>();
+	@Nullable
+	protected String searchText;
+	protected boolean canEdit = true;
 
 	public static SubMenuConfigScreen find(ConfigHelper.ConfigPath path) {
 		ModConfigSpec spec = ConfigHelper.findModConfigSpecFor(path.getType(), path.getModID());
@@ -83,7 +83,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 		path:
 		while (!remainingPath.isEmpty()) {
-			String next = remainingPath.remove(0);
+			String next = remainingPath.removeFirst();
 			for (Map.Entry<String, Object> entry : values.valueMap().entrySet()) {
 				String key = entry.getKey();
 				Object obj = entry.getValue();
@@ -91,8 +91,8 @@ public class SubMenuConfigScreen extends ConfigScreen {
 					continue;
 
 				if (!(obj instanceof AbstractConfig)) {
-					//highlight entry
-					screen.highlights.add(path.getPath()[path.getPath().length - 1]);
+					// search for entry
+					screen.searchText = path.getPath()[path.getPath().length - 1];
 					continue;
 				}
 
@@ -281,26 +281,8 @@ public class SubMenuConfigScreen extends ConfigScreen {
 
 			} else if (obj instanceof ModConfigSpec.ConfigValue<?> configValue) {
 				ModConfigSpec.ValueSpec valueSpec = spec.getSpec().getRaw(configValue.getPath());
-				Object value = configValue.get();
-				ConfigScreenList.Entry entry = null;
 
-				if (value instanceof Boolean) {
-					entry = new BooleanEntry(humanKey, (ModConfigSpec.ConfigValue<Boolean>) configValue, valueSpec);
-				} else if (value instanceof Enum) {
-					entry = new EnumEntry(humanKey, (ModConfigSpec.ConfigValue<Enum<?>>) configValue, valueSpec);
-				} else if (value instanceof Number) {
-					entry = NumberEntry.create(value, humanKey, configValue, valueSpec);
-				} else if (value instanceof String) {
-					entry = new StringEntry(humanKey, (ModConfigSpec.ConfigValue<String>) configValue, valueSpec);
-				}
-
-				if (entry == null)
-					entry = new LabeledEntry("Impl missing - " + configValue.get().getClass().getSimpleName() + "  " + humanKey + " : " + value);
-
-				if (highlights.contains(key))
-					entry.annotations.put("highlight", ":)");
-
-				list.children().add(entry);
+				list.children().add(createEntry(humanKey, configValue, valueSpec));
 			}
 		});
 
@@ -314,7 +296,16 @@ public class SubMenuConfigScreen extends ConfigScreen {
 			return group;
 		});
 
-		list.search(highlights.stream().findFirst().orElse(""));
+		list.allEntries = new ArrayList<>(list.children());
+
+		List<ConfigScreenList.Entry> deepResults = new ArrayList<>();
+		recursiveCollect(configGroup, "", deepResults);
+		list.deepEntries = deepResults;
+
+		if (searchText != null) {
+			search.setValue(searchText);
+			searchText = null;
+		}
 
 		//extras for server configs
 		if (type != ModConfig.Type.SERVER)
@@ -322,7 +313,7 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		if (minecraft.hasSingleplayerServer())
 			return;
 
-		boolean canEdit = minecraft != null && minecraft.player != null && minecraft.player.hasPermissions(2);
+		canEdit = minecraft != null && minecraft.player != null && minecraft.player.hasPermissions(2);
 
 		Couple<Color> red = AbstractSimiWidget.COLOR_FAIL;
 		Couple<Color> green = AbstractSimiWidget.COLOR_SUCCESS;
@@ -350,6 +341,37 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		}
 
 		addRenderableWidget(serverLocked);
+	}
+
+	private ConfigScreenList.Entry createEntry(String humanKey, ModConfigSpec.ConfigValue<?> configValue, ModConfigSpec.ValueSpec valueSpec) {
+		Object value = configValue.get();
+
+		if (value instanceof Boolean) {
+			return new BooleanEntry(humanKey, (ModConfigSpec.ConfigValue<Boolean>) configValue, valueSpec, this.type);
+		} else if (value instanceof Enum) {
+			return new EnumEntry(humanKey, (ModConfigSpec.ConfigValue<Enum<?>>) configValue, valueSpec, this.type);
+		} else if (value instanceof Number) {
+			return NumberEntry.create(value, humanKey, configValue, valueSpec, this.type);
+		} else if (value instanceof String) {
+			return new StringEntry(humanKey, (ModConfigSpec.ConfigValue<String>) configValue, valueSpec, this.type);
+		}
+
+		return new LabeledEntry("Impl missing - " + configValue.get().getClass().getSimpleName() + "  " + humanKey + " : " + value);
+	}
+
+	private List<ConfigScreenList.Entry> recursiveCollect(UnmodifiableConfig config, String prefix, List<ConfigScreenList.Entry> results) {
+		config.valueMap().forEach((key, obj) -> {
+			String fullPath = prefix.isEmpty() ? key : prefix + "." + key;
+			if (obj instanceof AbstractConfig) {
+				recursiveCollect((UnmodifiableConfig) obj, fullPath, results);
+			} else if (obj instanceof ModConfigSpec.ConfigValue) {
+				String humanKey = toHumanReadable(key);
+				ModConfigSpec.ValueSpec valueSpec = spec.getSpec().getRaw(((ModConfigSpec.ConfigValue<?>) obj).getPath());
+				results.add(createEntry(humanKey, (ModConfigSpec.ConfigValue<?>) obj, valueSpec));
+			}
+		});
+		return results;
+
 	}
 
 	@Override
@@ -403,8 +425,10 @@ public class SubMenuConfigScreen extends ConfigScreen {
 		if (list.search(search)) {
 			this.search.setTextColor(UIRenderHelper.COLOR_TEXT.getFirst().getRGB());
 		} else {
-			this.search.setTextColor(AbstractSimiWidget.COLOR_SUCCESS.getFirst().getRGB());
+			this.search.setTextColor(AbstractSimiWidget.COLOR_FAIL.getFirst().getRGB());
 		}
+		if (!canEdit)
+			list.children().forEach(e -> e.setEditable(false));
 	}
 
 	private void attemptBackstep() {

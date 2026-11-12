@@ -18,7 +18,7 @@ public class CatnipServices {
 	public static final NetworkHelper NETWORK = load(NetworkHelper.class);
 
 	public static <T> T load(Class<T> clazz) {
-		final T loadedService = ServiceLoader.load(clazz)
+		final T loadedService = ServiceLoader.load(clazz, CatnipServices.class.getClassLoader())
 			.findFirst()
 			.orElseThrow(() -> new NullPointerException("Failed to load service for " + clazz.getName()));
 		Ponder.LOGGER.debug("Loaded {} for service {}", loadedService, clazz);

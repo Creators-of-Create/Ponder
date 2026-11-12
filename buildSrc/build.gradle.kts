@@ -9,7 +9,6 @@ plugins {
 repositories {
     gradlePluginPortal()
     mavenCentral()
-    maven("https://maven.ithundxr.dev/releases")
     maven("https://maven.fabricmc.net")
     maven("https://maven.neoforged.net/releases")
 }
@@ -33,8 +32,6 @@ dependencies {
     implementation("org.ow2.asm:asm:${"asm_version"()}")
     implementation("org.ow2.asm:asm-tree:${"asm_version"()}")
     implementation("org.ow2.asm:asm-util:${"asm_version"()}")
-
-    implementation("dev.ithundxr.lotus:lotus-gradle:${"lotus_gradle_version"()}")
 
     implementation("fabric-loom:fabric-loom.gradle.plugin:${properties["loom_version"]}")
     implementation("net.neoforged.moddev:net.neoforged.moddev.gradle.plugin:${properties["mdg_version"]}")

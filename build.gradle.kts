@@ -19,7 +19,6 @@ allprojects {
     apply(plugin = "java")
 
     group = "maven_group"()
-    base.archivesName.set("${"mod_id"()}-${project.name}")
     version = "${"mod_version"()}.${buildNumber ?: "0"}+mc${"minecraft_version"()}"
 }
 
@@ -116,9 +115,26 @@ subprojects {
         }
     }
 
+    val newMavenCords = "${project.group}:${project.name}:${project.version}"
+    val oldMavenCords = fun(): String {
+        val oldLoaderName = when (val name = project.name.split("-")[1]) {
+            "neoforge" -> "NeoForge"
+            else -> name.replaceFirstChar { it.uppercase() }
+        }
+        val oldArtifactId = "${"mod_name"()}-$oldLoaderName-${"minecraft_version"()}"
+        val oldVersion = "${"mod_version"()}.${buildNumber ?: "0"}"
+        return "${project.group}:$oldArtifactId:$oldVersion"
+    }()
+
+    configurations.configureEach {
+        outgoing {
+            capability(newMavenCords)
+            capability(oldMavenCords)
+        }
+    }
+
     publishing {
         publications.create<MavenPublication>("maven${capitalizedName}") {
-            artifactId = base.archivesName.get()
             from(components["java"])
         }
 
@@ -138,7 +154,7 @@ subprojects {
     }
 
     // from here down is platform configuration
-    if (project.path == ":common") {
+    if (project.path == ":ponder-common") {
         return@subprojects
     }
 
@@ -152,9 +168,9 @@ subprojects {
     }
 
     dependencies {
-        compileOnly(project(":common"))
-        "commonJava"(project(path = ":common", configuration = "commonJava"))
-        "commonResources"(project(path = ":common", configuration = "commonResources"))
+        compileOnly(project(":ponder-common"))
+        "commonJava"(project(path = ":ponder-common", configuration = "commonJava"))
+        "commonResources"(project(path = ":ponder-common", configuration = "commonResources"))
     }
 
     tasks.named<JavaCompile>("compileJava") {

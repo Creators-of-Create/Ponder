@@ -1,9 +1,10 @@
 package net.createmod.catnip.render;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -11,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 
 public class StitchedSprite {
-	private static final Map<ResourceLocation, List<StitchedSprite>> ALL = new HashMap<>();
+	private static final Map<ResourceLocation, List<StitchedSprite>> ALL = new ConcurrentHashMap<>();
 
 	protected final ResourceLocation atlasLocation;
 	protected final ResourceLocation location;
@@ -20,7 +21,7 @@ public class StitchedSprite {
 	public StitchedSprite(ResourceLocation atlas, ResourceLocation location) {
 		atlasLocation = atlas;
 		this.location = location;
-		ALL.computeIfAbsent(atlasLocation, $ -> new ArrayList<>()).add(this);
+		ALL.computeIfAbsent(atlasLocation, $ -> Collections.synchronizedList(new ArrayList<>())).add(this);
 	}
 
 	public StitchedSprite(ResourceLocation location) {

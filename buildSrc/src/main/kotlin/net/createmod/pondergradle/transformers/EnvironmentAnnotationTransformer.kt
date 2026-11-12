@@ -1,7 +1,7 @@
 package net.createmod.pondergradle.transformers
 
-import dev.ithundxr.lotus.gradle.api.asm.util.IClassTransformer
-import dev.ithundxr.lotus.gradle.api.asm.util.SubprojectType
+import net.createmod.pondergradle.IClassTransformer
+import net.createmod.pondergradle.SubprojectType
 import org.objectweb.asm.tree.AnnotationNode
 import org.objectweb.asm.tree.ClassNode
 

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -33,6 +32,12 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 	@Nullable
 	public static EditBox currentText;
 
+	@Nullable
+	public List<Entry> allEntries;
+
+	@Nullable
+	public List<Entry> deepEntries;
+
 	public ConfigScreenList(Minecraft client, int width, int height, int top, int elementHeight) {
 		super(client, width, height, top, elementHeight);
 		currentText = null;
@@ -46,6 +51,11 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 		UIRenderHelper.angledGradient(graphics, -90, getX() + width / 2, getBottom(), width, 5, c, Color.TRANSPARENT_BLACK);
 		UIRenderHelper.angledGradient(graphics, 0, getX(), getY() + height / 2, height, 5, c, Color.TRANSPARENT_BLACK);
 		UIRenderHelper.angledGradient(graphics, 180, getRight(), getY() + height / 2, height, 5, c, Color.TRANSPARENT_BLACK);
+
+		// Flush pending batch content (e.g. tooltip text from widgets rendered before the list)
+		// before super.render() activates the scissor — in unmanaged GuiGraphics mode,
+		// enableScissor() does not flush, so unflushed font renders would be clipped to the list bounds.
+		graphics.flush();
 
 		super.render(graphics, mouseX, mouseY, partialTicks);
 	}
@@ -83,41 +93,90 @@ public class ConfigScreenList extends ObjectSelectionList<ConfigScreenList.Entry
 
 	@Override
 	public void tick() {
-		/*for(int i = 0; i < getItemCount(); ++i) {
-			int top = this.getRowTop(i);
-			int bot = top + itemHeight;
-			if (bot >= this.y0 && top <= this.y1)
-				this.getEntry(i).tick();
-		}*/
 		children().forEach(Entry::tick);
 
 	}
 
-	public boolean search(String query) {
-		if (query == null || query.isEmpty()) {
-			setScrollAmount(0);
+	public boolean search(@Nullable String query) {
+		children().clear();
+
+		setScrollAmount(0);
+
+		if (query == null || query.trim().isEmpty()) {
+			if (allEntries != null)
+				children().addAll(allEntries);
 			return true;
 		}
 
-		String q = query.toLowerCase(Locale.ROOT);
-		Optional<Entry> first = children().stream().filter(entry -> {
-			if (entry.path == null)
-				return false;
+		List<Entry> source =
+			deepEntries != null ? deepEntries
+			: allEntries != null ? allEntries
+			: List.of();
 
-			String[] split = entry.path.split("\\.");
-			String key = split[split.length - 1].toLowerCase(Locale.ROOT);
-			return key.contains(q);
-		}).findFirst();
+		String q = query.toLowerCase(Locale.ROOT).replaceAll("\\s+", "");
+		List<Entry> searchResults = source.stream()
+			.filter(entry -> entry.path != null)
+			.map(entry -> {
+				String[] parts = entry.path.split("\\.");
+				String key = parts[parts.length - 1].toLowerCase(Locale.ROOT);
+				float distance = relevanceScore(q, key);
+				return Map.entry(entry, distance);
+			})
+			.filter(map -> map.getValue() <= 0.8)
+			.sorted(Map.Entry.comparingByValue())
+			.map(Map.Entry::getKey)
+			.toList();
 
-		if (first.isEmpty()) {
-			setScrollAmount(0);
+		if (searchResults.isEmpty()) {
 			return false;
 		}
 
-		Entry e = first.get();
-		e.annotations.put("highlight", "(:");
-		centerScrollOn(e);
+		children().addAll(searchResults);
+
 		return true;
+	}
+
+	private static float relevanceScore(String query, String target) {
+		int m = query.length();
+		int n = target.length();
+		int[][] table = new int[m + 1][n + 1];
+
+		// Levenshtein Distance Algorithm
+		// First row stays 0: no cost to skip leading target characters,
+		// allowing the query to match against any substring of the target.
+		for (int i = 0; i <= m; i++) table[i][0] = i;
+
+		for (int i = 1; i <= m; i++) {
+			for (int j = 1; j <= n; j++) {
+				if (query.charAt(i - 1) == target.charAt(j - 1)) {
+					table[i][j] = table[i - 1][j - 1];
+				} else {
+					table[i][j] = Math.min(table[i - 1][j - 1], Math.min(
+						table[i][j - 1],
+						table[i - 1][j]
+					)) + 1;
+				}
+			}
+		}
+
+		// Minimum over all end positions: best substring match within target
+		int rawDistance = Integer.MAX_VALUE;
+		for (int j = 0; j <= n; j++) {
+			rawDistance = Math.min(rawDistance, table[m][j]);
+		}
+
+		// Reject matches that exceed the maximum allowed edits for this query length
+		int maxEdits = Math.max(0, m / 3);
+		if (rawDistance > maxEdits)
+			return 1.0f;
+
+		// Normalize
+		float result = (float) rawDistance / m;
+
+		// Match boosting
+		result = target.contains(query) ? result * 0.5f : result;
+
+		return result;
 	}
 
 	public void bumpCog(float force) {

@@ -12,7 +12,17 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
-rootProject.name = "Ponder"
-include("common")
-include("neoforge")
-include("fabric")
+val modId = providers.gradleProperty("mod_id").get()
+
+rootProject.name = modId
+
+rootDir.listFiles { file ->
+    file.isDirectory
+        && file.name != "buildSrc"
+        && (file.resolve("build.gradle").exists() || file.resolve("build.gradle.kts").exists())
+}.forEach {
+    val projectName = ":${modId}-${it.toRelativeString(rootDir)}"
+
+    include(projectName)
+    project(projectName).projectDir = it
+}
