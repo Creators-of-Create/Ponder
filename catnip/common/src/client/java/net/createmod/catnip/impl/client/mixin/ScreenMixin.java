@@ -14,10 +14,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Screen.class)
-public class ScreenMixin {
+public abstract class ScreenMixin {
 	@Shadow
 	@Final
 	protected Minecraft minecraft;
+
+	@Shadow
+	public abstract void onClose();
 
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	private void maybeCloseOnE(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
@@ -25,6 +28,7 @@ public class ScreenMixin {
 			return;
 
 		if (catnipScreen.shouldCloseOnE() && this.minecraft.options.keyInventory.matches(event)) {
+			onClose();
 			cir.setReturnValue(true);
 		}
 	}
