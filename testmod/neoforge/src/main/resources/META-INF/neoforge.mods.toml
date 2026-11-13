@@ -1,0 +1,16 @@
+modLoader = "javafml"
+loaderVersion = "[0,)"
+license = "MIT"
+
+[[mods]]
+modId = "ponder_testmod"
+version = "${version}"
+displayName = "Ponder Testmod"
+description = "Test mod for Ponder"
+
+[[dependencies.ponder_testmod]]
+modId = "ponder"
+type="required"
+versionRange = "[${version}]"
+ordering = "AFTER"
+side = "BOTH"
