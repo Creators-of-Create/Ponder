@@ -15,7 +15,7 @@ import net.minecraft.world.level.chunk.LightChunkGetter;
 import net.minecraft.world.level.lighting.LayerLightEventListener;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 
-// https://github.com/Engine-Room/Flywheel/blob/bb43937ca17e5e8ca0b08fe1fa896799e526ec11/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/VirtualLightEngine.java
+// https://github.com/Engine-Room/Flywheel/blob/26.1.2/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/VirtualLightEngine.java
 public final class VirtualLightEngine extends LevelLightEngine {
 	private final LayerLightEventListener blockListener;
 	private final LayerLightEventListener skyListener;

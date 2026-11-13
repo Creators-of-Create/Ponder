@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+// https://github.com/Engine-Room/Flywheel/blob/26.1.2/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/SinglePosVirtualBlockGetter.java
 public class SinglePosVirtualBlockGetter extends VirtualBlockGetter {
 	protected BlockPos pos = BlockPos.ZERO;
 	protected BlockState blockState = Blocks.AIR.defaultBlockState();

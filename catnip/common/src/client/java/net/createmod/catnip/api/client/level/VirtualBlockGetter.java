@@ -14,8 +14,10 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.FluidState;
 
-// https://github.com/Engine-Room/Flywheel/blob/bb43937ca17e5e8ca0b08fe1fa896799e526ec11/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/VirtualBlockGetter.java
+// https://github.com/Engine-Room/Flywheel/blob/26.1.2/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/VirtualBlockGetter.java
 public abstract class VirtualBlockGetter implements BlockAndTintGetter {
+	public static final CardinalLighting FULL_LIGHTING = new CardinalLighting(1F, 1F, 1F, 1F, 1F, 1F);
+
 	protected final VirtualLightEngine lightEngine;
 
 	public VirtualBlockGetter(ToIntFunction<BlockPos> blockLightFunc, ToIntFunction<BlockPos> skyLightFunc) {
@@ -28,6 +30,11 @@ public abstract class VirtualBlockGetter implements BlockAndTintGetter {
 	}
 
 	@Override
+	public CardinalLighting cardinalLighting() {
+		return FULL_LIGHTING;
+	}
+
+	@Override
 	public LevelLightEngine getLightEngine() {
 		return lightEngine;
 	}
@@ -36,10 +43,5 @@ public abstract class VirtualBlockGetter implements BlockAndTintGetter {
 	public int getBlockTint(BlockPos pos, ColorResolver resolver) {
 		Biome plainsBiome = Minecraft.getInstance().getConnection().registryAccess().lookupOrThrow(Registries.BIOME).getValueOrThrow(Biomes.PLAINS);
 		return resolver.getColor(plainsBiome, pos.getX(), pos.getZ());
-	}
-
-	@Override
-	public CardinalLighting cardinalLighting() {
-		return CardinalLighting.DEFAULT;
 	}
 }
