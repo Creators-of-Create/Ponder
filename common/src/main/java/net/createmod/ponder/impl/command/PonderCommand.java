@@ -47,7 +47,7 @@ public final class PonderCommand {
 						argument("targets", EntityArgument.players())
 							.requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
 							.executes(ctx -> send(
-								OpenPonderPacket.scenes(IdentifierArgument.getId(ctx, "scene")),
+								OpenPonderPacket.scenes(IdentifierArgument.getId(ctx, "scenes")),
 								EntityArgument.getPlayers(ctx, "targets")
 							))
 					)
