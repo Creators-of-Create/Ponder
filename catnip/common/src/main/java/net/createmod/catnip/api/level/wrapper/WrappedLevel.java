@@ -281,7 +281,7 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public int getMaxY() {
-		return this.getMinY() + this.getHeight();
+		return this.getMinY() + this.getHeight() - 1;
 	}
 
 	@Override
@@ -296,7 +296,7 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public int getMaxSectionY() {
-		return SectionPos.blockToSectionCoord(this.getMaxY() - 1) + 1;
+		return SectionPos.blockToSectionCoord(this.getMaxY() - 1);
 	}
 
 	@Override
