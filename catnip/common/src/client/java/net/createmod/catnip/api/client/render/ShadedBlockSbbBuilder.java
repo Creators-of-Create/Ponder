@@ -116,7 +116,7 @@ public class ShadedBlockSbbBuilder implements VertexConsumer {
 	}
 
 	@Override
-	public VertexConsumer setLineWidth(float p_456188_) {
+	public VertexConsumer setLineWidth(float width) {
 		throw new UnsupportedOperationException("ShadedBlockSbbBuilder only supports putBulkData!");
 	}
 }

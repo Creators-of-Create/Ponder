@@ -157,7 +157,7 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 	}
 
 	@Override
-	public int getBrightness(LightLayer p_226658_1_, BlockPos p_226658_2_) {
+	public int getBrightness(LightLayer layer, BlockPos pos) {
 		return overrideLight == -1 ? 15 : overrideLight;
 	}
 
@@ -209,7 +209,7 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 	}
 
 	@Override // For particle collision
-	public BlockGetter getChunkForCollisions(int p_225522_1_, int p_225522_2_) {
+	public BlockGetter getChunkForCollisions(int chunkX, int chunkZ) {
 		return this;
 	}
 
@@ -356,7 +356,7 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 	}
 
 	@Override
-	public boolean hasNearbyAlivePlayer(double p_217358_1_, double p_217358_3_, double p_217358_5_, double p_217358_7_) {
+	public boolean hasNearbyAlivePlayer(double x, double y, double z, double range) {
 		return true; // always enable spawner animations
 	}
 }

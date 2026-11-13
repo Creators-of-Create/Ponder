@@ -60,7 +60,7 @@ public class ParrotElementImpl extends AnimatedSceneElementBase implements Parro
 	public void tick(PonderScene scene) {
 		super.tick(scene);
 		if (entity == null) {
-			entity = pose.create(scene.getWorld());
+			entity = pose.create(scene.getLevel());
 			entity.setYRot(entity.yRotO = 180);
 		}
 
@@ -118,13 +118,13 @@ public class ParrotElementImpl extends AnimatedSceneElementBase implements Parro
 	}
 
 	@Override
-	protected void renderLast(PonderLevel world, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
-	                          CameraRenderState cameraRenderState, PoseStack poseStack, float fade, float pt) {
+	protected void renderLast(PonderLevel level, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
+							  CameraRenderState cameraRenderState, PoseStack poseStack, float fade, float pt) {
 		EntityRenderDispatcher dispatcher = Minecraft.getInstance()
 			.getEntityRenderDispatcher();
 
 		if (entity == null) {
-			entity = pose.create(world);
+			entity = pose.create(level);
 			entity.setYRot(entity.yRotO = 180);
 		}
 

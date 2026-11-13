@@ -10,12 +10,12 @@ import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 
 public interface PonderSceneElement extends PonderElement {
-	void renderFirst(PonderLevel world, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
+	void renderFirst(PonderLevel level, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
 					 CameraRenderState cameraRenderState, PoseStack poseStack, float pt);
 
-	void renderLayer(PonderLevel world, MultiBufferSource buffer, ChunkSectionLayer layer, SubmitNodeCollector queue,
-	                 Camera camera, CameraRenderState cameraRenderState, PoseStack poseStack, float pt);
+	void renderLayer(PonderLevel level, MultiBufferSource buffer, ChunkSectionLayer layer, SubmitNodeCollector queue,
+					 Camera camera, CameraRenderState cameraRenderState, PoseStack poseStack, float pt);
 
-	void renderLast(PonderLevel world, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
+	void renderLast(PonderLevel level, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
 					CameraRenderState cameraRenderState, PoseStack poseStack, float pt);
 }

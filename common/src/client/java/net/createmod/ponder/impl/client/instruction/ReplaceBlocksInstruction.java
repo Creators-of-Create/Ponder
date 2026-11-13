@@ -23,7 +23,7 @@ public class ReplaceBlocksInstruction extends WorldModifyInstruction {
 
 	@Override
 	protected void runModification(Selection selection, PonderScene scene) {
-		PonderLevel level = scene.getWorld();
+		PonderLevel level = scene.getLevel();
 		selection.forEach(pos -> {
 			if (!level.getBounds()
 				.isInside(pos))

@@ -67,9 +67,9 @@ public class PlacementClient {
 
 	private static void checkHelpers() {
 		Minecraft mc = Minecraft.getInstance();
-		ClientLevel world = mc.level;
+		ClientLevel level = mc.level;
 
-		if (world == null)
+		if (level == null)
 			return;
 
 		if (!(mc.hitResult instanceof BlockHitResult ray))
@@ -96,7 +96,7 @@ public class PlacementClient {
 				continue;
 
 			BlockPos pos = ray.getBlockPos();
-			BlockState state = world.getBlockState(pos);
+			BlockState state = level.getBlockState(pos);
 
 			List<IPlacementHelper> filteredForState = new ArrayList<>();
 			for (IPlacementHelper helper : filteredForHeldItem) {
@@ -109,7 +109,7 @@ public class PlacementClient {
 
 			boolean atLeastOneMatch = false;
 			for (IPlacementHelper h : filteredForState) {
-				PlacementOffset offset = h.getOffset(mc.player, world, state, pos, ray, heldItem);
+				PlacementOffset offset = h.getOffset(mc.player, level, state, pos, ray, heldItem);
 
 				if (offset.isSuccessful()) {
 					PlacementHelperRenderer.get(h).render(h, pos, state, ray, offset);
@@ -248,7 +248,7 @@ public class PlacementClient {
 	// slightly modified
 	private static Vec3 projectToPlayerView(Vec3 target, float partialTicks) {
 		/*
-		 * The (centered) location on the screen of the given 3d point in the world.
+		 * The (centered) location on the screen of the given 3d point in the level.
 		 * Result is (dist right of center screen, dist up from center screen, if < 0,
 		 * then in front of view plane)
 		 */

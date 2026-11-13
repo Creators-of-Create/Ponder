@@ -86,7 +86,7 @@ public class PonderScene {
 	private final List<PonderTag> tags;
 	private final List<SceneOrderingEntry> orderingEntries;
 
-	private final PonderLevel world;
+	private final PonderLevel level;
 	private final String namespace;
 	private final Identifier identifier;
 	private final SceneCamera camera;
@@ -114,13 +114,13 @@ public class PonderScene {
 	private int currentTime;
 	private boolean nextUpEnabled = true;
 
-	public PonderScene(@Nullable PonderLevel world, PonderLocalization localization, String namespace,
+	public PonderScene(@Nullable PonderLevel level, PonderLocalization localization, String namespace,
 					   Identifier identifier, Collection<Identifier> tags,
 					   Collection<SceneOrderingEntry> orderingEntries) {
-		if (world != null) {
-			world.scene = this;
+		if (level != null) {
+			level.scene = this;
 		}
-		this.world = world;
+		this.level = level;
 
 		this.localization = localization;
 
@@ -148,8 +148,8 @@ public class PonderScene {
 		scaleFactor = 1;
 		yOffset = 0;
 
-		if (world != null) {
-			renderViewEntity = new ArmorStand(world, 0, 0, 0);
+		if (level != null) {
+			renderViewEntity = new ArmorStand(level, 0, 0, 0);
 		} else {
 			renderViewEntity = null;
 		}
@@ -169,7 +169,7 @@ public class PonderScene {
 			wse.resetSelectedBlock();
 			if (!wse.isVisible())
 				return;
-			Pair<Vec3, BlockHitResult> rayTrace = wse.rayTrace(world, from, to);
+			Pair<Vec3, BlockHitResult> rayTrace = wse.rayTrace(level, from, to);
 			if (rayTrace == null)
 				return;
 			double distanceTo = rayTrace.getFirst()
@@ -188,7 +188,7 @@ public class PonderScene {
 		BlockPos selectedPos = selectedHit.getSecond().getBlockPos();
 
 		BlockPos origin = new BlockPos(basePlateOffsetX, 0, basePlateOffsetZ);
-		if (!world.getBounds()
+		if (!level.getBounds()
 			.isInside(selectedPos))
 			return Pair.of(ItemStack.EMPTY, null);
 		if (BoundingBox.fromCorners(origin, origin.offset(new Vec3i(basePlateSize - 1, 0, basePlateSize - 1)))
@@ -203,7 +203,7 @@ public class PonderScene {
 		nearestHit.get()
 			.getFirst()
 			.selectBlock(selectedPos);
-		BlockState blockState = world.getBlockState(selectedPos);
+		BlockState blockState = level.getBlockState(selectedPos);
 
 		Direction direction = selectedHit.getSecond().getDirection();
 		Vec3 location = selectedHit.getSecond().getLocation();
@@ -211,7 +211,7 @@ public class PonderScene {
 		ItemStack pickBlock = ModHooksHelper.INSTANCE.getCloneItemFromBlockstate(
 			blockState,
 			new BlockHitResult(location, direction, selectedPos, true),
-			world,
+			level,
 			selectedPos,
 			Minecraft.getInstance().player
 		);
@@ -229,7 +229,7 @@ public class PonderScene {
 		reset();
 		forEach(pe -> pe.reset(this));
 
-		world.restore();
+		level.restore();
 		elements.clear();
 		linkedElements.clear();
 		keyframeTimes.clear();
@@ -275,15 +275,15 @@ public class PonderScene {
 		cameraRenderState.orientation.set(camera.rotation());
 
 		mc.setCameraEntity(this.renderViewEntity);
-		forEachVisible(PonderSceneElement.class, e -> e.renderFirst(world, buffer, queue, camera, cameraRenderState, poseStack, pt));
+		forEachVisible(PonderSceneElement.class, e -> e.renderFirst(level, buffer, queue, camera, cameraRenderState, poseStack, pt));
 		mc.setCameraEntity(prevRVE);
 
 		for (ChunkSectionLayer layer : ChunkSectionLayer.values())
-			forEachVisible(PonderSceneElement.class, e -> e.renderLayer(world, buffer, layer, queue, camera, cameraRenderState, poseStack, pt));
+			forEachVisible(PonderSceneElement.class, e -> e.renderLayer(level, buffer, layer, queue, camera, cameraRenderState, poseStack, pt));
 
-		forEachVisible(PonderSceneElement.class, e -> e.renderLast(world, buffer, queue, camera, cameraRenderState, poseStack, pt));
-		world.renderEntities(poseStack, queue, camera, cameraRenderState, pt);
-		world.renderParticles(poseStack, queue, camera, cameraRenderState, pt);
+		forEachVisible(PonderSceneElement.class, e -> e.renderLast(level, buffer, queue, camera, cameraRenderState, poseStack, pt));
+		level.renderEntities(poseStack, queue, camera, cameraRenderState, pt);
+		level.renderParticles(poseStack, queue, camera, cameraRenderState, pt);
 		outliner.renderOutlines(poseStack, buffer, Vec3.ZERO, pt);
 
 		poseStack.popPose();
@@ -310,7 +310,7 @@ public class PonderScene {
 			pointOfInterest = VecHelper.lerp(.25f, pointOfInterest, chasingPointOfInterest);
 
 		outliner.tickOutlines();
-		world.tick();
+		level.tick();
 		transform.tick();
 		forEach(e -> e.tick(this));
 
@@ -403,7 +403,7 @@ public class PonderScene {
 	}
 
 	public <T extends Entity> void forEachWorldEntity(Class<T> type, Consumer<T> function) {
-		for (Entity entity : world.getEntityList()) {
+		for (Entity entity : level.getEntityList()) {
 			if (type.isInstance(entity)) {
 				function.accept(type.cast(entity));
 			}
@@ -442,8 +442,8 @@ public class PonderScene {
 		return localization.getSpecific(sceneId, key);
 	}
 
-	public PonderLevel getWorld() {
-		return world;
+	public PonderLevel getLevel() {
+		return level;
 	}
 
 	public String getNamespace() {
@@ -475,7 +475,7 @@ public class PonderScene {
 	}
 
 	public BoundingBox getBounds() {
-		return world == null ? new BoundingBox(BlockPos.ZERO) : world.getBounds();
+		return level == null ? new BoundingBox(BlockPos.ZERO) : level.getBounds();
 	}
 
 	public Identifier getSceneId() {

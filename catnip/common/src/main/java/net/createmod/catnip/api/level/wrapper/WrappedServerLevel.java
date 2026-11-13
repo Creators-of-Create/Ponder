@@ -88,13 +88,11 @@ public class WrappedServerLevel extends ServerLevel {
 	}
 
 	@Override
-	public void playSound(@Nullable Entity entity, double x, double y, double z, SoundEvent soundIn, SoundSource category,
-						  float volume, float pitch) {
+	public void playSound(@Nullable Entity except, double x, double y, double z, SoundEvent sound, SoundSource source, float volume, float pitch) {
 	}
 
 	@Override
-	public void playSound(@Nullable Entity p_217384_1_, Entity p_217384_2_, SoundEvent p_217384_3_, SoundSource p_217384_4_,
-						  float p_217384_5_, float p_217384_6_) {
+	public void playSound(@Nullable Entity except, Entity sourceEntity, SoundEvent sound, SoundSource source, float volume, float pitch) {
 	}
 
 	@Override

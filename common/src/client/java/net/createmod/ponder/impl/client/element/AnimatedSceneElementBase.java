@@ -42,30 +42,30 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
 	}
 
 	@Override
-	public final void renderLayer(PonderLevel world, MultiBufferSource buffer, ChunkSectionLayer layer,
+	public final void renderLayer(PonderLevel level, MultiBufferSource buffer, ChunkSectionLayer layer,
 								  SubmitNodeCollector queue, Camera camera, CameraRenderState cameraRenderState,
 								  PoseStack poseStack, float pt) {
 		poseStack.pushPose();
 		float currentFade = applyFade(poseStack, pt);
-		renderLayer(world, buffer, layer, queue, camera, cameraRenderState, poseStack, currentFade, pt);
+		renderLayer(level, buffer, layer, queue, camera, cameraRenderState, poseStack, currentFade, pt);
 		poseStack.popPose();
 	}
 
 	@Override
-	public final void renderFirst(PonderLevel world, MultiBufferSource buffer, SubmitNodeCollector queue,
+	public final void renderFirst(PonderLevel level, MultiBufferSource buffer, SubmitNodeCollector queue,
 								  Camera camera, CameraRenderState cameraRenderState, PoseStack poseStack, float pt) {
 		poseStack.pushPose();
 		float currentFade = applyFade(poseStack, pt);
-		renderFirst(world, buffer, queue, camera, cameraRenderState, poseStack, currentFade, pt);
+		renderFirst(level, buffer, queue, camera, cameraRenderState, poseStack, currentFade, pt);
 		poseStack.popPose();
 	}
 
 	@Override
-	public final void renderLast(PonderLevel world, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
+	public final void renderLast(PonderLevel level, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
 								 CameraRenderState cameraRenderState, PoseStack poseStack, float pt) {
 		poseStack.pushPose();
 		float currentFade = applyFade(poseStack, pt);
-		renderLast(world, buffer, queue, camera, cameraRenderState, poseStack, currentFade, pt);
+		renderLast(level, buffer, queue, camera, cameraRenderState, poseStack, currentFade, pt);
 		poseStack.popPose();
 	}
 
@@ -79,16 +79,16 @@ public abstract class AnimatedSceneElementBase extends PonderElementBase impleme
 		return currentFade;
 	}
 
-	protected void renderLayer(PonderLevel world, MultiBufferSource buffer, ChunkSectionLayer layer,
+	protected void renderLayer(PonderLevel level, MultiBufferSource buffer, ChunkSectionLayer layer,
 							   SubmitNodeCollector queue, Camera camera, CameraRenderState cameraRenderState,
 							   PoseStack poseStack, float fade, float pt) {
 	}
 
-	protected void renderFirst(PonderLevel world, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
+	protected void renderFirst(PonderLevel level, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
 							   CameraRenderState cameraRenderState, PoseStack poseStack, float fade, float pt) {
 	}
 
-	protected void renderLast(PonderLevel world, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
+	protected void renderLast(PonderLevel level, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
 							  CameraRenderState cameraRenderState, PoseStack poseStack, float fade, float pt) {
 	}
 

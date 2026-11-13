@@ -387,22 +387,22 @@ public class PonderSceneBuilder implements SceneBuilder {
 	public class PonderWorldInstructions implements WorldInstructions {
 		@Override
 		public HolderLookup.Provider getHolderLookupProvider() {
-			return scene.getWorld().registryAccess();
+			return scene.getLevel().registryAccess();
 		}
 
 		@Override
 		public void incrementBlockBreakingProgress(BlockPos pos) {
 			addInstruction(scene -> {
-				PonderLevel world = scene.getWorld();
-				int progress = world.getBlockBreakingProgressions()
+				PonderLevel level = scene.getLevel();
+				int progress = level.getBlockBreakingProgressions()
 					.getOrDefault(pos, -1) + 1;
 				if (progress == 9) {
-					world.addBlockDestroyEffects(pos, world.getBlockState(pos));
-					world.destroyBlock(pos, false);
-					world.setBlockBreakingProgress(pos, 0);
+					level.addBlockDestroyEffects(pos, level.getBlockState(pos));
+					level.destroyBlock(pos, false);
+					level.setBlockBreakingProgress(pos, 0);
 					scene.forEach(WorldSectionElement.class, WorldSectionElement::queueRedraw);
 				} else
-					world.setBlockBreakingProgress(pos, progress + 1);
+					level.setBlockBreakingProgress(pos, progress + 1);
 			});
 		}
 
@@ -462,7 +462,7 @@ public class PonderSceneBuilder implements SceneBuilder {
 
 		@Override
 		public void restoreBlocks(Selection selection) {
-			addInstruction(scene -> scene.getWorld()
+			addInstruction(scene -> scene.getLevel()
 				.restoreBlocks(selection));
 		}
 
@@ -585,12 +585,12 @@ public class PonderSceneBuilder implements SceneBuilder {
 		public ElementLink<EntityElement> createEntity(Function<Level, Entity> factory) {
 			ElementLink<EntityElement> link = new ElementLinkImpl<>(EntityElement.class, UUID.randomUUID());
 			addInstruction(scene -> {
-				PonderLevel world = scene.getWorld();
-				Entity entity = factory.apply(world);
+				PonderLevel level = scene.getLevel();
+				Entity entity = factory.apply(level);
 				EntityElement handle = new EntityElementImpl(entity);
 				scene.addElement(handle);
 				scene.linkElement(handle, link);
-				world.addFreshEntity(entity);
+				level.addFreshEntity(entity);
 			});
 			return link;
 		}
@@ -614,7 +614,7 @@ public class PonderSceneBuilder implements SceneBuilder {
 		public <T extends BlockEntity> void modifyBlockEntity(BlockPos position, Class<T> beType,
 															  Consumer<T> consumer) {
 			addInstruction(scene -> {
-				BlockEntity blockEntity = scene.getWorld()
+				BlockEntity blockEntity = scene.getLevel()
 					.getBlockEntity(position);
 				if (beType.isInstance(blockEntity))
 					consumer.accept(beType.cast(blockEntity));

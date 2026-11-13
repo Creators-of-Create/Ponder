@@ -49,10 +49,10 @@ public class PonderWorldParticles {
 	private final ParticleEngine particleEngine = Minecraft.getInstance().particleEngine;
 	private final ParticleFeatureRenderer.ParticleBufferCache particleBufferCache = new ParticleFeatureRenderer.ParticleBufferCache();
 
-	PonderLevel world;
+	PonderLevel level;
 
-	public PonderWorldParticles(PonderLevel world) {
-		this.world = world;
+	public PonderWorldParticles(PonderLevel level) {
+		this.level = level;
 	}
 
 	public void addParticle(Particle effect) {

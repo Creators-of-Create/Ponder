@@ -99,19 +99,18 @@ public class PlacementOffset {
 		return ghostState;
 	}
 
-	public boolean isReplaceable(Level world) {
+	public boolean isReplaceable(Level level) {
 		if (!success)
 			return false;
 
-		return world.getBlockState(new BlockPos(pos)).canBeReplaced();
+		return level.getBlockState(new BlockPos(pos)).canBeReplaced();
 	}
 
-	public InteractionResult placeInWorld(Level world, BlockItem blockItem, Player player, InteractionHand hand, BlockHitResult ray) {
-
-		if (!isReplaceable(world))
+	public InteractionResult placeInLevel(Level level, BlockItem blockItem, Player player, InteractionHand hand, BlockHitResult ray) {
+		if (!isReplaceable(level))
 			return InteractionResult.PASS;
 
-		if (world.isClientSide())
+		if (level.isClientSide())
 			return InteractionResult.SUCCESS;
 
 		UseOnContext context = new UseOnContext(player, hand, ray);
@@ -119,27 +118,27 @@ public class PlacementOffset {
 		ItemStack stackBefore = player.getItemInHand(hand)
 			.copy();
 
-		if (!world.mayInteract(player, newPos))
+		if (!level.mayInteract(player, newPos))
 			return InteractionResult.PASS;
 
 		BlockState state = stateTransform.apply(blockItem.getBlock().defaultBlockState());
 		if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
-			FluidState fluidState = world.getFluidState(newPos);
+			FluidState fluidState = level.getFluidState(newPos);
 			state = state.setValue(BlockStateProperties.WATERLOGGED, fluidState.getType() == Fluids.WATER);
 		}
 
-		if (ModHooksHelper.INSTANCE.playerPlaceSingleBlock(player, world, newPos, state)) {
+		if (ModHooksHelper.INSTANCE.playerPlaceSingleBlock(player, level, newPos, state)) {
 			return InteractionResult.FAIL;
 		}
 
-		BlockState newState = world.getBlockState(newPos);
+		BlockState newState = level.getBlockState(newPos);
 		SoundType soundtype = newState.getSoundType();
-		world.playSound(null, newPos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
-		world.gameEvent(GameEvent.BLOCK_PLACE, newPos, GameEvent.Context.of(player, newState));
+		level.playSound(null, newPos, soundtype.getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+		level.gameEvent(GameEvent.BLOCK_PLACE, newPos, GameEvent.Context.of(player, newState));
 
 		player.awardStat(Stats.ITEM_USED.get(blockItem));
 		newState.getBlock()
-			.setPlacedBy(world, newPos, newState, player, stackBefore);
+			.setPlacedBy(level, newPos, newState, player, stackBefore);
 
 		if (player instanceof ServerPlayer)
 			CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, newPos, context.getItemInHand());

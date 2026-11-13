@@ -43,21 +43,21 @@ public interface IPlacementHelper {
 
 	/**
 	 *
-	 * @param player the player that activated the placement helper
-	 * @param world  the world that the placement helper got activated in
-	 * @param state  the Blockstate of the Block that the player is looking at or clicked on
-	 * @param pos    the position of the Block the player is looking at or clicked on
-	 * @param ray    the exact raytrace result
+	 * @param player The {@link Player} that activated the placement helper
+	 * @param level  The {@link Level} that the placement helper got activated in
+	 * @param state  The {@link BlockState} that the player is looking at or clicked on
+	 * @param pos    The {@link BlockPos} the player is looking at or clicked on
+	 * @param ray    The exact {@link BlockHitResult}
 	 * @return the PlacementOffset object describing where to place the new block.<br>
 	 * Use {@link PlacementOffset#fail} when no new position could be found.<br>
 	 * Use {@link PlacementOffset#success(Vec3i)} with the new BlockPos to indicate a success
 	 * and call {@link PlacementOffset#withTransform(Function)} if the blocks default state has to be modified before it is placed
 	 */
-	PlacementOffset getOffset(Player player, Level world, BlockState state, BlockPos pos, BlockHitResult ray);
+	PlacementOffset getOffset(Player player, Level level, BlockState state, BlockPos pos, BlockHitResult ray);
 
 	//sets the offset's ghost state with the default state of the held block item, this is used in PlacementHelpers and can be ignored in most cases
-	default PlacementOffset getOffset(Player player, Level world, BlockState state, BlockPos pos, BlockHitResult ray, ItemStack heldItem) {
-		PlacementOffset offset = getOffset(player, world, state, pos, ray);
+	default PlacementOffset getOffset(Player player, Level level, BlockState state, BlockPos pos, BlockHitResult ray, ItemStack heldItem) {
+		PlacementOffset offset = getOffset(player, level, state, pos, ray);
 		if (heldItem.getItem() instanceof BlockItem blockItem) {
 			offset = offset.withGhostState(blockItem.getBlock().defaultBlockState());
 		}

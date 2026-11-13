@@ -24,6 +24,6 @@ public class EmitParticlesInstruction extends TickingInstruction {
 		if (Ponder.RANDOM.nextFloat() < (runsPerTick - runs))
 			runs++;
 		for (int i = 0; i < runs; i++)
-			emitter.create(scene.getWorld(), anchor.x, anchor.y, anchor.z);
+			emitter.create(scene.getLevel(), anchor.x, anchor.y, anchor.z);
 	}
 }

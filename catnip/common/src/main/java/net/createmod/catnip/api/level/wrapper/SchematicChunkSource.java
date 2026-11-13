@@ -7,7 +7,6 @@ import java.util.function.BooleanSupplier;
 import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.particles.ExplosionParticleInfo;
@@ -59,10 +58,10 @@ import net.minecraft.world.ticks.BlackholeTickAccess;
 import net.minecraft.world.ticks.LevelTickAccess;
 
 public class SchematicChunkSource extends ChunkSource {
-	private final Level fallbackWorld;
+	private final Level fallbackLevel;
 
-	public SchematicChunkSource(Level world) {
-		fallbackWorld = world;
+	public SchematicChunkSource(Level level) {
+		fallbackLevel = level;
 	}
 
 	@Nullable
@@ -73,17 +72,17 @@ public class SchematicChunkSource extends ChunkSource {
 
 	@Override
 	public Level getLevel() {
-		return fallbackWorld;
+		return fallbackLevel;
 	}
 
 	@Nullable
 	@Override
-	public ChunkAccess getChunk(int x, int z, ChunkStatus status, boolean p_212849_4_) {
+	public ChunkAccess getChunk(int x, int z, ChunkStatus targetStatus, boolean loadOrGenerate) {
 		return getChunk(x, z);
 	}
 
 	public ChunkAccess getChunk(int x, int z) {
-		return new EmptierChunk(fallbackWorld);
+		return new EmptierChunk(fallbackLevel);
 	}
 
 	@Override
@@ -93,11 +92,11 @@ public class SchematicChunkSource extends ChunkSource {
 
 	@Override
 	public LevelLightEngine getLightEngine() {
-		return fallbackWorld.getLightEngine();
+		return fallbackLevel.getLightEngine();
 	}
 
 	@Override
-	public void tick(BooleanSupplier p_202162_, boolean p_202163_) {
+	public void tick(BooleanSupplier haveTime, final boolean tickChunks) {
 	}
 
 	@Override
@@ -310,7 +309,7 @@ public class SchematicChunkSource extends ChunkSource {
 			super(new DummyLevel(level), ChunkPos.ZERO);
 		}
 
-		public BlockState getBlockState(BlockPos p_180495_1_) {
+		public BlockState getBlockState(BlockPos pos) {
 			return Blocks.VOID_AIR.defaultBlockState();
 		}
 

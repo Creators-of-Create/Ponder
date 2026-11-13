@@ -39,5 +39,5 @@ public interface WorldSectionElement extends AnimatedSceneElement {
 
 	Vec3 getAnimatedOffset();
 
-	Pair<Vec3, BlockHitResult> rayTrace(PonderLevel world, Vec3 source, Vec3 target);
+	Pair<Vec3, BlockHitResult> rayTrace(PonderLevel level, Vec3 source, Vec3 target);
 }

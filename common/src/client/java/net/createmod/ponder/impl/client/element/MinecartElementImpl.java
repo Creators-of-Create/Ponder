@@ -54,7 +54,7 @@ public class MinecartElementImpl extends AnimatedSceneElementBase implements Min
 	public void tick(PonderScene scene) {
 		super.tick(scene);
 		if (entity == null)
-			entity = constructor.create(scene.getWorld(), 0, 0, 0);
+			entity = constructor.create(scene.getLevel(), 0, 0, 0);
 
 		entity.tickCount++;
 		entity.setOnGround(true);
@@ -99,12 +99,12 @@ public class MinecartElementImpl extends AnimatedSceneElementBase implements Min
 	}
 
 	@Override
-	protected void renderLast(PonderLevel world, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
-	                          CameraRenderState cameraRenderState, PoseStack poseStack, float fade, float pt) {
+	protected void renderLast(PonderLevel level, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
+							  CameraRenderState cameraRenderState, PoseStack poseStack, float fade, float pt) {
 		EntityRenderDispatcher dispatcher = Minecraft.getInstance()
 			.getEntityRenderDispatcher();
 		if (entity == null)
-			entity = constructor.create(world, 0, 0, 0);
+			entity = constructor.create(level, 0, 0, 0);
 
 		poseStack.pushPose();
 		poseStack.translate(location.x, location.y, location.z);

@@ -200,12 +200,12 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 	}
 
 	@Override
-	public Pair<Vec3, BlockHitResult> rayTrace(PonderLevel world, Vec3 source, Vec3 target) {
-		world.setMask(this.section);
+	public Pair<Vec3, BlockHitResult> rayTrace(PonderLevel level, Vec3 source, Vec3 target) {
+		level.setMask(this.section);
 		Vec3 transformedTarget = reverseTransformVec(target);
-		BlockHitResult rayTraceBlocks = world.clip(new ClipContext(reverseTransformVec(source), transformedTarget,
+		BlockHitResult rayTraceBlocks = level.clip(new ClipContext(reverseTransformVec(source), transformedTarget,
 			ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty()));
-		world.clearMask();
+		level.clearMask();
 
 		double t = rayTraceBlocks.getLocation()
 			.subtract(transformedTarget)
@@ -270,14 +270,14 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 		prevAnimatedRotation = animatedRotation;
 		if (!isVisible())
 			return;
-		loadBEsIfMissing(scene.getWorld());
-		renderedBlockEntities.removeIf(be -> scene.getWorld()
+		loadBEsIfMissing(scene.getLevel());
+		renderedBlockEntities.removeIf(be -> scene.getLevel()
 			.getBlockEntity(be.getBlockPos()) != be);
-		tickableBlockEntities.removeIf(be -> scene.getWorld()
+		tickableBlockEntities.removeIf(be -> scene.getLevel()
 			.getBlockEntity(be.getFirst()
 				.getBlockPos()) != be.getFirst());
 		tickableBlockEntities.forEach(be -> be.getSecond()
-			.accept(scene.getWorld()));
+			.accept(scene.getLevel()));
 	}
 
 	@Override
@@ -289,21 +289,21 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 		redraw = false;
 	}
 
-	protected void loadBEsIfMissing(PonderLevel world) {
+	protected void loadBEsIfMissing(PonderLevel level) {
 		if (renderedBlockEntities != null)
 			return;
 		tickableBlockEntities = new ArrayList<>();
 		renderedBlockEntities = new ArrayList<>();
 		section.forEach(pos -> {
-			BlockEntity blockEntity = world.getBlockEntity(pos);
-			BlockState blockState = world.getBlockState(pos);
+			BlockEntity blockEntity = level.getBlockEntity(pos);
+			BlockState blockState = level.getBlockState(pos);
 			Block block = blockState.getBlock();
 			if (blockEntity == null)
 				return;
 			if (!(block instanceof EntityBlock))
 				return;
-			blockEntity.setBlockState(world.getBlockState(pos));
-			BlockEntityTicker<?> ticker = ((EntityBlock) block).getTicker(world, blockState, blockEntity.getType());
+			blockEntity.setBlockState(level.getBlockState(pos));
+			BlockEntityTicker<?> ticker = ((EntityBlock) block).getTicker(level, blockState, blockEntity.getType());
 			if (ticker != null)
 				addTicker(blockEntity, ticker);
 			renderedBlockEntities.add(blockEntity);
@@ -363,18 +363,18 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 	}
 
 	@Override
-	protected void renderLayer(PonderLevel world, MultiBufferSource buffer, ChunkSectionLayer layer,
+	protected void renderLayer(PonderLevel level, MultiBufferSource buffer, ChunkSectionLayer layer,
 							   SubmitNodeCollector queue, Camera camera, CameraRenderState cameraRenderState,
 							   PoseStack poseStack, float fade, float pt) {
 		SuperByteBufferCache bufferCache = SuperByteBufferCache.getInstance();
 
-		int code = hashCode() ^ world.hashCode();
+		int code = hashCode() ^ level.hashCode();
 		Pair<Integer, Integer> key = Pair.of(code, layer.ordinal());
 
 		if (redraw)
 			bufferCache.invalidate(PONDER_WORLD_SECTION, key);
 
-		SuperByteBuffer structureBuffer = bufferCache.get(PONDER_WORLD_SECTION, key, () -> buildStructureBuffer(world, layer));
+		SuperByteBuffer structureBuffer = bufferCache.get(PONDER_WORLD_SECTION, key, () -> buildStructureBuffer(level, layer));
 		if (structureBuffer.isEmpty())
 			return;
 
@@ -388,16 +388,16 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 	}
 
 	@Override
-	protected void renderLast(PonderLevel world, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
+	protected void renderLast(PonderLevel level, MultiBufferSource buffer, SubmitNodeCollector queue, Camera camera,
 							  CameraRenderState cameraRenderState, PoseStack poseStack, float fade, float pt) {
 		redraw = false;
 		if (selectedBlock == null)
 			return;
-		BlockState blockState = world.getBlockState(selectedBlock);
+		BlockState blockState = level.getBlockState(selectedBlock);
 		if (blockState.isAir())
 			return;
 		VoxelShape shape =
-			blockState.getShape(world, selectedBlock, CollisionContext.of(Minecraft.getInstance().player));
+			blockState.getShape(level, selectedBlock, CollisionContext.of(Minecraft.getInstance().player));
 		if (shape.isEmpty())
 			return;
 
@@ -415,9 +415,9 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 		poseStack.popPose();
 	}
 
-	private void renderBlockEntities(PonderLevel world, PoseStack ms, SubmitNodeCollector queue, Camera camera,
+	private void renderBlockEntities(PonderLevel level, PoseStack ms, SubmitNodeCollector queue, Camera camera,
 									 CameraRenderState cameraRenderState, PoseStack poseStack, float pt) {
-		loadBEsIfMissing(world);
+		loadBEsIfMissing(level);
 
 		Iterator<BlockEntity> iterator = renderedBlockEntities.iterator();
 		while (iterator.hasNext()) {
@@ -449,20 +449,20 @@ public class WorldSectionElementImpl extends AnimatedSceneElementBase implements
 		}
 	}
 
-	private SuperByteBuffer buildStructureBuffer(PonderLevel world, ChunkSectionLayer layer) {
+	private SuperByteBuffer buildStructureBuffer(PonderLevel level, ChunkSectionLayer layer) {
 		ThreadLocalObjects objects = THREAD_LOCAL_OBJECTS.get();
 		SbbBuilder sbbBuilder = objects.sbbBuilder;
 		sbbBuilder.prepare(layer.pipeline());
 
-		world.setMask(section);
-		world.pushFakeLight(0);
-		world.pushCardinalLighting(SCENE_LIGHTING);
+		level.setMask(section);
+		level.pushFakeLight(0);
+		level.pushCardinalLighting(SCENE_LIGHTING);
 
-		BakedModelBufferer.bufferBlocks(section.iterator(), world, null, true, sbbBuilder);
+		BakedModelBufferer.bufferBlocks(section.iterator(), level, null, true, sbbBuilder);
 
-		world.popCardinalLighting();
-		world.popLight();
-		world.clearMask();
+		level.popCardinalLighting();
+		level.popLight();
+		level.clearMask();
 
 		return sbbBuilder.build();
 	}
