@@ -283,7 +283,7 @@ public class PonderScene {
 
 		forEachVisible(PonderSceneElement.class, e -> e.renderLast(level, buffer, queue, camera, cameraRenderState, poseStack, pt));
 		level.renderEntities(poseStack, queue, camera, cameraRenderState, pt);
-		level.renderParticles(poseStack, queue, camera, cameraRenderState, pt);
+		level.renderParticles(poseStack, camera, cameraRenderState, pt);
 		outliner.renderOutlines(poseStack, buffer, Vec3.ZERO, pt);
 
 		poseStack.popPose();

@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_25",
   "mixins": [
     "AbstractContainerScreenAccessor",
+    "FeatureRenderDispatcherAccessor",
     "GuiGraphicsExtractorAccessor",
+    "ParticleFeatureRendererAccessor",
     "TooltipRenderUtilMixin"
   ],
   "injectors": {

@@ -62,7 +62,7 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 	@Nullable
 	public PonderScene scene;
 
-	protected Map<BlockPos, BlockState> originalBlocks;
+	protected Map<BlockPos, BlockState> originalBlocks = new HashMap<>();
 	protected Map<BlockPos, CompoundTag> originalBlockEntities;
 	protected Map<BlockPos, Integer> blockBreakingProgressions;
 	protected List<Entity> originalEntities;
@@ -78,7 +78,6 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 
 	public PonderLevel(BlockPos anchor, Level original) {
 		super(anchor, original);
-		originalBlocks = new HashMap<>();
 		originalBlockEntities = new HashMap<>();
 		blockBreakingProgressions = new HashMap<>();
 		originalEntities = new ArrayList<>();
@@ -120,7 +119,7 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 				TagValueOutput output = TagValueOutput.createWithContext(reporter, registryAccess());
 				e.save(output);
 				ValueInput input = TagValueInput.create(reporter, registryAccess(), output.buildResult());
-				EntityType.create(input, this, EntitySpawnReason.LOAD).ifPresent(originalEntities::add);
+				EntityType.create(input, this, EntitySpawnReason.LOAD).ifPresent(entities::add);
 			}
 		});
 		particles.clearEffects();
@@ -233,9 +232,8 @@ public class PonderLevel extends SchematicLevel implements BlockAndTintGetter {
 		}
 	}
 
-	public void renderParticles(PoseStack ms, SubmitNodeStorage queue, Camera camera,
-								CameraRenderState cameraRenderState, float pt) {
-		particles.renderParticles(ms, queue, camera, cameraRenderState, pt);
+	public void renderParticles(PoseStack ms, Camera camera, CameraRenderState cameraRenderState, float pt) {
+		particles.renderParticles(ms, camera, cameraRenderState, pt);
 	}
 
 	public void tick() {
