@@ -14,8 +14,7 @@ import net.minecraft.resources.Identifier;
 public final class Catnip {
 	public static final String ID = "catnip";
 
-	// Called from the constructor on NeoForge, and from onInitialize on Fabric
-	public static void earlyInit() {
+	public static void preInit() {
 		CommandArgumentTypeRegistry.INSTANCE.register(id("config_id"), ConfigIdArgument.class, ConfigIdArgument.INFO);
 		CommandArgumentTypeRegistry.INSTANCE.register(id("config_path"), ConfigPathArgument.class, ConfigPathArgument.INFO);
 		CommandArgumentTypeRegistry.INSTANCE.register(id("mod_id"), ModIdArgument.class, ModIdArgument.INFO);

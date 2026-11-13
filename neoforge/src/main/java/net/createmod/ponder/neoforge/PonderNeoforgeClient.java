@@ -18,6 +18,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 @Mod(value = Ponder.MOD_ID, dist = Dist.CLIENT)
 public class PonderNeoforgeClient {
 	public PonderNeoforgeClient(IEventBus modEventBus) {
+		PonderClient.preInit();
 		modEventBus.addListener(PonderNeoforgeClient::init);
 	}
 

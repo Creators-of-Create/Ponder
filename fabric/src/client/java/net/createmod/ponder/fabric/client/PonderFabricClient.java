@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 public class PonderFabricClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
+		PonderClient.preInit();
 		PonderClient.init();
 
 		ItemTooltipCallback.EVENT.register(TooltipQueryCallback.EVENT.invoker()::onTooltipQuery);

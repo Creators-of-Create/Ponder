@@ -14,7 +14,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 @EventBusSubscriber
 public final class CatnipNeoforge {
 	public CatnipNeoforge(IEventBus bus) {
-		Catnip.earlyInit();
+		Catnip.preInit();
 		bus.addListener(CatnipNeoforge::setup);
 	}
 

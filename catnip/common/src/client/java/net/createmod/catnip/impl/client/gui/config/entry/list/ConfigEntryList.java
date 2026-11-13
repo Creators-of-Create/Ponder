@@ -95,11 +95,11 @@ public final class ConfigEntryList extends AbstractConfigEntryList<ConfigEntryLi
 		private final LerpedFloat highlightAnimation;
 
 		protected Entry(ConfigEntryList list, ConfigPath path, ConfigAccess.Element element) {
-			super(ConfigHelper.toHumanReadable(element.name()));
 			this.list = list;
 			this.id = new ConfigValueId(list.screen.configId, path);
 			this.element = element;
 			this.highlightAnimation = LerpedFloat.linear().startWithValue(0);
+			super(ConfigHelper.toHumanReadable(element.name()));
 		}
 
 		@Override

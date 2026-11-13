@@ -66,7 +66,6 @@ public final class ConfigValue<T> implements ConfigElement {
 	/// Attempt to set the current value. May fail if the given value is invalid.
 	/// @return an error message if invalid, otherwise empty
 	public Optional<String> trySet(T value) {
-		this.assertInitialized();
 		Optional<String> message = this.validate(value);
 		if (message.isPresent())
 			return message;
@@ -119,6 +118,6 @@ public final class ConfigValue<T> implements ConfigElement {
 	@FunctionalInterface
 	public interface ChangeCallback<T> {
 		/// Invoked after a [ConfigValue] changes, either by being set manually or by being reloaded.
-		void afterChange(T oldValue, T newValue);
+		void afterChange(@Nullable T oldValue, T newValue);
 	}
 }

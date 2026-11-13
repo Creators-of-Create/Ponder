@@ -36,13 +36,13 @@ import net.minecraft.world.phys.Vec3;
 public final class CatnipClient {
 	public static void preInit() {
 		CatnipRenderPipelines.init();
+		CatnipModConfig.register();
 	}
 
 	public static void init() {
 		SuperByteBufferCache.getInstance().registerCompartment(CachedBuffers.GENERIC_BLOCK);
 		SuperByteBufferCache.getInstance().registerCompartment(CachedBuffers.BLOCK_STATE_MODEL);
 	    CatnipClientPayloadHandlers.register();
-		CatnipModConfig.register();
 
 		ClientTickCallback.EVENT.pre().subscribe(CatnipClient::beforeClientTick);
 		LevelRendererReloadCallback.EVENT.subscribe(CatnipClient::onRendererReload);

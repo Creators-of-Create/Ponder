@@ -44,8 +44,9 @@ public class RootConfigScreen extends ModConfigScreen {
 	private final Map<ConfigSide, ConfigAccess> configs;
 	protected boolean returnOnClose;
 
+	// TODO - Set screen title for narration
 	private RootConfigScreen(@Nullable Screen parent, String modId, Map<ConfigSide, ConfigAccess> configs) {
-		super(null, modId, parent);
+		super(Component.empty(), modId, parent);
 		this.configs = configs;
 	}
 

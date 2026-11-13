@@ -14,6 +14,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 public final class CatnipFabricClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
+		CatnipClient.preInit();
 		CatnipClient.init();
 
 		// event registration
