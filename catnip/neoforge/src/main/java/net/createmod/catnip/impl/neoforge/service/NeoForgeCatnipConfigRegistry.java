@@ -1,14 +1,22 @@
 package net.createmod.catnip.impl.neoforge.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+import org.jspecify.annotations.Nullable;
+
 import net.createmod.catnip.api.config.CatnipConfigRegistry;
-import net.createmod.catnip.impl.config.ConfigHelper;
 import net.createmod.catnip.api.config.ConfigId;
 import net.createmod.catnip.api.config.definition.CatnipConfig;
-
 import net.createmod.catnip.api.config.definition.ConfigValue;
-
 import net.createmod.catnip.api.config.validator.RangeValidator;
 import net.createmod.catnip.api.config.validator.Validator;
+import net.createmod.catnip.impl.config.ConfigHelper;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -17,16 +25,6 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.config.ModConfig.Type;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
-
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 public final class NeoForgeCatnipConfigRegistry implements CatnipConfigRegistry {
 	private static final Map<ConfigId, CatnipConfig.Root> registeredConfigs = new HashMap<>();
