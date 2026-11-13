@@ -59,7 +59,6 @@ import net.createmod.ponder.impl.client.plugin.DebugScenes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -947,10 +946,6 @@ public class PonderUI extends AbstractPonderScreen {
 		}
 
 		return super.mouseClicked(event, doubleClick);
-	}
-
-	public Font getFontRenderer() {
-		return font;
 	}
 
 	protected boolean isMouseOver(double mouseX, double mouseY, int x, int y, int w, int h) {

@@ -146,16 +146,16 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
 
 		int textWidth = (int) Math.min(screen.width - targetX, 180);
 
-		List<FormattedText> lines = screen.getFontRenderer()
+		List<FormattedText> lines = screen.getFont()
 			.getSplitter()
 			.splitLines(bakedText, textWidth, Style.EMPTY);
 
 		int boxWidth = 0;
 		for (FormattedText line : lines)
-			boxWidth = Math.max(boxWidth, screen.getFontRenderer()
+			boxWidth = Math.max(boxWidth, screen.getFont()
 				.width(line));
 
-		int boxHeight = screen.getFontRenderer()
+		int boxHeight = screen.getFont()
 			.wordWrapHeight(bakedText, boxWidth);
 
 		Matrix3x2fStack poseStack = graphics.pose();
@@ -183,7 +183,7 @@ public class TextWindowElement extends AnimatedOverlayElementBase {
 		}
 
 		for (int i = 0; i < lines.size(); i++) {
-			graphics.text(screen.getFontRenderer(), lines.get(i).getString(), (int) (targetX - 10), 3 + 9 * i, brighter.scaleAlphaForText(fade).getRGB(), false);
+			graphics.text(screen.getFont(), lines.get(i).getString(), (int) (targetX - 10), 3 + 9 * i, brighter.scaleAlphaForText(fade).getRGB(), false);
 		}
 		poseStack.popMatrix();
 	}

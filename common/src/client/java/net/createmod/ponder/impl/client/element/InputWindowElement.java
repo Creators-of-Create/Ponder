@@ -86,7 +86,7 @@ public class InputWindowElement extends AnimatedOverlayElementBase {
 
 	@Override
 	public void render(PonderScene scene, PonderUI screen, GuiGraphicsExtractor graphics, float partialTicks, float fade) {
-		Font font = screen.getFontRenderer();
+		Font font = screen.getFont();
 		int width = 0;
 		int height = 0;
 
