@@ -30,7 +30,7 @@ public abstract class AbstractConfigScreen extends AbstractSimiScreen {
 		this.parent = parent;
 		this.shadowElement = shadowBlock.isAir() ? null : new DelegatedStencilElement(
 			(graphics, _, _, _) -> renderShadowBlock(graphics, shadowBlock),
-			(graphics, _, _, _) -> graphics.fill(-200, -200, 200, 200, 0x60_000000)
+			(graphics, _, _, _) -> graphics.fill(-300, -200, 300, 200, 0x60_000000)
 		);
 	}
 
