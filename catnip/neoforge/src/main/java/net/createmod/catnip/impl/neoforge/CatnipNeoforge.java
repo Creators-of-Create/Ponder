@@ -13,14 +13,8 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 @Mod(Catnip.ID)
 @EventBusSubscriber
 public final class CatnipNeoforge {
-	// FIXME: config
-	// private static final DeferredRegister<ArgumentTypeInfo<?, ?>> commandArgumentTypes = DeferredRegister.create(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, Catnip.ID);
-	//
-	// private static final DeferredHolder<ArgumentTypeInfo<?, ?>, SingletonArgumentInfo<ConfigPathArgument>> CONFIG_PATH_ARGUMENT_TYPE = commandArgumentTypes.register(
-	// 	"config_path", () -> ArgumentTypeInfos.registerByClass(ConfigPathArgument.class, SingletonArgumentInfo.contextFree(ConfigPathArgument::new))
-	// );
-
 	public CatnipNeoforge(IEventBus bus) {
+		Catnip.earlyInit();
 		bus.addListener(CatnipNeoforge::setup);
 	}
 

@@ -15,9 +15,9 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
 import net.createmod.catnip.api.config.ConfigPath;
 import net.createmod.catnip.api.platform.services.PlatformHelper;
-import net.createmod.catnip.impl.config.ConfigHelper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -28,9 +28,8 @@ public class ConfigPathArgument implements ArgumentType<ConfigPath> {
 
 	public static final List<String> EXAMPLES = List.of("comfyReading", "kinetics.disableStress");
 
-	public static ConfigPathArgument path() {
-		return new ConfigPathArgument();
-	}
+	public static final ConfigPathArgument INSTANCE = new ConfigPathArgument();
+	public static final SingletonArgumentInfo<ConfigPathArgument> INFO = SingletonArgumentInfo.contextFree(() -> INSTANCE);
 
 	public static ConfigPath getPath(CommandContext<CommandSourceStack> context, String name) {
 		return context.getArgument(name, ConfigPath.class);

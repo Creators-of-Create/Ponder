@@ -12,7 +12,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.gui.GuiLayer;
 
 @EventBusSubscriber
-public final class NeoforgeHudElements implements HudElements {
+public final class NeoForgeHudElements implements HudElements {
 	private static final List<Registration> registrations = new ArrayList<>();
 
 	@Override

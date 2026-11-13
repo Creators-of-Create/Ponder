@@ -14,9 +14,9 @@ import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.SortedReloadListenerEvent;
 
 @EventBusSubscriber
-public record NeoforgeReloadListenerRegistries(Registry assets, Registry data) implements ReloadListenerRegistries {
+public record NeoForgeReloadListenerRegistries(Registry assets, Registry data) implements ReloadListenerRegistries {
 	@SuppressWarnings("unused") // will be invoked by ServiceLoader
-	public NeoforgeReloadListenerRegistries() {
+	public NeoForgeReloadListenerRegistries() {
 		this(new NeoforgeRegistry(), new NeoforgeRegistry());
 	}
 

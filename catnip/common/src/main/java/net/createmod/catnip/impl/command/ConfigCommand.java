@@ -47,18 +47,18 @@ public class ConfigCommand {
 			NetworkHelper.INSTANCE.sendToClient(player, OpenConfigScreenPacket.forMod(Catnip.ID));
 			return Command.SINGLE_SUCCESS;
 		})).then(
-			argument("mod", ModIdArgument.modId()).executes(withPlayer((ctx, player) -> {
+			argument("mod", ModIdArgument.INSTANCE).executes(withPlayer((ctx, player) -> {
 				String modId = ModIdArgument.getModId(ctx, "mod");
 				NetworkHelper.INSTANCE.sendToClient(player, OpenConfigScreenPacket.forMod(modId));
 				return Command.SINGLE_SUCCESS;
 			}))
 		).then(
-			argument("config", ConfigIdArgument.configId()).executes(withPlayer((ctx, player) -> {
+			argument("config", ConfigIdArgument.INSTANCE).executes(withPlayer((ctx, player) -> {
 				ConfigId config = ConfigIdArgument.getConfigId(ctx, "config");
 				NetworkHelper.INSTANCE.sendToClient(player, OpenConfigScreenPacket.forConfig(config));
 				return Command.SINGLE_SUCCESS;
 			})).then(
-				argument("path", ConfigPathArgument.path()).executes(withPlayer((ctx, player) -> {
+				argument("path", ConfigPathArgument.INSTANCE).executes(withPlayer((ctx, player) -> {
 					ConfigValueId valueId = getValueId(ctx);
 					NetworkHelper.INSTANCE.sendToClient(player, OpenConfigScreenPacket.forValue(valueId));
 					return Command.SINGLE_SUCCESS;

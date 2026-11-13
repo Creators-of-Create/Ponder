@@ -1,5 +1,9 @@
 package net.createmod.catnip.impl.command.argument;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -9,17 +13,13 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.createmod.catnip.api.platform.services.PlatformHelper;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 
 public final class ModIdArgument implements ArgumentType<String> {
 	public static final List<String> EXAMPLES = List.of("catnip", "ponder", "create");
 
-	public static ModIdArgument modId() {
-		return new ModIdArgument();
-	}
+	public static final ModIdArgument INSTANCE = new ModIdArgument();
+	public static final SingletonArgumentInfo<ModIdArgument> INFO = SingletonArgumentInfo.contextFree(() -> INSTANCE);
 
 	public static String getModId(CommandContext<CommandSourceStack> context, String name) {
 		return context.getArgument(name, String.class);

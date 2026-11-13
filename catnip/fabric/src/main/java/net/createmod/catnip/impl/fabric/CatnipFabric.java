@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 public final class CatnipFabric implements ModInitializer {
 	@Override
 	public void onInitialize() {
+		Catnip.earlyInit();
 		Catnip.init();
 		CommandRegistrationCallback.EVENT.register(ServerCommandRegistrationCallback.EVENT.invoker()::register);
 	}

@@ -10,7 +10,7 @@ import net.createmod.catnip.api.client.event.LevelRenderCallback;
 import net.createmod.catnip.impl.client.CatnipClient;
 import net.createmod.catnip.impl.neoforge.service.NeoForgeClientHooksHelper;
 import net.createmod.catnip.impl.neoforge.service.NeoForgeRenderPipelineRegistry;
-import net.createmod.catnip.impl.neoforge.service.NeoforgeHudElements;
+import net.createmod.catnip.impl.neoforge.service.NeoForgeHudElements;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 
 import net.neoforged.api.distmarker.Dist;
@@ -33,7 +33,7 @@ public final class CatnipNeoforgeClient {
 		bus.addListener(CatnipNeoforgeClient::setup);
 		bus.addListener(CatnipNeoforgeClient::loadCompleted);
 		bus.addListener(CatnipNeoforgeClient::afterAtlasStitch);
-		bus.addListener(NeoforgeHudElements::registerEvent);
+		bus.addListener(NeoForgeHudElements::registerEvent);
 		bus.addListener(NeoForgeRenderPipelineRegistry::registerEvent);
 		bus.addListener(CatnipNeoforgeClient::registerPictureInPictureRenderers);
 	}
