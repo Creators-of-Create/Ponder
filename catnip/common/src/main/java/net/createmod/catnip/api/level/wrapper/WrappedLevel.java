@@ -286,7 +286,7 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public int getSectionsCount() {
-		return this.getMaxSectionY() - this.getMinSectionY();
+		return this.getMaxSectionY() - this.getMinSectionY() + 1;
 	}
 
 	@Override
@@ -296,7 +296,7 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public int getMaxSectionY() {
-		return SectionPos.blockToSectionCoord(this.getMaxY() - 1);
+		return SectionPos.blockToSectionCoord(this.getMaxY());
 	}
 
 	@Override
@@ -306,7 +306,7 @@ public class WrappedLevel extends Level {
 
 	@Override
 	public boolean isOutsideBuildHeight(int y) {
-		return y < this.getMinY() || y >= this.getMaxY();
+		return y < this.getMinY() || y > this.getMaxY();
 	}
 
 	@Override
