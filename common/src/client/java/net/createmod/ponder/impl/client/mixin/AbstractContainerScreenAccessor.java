@@ -9,7 +9,7 @@ import net.minecraft.world.inventory.Slot;
 
 @Mixin(AbstractContainerScreen.class)
 public interface AbstractContainerScreenAccessor {
-	@Accessor
 	@Nullable
-	Slot getHoveredSlot();
+	@Accessor("hoveredSlot")
+	Slot ponder$getHoveredSlot();
 }

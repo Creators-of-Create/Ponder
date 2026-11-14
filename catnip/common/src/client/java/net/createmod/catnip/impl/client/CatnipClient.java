@@ -37,6 +37,10 @@ public final class CatnipClient {
 	public static void preInit() {
 		CatnipRenderPipelines.init();
 		CatnipModConfig.register();
+
+		ModClientHooksHelper.INSTANCE.registerPictureInPictureRenderer(GuiBlockModelRenderState.class, GuiBlockModelRenderer::new);
+		ModClientHooksHelper.INSTANCE.registerPictureInPictureRenderer(GuiBlockEntityRenderState.class, GuiBlockEntityRenderer::new);
+		ModClientHooksHelper.INSTANCE.registerPictureInPictureRenderer(GuiFluidStateRenderState.class, GuiFluidStateRenderer::new);
 	}
 
 	public static void init() {
@@ -48,10 +52,6 @@ public final class CatnipClient {
 		LevelRendererReloadCallback.EVENT.subscribe(CatnipClient::onRendererReload);
 		LevelRenderCallback.AFTER_TRANSLUCENT_FEATURES.subscribe(CatnipClient::onLevelRender);
 		AtlasStitchedCallback.EVENT.subscribe(StitchedSprite::afterAtlasStitch);
-
-		ModClientHooksHelper.INSTANCE.registerPictureInPictureRenderer(GuiBlockModelRenderState.class, GuiBlockModelRenderer::new);
-		ModClientHooksHelper.INSTANCE.registerPictureInPictureRenderer(GuiBlockEntityRenderState.class, GuiBlockEntityRenderer::new);
-		ModClientHooksHelper.INSTANCE.registerPictureInPictureRenderer(GuiFluidStateRenderState.class, GuiFluidStateRenderer::new);
 
 		ReloadListenerRegistries.INSTANCE.assets().register(CatnipReloadListener.ID, CatnipReloadListener.INSTANCE);
 		HudElements.INSTANCE.register(Catnip.id("placement_helper"), PlacementClient::renderCrosshairOverlay);

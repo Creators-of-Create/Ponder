@@ -14,13 +14,13 @@ import net.createmod.ponder.impl.client.tooltip.PonderTooltipHandler;
 public class PonderClient {
 	public static void preInit() {
 		PonderClientConfig.register();
+
+		ModClientHooksHelper.INSTANCE.registerPictureInPictureRenderer(PonderSceneRenderState.class, PonderSceneRenderer::new);
 	}
 
 	public static void init() {
 		SuperByteBufferCache.getInstance().registerCompartment(WorldSectionElementImpl.PONDER_WORLD_SECTION);
 		PonderClientPayloadHandlers.register();
-
-		ModClientHooksHelper.INSTANCE.registerPictureInPictureRenderer(PonderSceneRenderState.class, PonderSceneRenderer::new);
 
 		PonderTooltipHandler.init();
 

@@ -13,10 +13,10 @@ authors = "${authors}"
 credits = "${contributors}"
 
 [[mixins]]
-config="ponder.mixins.json"
+config="ponder-common.mixins.json"
 
 [[mixins]]
-config="ponder-common.mixins.json"
+config="ponder-common-client.mixins.json"
 
 [[dependencies.ponder]]
 modId = "neoforge"
